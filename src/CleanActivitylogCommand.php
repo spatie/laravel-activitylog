@@ -2,6 +2,7 @@
 
 namespace Spatie\DatabaseCleanup;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Spatie\Activitylog\Models\Activity;
 
