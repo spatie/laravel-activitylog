@@ -29,16 +29,17 @@
     "autoload": {
         "psr-4": {
             "Spatie\\Activitylog\\": "src"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Spatie\\Activitylog\\Test\\": "tests"
         }
     },
-    "files": [
-        "src/helpers.php"
-    ],
+
     "scripts": {
         "test": "vendor/bin/phpunit"
     },

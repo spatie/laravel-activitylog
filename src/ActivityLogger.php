@@ -20,7 +20,7 @@ class ActivityLogger
 
     /** @var array */
     protected $extraProperties;
-    
+
     public function __construct(Guard $auth)
     {
         $this->causedBy = $auth->user();
@@ -29,10 +29,10 @@ class ActivityLogger
     public function performedOn(Model $model)
     {
         $this->performedOn = $model;
-        
+
         return $this;
     }
-    
+
     public function on(Model $model)
     {
         return $this->performedOn($model);
@@ -47,26 +47,32 @@ class ActivityLogger
 
         $this->causedBy = $model;
     }
-    
+
     public function by($modelOrId)
     {
         return $this->causedBy($modelOrId);
     }
-    
+
     public function withExtraProperties(array $extraProperties)
     {
         $this->extraProperties = $extraProperties;
-        
+
         return $this;
     }
-    
+
     public function log(string $description)
     {
         $activity = new Activity();
 
         $activity->description = $description;
-        $activity->subject()->associate($this->performedOn);
-        $activity->causer()->associate($this->causedBy);
+
+        if ($this->performedOn) {
+            $activity->subject()->associate($this->performedOn);
+        }
+
+        if ($this->causedBy) {
+            $activity->causer()->associate($this->causedBy);
+        }
         $activity->extra_properties = $this->extraProperties;
 
         $activity->save();

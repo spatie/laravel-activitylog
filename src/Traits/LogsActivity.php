@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Activitylog\ActivityLogger;
 
 trait LogsActivity
 {
@@ -41,12 +42,12 @@ trait LogsActivity
     /*
      * Get the fieldnames and their values that have been changed.
      */
-    public function getChanges(Model $model): array
+    public function getChanges(): array
     {
-        return array_intersect_key($model->fresh()->toArray(), $model->getDirty());
+        return array_intersect_key($this->fresh()->toArray(), $this->getDirty());
     }
 
-    public function getActivityDescriptionForEvent(string $eventName): string
+    public function getDescriptionForEvent(string $eventName): string
     {
         return $eventName;
     }
