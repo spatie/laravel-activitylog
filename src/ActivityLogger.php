@@ -2,12 +2,16 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogger
 {
+    /** @var \Illuminate\Contracts\Auth\Guard */
+    protected $auth;
+
     /** @var \Illuminate\Database\Eloquent\Model */
     protected $performedOn;
 
@@ -17,9 +21,9 @@ class ActivityLogger
     /** @var array */
     protected $extraProperties;
     
-    public function __construct()
+    public function __construct(Guard $auth)
     {
-        $this->causedBy = auth()->user();
+        $this->causedBy = $auth->user();
     }
 
     public function performedOn(Model $model)
@@ -74,7 +78,7 @@ class ActivityLogger
             return $modelOrId;
         }
 
-        if ($model = auth()->retrieveById($modelOrId)) {
+        if ($model = $this->auth->retrieveById($modelOrId)) {
             return $model;
         }
 

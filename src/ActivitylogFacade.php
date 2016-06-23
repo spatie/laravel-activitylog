@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Facade;
 class ActivitylogFacade extends Facade
 {
     /**
-     * Get the registered name of the component.
-     *
-     * @return string
+     * @see \Spatie\Activitylog\ActivityLogger
      */
     protected static function getFacadeAccessor()
     {
