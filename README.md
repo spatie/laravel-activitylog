@@ -1,38 +1,80 @@
 # Very short description of the package
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/:package_name.svg?style=flat-square)](https://packagist.org/packages/spatie/:package_name)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/spatie/:package_name/master.svg?style=flat-square)](https://travis-ci.org/spatie/:package_name)
+[![Build Status](https://img.shields.io/travis/spatie/laravel-activitylog/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-activitylog)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/xxxxxxxxx.svg?style=flat-square)](https://insight.sensiolabs.com/projects/xxxxxxxxx)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/:package_name.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/:package_name)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/:package_name.svg?style=flat-square)](https://packagist.org/packages/spatie/:package_name)
+[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-activitylog.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-activitylog)
+[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
 
-**Note:** Replace ```:author_name``` ```:author_username``` ```:author_website``` ```:author_email``` ```:package_name``` ```:package_description``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line.
+This package provides a function to easily log activities of the users of your app.
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+Here's an example
+
+```php
+activity()
+   ->causedBy($userModel)
+   ->performedOn($anEloquentModel)
+   ->log('Model was saved');
+```
+
+All activity is saved in a `activity_log` table in the database.
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
+## Documentation
+You'll find the documentation on [https://docs.spatie.be/laravel-activitylog/v1](https://docs.spatie.be/laravel-activitylog/v1).
+
+Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the media library? Feel free to [create an issue on GitHub](https://github.com/spatie/laravel-medialibrary/issues), we'll try to address it as soon as possible.
+
+If you've found a bug regarding security please mail [freek@spatie.be](mailto:freek@spatie.be) instead of using the issue tracker.
+
+
 ## Installation
-
-**Note:** Remove this paragraph if you are building a public package  
-This package is custom built for [Spatie](https://spatie.be) projects and is therefore not registered on packagist. In order to install it via composer you must specify this extra repository in `composer.json`:
-
-```json
-"repositories": [ { "type": "composer", "url": "https://satis.spatie.be/" } ]
-```
 
 You can install the package via composer:
 
 ``` bash
-composer require spatie/:package_name
+composer require spatie/laravel-activitylog
 ```
 
-## Usage
+Next, you must install the service provider:
 
-``` php
-$skeleton = new Spatie\Skeleton();
-echo $skeleton->echoPhrase('Hello, Spatie!');
+```php
+// config/app.php
+'providers' => [
+    ...
+    Spatie\Activitylog\ActivitylogServiceProvider::class,
+];
+```
+
+You can publish the migration with:
+```bash
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
+```
+
+After the migration has been published you can create the media-table by running the migrations:
+
+```bash
+php artisan migrate
+```
+
+You can optionally publish the config file with:
+```bash
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="config"
+```
+
+This is the contents of the published config file:
+
+```php
+return [
+
+    /**
+     * When running the clean-command all recording activites older than
+     *  the number of days specified here will be deleted.
+     */
+    'delete_records_older_than_days' => 31,
+];
 ```
 
 ## Changelog
@@ -55,7 +97,7 @@ If you discover any security related issues, please email freek@spatie.be instea
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Freek Van der Herten](https://github.com/freekmurze)
 - [All Contributors](../../contributors)
 
 ## About Spatie
