@@ -22,11 +22,12 @@ class Activity extends Eloquent
     {
         return $this->morphTo();
     }
-    
+
     /**
      * Get the extra properties with the given name.
      *
      * @param $propertyName
+     *
      * @return mixed
      */
     public function getExtraProperty(string $propertyName)

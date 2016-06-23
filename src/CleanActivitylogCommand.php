@@ -14,7 +14,7 @@ class CleanActivitylogCommand extends Command
      * @var string
      */
     protected $signature = 'activitylog:clean';
-    
+
     /**
      * The console command description.
      *

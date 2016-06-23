@@ -19,7 +19,7 @@ trait LogsActivity
                 if ($description == '') {
                     return;
                 }
-                
+
                 $extraProperties = [];
                 if ($eventName != 'deleted') {
                     $extraProperties['changes'] = $model->getChanges();

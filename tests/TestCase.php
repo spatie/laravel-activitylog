@@ -20,7 +20,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [
-            ActivitylogServiceProvider::class
+            ActivitylogServiceProvider::class,
         ];
     }
 
@@ -30,7 +30,7 @@ abstract class TestCase extends OrchestraTestCase
 
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => $this->getTempDirectory() . '/database.sqlite',
+            'database' => $this->getTempDirectory().'/database.sqlite',
             'prefix' => '',
         ]);
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
@@ -48,7 +48,7 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function resetDatabase()
     {
-        file_put_contents($this->getTempDirectory() . '/database.sqlite', null);
+        file_put_contents($this->getTempDirectory().'/database.sqlite', null);
     }
 
     protected function createActivityLogTable()
@@ -60,7 +60,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function getTempDirectory(): string
     {
-        return __DIR__ . '/temp';
+        return __DIR__.'/temp';
     }
 
     protected function createTables(...$tableNames)
@@ -82,6 +82,4 @@ abstract class TestCase extends OrchestraTestCase
             }
         });
     }
-
-
 }
