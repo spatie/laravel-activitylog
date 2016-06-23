@@ -9,7 +9,7 @@
 
 This package provides a function to easily log activities of the users of your app.
 
-Here's an example
+Here's an example:
 
 ```php
 activity()
