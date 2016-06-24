@@ -32,6 +32,6 @@ class Activity extends Eloquent
      */
     public function getExtraProperty(string $propertyName)
     {
-        return array_get($this->extra_properties[$propertyName]);
+        return array_get($this->extra_properties, $propertyName);
     }
 }

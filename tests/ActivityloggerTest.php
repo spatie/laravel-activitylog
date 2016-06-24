@@ -55,4 +55,16 @@ class ActivityloggerTest extends TestCase
         $this->assertEquals($user->id, $firstActivity->causer->id);
         $this->assertInstanceOf(User::class, $firstActivity->causer);
     }
+
+    /** @test */
+    public function it_can_log_activity_with_extra_properties()
+    {
+        $extraProperties = ['key' => 'value'];
+
+        activity()
+            ->withExtraProperties($extraProperties)
+            ->log($this->activityDescription);
+
+        $this->assertEquals('value', Activity::first()->getExtraProperty('key'));
+    }
 }
