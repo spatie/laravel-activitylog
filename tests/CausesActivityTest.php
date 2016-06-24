@@ -46,6 +46,7 @@ class CausesActivityTest extends TestCase
         $this->assertCount(2, Activity::all());
 
         $lastActivity = Activity::all()->last();
+
         $this->assertInstanceOf(get_class($this->article), $lastActivity->subject);
         $this->assertEquals($article->id, $lastActivity->subject->id);
         $this->assertEquals('updated', $lastActivity->description);

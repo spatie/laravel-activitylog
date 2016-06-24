@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 trait DetectsChanges
@@ -10,7 +11,7 @@ trait DetectsChanges
 
     protected $newValues = [];
 
-    protected static function bootRemembersOldValues()
+    protected static function bootDetectsChanges()
     {
         collect(['updating', 'deleting'])->each(function ($eventName) {
 
@@ -32,6 +33,8 @@ trait DetectsChanges
         if (!isset(static::$logChangesOnAttributes)) {
             return collect();
         }
+
+        dd($this->oldValues, $this->newValues);
 
         return collect($this->getChangedAttributeNames())
             ->filter(function (string $attributeName) {
