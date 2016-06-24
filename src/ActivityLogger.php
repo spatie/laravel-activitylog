@@ -40,12 +40,16 @@ class ActivityLogger
 
     /**
      * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
+     * 
+     * @return $this
      */
     public function causedBy($modelOrId)
     {
         $model = $this->normalizeCauser($modelOrId);
 
         $this->causedBy = $model;
+
+        return $this;
     }
 
     public function by($modelOrId)
