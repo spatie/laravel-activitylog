@@ -19,7 +19,8 @@
     "require": {
         "php" : "^7.0",
         "illuminate/database": "^5.2",
-        "illuminate/support": "^5.2"
+        "illuminate/config": "^5.2",
+        "illuminate/support": "^5.2.21"
 
     },
     "require-dev": {
