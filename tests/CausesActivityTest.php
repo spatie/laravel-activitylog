@@ -49,7 +49,23 @@ class CausesActivityTest extends TestCase
         $this->assertInstanceOf(get_class($this->article), $lastActivity->subject);
         $this->assertEquals($article->id, $lastActivity->subject->id);
         $this->assertEquals('updated', $lastActivity->description);
+    }
 
+    /** @test */
+    public function it_will_log_the_deletion_of_the_model()
+    {
+        $article = $this->createArticle();
+
+        $articleId = $article->id;
+
+        $article->delete();
+
+        $this->assertCount(2, Activity::all());
+
+        $lastActivity = Activity::all()->last();
+        $this->assertEquals(get_class($this->article), $lastActivity->subject_type);
+        $this->assertEquals($articleId, $lastActivity->subject_id);
+        $this->assertEquals('deleted', $lastActivity->description);
     }
 
     protected function createArticle(): Article
