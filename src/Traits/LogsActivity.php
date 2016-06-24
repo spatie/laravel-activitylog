@@ -8,6 +8,8 @@ use Spatie\Activitylog\ActivityLogger;
 
 trait LogsActivity
 {
+    use DetectsChanges;
+
     protected static function bootLogsActivity()
     {
         collect(static::eventsToBeRecorded())->each(function ($eventName) {
@@ -22,7 +24,7 @@ trait LogsActivity
 
                 $extraProperties = [];
                 if ($eventName != 'deleted') {
-                    $extraProperties['changes'] = $model->getChanges();
+                    $extraProperties['changes'] = $model->getChangedValues();
                 }
 
                 app(ActivityLogger::class)
@@ -37,25 +39,6 @@ trait LogsActivity
     public function causesActivity(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    /*
-     * Get the fieldnames and their values that have been changed.
-     */
-    public function getChanges(): array
-    {
-        $oldData = $this->fresh()->toArray();
-
-        $newData = $this->getDirty();
-
-        $changedKeys =  array_keys(array_intersect_key($this->fresh()->toArray(), $this->getDirty()));
-
-        return collect($changedKeys)->map(function(string $changedKey) use ($oldData, $newData) {
-            return [
-                'old' => $oldData[$changedKey],
-                'new' => $newData[$changedKey],
-            ];
-        })->toArray();
     }
 
     public function getDescriptionForEvent(string $eventName): string
@@ -74,8 +57,7 @@ trait LogsActivity
 
         return [
             'created',
-            'updating',
-            'deleting',
+            'updated',
             'deleted',
         ];
     }
