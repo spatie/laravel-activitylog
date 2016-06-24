@@ -9,5 +9,7 @@ class User extends Model
 {
     use CausesActivity;
 
+    protected $table = 'users';
+
     protected $guarded = [];
 }
