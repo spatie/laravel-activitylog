@@ -33,6 +33,9 @@ abstract class TestCase extends OrchestraTestCase
             'database' => $this->getTempDirectory().'/database.sqlite',
             'prefix' => '',
         ]);
+
+        $app['config']->set('auth.providers.users.model', User::class);
+
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
 

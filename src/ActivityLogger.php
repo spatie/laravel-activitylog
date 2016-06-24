@@ -23,6 +23,8 @@ class ActivityLogger
 
     public function __construct(Guard $auth)
     {
+        $this->auth = $auth;
+
         $this->causedBy = $auth->user();
     }
 
@@ -40,7 +42,7 @@ class ActivityLogger
 
     /**
      * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
-     * 
+     *
      * @return $this
      */
     public function causedBy($modelOrId)
@@ -88,7 +90,7 @@ class ActivityLogger
             return $modelOrId;
         }
 
-        if ($model = $this->auth->retrieveById($modelOrId)) {
+        if ($model = $this->auth->getProvider()->retrieveById($modelOrId)) {
             return $model;
         }
 

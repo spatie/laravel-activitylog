@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
@@ -74,5 +75,28 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $firstActivity->extra_properties);
         $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
+    }
+
+    /** @test */
+    public function it_can_translate_a_given_causer_id_to_an_object()
+    {
+        $userId = User::first()->id;
+
+        activity()
+            ->causedBy($userId)
+            ->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+
+        $this->assertInstanceOf(User::class, $firstActivity->causer);
+        $this->assertEquals($userId, $firstActivity->causer->id);
+    }
+
+    /** @test */
+    public function it_will_throw_an_exception_if_it_cannot_translate_a_causer_id()
+    {
+        $this->expectException(CouldNotLogActivity::class);
+        
+        activity()->causedBy(999);
     }
 }
