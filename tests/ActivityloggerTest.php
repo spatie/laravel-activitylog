@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
@@ -59,12 +60,19 @@ class ActivityloggerTest extends TestCase
     /** @test */
     public function it_can_log_activity_with_extra_properties()
     {
-        $extraProperties = ['key' => 'value'];
+        $extraProperties = [
+            'property' => [
+                'subProperty' => 'value'
+            ]
+        ];
 
         activity()
             ->withExtraProperties($extraProperties)
             ->log($this->activityDescription);
 
-        $this->assertEquals('value', Activity::first()->getExtraProperty('key'));
+        $firstActivity = Activity::first();
+
+        $this->assertInstanceOf(Collection::class, $firstActivity->extra_properties);
+        $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
     }
 }
