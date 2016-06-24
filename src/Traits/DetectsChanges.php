@@ -16,9 +16,11 @@ trait DetectsChanges
         collect(['updating', 'deleting'])->each(function ($eventName) {
 
             return static::$eventName(function (Model $model) {
+
                 $model->oldValues = $model->fresh()->toArray();
 
                 $model->newValues = $model->getDirty();
+
             });
         });
     }
@@ -30,15 +32,14 @@ trait DetectsChanges
 
     public function getChangedValues(): Collection
     {
-        if (!isset(static::$logChangesOnAttributes)) {
+
+        if (!isset($this->logChangesOnAttributes)) {
             return collect();
         }
 
-        dd($this->oldValues, $this->newValues);
-
         return collect($this->getChangedAttributeNames())
             ->filter(function (string $attributeName) {
-               return collect(static::$logChangesOnAttributes)->contains($attributeName);
+               return collect($this->logChangesOnAttributes)->contains($attributeName);
             })
             ->map(function (string $changedAttributeName) {
                 return [

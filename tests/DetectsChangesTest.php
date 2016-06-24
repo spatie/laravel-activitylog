@@ -34,7 +34,6 @@ class DetectsChangesTest extends TestCase
 
         $article->save();
 
-        dd($article->getChangedValues());
     }
 
     protected function createArticle(): Article
