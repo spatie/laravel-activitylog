@@ -44,7 +44,18 @@ trait LogsActivity
      */
     public function getChanges(): array
     {
-        return array_intersect_key($this->fresh()->toArray(), $this->getDirty());
+        $oldData = $this->fresh()->toArray();
+
+        $newData = $this->getDirty();
+
+        $changedKeys =  array_keys(array_intersect_key($this->fresh()->toArray(), $this->getDirty()));
+
+        return collect($changedKeys)->map(function(string $changedKey) use ($oldData, $newData) {
+            return [
+                'old' => $oldData[$changedKey],
+                'new' => $newData[$changedKey],
+            ];
+        })->toArray();
     }
 
     public function getDescriptionForEvent(string $eventName): string
@@ -63,7 +74,7 @@ trait LogsActivity
 
         return [
             'created',
-            'updated',
+            'updating',
             'deleting',
             'deleted',
         ];

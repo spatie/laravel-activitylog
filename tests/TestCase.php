@@ -71,7 +71,8 @@ abstract class TestCase extends OrchestraTestCase
         collect($tableNames)->each(function (string $tableName) {
             $this->app['db']->connection()->getSchemaBuilder()->create($tableName, function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name');
+                $table->string('name')->nullable();
+                $table->string('text')->nullable();
                 $table->timestamps();
             });
         });
