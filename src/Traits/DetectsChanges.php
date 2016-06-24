@@ -12,7 +12,7 @@ trait DetectsChanges
 
     protected static function bootRemembersOldValues()
     {
-        collect(['updated', 'deleted'])->each(function ($eventName) {
+        collect(['updating', 'deleting'])->each(function ($eventName) {
 
             return static::$eventName(function (Model $model) {
                 $model->oldValues = $model->fresh()->toArray();

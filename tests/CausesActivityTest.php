@@ -56,15 +56,14 @@ class CausesActivityTest extends TestCase
     {
         $article = $this->createArticle();
 
-        $articleId = $article->id;
-
         $article->delete();
 
         $this->assertCount(2, Activity::all());
 
         $lastActivity = Activity::all()->last();
+
         $this->assertEquals(get_class($this->article), $lastActivity->subject_type);
-        $this->assertEquals($articleId, $lastActivity->subject_id);
+        $this->assertEquals($article->id, $lastActivity->subject_id);
         $this->assertEquals('deleted', $lastActivity->description);
     }
 
