@@ -38,8 +38,11 @@ trait DetectsChanges
         $properties['attributes'] = static::logChanges($this);
 
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
-            $properties['old'] = $this->oldAttributes;
+            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
+
+            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
         }
+
 
         return $properties;
     }
