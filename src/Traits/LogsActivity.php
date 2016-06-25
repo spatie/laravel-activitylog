@@ -31,7 +31,7 @@ trait LogsActivity
 
         });
     }
-    
+
     public function causesActivity(): MorphTo
     {
         return $this->morphTo();
@@ -41,7 +41,7 @@ trait LogsActivity
     {
         return $eventName;
     }
-    
+
     /*
      * Get the event names that should be recorded.
      */

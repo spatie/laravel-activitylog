@@ -11,7 +11,6 @@ trait DetectsChanges
     protected static function bootDetectsChanges()
     {
         if (static::eventsToBeRecorded()->contains('updated')) {
-
             static::updating(function (Model $model) {
 
                 $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
@@ -23,7 +22,7 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
-        if (! isset(static::$logAttributes)) {
+        if (!isset(static::$logAttributes)) {
             return [];
         }
 
@@ -32,9 +31,7 @@ trait DetectsChanges
 
     public function getPropertiesToBeLogged(): array
     {
-
-
-        if (! count($this->attributesToBeLogged())) {
+        if (!count($this->attributesToBeLogged())) {
             return [];
         }
 
@@ -43,7 +40,7 @@ trait DetectsChanges
         if (static::eventsToBeRecorded()->contains('updated')) {
             $properties['old'] = $this->oldAttributes;
         }
-       
+
         return $properties;
     }
 
