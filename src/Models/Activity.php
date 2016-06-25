@@ -10,6 +10,8 @@ class Activity extends Eloquent
 {
     protected $table = 'activity_log';
 
+    public $guarded = [];
+
     protected $casts = [
         'properties' => 'collection',
     ];

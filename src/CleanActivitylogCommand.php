@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\DatabaseCleanup;
+namespace Spatie\Activitylog;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -28,7 +28,9 @@ class CleanActivitylogCommand extends Command
 
         $maxAgeInDays = config('laravel-activitylog.delete_records_older_than_days');
 
-        $amountDeleted = Activity::where('created_at', '<', Carbon::now()->subDays($maxAgeInDays))->delete();
+        $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
+
+        $amountDeleted = Activity::where('created_at', '<', $cutOffDate)->delete();
 
         $this->info("Deleted {$amountDeleted} record(s) from the activity log.");
 

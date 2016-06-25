@@ -22,6 +22,8 @@ class ActivitylogServiceProvider extends ServiceProvider
             __DIR__.'/../config/laravel-activitylog.php' => config_path('laravel-activitylog.php'),
         ], 'config');
 
+        $this->mergeConfigFrom(__DIR__.'/../config/laravel-activitylog.php', 'laravel-activitylog');
+
         if (!class_exists('CreateActivityLogTable')) {
             $timestamp = date('Y_m_d_His', time());
 
@@ -40,5 +42,11 @@ class ActivitylogServiceProvider extends ServiceProvider
             'laravel-activitylog',
             \Spatie\Activitylog\ActivityLogger::class
         );
+
+        $this->app->bind('command.activitylog:clean', CleanActivitylogCommand::class);
+
+        $this->commands([
+            'command.activitylog:clean',
+        ]);
     }
 }
