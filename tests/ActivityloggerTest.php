@@ -60,7 +60,7 @@ class ActivityloggerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_log_activity_with_extra_properties()
+    public function it_can_log_activity_with_properties()
     {
         $extraProperties = [
             'property' => [
@@ -74,7 +74,7 @@ class ActivityloggerTest extends TestCase
 
         $firstActivity = Activity::first();
 
-        $this->assertInstanceOf(Collection::class, $firstActivity->extra_properties);
+        $this->assertInstanceOf(Collection::class, $firstActivity->properties);
         $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
     }
 

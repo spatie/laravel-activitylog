@@ -11,7 +11,7 @@ class Activity extends Eloquent
     protected $table = 'activity_log';
 
     protected $casts = [
-        'extra_properties' => 'collection',
+        'properties' => 'collection',
     ];
 
     public function subject(): MorphTo
@@ -33,7 +33,7 @@ class Activity extends Eloquent
      */
     public function getExtraProperty(string $propertyName)
     {
-        return array_get($this->extra_properties, $propertyName);
+        return array_get($this->properties, $propertyName);
     }
 
     public function getChangesAttribute(): Collection

@@ -79,7 +79,7 @@ class ActivityLogger
         if ($this->causedBy) {
             $activity->causer()->associate($this->causedBy);
         }
-        $activity->extra_properties = $this->extraProperties;
+        $activity->properties = $this->extraProperties;
 
         $activity->save();
     }
