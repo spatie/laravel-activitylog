@@ -2,7 +2,6 @@
 
 namespace Spatie\Activitylog\Test;
 
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -63,7 +62,7 @@ class DetectsChangesTest extends TestCase
 
         $this->assertEquals(collect(), $this->getLastActivity()->changes);
     }
-    
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
