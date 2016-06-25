@@ -29,15 +29,15 @@ trait DetectsChanges
         return static::$logAttributes;
     }
 
-    public function getPropertiesToBeLogged(): array
+    public function getPropertiesToBeLogged(string $processingEvent): array
     {
         if (!count($this->attributesToBeLogged())) {
             return [];
         }
 
-        $properties['values'] = static::logChanges($this);
+        $properties['attributes'] = static::logChanges($this);
 
-        if (static::eventsToBeRecorded()->contains('updated')) {
+        if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
             $properties['old'] = $this->oldAttributes;
         }
 

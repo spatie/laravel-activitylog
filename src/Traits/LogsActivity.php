@@ -25,7 +25,7 @@ trait LogsActivity
 
                 app(ActivityLogger::class)
                     ->performedOn($model)
-                    ->withProperties($model->getPropertiesToBeLogged())
+                    ->withProperties($model->getPropertiesToBeLogged($eventName))
                     ->log($description);
             });
 

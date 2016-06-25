@@ -30,13 +30,13 @@ class DetectsChangesTest extends TestCase
     {
         $this->createArticle();
 
-        $expectedChanges = collect([
+        $expectedChanges = [
             'attributes' => [
                 'name' => 'my name',
             ]
-        ]);
+        ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
     }
 
     /** @test */
