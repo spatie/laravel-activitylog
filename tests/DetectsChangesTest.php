@@ -49,18 +49,20 @@ class DetectsChangesTest extends TestCase
 
         $article->save();
 
-        $expectedChanges = collect([
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'updated name',
+                'text' => 'updated text',
+            ],
             'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
-            'attributes' => [
-                'name' => 'updated name',
-                'text' => 'updated text',
-            ]
-        ]);
+        ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
+
+        dd("assert", $expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
     }
 
     /** @test */
