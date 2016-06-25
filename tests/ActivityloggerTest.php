@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Auth;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
@@ -98,5 +99,18 @@ class ActivityloggerTest extends TestCase
         $this->expectException(CouldNotLogActivity::class);
 
         activity()->causedBy(999);
+    }
+
+    /** @test */
+    public function it_will_use_the_logged_in_user_as_the_causer_by_default()
+    {
+        $userId = 1;
+
+        Auth::login(User::find($userId));
+
+        activity()->log('hello kuisvrouwman');
+
+        $this->assertInstanceOf(User::class, $this->getLastActivity()->causer);
+        $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
 }
