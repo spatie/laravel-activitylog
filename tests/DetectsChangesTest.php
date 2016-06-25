@@ -59,7 +59,7 @@ class DetectsChangesTest extends TestCase
                 'text' => null,
             ],
         ];
-        
+
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
     }
 

@@ -29,7 +29,7 @@ trait DetectsChanges
         return static::$logAttributes;
     }
 
-    public function getPropertiesToBeLogged(string $processingEvent): array
+    public function attributeValuesToBeLogged(string $processingEvent): array
     {
         if (!count($this->attributesToBeLogged())) {
             return [];
