@@ -25,7 +25,7 @@ trait LogsActivity
                 $extraProperties = [];
 
                 if ($model->shouldLogChanges()) {
-                    $extraProperties['changes'] = $model->getChangedValues();
+                    $extraProperties['changes'] = $model->getChangedAttributes($eventName);
                 }
 
                 app(ActivityLogger::class)

@@ -26,6 +26,20 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_the_values_when_creating_a_model()
+    {
+        $this->createArticle();
+
+        $expectedChanges = collect([
+            'attributes' => [
+                'name' => 'my name',
+            ]
+        ]);
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
+    }
+
+    /** @test */
     public function it_can_store_the_changes_when_updating_a_model()
     {
         $article = $this->createArticle();
@@ -40,7 +54,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'text' => null,
             ],
-            'new' => [
+            'attributes' => [
                 'name' => 'updated name',
                 'text' => 'updated text',
             ]
@@ -61,6 +75,22 @@ class DetectsChangesTest extends TestCase
         $article->save();
 
         $this->assertEquals(collect(), $this->getLastActivity()->changes);
+    }
+
+    /** @test */
+    public function it_will_store_the_values_when_deleting_the_model()
+    {
+        $article = $this->createArticle();
+
+        $article->delete();
+
+        $expectedChanges = collect([
+            'attributes' => [
+                'name' => 'my name',
+            ],
+        ]);
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
     }
 
     protected function createArticle(): Article
