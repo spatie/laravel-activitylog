@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 
 trait LogsActivity
@@ -12,6 +13,17 @@ trait LogsActivity
 
     protected static function bootLogsActivity()
     {
+        if (static::eventsToBeRecorded()->contains('updated')) {
+
+            static::updating(function (Model $model) {
+
+                $old = $model->replicate()->setRawAttributes($model->getOriginal());
+
+                $model->oldStuffs = static::logChanges($old);
+            });
+
+        }
+
         collect(static::eventsToBeRecorded())->each(function ($eventName) {
 
             return static::$eventName(function (Model $model) use ($eventName) {
@@ -24,8 +36,13 @@ trait LogsActivity
 
                 $extraProperties = [];
 
-                if ($model->shouldLogChanges()) {
-                    $extraProperties['changes'] = $model->getChangedAttributes($eventName);
+                if (method_exists($model, 'logChanges')) {
+
+                    if (static::eventsToBeRecorded()->contains('updated')) {
+                        $extraProperties['old'] = $model->oldStuffs;
+                    }
+
+                    $extraProperties['values'] = static::logChanges($model);
                 }
 
                 app(ActivityLogger::class)
@@ -35,15 +52,6 @@ trait LogsActivity
             });
 
         });
-    }
-
-    public function shouldLogChanges(): bool
-    {
-        if (!isset($this->logChangesOnAttributes)) {
-            return false;
-        }
-
-        return count($this->logChangesOnAttributes);
     }
 
     public function causesActivity(): MorphTo
@@ -59,16 +67,16 @@ trait LogsActivity
     /*
      * Get the event names that should be recorded.
      */
-    protected static function eventsToBeRecorded(): array
+    protected static function eventsToBeRecorded(): Collection
     {
         if (isset(static::$recordEvents)) {
-            return static::$recordEvents;
+            return collect(static::$recordEvents);
         }
 
-        return [
+        return collect([
             'created',
             'updated',
             'deleted',
-        ];
+        ]);
     }
 }

@@ -17,9 +17,12 @@ class DetectsChangesTest extends TestCase
 
         $this->article = new class extends Article
         {
-            public $logChangesOnAttributes = ['name', 'text'];
-
             use LogsActivity;
+
+            public static function logChanges(\Illuminate\Database\Eloquent\Model $model)
+            {
+                return collect($model)->only('name', 'text')->toArray();
+            }
         };
 
         $this->assertCount(0, Activity::all());
