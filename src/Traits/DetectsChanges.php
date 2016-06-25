@@ -32,20 +32,22 @@ trait DetectsChanges
 
     public function getChangedValues(): Collection
     {
-
         if (!isset($this->logChangesOnAttributes)) {
             return collect();
         }
 
-        return collect($this->getChangedAttributeNames())
+        $changes = collect($this->getChangedAttributeNames())
             ->filter(function (string $attributeName) {
                return collect($this->logChangesOnAttributes)->contains($attributeName);
             })
-            ->map(function (string $changedAttributeName) {
-                return [
-                    'old' => $this->oldValues[$changedAttributeName],
-                    'new' => $this->newValues[$changedAttributeName],
-                ];
-            });
+            ->reduce(function (array $changes, string $changedAttributeName) {
+                $changes['old'][$changedAttributeName] = $this->oldValues[$changedAttributeName];
+
+                $changes['new'][$changedAttributeName] = $this->newValues[$changedAttributeName];
+
+                return $changes;
+            }, ['old' => [], 'new' => []]);
+
+        return collect($changes);
     }
 }

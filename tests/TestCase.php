@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Test;
 use Illuminate\Database\Schema\Blueprint;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Spatie\Activitylog\ActivitylogServiceProvider;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
@@ -85,5 +86,13 @@ abstract class TestCase extends OrchestraTestCase
                 $modelClass::create(['name' => "name {$index}"]);
             }
         });
+    }
+
+    /**
+     * @return \Spatie\Activitylog\Models\Activity|null
+     */
+    public function getLastActivity()
+    {
+        return Activity::all()->last();
     }
 }

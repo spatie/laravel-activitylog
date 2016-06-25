@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -17,7 +18,7 @@ class DetectsChangesTest extends TestCase
 
         $this->article = new class extends Article
         {
-            public $logChangesOnAttributes = ['name'];
+            public $logChangesOnAttributes = ['name', 'text'];
 
             use LogsActivity;
         };
@@ -26,16 +27,43 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
-    public function it_can_detect_the_old_value()
+    public function it_can_store_the_changes_when_updating_a_model()
     {
         $article = $this->createArticle();
 
-        $article->name = 'updated';
+        $article->name = 'updated name';
+        $article->text = 'updated text';
 
         $article->save();
 
+        $expectedChanges = collect([
+            'old' => [
+                'name' => 'my name',
+                'text' => null,
+            ],
+            'new' => [
+                'name' => 'updated name',
+                'text' => 'updated text',
+            ]
+        ]);
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
     }
 
+    /** @test */
+    public function it_will_store_no_changes_when_not_logging_attributes()
+    {
+        $article = $this->createArticle();
+
+        $article->logChangesOnAttributes = [];
+
+        $article->name = 'updated name';
+
+        $article->save();
+
+        $this->assertEquals(collect(), $this->getLastActivity()->changes);
+    }
+    
     protected function createArticle(): Article
     {
         $article = new $this->article();

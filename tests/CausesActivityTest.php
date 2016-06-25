@@ -28,11 +28,9 @@ class CausesActivityTest extends TestCase
         $article = $this->createArticle();
         $this->assertCount(1, Activity::all());
 
-        $firstActivity = Activity::first();
-
-        $this->assertInstanceOf(get_class($this->article), $firstActivity->subject);
-        $this->assertEquals($article->id, $firstActivity->subject->id);
-        $this->assertEquals('created', $firstActivity->description);
+        $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('created', $this->getLastActivity()->description);
     }
 
     /** @test */
@@ -45,11 +43,9 @@ class CausesActivityTest extends TestCase
 
         $this->assertCount(2, Activity::all());
 
-        $lastActivity = Activity::all()->last();
-
-        $this->assertInstanceOf(get_class($this->article), $lastActivity->subject);
-        $this->assertEquals($article->id, $lastActivity->subject->id);
-        $this->assertEquals('updated', $lastActivity->description);
+        $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('updated', $this->getLastActivity()->description);
     }
 
     /** @test */
@@ -61,11 +57,9 @@ class CausesActivityTest extends TestCase
 
         $this->assertCount(2, Activity::all());
 
-        $lastActivity = Activity::all()->last();
-
-        $this->assertEquals(get_class($this->article), $lastActivity->subject_type);
-        $this->assertEquals($article->id, $lastActivity->subject_id);
-        $this->assertEquals('deleted', $lastActivity->description);
+        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
     }
 
     protected function createArticle(): Article

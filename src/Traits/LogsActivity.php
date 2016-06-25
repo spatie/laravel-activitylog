@@ -23,7 +23,8 @@ trait LogsActivity
                 }
 
                 $extraProperties = [];
-                if ($eventName != 'deleted') {
+
+                if ($model->shouldLogChanges()) {
                     $extraProperties['changes'] = $model->getChangedValues();
                 }
 
@@ -34,6 +35,15 @@ trait LogsActivity
             });
 
         });
+    }
+
+    public function shouldLogChanges(): bool
+    {
+        if (!isset($this->logChangesOnAttributes)) {
+            return false;
+        }
+
+        return count($this->logChangesOnAttributes);
     }
 
     public function causesActivity(): MorphTo

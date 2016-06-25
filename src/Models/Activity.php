@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 
 class Activity extends Eloquent
 {
@@ -33,5 +34,10 @@ class Activity extends Eloquent
     public function getExtraProperty(string $propertyName)
     {
         return array_get($this->extra_properties, $propertyName);
+    }
+
+    public function getChangesAttribute(): Collection
+    {
+        return collect($this->getExtraProperty('changes'));
     }
 }
