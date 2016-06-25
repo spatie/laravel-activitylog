@@ -13,13 +13,21 @@
     "authors": [
         {
             "name": "Freek Van der Herten",
-            "email": "freek@spatie.be"
+            "email": "freek@spatie.be",
+            "homepage": "https://spatie.be",
+            "role": "Developer"
+        },
+        {
+            "name": "Sebastian De Deyne",
+            "email": "sebastian@spatie.be",
+            "homepage": "https://spatie.be",
+            "role": "Developer"
         }
     ],
     "require": {
         "php" : "^7.0",
-        "illuminate/database": "^5.2",
         "illuminate/config": "^5.2",
+        "illuminate/database": "^5.2",
         "illuminate/support": "^5.2.21"
 
     },

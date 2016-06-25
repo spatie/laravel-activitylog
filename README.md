@@ -98,6 +98,7 @@ If you discover any security related issues, please email freek@spatie.be instea
 ## Credits
 
 - [Freek Van der Herten](https://github.com/freekmurze)
+- [Sebastian De Deyne](https://github.com/sebdedeyne)
 - [All Contributors](../../contributors)
 
 ## About Spatie
