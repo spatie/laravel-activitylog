@@ -13,17 +13,6 @@ trait LogsActivity
 
     protected static function bootLogsActivity()
     {
-        if (static::eventsToBeRecorded()->contains('updated')) {
-
-            static::updating(function (Model $model) {
-
-                $old = $model->replicate()->setRawAttributes($model->getOriginal());
-
-                $model->oldStuffs = static::logChanges($old);
-            });
-
-        }
-
         collect(static::eventsToBeRecorded())->each(function ($eventName) {
 
             return static::$eventName(function (Model $model) use ($eventName) {
@@ -34,26 +23,15 @@ trait LogsActivity
                     return;
                 }
 
-                $extraProperties = [];
-
-                if (method_exists($model, 'logChanges')) {
-
-                    if (static::eventsToBeRecorded()->contains('updated')) {
-                        $extraProperties['old'] = $model->oldStuffs;
-                    }
-
-                    $extraProperties['values'] = static::logChanges($model);
-                }
-
                 app(ActivityLogger::class)
                     ->performedOn($model)
-                    ->withExtraProperties($extraProperties)
+                    ->withProperties($model->getPropertiesToBeLogged())
                     ->log($description);
             });
 
         });
     }
-
+    
     public function causesActivity(): MorphTo
     {
         return $this->morphTo();
@@ -63,7 +41,7 @@ trait LogsActivity
     {
         return $eventName;
     }
-
+    
     /*
      * Get the event names that should be recorded.
      */

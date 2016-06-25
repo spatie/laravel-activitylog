@@ -38,6 +38,6 @@ class Activity extends Eloquent
 
     public function getChangesAttribute(): Collection
     {
-        return collect($this->getExtraProperty('changes'));
+        return collect($this->properties->pluck(['attributes', 'old']));
     }
 }

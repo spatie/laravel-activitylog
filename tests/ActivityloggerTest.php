@@ -62,14 +62,14 @@ class ActivityloggerTest extends TestCase
     /** @test */
     public function it_can_log_activity_with_properties()
     {
-        $extraProperties = [
+        $properties = [
             'property' => [
                 'subProperty' => 'value',
             ],
         ];
 
         activity()
-            ->withExtraProperties($extraProperties)
+            ->withProperties($properties)
             ->log($this->activityDescription);
 
         $firstActivity = Activity::first();

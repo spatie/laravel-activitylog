@@ -19,7 +19,7 @@ class ActivityLogger
     protected $causedBy;
 
     /** @var array */
-    protected $extraProperties;
+    protected $properties;
 
     public function __construct(Guard $auth)
     {
@@ -59,9 +59,9 @@ class ActivityLogger
         return $this->causedBy($modelOrId);
     }
 
-    public function withExtraProperties(array $extraProperties)
+    public function withProperties(array $properties)
     {
-        $this->extraProperties = $extraProperties;
+        $this->properties = $properties;
 
         return $this;
     }
@@ -79,7 +79,8 @@ class ActivityLogger
         if ($this->causedBy) {
             $activity->causer()->associate($this->causedBy);
         }
-        $activity->properties = $this->extraProperties;
+
+        $activity->properties = $this->properties;
 
         $activity->save();
     }
