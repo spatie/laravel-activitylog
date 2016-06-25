@@ -43,7 +43,6 @@ trait DetectsChanges
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
         }
 
-
         return $properties;
     }
 
