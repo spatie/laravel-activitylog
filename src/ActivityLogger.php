@@ -70,7 +70,7 @@ class ActivityLogger
     {
         $activity = new Activity();
 
-        $activity->description = $description;
+        $activity->description = $this->replacePlaceholders($description);
 
         if ($this->performedOn) {
             $activity->subject()->associate($this->performedOn);
@@ -96,5 +96,12 @@ class ActivityLogger
         }
 
         throw CouldNotLogActivity::couldNotDetermineUser($modelOrId);
+    }
+
+    protected function replacePlaceholders(string $description): string
+    {
+        return preg_replace_callback('/:[a-z._]+/i', function ($match) {
+            return array_get($this->properties, substr($match[0], 1), $match[0]);
+        }, $description);
     }
 }

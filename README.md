@@ -53,7 +53,8 @@ You can publish the migration with:
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
 ```
 
-After the migration has been published you can create the media-table by running the migrations:
+After the migration has been published you can create the `activity_log` table by running the migrations:
+
 
 ```bash
 php artisan migrate
