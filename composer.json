@@ -28,7 +28,8 @@
         "php" : "^7.0",
         "illuminate/config": "^5.2",
         "illuminate/database": "^5.2",
-        "illuminate/support": "^5.2.21"
+        "illuminate/support": "^5.2.21",
+        "spatie/string": "^2.1"
 
     },
     "require-dev": {

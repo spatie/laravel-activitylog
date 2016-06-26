@@ -70,8 +70,6 @@ class ActivityLogger
     {
         $activity = new Activity();
 
-        $activity->description = $this->replacePlaceholders($description);
-
         if ($this->performedOn) {
             $activity->subject()->associate($this->performedOn);
         }
@@ -81,6 +79,8 @@ class ActivityLogger
         }
 
         $activity->properties = $this->properties;
+
+        $activity->description = $this->replacePlaceholders($description, $activity);
 
         $activity->save();
     }
@@ -98,10 +98,25 @@ class ActivityLogger
         throw CouldNotLogActivity::couldNotDetermineUser($modelOrId);
     }
 
-    protected function replacePlaceholders(string $description): string
+    protected function replacePlaceholders(string $description, Activity $activity): string
     {
-        return preg_replace_callback('/:[a-z._]+/i', function ($match) {
-            return array_get($this->properties, substr($match[0], 1), $match[0]);
+        return preg_replace_callback('/:[a-z._]+/i', function ($match) use ($activity) {
+
+            $match = $match[0];
+
+
+
+            $attribute = (string)string($match)->between(':', '.');
+
+            if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
+                return $match;
+            }
+
+            $propertyName = substr($match, strpos($match, '.') + 1);
+
+            //dd($match, $attribute, $propertyName, array_get($activity->$attribute, $attribute, $match), $activity->subject['name']);
+
+            return $activity->$attribute[$propertyName];
         }, $description);
     }
 }

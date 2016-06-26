@@ -113,4 +113,32 @@ class ActivityloggerTest extends TestCase
         $this->assertInstanceOf(User::class, $this->getLastActivity()->causer);
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
+
+    /** @test */
+    public function it_can_replace_the_placeholders()
+    {
+        $article = Article::create(['name' => 'article name']);
+
+        $user = Article::create(['name' => 'user name']);
+
+        activity()
+            ->performedOn($article)
+            ->causedBy($user)
+            ->withProperties(['key' => 'value', 'key2' => ['subkey' => 'subvalue']])
+            ->log('Subject name is :subject.name, causer name is :causer.name and property key is :properties.key and sub key :properties.key2.subkey');
+
+        $expectedDescription = 'Subject name is article name, causer name is user name and property key is value and sub key subvalue';
+
+        $this->assertEquals($expectedDescription, $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_will_not_replace_non_placeholders()
+    {
+        $description = 'hello: :hello';
+
+        activity()->log($description);
+
+        $this->assertEquals($description, $this->getLastActivity()->description);
+    }
 }
