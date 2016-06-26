@@ -104,8 +104,6 @@ class ActivityLogger
 
             $match = $match[0];
 
-
-
             $attribute = (string)string($match)->between(':', '.');
 
             if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
@@ -114,9 +112,13 @@ class ActivityLogger
 
             $propertyName = substr($match, strpos($match, '.') + 1);
 
-            //dd($match, $attribute, $propertyName, array_get($activity->$attribute, $attribute, $match), $activity->subject['name']);
+            $attributeValue = $activity->$attribute;
 
-            return $activity->$attribute[$propertyName];
+            if ($attributeValue instanceof Model) {
+                $attributeValue = $attributeValue->toArray();
+            }
+
+            return array_get($attributeValue, $propertyName, $match);
         }, $description);
     }
 }
