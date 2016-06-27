@@ -13,6 +13,8 @@ class CleanActivitylogCommandTest extends TestCase
         parent::setUp();
 
         Carbon::setTestNow(Carbon::create(2016, 1, 1, 00, 00, 00));
+
+        $this->app['config']->set('laravel-activitylog.delete_records_older_than_days', 31);
     }
 
     /** @test */
