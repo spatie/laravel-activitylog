@@ -53,7 +53,7 @@ class ActivityLogger
 
         return $this;
     }
-    
+
     public function by($modelOrId)
     {
         return $this->causedBy($modelOrId);
@@ -87,9 +87,9 @@ class ActivityLogger
 
     /**
      * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Model
-     * 
+     *
      * @throws \Spatie\Activitylog\Exceptions\CouldNotLogActivity
      */
     protected function normalizeCauser($modelOrId): Model
