@@ -29,7 +29,7 @@ class Activity extends Eloquent
     /**
      * Get the extra properties with the given name.
      *
-     * @param $propertyName
+     * @param string $propertyName
      *
      * @return mixed
      */
