@@ -25,7 +25,7 @@ abstract class TestCase extends OrchestraTestCase
         collect($this->getAnnotations())->filter(function ($location) {
             return in_array('!Travis', array_get($location, 'requires', []));
         })->each(function ($location) {
-            getenv('TRAVIS') and $this->markTestSkipped('Trvis will not run this test.');
+            getenv('TRAVIS') and $this->markTestSkipped('Travis will not run this test.');
         });
     }
 
