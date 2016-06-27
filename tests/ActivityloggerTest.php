@@ -131,7 +131,11 @@ class ActivityloggerTest extends TestCase
         activity()->causedBy(999);
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @requires !Travis
+     */
     public function it_will_use_the_logged_in_user_as_the_causer_by_default()
     {
         $userId = 1;
