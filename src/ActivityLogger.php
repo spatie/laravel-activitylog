@@ -107,7 +107,7 @@ class ActivityLogger
 
     protected function replacePlaceholders(string $description, Activity $activity): string
     {
-        return preg_replace_callback('/:[a-z._]+/i', function ($match) use ($activity) {
+        return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
 
             $match = $match[0];
 
