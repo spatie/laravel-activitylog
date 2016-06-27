@@ -108,7 +108,7 @@ class ActivityloggerTest extends TestCase
 
         Auth::login(User::find($userId));
 
-        activity()->log('hello kuisvrouwman');
+        activity()->log('hello poetsvrouwman');
 
         $this->assertInstanceOf(User::class, $this->getLastActivity()->causer);
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
