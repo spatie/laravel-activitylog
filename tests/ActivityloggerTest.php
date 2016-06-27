@@ -79,6 +79,19 @@ class ActivityloggerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_log_activity_with_a_single_properties()
+    {
+        activity()
+            ->withProperty('key', 'value')
+            ->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+
+        $this->assertInstanceOf(Collection::class, $firstActivity->properties);
+        $this->assertEquals('value', $firstActivity->getExtraProperty('key'));
+    }
+
+    /** @test */
     public function it_can_translate_a_given_causer_id_to_an_object()
     {
         $userId = User::first()->id;

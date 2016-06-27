@@ -43,7 +43,5 @@ class Activity extends Eloquent
         return $this->properties->filter(function ($value, $key) {
             return in_array($key, ['attributes', 'old']);
         });
-
-        return collect($this->properties->pluck(['attributes', 'old']));
     }
 }
