@@ -26,7 +26,20 @@ class ActivityloggerTest extends TestCase
     {
         activity()->log($this->activityDescription);
 
-        $this->assertEquals($this->activityDescription, Activity::first()->description);
+        $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+        $this->assertEquals('', $this->getLastActivity()->log_name);
+    }
+
+    /** @test */
+    public function it_can_log_an_activity_to_a_specific_log()
+    {
+        $customLogName = 'secondLog';
+
+        activity($customLogName)->log($this->activityDescription);
+        $this->assertEquals($customLogName, $this->getLastActivity()->log_name);
+
+        activity()->useLog($customLogName)->log($this->activityDescription);
+        $this->assertEquals($customLogName, $this->getLastActivity()->log_name);
     }
 
     /** @test */

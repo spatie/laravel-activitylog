@@ -4,7 +4,6 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
 
@@ -12,6 +11,8 @@ class ActivityLogger
 {
     /** @var \Illuminate\Contracts\Auth\Guard */
     protected $auth;
+
+    protected $logName = '';
 
     /** @var \Illuminate\Database\Eloquent\Model */
     protected $performedOn;
@@ -87,6 +88,13 @@ class ActivityLogger
         return $this;
     }
 
+    public function useLog(string $logName)
+    {
+        $this->logName = $logName;
+
+        return $this;
+    }
+
     public function log(string $description)
     {
         $activity = new Activity();
@@ -102,6 +110,8 @@ class ActivityLogger
         $activity->properties = $this->properties;
 
         $activity->description = $this->replacePlaceholders($description, $activity);
+
+        $activity->log_name = $this->logName;
 
         $activity->save();
     }
