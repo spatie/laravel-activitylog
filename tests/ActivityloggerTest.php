@@ -119,7 +119,11 @@ class ActivityloggerTest extends TestCase
         $this->assertEquals($userId, $firstActivity->causer->id);
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @requires !Travis
+     */
     public function it_will_throw_an_exception_if_it_cannot_translate_a_causer_id()
     {
         $this->expectException(CouldNotLogActivity::class);
@@ -140,11 +144,7 @@ class ActivityloggerTest extends TestCase
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
 
-    /** 
-     * @test
-     * 
-     * @requires !Travis
-     */
+    /** @test */
     public function it_can_replace_the_placeholders()
     {
         $article = Article::create(['name' => 'article name']);
@@ -162,11 +162,7 @@ class ActivityloggerTest extends TestCase
         $this->assertEquals($expectedDescription, $this->getLastActivity()->description);
     }
 
-    /**
-     * @test
-     *
-     * @requires !Travis
-     * */
+    /** @test */
     public function it_will_not_replace_non_placeholders()
     {
         $description = 'hello: :hello';
