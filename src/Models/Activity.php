@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Models;
 
 use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 
@@ -43,5 +44,14 @@ class Activity extends Eloquent
         return $this->properties->filter(function ($value, $key) {
             return in_array($key, ['attributes', 'old']);
         });
+    }
+
+    public function scopeOnLog(Builder $query, ...$logNames): Builder
+    {
+        if (is_array($logNames[0])) {
+            $logNames = $logNames[0];
+        }
+
+        return $query->whereIn('log_name', $logNames);
     }
 }
