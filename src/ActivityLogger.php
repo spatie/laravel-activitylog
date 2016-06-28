@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Config\Repository;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
@@ -23,13 +24,15 @@ class ActivityLogger
     /** @var \Illuminate\Support\Collection */
     protected $properties;
 
-    public function __construct(Guard $auth)
+    public function __construct(Guard $auth, Repository $config)
     {
         $this->auth = $auth;
 
         $this->properties = collect();
 
         $this->causedBy = $auth->user();
+        
+        $this->logName = $config['laravel-activitylog']['default_log_name'];
     }
 
     public function performedOn(Model $model)

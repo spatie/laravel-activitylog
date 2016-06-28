@@ -27,7 +27,15 @@ class ActivityloggerTest extends TestCase
         activity()->log($this->activityDescription);
 
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
-        $this->assertEquals('', $this->getLastActivity()->log_name);
+
+    }
+
+    /** @test */
+    public function it_will_log_to_the_default_log_by_default()
+    {
+        activity()->log($this->activityDescription);
+
+        $this->assertEquals(config('laravel-activitylog.default_log_name'), $this->getLastActivity()->log_name);
     }
 
     /** @test */
