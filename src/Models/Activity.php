@@ -45,7 +45,7 @@ class Activity extends Eloquent
             return in_array($key, ['attributes', 'old']);
         });
     }
-
+    
     public function scopeOnLog(Builder $query, ...$logNames): Builder
     {
         if (is_array($logNames[0])) {
