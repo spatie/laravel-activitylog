@@ -19,17 +19,17 @@ class ActivityModelTest extends TestCase
     /** @test */
     public function it_provides_a_scope_to_get_activities_from_a_specific_log()
     {
-        $activityOnLog3 = Activity::onLog('log3')->get();
+        $activityInLog3 = Activity::inLog('log3')->get();
 
-        $this->assertCount(1, $activityOnLog3);
+        $this->assertCount(1, $activityInLog3);
 
-        $this->assertEquals("log3", $activityOnLog3->first()->log_name);
+        $this->assertEquals("log3", $activityInLog3->first()->log_name);
     }
 
     /** @test */
     public function it_provides_a_scope_to_get_log_items_from_multiple_logs()
     {
-        $activity = Activity::onLog('log2', 'log4')->get();
+        $activity = Activity::inLog('log2', 'log4')->get();
 
         $this->assertCount(2, $activity);
 
@@ -40,7 +40,7 @@ class ActivityModelTest extends TestCase
     /** @test */
     public function it_provides_a_scope_to_get_log_items_from_multiple_logs_using_an_array()
     {
-        $activity = Activity::onLog(['log1', 'log2'])->get();
+        $activity = Activity::inLog(['log1', 'log2'])->get();
 
         $this->assertCount(2, $activity);
 
