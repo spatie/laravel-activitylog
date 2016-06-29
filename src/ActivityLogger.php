@@ -80,7 +80,6 @@ class ActivityLogger
 
     /**
      * @param string $key
-     * 
      * @param mixed  $value
      *
      * @return $this
@@ -97,6 +96,11 @@ class ActivityLogger
         $this->logName = $logName;
 
         return $this;
+    }
+
+    public function inLog(string $logName)
+    {
+        return $this->useLog($logName);
     }
 
     public function log(string $description)
