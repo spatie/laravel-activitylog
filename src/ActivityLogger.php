@@ -31,7 +31,7 @@ class ActivityLogger
         $this->properties = collect();
 
         $this->causedBy = $auth->user();
-        
+
         $this->logName = $config['laravel-activitylog']['default_log_name'];
     }
 
@@ -80,7 +80,8 @@ class ActivityLogger
 
     /**
      * @param string $key
-     * @param mixed $value
+     * 
+     * @param mixed  $value
      *
      * @return $this
      */
@@ -145,9 +146,9 @@ class ActivityLogger
 
             $match = $match[0];
 
-            $attribute = (string)string($match)->between(':', '.');
+            $attribute = (string) string($match)->between(':', '.');
 
-            if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
+            if (!in_array($attribute, ['subject', 'causer', 'properties'])) {
                 return $match;
             }
 
