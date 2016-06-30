@@ -12,7 +12,7 @@ The `spatie/laravel-activity` package provides easy to use functions to log the 
 Here's a litte demo of how you can use it:
 
 ```php
-activity()->log('Look mum, I logged something');
+activity()->log('Look, I logged something');
 ```
 
 You can retrieve all activity using the `Spatie\Activitylog\Models\Activity` model.
@@ -27,14 +27,14 @@ activity()
    ->performedOn($anEloquentModel)
    ->causedBy($user)
    ->withProperties(['customProperty' => 'customValue'])
-   ->log('Look mum, I logged something');
+   ->log('Look, I logged something');
    
 $lastLoggedActivity = Activity::all()->last();
 
 $lastLoggedActivity->subject; //returns an instance of an eloquent model
 $lastLoggedActivity->causer; //returns an instance of your user model
 $lastLoggedActivity->property('customProperty'); //returns 'customValue'
-$lastLoggedActivity->description; //returns 'Look mum, I logged something'
+$lastLoggedActivity->description; //returns 'Look, I logged something'
 ```
 
 
