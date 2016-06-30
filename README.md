@@ -7,18 +7,64 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-activitylog.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-activitylog)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
 
-This package provides a function to easily log activities of the users of your app.
+The `spatie/laravel-activity` package provides easy to use functions to log the activities of the users of your app. It can also automatically log model events. All activity will be stored in the `activity_log` table.
 
-Here's an example:
+Here's a litte demo of how you can use it:
 
 ```php
-activity()
-   ->causedBy($userModel)
-   ->performedOn($anEloquentModel)
-   ->log('Model was saved');
+activity()->log('Look mum, I logged something');
 ```
 
-All activity is saved in a `activity_log` table in the database.
+You can retrieve all activity using the `Spatie\Activitylog\Models\Activity` model.
+
+```php
+Activity::all();
+```
+
+Here's a more advanced example:
+```php
+activity()
+   ->performedOn($anEloquentModel)
+   ->causedBy($user)
+   ->withProperties(['customProperty' => 'customValue'])
+   ->log('Look mum, I logged something');
+   
+$lastLoggedActivity = Activity::all()->last();
+
+$lastLoggedActivity->subject; //returns an instance of an eloquent model
+$lastLoggedActivity->causer; //returns an instance of your user model
+$lastLoggedActivity->property('customProperty'); //returns 'customValue'
+$lastLoggedActivity->description; //returns 'Look mum, I logged something'
+```
+
+
+Here's an example on [event logging](/laravel-activitylog/v1/advanced-usage/logging-model-events).
+
+```php
+$newsItem->name = 'updated name';
+$newsItem->save();
+
+//updating the newsItem will cause an activity being logged
+$activity = Activity::all()->last();
+
+$activity->description; //returns 'updated'
+$activity->subject; //returns the instance of NewsItem that was created
+```
+
+Calling `$activity->changes` will return this array:
+
+```php
+[
+   'attributes' => [
+        'name' => 'original name',
+        'text' => 'Lorum',
+    ],
+    'old' => [
+        'name' => 'updated name',
+        'text' => 'Lorum',
+    ],
+];
+```
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
