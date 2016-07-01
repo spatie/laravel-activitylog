@@ -47,9 +47,6 @@ abstract class TestCase extends OrchestraTestCase
         ]);
 
         $app['config']->set('auth.providers.users.model', User::class);
-        
-        // to support testing in Laravel 5.1
-        $app['config']->set('auth.model', User::class);
 
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }

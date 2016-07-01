@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Auth;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
@@ -128,12 +129,13 @@ class ActivityloggerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Spatie\Activitylog\Exceptions\CouldNotLogActivity
      *
      * @requires !Travis
      */
     public function it_will_throw_an_exception_if_it_cannot_translate_a_causer_id()
     {
+        $this->setExpectedException(CouldNotLogActivity::class);
+
         activity()->causedBy(999);
     }
 
