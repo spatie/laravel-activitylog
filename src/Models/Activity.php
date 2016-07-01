@@ -36,14 +36,19 @@ class Activity extends Eloquent
      */
     public function getExtraProperty(string $propertyName)
     {
-        return array_get($this->properties, $propertyName);
+        return data_get($this->properties, $propertyName);
     }
 
     public function getChangesAttribute(): Collection
     {
-        return $this->properties->filter(function ($value, $key) {
-            return in_array($key, ['attributes', 'old']);
-        });
+        $return = [];
+        foreach ($this->properties->all() as $key => $value) {
+            if (in_array($key, ['attributes', 'old'])) {
+                $return[$key] = $value;
+            }
+        }
+
+        return new Collection($return);
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
