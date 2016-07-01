@@ -160,9 +160,7 @@ class ActivityLogger
 
             $attributeValue = $activity->$attribute;
 
-            if ($attributeValue instanceof Model) {
-                $attributeValue = $attributeValue->toArray();
-            }
+            $attributeValue = $attributeValue->toArray();
 
             return array_get($attributeValue, $propertyName, $match);
         }, $description);
