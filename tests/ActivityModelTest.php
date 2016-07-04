@@ -10,9 +10,9 @@ class ActivityModelTest extends TestCase
     {
         parent::setUp();
 
-        collect(range(1,5))->each(function (int $index) {
+        collect(range(1, 5))->each(function (int $index) {
             $logName = "log{$index}";
-            activity($logName)->log("hello everybody");
+            activity($logName)->log('hello everybody');
         });
     }
 
@@ -23,7 +23,7 @@ class ActivityModelTest extends TestCase
 
         $this->assertCount(1, $activityInLog3);
 
-        $this->assertEquals("log3", $activityInLog3->first()->log_name);
+        $this->assertEquals('log3', $activityInLog3->first()->log_name);
     }
 
     /** @test */
@@ -33,8 +33,8 @@ class ActivityModelTest extends TestCase
 
         $this->assertCount(2, $activity);
 
-        $this->assertEquals("log2", $activity->first()->log_name);
-        $this->assertEquals("log4", $activity->last()->log_name);
+        $this->assertEquals('log2', $activity->first()->log_name);
+        $this->assertEquals('log4', $activity->last()->log_name);
     }
 
     /** @test */
@@ -44,7 +44,7 @@ class ActivityModelTest extends TestCase
 
         $this->assertCount(2, $activity);
 
-        $this->assertEquals("log1", $activity->first()->log_name);
-        $this->assertEquals("log2", $activity->last()->log_name);
+        $this->assertEquals('log1', $activity->first()->log_name);
+        $this->assertEquals('log2', $activity->last()->log_name);
     }
 }

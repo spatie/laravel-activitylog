@@ -27,7 +27,6 @@ class ActivityloggerTest extends TestCase
         activity()->log($this->activityDescription);
 
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
-
     }
 
     /** @test */
