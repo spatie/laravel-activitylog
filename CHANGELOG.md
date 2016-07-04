@@ -4,7 +4,7 @@ All Notable changes to `spatie/laravel-activitylog` will be documented in this f
 
 ## 1.1.0 - 2016-07-04
 
-- add `activity`-method on both the `CausesActivity` and `LogsActivity`-trait
+- added `activity`-method on both the `CausesActivity` and `LogsActivity`-trait
 
 ## 1.0.3 - 2016-07-01
 
