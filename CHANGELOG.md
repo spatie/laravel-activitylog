@@ -2,6 +2,10 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.1.0 - 2016-07-04
+
+- add `activity`-method on both the `CausesActivity` and `LogsActivity`-trait
+
 ## 1.0.3 - 2016-07-01
 
 - the package is now compatible with Laravel 5.1

@@ -7,8 +7,14 @@ use Spatie\Activitylog\Models\Activity;
 
 trait CausesActivity
 {
-    public function loggedActivity(): MorphMany
+    public function activity(): MorphMany
     {
         return $this->morphMany(Activity::class, 'causer');
+    }
+
+    /** @deprecated Use activity() instead */
+    public function loggedActivity(): MorphMany
+    {
+        return $this->activity();
     }
 }

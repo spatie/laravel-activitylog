@@ -3,9 +3,10 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
+use Spatie\Activitylog\Models\Activity;
 
 trait LogsActivity
 {
@@ -32,9 +33,9 @@ trait LogsActivity
         });
     }
 
-    public function causesActivity(): MorphTo
+    public function activity(): MorphMany
     {
-        return $this->morphTo();
+        return $this->morphMany(Activity::class, 'subject');
     }
 
     public function getDescriptionForEvent(string $eventName): string
