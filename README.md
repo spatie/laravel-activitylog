@@ -56,11 +56,11 @@ Calling `$activity->changes` will return this array:
 ```php
 [
    'attributes' => [
-        'name' => 'original name',
+        'name' => 'updated name',
         'text' => 'Lorum',
     ],
     'old' => [
-        'name' => 'updated name',
+        'name' => 'original name',
         'text' => 'Lorum',
     ],
 ];
