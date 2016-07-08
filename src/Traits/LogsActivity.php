@@ -20,7 +20,7 @@ trait LogsActivity
 
                 $description = $model->getDescriptionForEvent($eventName);
 
-                $logName = $model->getLogToUse();
+                $logName = $model->getLogNameToUse($eventName);
 
                 if ($description == '') {
                     return;
@@ -46,7 +46,7 @@ trait LogsActivity
         return $eventName;
     }
 
-    public function getLogToUse(): string
+    public function getLogNameToUse(string $eventName = ''): string
     {
         return config('laravel-activitylog.default_log_name');
     }

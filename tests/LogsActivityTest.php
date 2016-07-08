@@ -10,7 +10,6 @@ class LogsActivityTest extends TestCase
 {
     /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity  */
     protected $article;
-    protected $articleWithCustomLog;
 
     public function setUp()
     {
@@ -18,15 +17,6 @@ class LogsActivityTest extends TestCase
 
         $this->article = new class extends Article {
             use LogsActivity;
-        };
-
-        $this->articleWithCustomLog = new class extends Article {
-            use LogsActivity;
-
-            public function getLogToUse()
-            {
-                return 'custom_log';
-            }
         };
 
         $this->assertCount(0, Activity::all());
@@ -88,16 +78,22 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
-        $article = $this->createArticle();
-        $articleWithCustomLog = $this->createArticleWithCustomLog();
-        $this->assertEquals('default', $article->getLogToUse());
-        $this->assertEquals('custom_log', $articleWithCustomLog->getLogToUse());
-        $this->assertEquals($article->id, Activity::inLog('default')->first()->subject->id);
-        $this->assertEquals($articleWithCustomLog->id, Activity::inLog('custom_log')->first()->subject->id);
-        $this->assertCount(1, Activity::inLog('default')->get());
+        $articleClass = new class extends Article {
+            use LogsActivity;
+
+            public function getLogNameToUse()
+            {
+                return 'custom_log';
+            }
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->save();
+
+        $this->assertEquals($article->id, Activity::inLog('custom_log')->first()->subject->id);
         $this->assertCount(1, Activity::inLog('custom_log')->get());
     }
-
 
     protected function createArticle(): Article
     {
@@ -107,14 +103,4 @@ class LogsActivityTest extends TestCase
 
         return $article;
     }
-
-    protected function createArticleWithCustomLog(): Article
-    {
-        $article = new $this->articleWithCustomLog();
-        $article->name = 'my name';
-        $article->save();
-
-        return $article;
-    }
-    
 }
