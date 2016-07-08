@@ -20,11 +20,14 @@ trait LogsActivity
 
                 $description = $model->getDescriptionForEvent($eventName);
 
+                $logName = $model->getLogToUse();
+
                 if ($description == '') {
                     return;
                 }
 
                 app(ActivityLogger::class)
+                    ->useLog($logName)
                     ->performedOn($model)
                     ->withProperties($model->attributeValuesToBeLogged($eventName))
                     ->log($description);
@@ -41,6 +44,11 @@ trait LogsActivity
     public function getDescriptionForEvent(string $eventName): string
     {
         return $eventName;
+    }
+
+    public function getLogToUse(): string
+    {
+        return config('laravel-activitylog.default_log_name');
     }
 
     /*
