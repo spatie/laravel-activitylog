@@ -13,5 +13,13 @@ return [
      * When not specifying a log name when logging activity
      * we'll using this log name.
      */
-    'default_log_name' => 'default'
+    'default_log_name' => 'default',
+
+
+    /**
+     * If using another guard than the default one,
+     * specify the guard name here.
+     */
+    'auth_guard' => 'default'
+
 ];

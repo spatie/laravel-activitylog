@@ -30,7 +30,12 @@ class ActivityLogger
 
         $this->properties = collect();
 
-        $this->causedBy = $auth->user();
+        if ($config['laravel-activitylog']['auth_guard'] != 'default') {
+            $this->causedBy = auth()->guard($config['laravel-activitylog']['auth_guard'])->user();
+        }
+        else {
+            $this->causedBy = $auth->user();
+        }
 
         $this->logName = $config['laravel-activitylog']['default_log_name'];
     }
