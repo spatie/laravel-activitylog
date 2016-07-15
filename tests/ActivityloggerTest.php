@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Auth;
+use Illuminate\Auth\TokenGuard;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
@@ -138,6 +139,24 @@ class ActivityloggerTest extends TestCase
         activity()->causedBy(999);
     }
 
+    /** @test */
+    public function it_can_create_an_activity_with_a_causer_using_token_guard()
+    {
+        $user = User::first();
+
+        $logger = activity()
+            ->useAuthDriver('api')
+            ->causedBy($user);
+
+        $logger->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+
+        $this->assertEquals($user->id, $firstActivity->causer->id);
+        $this->assertInstanceOf(User::class, $firstActivity->causer);
+        $this->assertInstanceOf(TokenGuard::class, $logger->resolveAuthDriver());
+    }
+
     /**
      * @test
      *
@@ -154,6 +173,7 @@ class ActivityloggerTest extends TestCase
         $this->assertInstanceOf(User::class, $this->getLastActivity()->causer);
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
+
 
     /** @test */
     public function it_can_replace_the_placeholders()

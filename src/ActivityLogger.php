@@ -2,16 +2,18 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogger
 {
-    /** @var \Illuminate\Contracts\Auth\Guard */
+    /** @var \Illuminate\Auth\AuthManager */
     protected $auth;
+
+    protected $authDriver = '';
 
     protected $logName = '';
 
@@ -24,13 +26,15 @@ class ActivityLogger
     /** @var \Illuminate\Support\Collection */
     protected $properties;
 
-    public function __construct(Guard $auth, Repository $config)
+    public function __construct(AuthManager $auth, Repository $config)
     {
         $this->auth = $auth;
 
+        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'];
+
         $this->properties = collect();
 
-        $this->causedBy = $auth->user();
+        $this->causedBy = $this->resolveAuthDriver()->user();
 
         $this->logName = $config['laravel-activitylog']['default_log_name'];
     }
@@ -45,6 +49,25 @@ class ActivityLogger
     public function on(Model $model)
     {
         return $this->performedOn($model);
+    }
+
+    /**
+     * @param string $driver
+     *
+     * @return $this
+     */
+    public function useAuthDriver(string $driver)
+    {
+        $this->authDriver = $driver;
+        return $this;
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Auth\Guard
+     */
+    public function resolveAuthDriver()
+    {
+        return $this->auth->guard($this->authDriver);
     }
 
     /**
