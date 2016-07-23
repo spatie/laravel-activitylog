@@ -128,6 +128,11 @@ return [
      * we'll using this log name.
      */
     'default_log_name' => 'default'
+
+    /**
+     * When set to true, the subject returns soft deleted models
+     */
+     'subject_withTrashed' => false
 ];
 ```
 

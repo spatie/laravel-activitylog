@@ -76,6 +76,25 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
+    public function it_can_fetch_all_activity_for_a_deleted_model()
+    {
+        $article = $this->createArticle();
+
+        $article->name = 'changed name';
+        $article->save();
+
+        $article->delete();
+
+        $activities = $article->activity;
+
+        $this->assertCount(3, $activities);
+
+        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+    }
+
+    /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
         $articleClass = new class extends Article {
