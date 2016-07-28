@@ -6,6 +6,15 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+class LogActivityTestMockArticle extends Article {
+    use LogsActivity;
+
+    public function getLogNameToUse()
+    {
+        return 'custom_log';
+    }
+};
+
 class LogsActivityTest extends TestCase
 {
     /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity  */
@@ -15,9 +24,7 @@ class LogsActivityTest extends TestCase
     {
         parent::setUp();
 
-        $this->article = new class extends Article {
-            use LogsActivity;
-        };
+        $this->article = new LogActivityTestMockArticle(); 
 
         $this->assertCount(0, Activity::all());
     }
@@ -78,14 +85,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
-        $articleClass = new class extends Article {
-            use LogsActivity;
-
-            public function getLogNameToUse()
-            {
-                return 'custom_log';
-            }
-        };
+        $articleClass = new LogActivityTestMockArticle();
 
         $article = new $articleClass();
         $article->name = 'my name';
@@ -95,7 +95,11 @@ class LogsActivityTest extends TestCase
         $this->assertCount(1, Activity::inLog('custom_log')->get());
     }
 
-    protected function createArticle(): Article
+
+    /**
+     * @return \Spatie\Activitylog\Test\Models\Article
+     */
+    protected function createArticle()
     {
         $article = new $this->article();
         $article->name = 'my name';

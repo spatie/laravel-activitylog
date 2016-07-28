@@ -20,7 +20,7 @@ class CleanActivitylogCommandTest extends TestCase
     /** @test */
     public function it_can_clean_the_activity_log()
     {
-        collect(range(1, 60))->each(function (int $index) {
+        collect(range(1, 60))->each(function ($index) {
             Activity::create([
                 'description' => "item {$index}",
                 'created_at' => Carbon::now()->subDays($index)->startOfDay(),

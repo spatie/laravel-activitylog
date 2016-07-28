@@ -73,14 +73,18 @@ abstract class TestCase extends OrchestraTestCase
         (new \CreateActivityLogTable())->up();
     }
 
-    public function getTempDirectory(): string
+
+    /**
+     * @return string
+     */
+    public function getTempDirectory()
     {
         return __DIR__.'/temp';
     }
 
     protected function createTables(...$tableNames)
     {
-        collect($tableNames)->each(function (string $tableName) {
+        collect($tableNames)->each(function ($tableName) {
             $this->app['db']->connection()->getSchemaBuilder()->create($tableName, function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name')->nullable();
@@ -92,7 +96,7 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function seedModels(...$modelClasses)
     {
-        collect($modelClasses)->each(function (string $modelClass) {
+        collect($modelClasses)->each(function ($modelClass) {
             foreach (range(1, 0) as $index) {
                 $modelClass::create(['name' => "name {$index}"]);
             }

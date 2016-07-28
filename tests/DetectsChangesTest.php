@@ -6,6 +6,19 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+class DetectsChangesTestSetupMockArticle extends Article
+{
+    static $logAttributes = ['name', 'text'];
+
+    use LogsActivity;
+}
+class DetectsChangesTestMockArticle extends Article
+{
+    static $logAttributes = [];
+
+    use LogsActivity;
+}
+
 class DetectsChangesTest extends TestCase
 {
     /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
@@ -15,12 +28,7 @@ class DetectsChangesTest extends TestCase
     {
         parent::setUp();
 
-        $this->article = new class extends Article
-        {
-            static $logAttributes = ['name', 'text'];
-            
-            use LogsActivity;
-        };
+        $this->article = new DetectsChangesTestSetupMockArticle();
 
         $this->assertCount(0, Activity::all());
     }
@@ -66,12 +74,7 @@ class DetectsChangesTest extends TestCase
     /** @test */
     public function it_will_store_no_changes_when_not_logging_attributes()
     {
-        $articleClass = new class extends Article
-        {
-            static $logAttributes = [];
-
-            use LogsActivity;
-        };
+        $articleClass = new DetectsChangesTestMockArticle();
 
         $article = new $articleClass;
 
@@ -98,7 +101,11 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
     }
 
-    protected function createArticle(): Article
+
+    /**
+     * @return \Spatie\Activitylog\Test\Models\Article
+     */
+    protected function createArticle()
     {
         $article = new $this->article();
         $article->name = 'my name';
