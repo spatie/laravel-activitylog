@@ -84,26 +84,42 @@ class ActivityLogger
      *
      * @return $this
      */
-    public function withProperty(string $key, $value)
+    public function withProperty($key, $value)
     {
         $this->properties->put($key, $value);
 
         return $this;
     }
 
-    public function useLog(string $logName)
+
+    /**
+     * @param string $logName
+     *
+     * @return $this
+     */
+    public function useLog($logName)
     {
         $this->logName = $logName;
 
         return $this;
     }
 
-    public function inLog(string $logName)
+
+    /**
+     * @param string $logName
+     *
+     * @return \Spatie\Activitylog\ActivityLogger
+     */
+    public function inLog($logName)
     {
         return $this->useLog($logName);
     }
 
-    public function log(string $description)
+
+    /**
+     * @param string $description
+     */
+    public function log($description)
     {
         $activity = new Activity();
 
@@ -131,7 +147,7 @@ class ActivityLogger
      *
      * @throws \Spatie\Activitylog\Exceptions\CouldNotLogActivity
      */
-    protected function normalizeCauser($modelOrId): Model
+    protected function normalizeCauser($modelOrId)
     {
         if ($modelOrId instanceof Model) {
             return $modelOrId;
@@ -144,7 +160,14 @@ class ActivityLogger
         throw CouldNotLogActivity::couldNotDetermineUser($modelOrId);
     }
 
-    protected function replacePlaceholders(string $description, Activity $activity): string
+
+    /**
+     * @param string                              $description
+     * @param \Spatie\Activitylog\Models\Activity $activity
+     *
+     * @return string
+     */
+    protected function replacePlaceholders($description, Activity $activity)
     {
         return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
 

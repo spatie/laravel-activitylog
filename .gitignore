@@ -2,3 +2,5 @@ build
 composer.lock
 docs
 vendor
+
+.idea/

@@ -17,12 +17,20 @@ class Activity extends Eloquent
         'properties' => 'collection',
     ];
 
-    public function subject(): MorphTo
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function subject()
     {
         return $this->morphTo();
     }
 
-    public function causer(): MorphTo
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function causer()
     {
         return $this->morphTo();
     }
@@ -34,19 +42,30 @@ class Activity extends Eloquent
      *
      * @return mixed
      */
-    public function getExtraProperty(string $propertyName)
+    public function getExtraProperty($propertyName)
     {
         return array_get($this->properties->toArray(), $propertyName);
     }
 
-    public function getChangesAttribute(): Collection
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getChangesAttribute()
     {
         return collect(array_filter($this->properties->toArray(), function ($key) {
             return in_array($key, ['attributes', 'old']);
         }, ARRAY_FILTER_USE_KEY));
     }
 
-    public function scopeInLog(Builder $query, ...$logNames): Builder
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array                                 ...$logNames
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInLog(Builder $query, ...$logNames)
     {
         if (is_array($logNames[0])) {
             $logNames = $logNames[0];

@@ -22,7 +22,11 @@ trait DetectsChanges
         }
     }
 
-    public function attributesToBeLogged(): array
+
+    /**
+     * @return array
+     */
+    public function attributesToBeLogged()
     {
         if (!isset(static::$logAttributes)) {
             return [];
@@ -31,7 +35,13 @@ trait DetectsChanges
         return static::$logAttributes;
     }
 
-    public function attributeValuesToBeLogged(string $processingEvent): array
+
+    /**
+     * @param string $processingEvent
+     *
+     * @return array
+     */
+    public function attributeValuesToBeLogged($processingEvent)
     {
         if (!count($this->attributesToBeLogged())) {
             return [];
@@ -48,7 +58,13 @@ trait DetectsChanges
         return $properties;
     }
 
-    public static function logChanges(Model $model): array
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     *
+     * @return array
+     */
+    public static function logChanges(Model $model)
     {
         return collect($model)->only($model->attributesToBeLogged())->toArray();
     }
