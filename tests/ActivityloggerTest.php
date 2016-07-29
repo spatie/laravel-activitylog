@@ -155,6 +155,7 @@ class ActivityloggerTest extends TestCase
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
 
+
     /** @test */
     public function it_can_replace_the_placeholders()
     {
