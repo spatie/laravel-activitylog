@@ -16,7 +16,8 @@ return [
     'default_log_name' => 'default',
 
     /**
-     * When not specifying an auth driver, we'll use this.
+     * You can specify an auth driver here that gets user models.
+     * When this is null we'll use the default Laravel auth driver.
      */
     'default_auth_driver' => null,
 ];
