@@ -2,6 +2,10 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.3.0 - 2016-07-29
+
+- made the auth driver configurable
+
 ## 1.2.1 - 2016-07-09
 
 - use config repo contract
