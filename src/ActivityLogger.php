@@ -13,8 +13,6 @@ class ActivityLogger
     /** @var \Illuminate\Auth\AuthManager */
     protected $auth;
 
-    protected $authDriver = '';
-
     protected $logName = '';
 
     /** @var \Illuminate\Database\Eloquent\Model */
@@ -30,11 +28,11 @@ class ActivityLogger
     {
         $this->auth = $auth;
 
-        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'];
-
         $this->properties = collect();
 
-        $this->causedBy = $this->resolveAuthDriver()->user();
+        $authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
+
+        $this->causedBy = $auth->guard($authDriver)->user();
 
         $this->logName = $config['laravel-activitylog']['default_log_name'];
     }
@@ -49,25 +47,6 @@ class ActivityLogger
     public function on(Model $model)
     {
         return $this->performedOn($model);
-    }
-
-    /**
-     * @param string $driver
-     *
-     * @return $this
-     */
-    public function useAuthDriver(string $driver)
-    {
-        $this->authDriver = $driver;
-        return $this;
-    }
-
-    /**
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
-    public function resolveAuthDriver()
-    {
-        return $this->auth->guard($this->authDriver);
     }
 
     /**

@@ -18,5 +18,5 @@ return [
     /**
      * When not specifying an auth driver, we'll use this.
      */
-    'default_auth_driver' => 'web',
+    'default_auth_driver' => null,
 ];
