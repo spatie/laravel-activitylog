@@ -15,7 +15,8 @@ class LogsActivityTest extends TestCase
     {
         parent::setUp();
 
-        $this->article = new class extends Article {
+        $this->article = new class() extends Article
+        {
             use LogsActivity;
         };
 
@@ -78,7 +79,8 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
-        $articleClass = new class extends Article {
+        $articleClass = new class() extends Article
+        {
             use LogsActivity;
 
             public function getLogNameToUse()
