@@ -27,7 +27,7 @@
     "require": {
         "php" : "^7.0",
         "illuminate/config": "^5.1.24",
-        "illuminate/database": "^5.1.24",
+        "illuminate/database": "^5.2.6",
         "illuminate/support": "^5.1.24",
         "spatie/string": "^2.1"
 
