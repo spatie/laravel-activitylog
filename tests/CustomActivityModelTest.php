@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: thijmen
- * Date: 07-08-16
- * Time: 23:25
- */
-
 namespace Spatie\Activitylog\Test;
 
 
