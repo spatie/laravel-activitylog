@@ -20,4 +20,12 @@ return [
      * When this is null we'll use the default Laravel auth driver.
      */
     'default_auth_driver' => null,
+
+    /**
+     * You can use your own Activity-model. However, it is required to
+     * extend the Spatie\Activitylog\Models\Activity model.
+     * When this is null we'll use the default Activity model from this package.
+     * Example: \App\Activity::class
+     */
+    'default_activity_model' => null,
 ];
