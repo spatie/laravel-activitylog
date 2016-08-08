@@ -24,7 +24,6 @@ return [
     /**
      * You can use your own Activity-model. However, it is required to
      * extend the Spatie\Activitylog\Models\Activity model.
-     * When this is null we'll use the default Activity model from this package.
      * Example: \App\Activity::class
      */
     'activity_model' => \Spatie\Activitylog\Models\Activity::class,

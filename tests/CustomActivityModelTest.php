@@ -2,7 +2,9 @@
 namespace Spatie\Activitylog\Test;
 
 
+use Spatie\Activitylog\Exceptions\ModelMismatchException;
 use Spatie\Activitylog\Test\Models\MyActivity;
+use Spatie\Activitylog\Test\Models\TestActivityModel;
 
 class CustomActivityModelTest extends TestCase
 {
@@ -15,8 +17,6 @@ class CustomActivityModelTest extends TestCase
         $this->activityDescription = 'My activity';
         parent::setUp();
 
-        $this->app['config']->set('laravel-activitylog.activity_model', MyActivity::class);
-
         collect(range(1, 5))->each(function (int $index) {
             $logName = "log{$index}";
             activity($logName)->log('hello everybody');
@@ -28,6 +28,7 @@ class CustomActivityModelTest extends TestCase
      */
     public function it_can_log_an_activity()
     {
+        $this->app['config']->set('laravel-activitylog.activity_model', MyActivity::class);
         $activity = activity()->log($this->activityDescription);
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
         $this->assertEquals("Spatie\\Activitylog\\Test\\Models\\MyActivity", $activity->getActivityModel());
@@ -47,10 +48,27 @@ class CustomActivityModelTest extends TestCase
     /**
      * @test
      */
-    public function it_uses_the_default_class_when_model_config_is_null()
+    public function it_throws_an_exception_when_model_config_is_null()
     {
         $this->app['config']->set('laravel-activitylog.activity_model', null);
-        $activity = activity()->log($this->activityDescription);
-        $this->assertEquals("Spatie\\Activitylog\\Models\\Activity", $activity->getActivityModel());
+        try {
+            activity()->log($this->activityDescription);
+            $this->fail("Exception not being thrown");
+        } catch(ModelMismatchException $e) {
+            $this->assertEquals("Model not set in laravel-activitylog.php", $e->getMessage());
+        }
+
+    }
+
+    /** @test */
+    public function it_throws_an_exception_when_model_doesnt_extend_package_model()
+    {
+        $this->app['config']->set('laravel-activitylog.activity_model', TestActivityModel::class);
+        try {
+            activity()->log($this->activityDescription);
+            $this->fail("Exception not being thrown");
+        } catch(ModelMismatchException $e) {
+            $this->assertEquals("Model `Spatie\\Activitylog\\Test\\Models\\TestActivityModel` is not extending \\Spatie\\Activitylog\\Models\\Activity", $e->getMessage());
+        }
     }
 }

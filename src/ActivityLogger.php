@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Exceptions\ModelMismatchException;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogger
@@ -32,6 +33,16 @@ class ActivityLogger
         $this->auth = $auth;
 
         $this->properties = collect();
+
+        $model = config('laravel-activitylog.activity_model');
+
+        if($model == null) {
+            throw new ModelMismatchException("Model not set in laravel-activitylog.php");
+        }
+
+        if(  (!($model instanceof Activity) && !($model == Activity::class)) && (!(is_subclass_of($model, Activity::class))) ) {
+            throw new ModelMismatchException("Model `{$model}` is not extending \\Spatie\\Activitylog\\Models\\Activity");
+        }
 
         $this->activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
 
