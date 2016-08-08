@@ -15,7 +15,7 @@ class CustomActivityModelTest extends TestCase
         $this->activityDescription = 'My activity';
         parent::setUp();
 
-        $this->app['config']->set('laravel-activitylog.default_activity_model', MyActivity::class);
+        $this->app['config']->set('laravel-activitylog.activity_model', MyActivity::class);
 
         collect(range(1, 5))->each(function (int $index) {
             $logName = "log{$index}";
@@ -49,7 +49,7 @@ class CustomActivityModelTest extends TestCase
      */
     public function it_uses_the_default_class_when_model_config_is_null()
     {
-        $this->app['config']->set('laravel-activitylog.default_activity_model', null);
+        $this->app['config']->set('laravel-activitylog.activity_model', null);
         $activity = activity()->log($this->activityDescription);
         $this->assertEquals("Spatie\\Activitylog\\Models\\Activity", $activity->getActivityModel());
     }

@@ -27,5 +27,5 @@ return [
      * When this is null we'll use the default Activity model from this package.
      * Example: \App\Activity::class
      */
-    'default_activity_model' => null,
+    'activity_model' => \Spatie\Activitylog\Models\Activity::class,
 ];

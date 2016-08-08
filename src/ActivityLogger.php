@@ -33,7 +33,7 @@ class ActivityLogger
 
         $this->properties = collect();
 
-        $this->activityModel = config('laravel-activitylog.default_activity_model') ?? Activity::class;
+        $this->activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
 
         $authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
