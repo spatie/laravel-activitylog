@@ -2,6 +2,24 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.3.2 - 2016-08-09
+- This version replaces version `1.3.0`
+- Dropped L5.1 compatibility
+
+## 1.3.1 - 2016-08-09
+- this version removes the features introduced in 1.3.0 and is compatible with L5.1
+
+## 1.3.0 - 2016-07-29
+
+**This version does not work properly**
+
+Please upgrade to:
+- `1.3.1` for Laravel 5.1
+- `1.3.2` for Laravel 5.2 and higher
+
+Introduced features
+- made the auth driver configurable
+
 ## 1.3.0 - 2016-07-29
 
 - made the auth driver configurable
