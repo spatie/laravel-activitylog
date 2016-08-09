@@ -11,7 +11,7 @@ All Notable changes to `spatie/laravel-activitylog` will be documented in this f
 
 ## 1.3.0 - 2016-07-29
 
-**This version does not work properly**
+**DO NOT USE THIS VERSION IF YOU'RE ON L5.1**
 
 Please upgrade to:
 - `1.3.1` for Laravel 5.1
