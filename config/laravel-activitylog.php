@@ -20,4 +20,9 @@ return [
      * When this is null we'll use the default Laravel auth driver.
      */
     'default_auth_driver' => null,
+
+    /**
+    * When set to true, the subject returns soft deleted models
+    */
+    'subject_withTrashed' => false,
 ];
