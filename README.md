@@ -135,7 +135,13 @@ return [
      * When not specifying a log name when logging activity
      * we'll using this log name.
      */
-    'default_log_name' => 'default'
+    'default_log_name' => 'default',
+
+
+    /**
+     * When set to true, the subject returns soft deleted models
+     */
+     'subject_returns_soft_deleted_models' => false
 ];
 ```
 
