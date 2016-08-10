@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.4.0 - 2016-08-10
+- Added support for soft deletes
+
 ## 1.3.2 - 2016-08-09
 - This version replaces version `1.3.0`
 - Dropped L5.1 compatibility

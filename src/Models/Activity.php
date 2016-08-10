@@ -19,8 +19,10 @@ class Activity extends Eloquent
 
     public function subject(): MorphTo
     {
-        if (config('laravel-activitylog.subject_withTrashed'))
-            return $this->morphTo()->withTrashed(); 
+        if (config('laravel-activitylog.subject_returns_soft_deleted_models')) {
+            return $this->morphTo()->withTrashed();
+        }
+
         return $this->morphTo();
     }
 

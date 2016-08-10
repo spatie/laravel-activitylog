@@ -23,5 +23,5 @@ return [
     /**
      * When set to true, the subject returns soft deleted models
      */
-     'subject_withTrashed' => false,
+     'subject_returns_soft_deleted_models' => false,
 ];

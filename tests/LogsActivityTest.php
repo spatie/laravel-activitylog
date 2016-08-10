@@ -77,10 +77,10 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
-    public function it_can_fetch_all_activity_for_a_deleted_model()
+    public function it_can_fetch_soft_deleted_models()
     {
-        $this->app['config']->set('laravel-activitylog.subject_withTrashed', true);
-        
+        $this->app['config']->set('laravel-activitylog.subject_returns_soft_deleted_models', true);
+
         $article = $this->createArticle();
 
         $article->name = 'changed name';
