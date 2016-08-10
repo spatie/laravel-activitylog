@@ -18,6 +18,10 @@ trait LogsActivity
 
             return static::$eventName(function (Model $model) use ($eventName) {
 
+                if (count(array_except($model->getDirty(), $model->attributesToBeIgnored())) === 0) {
+                    return;
+                }
+
                 $description = $model->getDescriptionForEvent($eventName);
 
                 $logName = $model->getLogNameToUse($eventName);
@@ -65,5 +69,14 @@ trait LogsActivity
             'updated',
             'deleted',
         ]);
+    }
+
+    public function attributesToBeIgnored(): array
+    {
+        if (!isset(static::$ignoreChangedAttributes)) {
+            return [];
+        }
+
+        return static::$ignoreChangedAttributes;
     }
 }

@@ -119,6 +119,30 @@ class LogsActivityTest extends TestCase
         $this->assertCount(1, Activity::inLog('custom_log')->get());
     }
 
+    /** @test */
+    public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
+    {
+        $articleClass = new class() extends Article
+        {
+            use LogsActivity;
+
+            protected static $ignoreChangedAttributes = ['text'];
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->save();
+
+        $article->text = 'ignore me';
+        $article->save();
+
+        $this->assertCount(1, Activity::all());
+
+        $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('created', $this->getLastActivity()->description);
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
