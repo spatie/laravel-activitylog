@@ -77,6 +77,28 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
+    public function it_can_fetch_all_activity_for_a_deleted_model()
+    {
+        $this->app['config']->set('laravel-activitylog.subject_withTrashed', true);
+        
+        $article = $this->createArticle();
+
+        $article->name = 'changed name';
+        $article->save();
+
+        $article->delete();
+
+        $activities = $article->activity;
+
+        $this->assertCount(3, $activities);
+
+        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
+    }
+
+    /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
         $articleClass = new class() extends Article

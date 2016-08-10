@@ -86,6 +86,7 @@ abstract class TestCase extends OrchestraTestCase
                 $table->string('name')->nullable();
                 $table->string('text')->nullable();
                 $table->timestamps();
+                $table->softDeletes();
             });
         });
     }
