@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.6.0 - 2016-08-11
+- Added `ignoreChangedAttributes`
+
 ## 1.5.0 - 2016-08-11
 - Added support for using a custom `Activity` model
 

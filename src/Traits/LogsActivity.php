@@ -18,7 +18,7 @@ trait LogsActivity
 
             return static::$eventName(function (Model $model) use ($eventName) {
 
-                if (count(array_except($model->getDirty(), $model->attributesToBeIgnored())) === 0) {
+                if (!count(array_except($model->getDirty(), $model->attributesToBeIgnored()))) {
                     return;
                 }
 
