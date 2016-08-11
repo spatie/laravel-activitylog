@@ -36,11 +36,11 @@ class ActivityLogger
 
         $model = config('laravel-activitylog.activity_model');
 
-        if($model == null) {
-            throw new ModelMismatchException("Model not set in laravel-activitylog.php");
+        if ($model == null) {
+            throw new ModelMismatchException('Model not set in laravel-activitylog.php');
         }
 
-        if(  (!($model instanceof Activity) && !($model == Activity::class)) && (!(is_subclass_of($model, Activity::class))) ) {
+        if ((!($model instanceof Activity) && !($model == Activity::class)) && (!(is_subclass_of($model, Activity::class)))) {
             throw new ModelMismatchException("Model `{$model}` is not extending \\Spatie\\Activitylog\\Models\\Activity");
         }
 
@@ -116,7 +116,6 @@ class ActivityLogger
         return $this;
     }
 
-
     public function inLog(string $logName)
     {
         return $this->useLog($logName);
@@ -124,7 +123,7 @@ class ActivityLogger
 
     public function log(string $description)
     {
-        $activity = new $this->activityModel;
+        $activity = new $this->activityModel();
 
         if ($this->performedOn) {
             $activity->subject()->associate($this->performedOn);
@@ -141,6 +140,7 @@ class ActivityLogger
         $activity->log_name = $this->logName;
 
         $activity->save();
+
         return $this;
     }
 

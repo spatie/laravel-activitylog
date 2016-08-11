@@ -1,8 +1,7 @@
 <?php
-namespace Spatie\Activitylog\Test\Models;
 
+namespace Spatie\Activitylog\Test\Models;
 
 class TestActivityModel
 {
-
 }

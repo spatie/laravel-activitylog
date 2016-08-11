@@ -1,6 +1,6 @@
 <?php
-namespace Spatie\Activitylog\Test;
 
+namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Exceptions\ModelMismatchException;
 use Spatie\Activitylog\Test\Models\MyActivity;
@@ -8,7 +8,6 @@ use Spatie\Activitylog\Test\Models\TestActivityModel;
 
 class CustomActivityModelTest extends TestCase
 {
-
     /** @var string */
     protected $activityDescription;
 
@@ -31,9 +30,8 @@ class CustomActivityModelTest extends TestCase
         $this->app['config']->set('laravel-activitylog.activity_model', MyActivity::class);
         $activity = activity()->log($this->activityDescription);
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
-        $this->assertEquals("Spatie\\Activitylog\\Test\\Models\\MyActivity", $activity->getActivityModel());
+        $this->assertEquals('Spatie\\Activitylog\\Test\\Models\\MyActivity', $activity->getActivityModel());
     }
-
 
     /** @test */
     public function it_provides_a_scope_to_get_activities_from_a_specific_log()
@@ -53,11 +51,10 @@ class CustomActivityModelTest extends TestCase
         $this->app['config']->set('laravel-activitylog.activity_model', null);
         try {
             activity()->log($this->activityDescription);
-            $this->fail("Exception not being thrown");
-        } catch(ModelMismatchException $e) {
-            $this->assertEquals("Model not set in laravel-activitylog.php", $e->getMessage());
+            $this->fail('Exception not being thrown');
+        } catch (ModelMismatchException $e) {
+            $this->assertEquals('Model not set in laravel-activitylog.php', $e->getMessage());
         }
-
     }
 
     /** @test */
@@ -66,9 +63,9 @@ class CustomActivityModelTest extends TestCase
         $this->app['config']->set('laravel-activitylog.activity_model', TestActivityModel::class);
         try {
             activity()->log($this->activityDescription);
-            $this->fail("Exception not being thrown");
-        } catch(ModelMismatchException $e) {
-            $this->assertEquals("Model `Spatie\\Activitylog\\Test\\Models\\TestActivityModel` is not extending \\Spatie\\Activitylog\\Models\\Activity", $e->getMessage());
+            $this->fail('Exception not being thrown');
+        } catch (ModelMismatchException $e) {
+            $this->assertEquals('Model `Spatie\\Activitylog\\Test\\Models\\TestActivityModel` is not extending \\Spatie\\Activitylog\\Models\\Activity', $e->getMessage());
         }
     }
 }
