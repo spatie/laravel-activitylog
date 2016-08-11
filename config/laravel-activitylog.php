@@ -26,8 +26,8 @@ return [
      'subject_returns_soft_deleted_models' => false,
 
     /**
-     * Specify the activity model to be used here. The only requirement is that
-     * it shoud extend the Spatie\Activitylog\Models\Activity model.
+     * This model will be used to log activity. The only requirement is that
+     * it should be or extend the Spatie\Activitylog\Models\Activity model.
      */
     'activity_model' => \Spatie\Activitylog\Models\Activity::class,
 ];

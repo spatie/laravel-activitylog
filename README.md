@@ -38,7 +38,7 @@ $lastLoggedActivity->description; //returns 'Look, I logged something'
 ```
 
 
-Here's an example on [event logging](/laravel-activitylog/v1/advanced-usage/logging-model-events).
+Here's an example on [event logging](https://docs.spatie.be/laravel-activitylog/v1/advanced-usage/logging-model-events).
 
 ```php
 $newsItem->name = 'updated name';
@@ -141,7 +141,14 @@ return [
     /**
      * When set to true, the subject returns soft deleted models
      */
-     'subject_returns_soft_deleted_models' => false
+     'subject_returns_soft_deleted_models' => false,
+     
+     
+    /**
+     * This model will be used to log activity. The only requirement is that
+     * it should be or extend the Spatie\Activitylog\Models\Activity model.
+     */
+    'activity_model' => \Spatie\Activitylog\Models\Activity::class,     
 ];
 ```
 
