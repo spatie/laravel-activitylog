@@ -2,6 +2,6 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-class TestActivityModel
+class InvalidActivityModel
 {
 }

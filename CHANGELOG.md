@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.4.0 - 2016-08-11
+- Added support for a custom model
+
 ## 1.4.0 - 2016-08-10
 - Added support for soft deletes
 

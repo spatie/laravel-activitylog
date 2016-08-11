@@ -26,9 +26,8 @@ return [
      'subject_returns_soft_deleted_models' => false,
 
     /**
-     * You can use your own Activity-model. However, it is required to
-     * extend the Spatie\Activitylog\Models\Activity model.
-     * Example: \App\Activity::class
+     * Specify the activity model to be used here. The only requirement is that
+     * it shoud extend the Spatie\Activitylog\Models\Activity model.
      */
     'activity_model' => \Spatie\Activitylog\Models\Activity::class,
 ];
