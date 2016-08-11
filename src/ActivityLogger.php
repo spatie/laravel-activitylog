@@ -25,16 +25,11 @@ class ActivityLogger
     /** @var \Illuminate\Support\Collection */
     protected $properties;
 
-    /** @var \Spatie\Activitylog\Models\Activity */
-    protected $activityModel;
-
     public function __construct(AuthManager $auth, Repository $config)
     {
         $this->auth = $auth;
 
         $this->properties = collect();
-
-        $this->activityModel = $this->determineActivityModel();
 
         $authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
@@ -113,7 +108,9 @@ class ActivityLogger
 
     public function log(string $description)
     {
-        $activity = new $this->activityModel();
+        $activityModelClassName = $this->determineActivityModel();
+
+        $activity = new $activityModelClassName();
 
         if ($this->performedOn) {
             $activity->subject()->associate($this->performedOn);
@@ -176,17 +173,12 @@ class ActivityLogger
         }, $description);
     }
 
-    public function getActivityModel() : string
-    {
-        return $this->activityModel;
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Model
      *
      * @throws \Spatie\Activitylog\Exceptions\InvalidConfiguration
      */
-    protected function determineActivityModel()
+    public function determineActivityModel()
     {
         $activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
 

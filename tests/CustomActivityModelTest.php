@@ -30,7 +30,8 @@ class CustomActivityModelTest extends TestCase
         $activity = activity()->log($this->activityDescription);
 
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
-        $this->assertEquals(CustomActivityModel::class, $activity->getActivityModel());
+
+        $this->assertEquals(CustomActivityModel::class, $activity->determineActivityModel());
     }
 
     /** @test */
