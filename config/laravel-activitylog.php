@@ -24,4 +24,11 @@ return [
      * When set to true, the subject returns soft deleted models
      */
      'subject_returns_soft_deleted_models' => false,
+
+    /**
+     * You can use your own Activity-model. However, it is required to
+     * extend the Spatie\Activitylog\Models\Activity model.
+     * Example: \App\Activity::class
+     */
+    'activity_model' => \Spatie\Activitylog\Models\Activity::class,
 ];

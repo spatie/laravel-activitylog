@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Exceptions\ModelMismatchException;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogger
@@ -24,11 +25,26 @@ class ActivityLogger
     /** @var \Illuminate\Support\Collection */
     protected $properties;
 
+    /** @var \Spatie\Activitylog\Models\Activity */
+    protected $activityModel;
+
     public function __construct(AuthManager $auth, Repository $config)
     {
         $this->auth = $auth;
 
         $this->properties = collect();
+
+        $model = config('laravel-activitylog.activity_model');
+
+        if($model == null) {
+            throw new ModelMismatchException("Model not set in laravel-activitylog.php");
+        }
+
+        if(  (!($model instanceof Activity) && !($model == Activity::class)) && (!(is_subclass_of($model, Activity::class))) ) {
+            throw new ModelMismatchException("Model `{$model}` is not extending \\Spatie\\Activitylog\\Models\\Activity");
+        }
+
+        $this->activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
 
         $authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
@@ -100,6 +116,7 @@ class ActivityLogger
         return $this;
     }
 
+
     public function inLog(string $logName)
     {
         return $this->useLog($logName);
@@ -107,7 +124,7 @@ class ActivityLogger
 
     public function log(string $description)
     {
-        $activity = new Activity();
+        $activity = new $this->activityModel;
 
         if ($this->performedOn) {
             $activity->subject()->associate($this->performedOn);
@@ -124,6 +141,7 @@ class ActivityLogger
         $activity->log_name = $this->logName;
 
         $activity->save();
+        return $this;
     }
 
     /**
@@ -166,5 +184,10 @@ class ActivityLogger
 
             return array_get($attributeValue, $propertyName, $match);
         }, $description);
+    }
+
+    public function getActivityModel() : string
+    {
+        return $this->activityModel;
     }
 }
