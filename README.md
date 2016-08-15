@@ -21,6 +21,20 @@ You can retrieve all activity using the `Spatie\Activitylog\Models\Activity` mod
 Activity::all();
 ```
 
+You can extend your `User` model to list an user's activity
+
+Add Facade in your `config/app.php` file,
+```php
+Activity' => Spatie\Activitylog\Models\Activity::class,
+```        
+Then in your `User.php` add a function
+```php
+    public function activity() {
+        return $this->hasMany('Activity', 'causer_id');
+    }
+```  
+
+
 Here's a more advanced example:
 ```php
 activity()
