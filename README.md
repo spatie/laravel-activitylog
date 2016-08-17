@@ -125,6 +125,11 @@ This is the contents of the published config file:
 return [
 
     /**
+     * When set to false, no activities are saved to database.
+     */
+    'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
+
+    /**
      * When running the clean-command all recording activites older than
      * the number of days specified here will be deleted.
      */
