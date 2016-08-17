@@ -113,7 +113,7 @@ class ActivityLogger
 
     public function log(string $description)
     {
-        if (!$this->logEnabled) {
+        if (! $this->logEnabled) {
             return;
         }
 
@@ -167,7 +167,7 @@ class ActivityLogger
 
             $attribute = (string) string($match)->between(':', '.');
 
-            if (!in_array($attribute, ['subject', 'causer', 'properties'])) {
+            if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
                 return $match;
             }
 
@@ -190,7 +190,7 @@ class ActivityLogger
     {
         $activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
 
-        if (!is_a($activityModel, Activity::class, true)) {
+        if (! is_a($activityModel, Activity::class, true)) {
             throw InvalidConfiguration::modelIsNotValid($activityModel);
         }
 
