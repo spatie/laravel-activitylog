@@ -31,11 +31,13 @@ class ActivityloggerTest extends TestCase
     }
 
     /** @test */
-    public function it_will_not_log_an_activity()
+    public function it_will_not_log_an_activity_when_the_log_is_not_enabled()
     {
         config(['laravel-activitylog.enabled' => false]);
 
-        $this->assertNotInstanceOf(ActivityLogger::class, activity()->log($this->activityDescription));
+        activity()->log($this->activityDescription);
+
+        $this->assertNull($this->getLastActivity());
     }
 
     /** @test */
@@ -43,7 +45,9 @@ class ActivityloggerTest extends TestCase
     {
         config(['laravel-activitylog.enabled' => null]);
 
-        $this->assertInstanceOf(ActivityLogger::class, activity()->log($this->activityDescription));
+        activity()->log($this->activityDescription);
+
+        $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
     }
 
     /** @test */
