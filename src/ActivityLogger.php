@@ -40,7 +40,7 @@ class ActivityLogger
 
         $this->logName = $config['laravel-activitylog']['default_log_name'];
 
-        $this->logEnabled = $config['laravel-activitylog']['enabled'];
+        $this->logEnabled = $config['laravel-activitylog']['enabled'] ?? true;
     }
 
     public function performedOn(Model $model)

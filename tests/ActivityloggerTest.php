@@ -39,6 +39,14 @@ class ActivityloggerTest extends TestCase
     }
 
     /** @test */
+    public function it_will_log_an_activity_when_enabled_option_is_null()
+    {
+        config(['laravel-activitylog.enabled' => null]);
+
+        $this->assertInstanceOf(ActivityLogger::class, activity()->log($this->activityDescription));
+    }
+
+    /** @test */
     public function it_will_log_to_the_default_log_by_default()
     {
         activity()->log($this->activityDescription);
