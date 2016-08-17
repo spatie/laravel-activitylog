@@ -41,9 +41,9 @@ abstract class TestCase extends OrchestraTestCase
         $app['config']->set('database.default', 'sqlite');
 
         $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => $this->getTempDirectory().'/database.sqlite',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
 
         $app['config']->set('auth.providers.users.model', User::class);

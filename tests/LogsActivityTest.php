@@ -8,15 +8,14 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class LogsActivityTest extends TestCase
 {
-    /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity  */
+    /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->article = new class() extends Article
-        {
+        $this->article = new class() extends Article {
             use LogsActivity;
         };
 
@@ -101,8 +100,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
-        $articleClass = new class() extends Article
-        {
+        $articleClass = new class() extends Article {
             use LogsActivity;
 
             public function getLogNameToUse()
@@ -122,8 +120,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
     {
-        $articleClass = new class() extends Article
-        {
+        $articleClass = new class() extends Article {
             use LogsActivity;
 
             protected static $ignoreChangedAttributes = ['text'];
