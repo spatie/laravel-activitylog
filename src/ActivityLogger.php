@@ -16,6 +16,9 @@ class ActivityLogger
 
     protected $logName = '';
 
+    /** @var boolean */
+    protected $logEnabled;
+
     /** @var \Illuminate\Database\Eloquent\Model */
     protected $performedOn;
 
@@ -36,6 +39,8 @@ class ActivityLogger
         $this->causedBy = $auth->guard($authDriver)->user();
 
         $this->logName = $config['laravel-activitylog']['default_log_name'];
+
+        $this->logEnabled = $config['laravel-activitylog']['enabled'];
     }
 
     public function performedOn(Model $model)
@@ -108,6 +113,10 @@ class ActivityLogger
 
     public function log(string $description)
     {
+        if (!$this->logEnabled) {
+            return;
+        }
+
         $activityModelClassName = $this->determineActivityModel();
 
         $activity = new $activityModelClassName();
