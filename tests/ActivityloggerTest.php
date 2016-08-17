@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Auth;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
@@ -27,6 +28,22 @@ class ActivityloggerTest extends TestCase
         activity()->log($this->activityDescription);
 
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_will_not_log_an_activity()
+    {
+        config(['laravel-activitylog.enabled' => false]);
+
+        $this->assertNotInstanceOf(ActivityLogger::class, activity()->log($this->activityDescription));
+    }
+
+    /** @test */
+    public function it_will_log_an_activity_when_enabled_option_is_null()
+    {
+        config(['laravel-activitylog.enabled' => null]);
+
+        $this->assertInstanceOf(ActivityLogger::class, activity()->log($this->activityDescription));
     }
 
     /** @test */
