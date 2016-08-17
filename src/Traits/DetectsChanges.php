@@ -24,7 +24,7 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
-        if (!isset(static::$logAttributes)) {
+        if (! isset(static::$logAttributes)) {
             return [];
         }
 
@@ -33,7 +33,7 @@ trait DetectsChanges
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
-        if (!count($this->attributesToBeLogged())) {
+        if (! count($this->attributesToBeLogged())) {
             return [];
         }
 
