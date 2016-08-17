@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.7.0 - 2016-08-17
+- Added `enabled` option in the config file.
+
 ## 1.6.0 - 2016-08-11
 - Added `ignoreChangedAttributes`
 

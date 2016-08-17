@@ -126,7 +126,7 @@ This is the contents of the published config file:
 return [
 
     /**
-     * When set to false, no activities are saved to database.
+     * When set to false, no activities will be saved to database.
      */
     'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
 
@@ -145,7 +145,7 @@ return [
 
 
     /**
-     * When set to true, the subject returns soft deleted models
+     * When set to true, the subject returns soft deleted models.
      */
      'subject_returns_soft_deleted_models' => false,
      
