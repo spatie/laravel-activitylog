@@ -15,8 +15,7 @@ class DetectsChangesTest extends TestCase
     {
         parent::setUp();
 
-        $this->article = new class() extends Article
-        {
+        $this->article = new class() extends Article {
             static $logAttributes = ['name', 'text'];
 
             use LogsActivity;
@@ -66,8 +65,7 @@ class DetectsChangesTest extends TestCase
     /** @test */
     public function it_will_store_no_changes_when_not_logging_attributes()
     {
-        $articleClass = new class() extends Article
-        {
+        $articleClass = new class() extends Article {
             static $logAttributes = [];
 
             use LogsActivity;

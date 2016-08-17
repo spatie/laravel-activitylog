@@ -16,7 +16,7 @@ class ActivityLogger
 
     protected $logName = '';
 
-    /** @var boolean */
+    /** @var bool */
     protected $logEnabled;
 
     /** @var \Illuminate\Database\Eloquent\Model */
@@ -143,9 +143,9 @@ class ActivityLogger
     /**
      * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
      *
-     * @return \Illuminate\Database\Eloquent\Model
-     *
      * @throws \Spatie\Activitylog\Exceptions\CouldNotLogActivity
+     *
+     * @return \Illuminate\Database\Eloquent\Model
      */
     protected function normalizeCauser($modelOrId): Model
     {
@@ -163,7 +163,6 @@ class ActivityLogger
     protected function replacePlaceholders(string $description, Activity $activity): string
     {
         return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
-
             $match = $match[0];
 
             $attribute = (string) string($match)->between(':', '.');
@@ -183,9 +182,9 @@ class ActivityLogger
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model
-     *
      * @throws \Spatie\Activitylog\Exceptions\InvalidConfiguration
+     *
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function determineActivityModel()
     {
