@@ -34,7 +34,7 @@ $lastLoggedActivity = Activity::all()->last();
 
 $lastLoggedActivity->subject; //returns an instance of an eloquent model
 $lastLoggedActivity->causer; //returns an instance of your user model
-$lastLoggedActivity->property('customProperty'); //returns 'customValue'
+$lastLoggedActivity->getExtraProperty('customProperty'); //returns 'customValue'
 $lastLoggedActivity->description; //returns 'Look, I logged something'
 ```
 
