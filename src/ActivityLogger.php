@@ -117,9 +117,7 @@ class ActivityLogger
             return;
         }
 
-        $activityModelClassName = $this->determineActivityModel();
-
-        $activity = new $activityModelClassName();
+        $activity = ActivitylogServiceProvider::getActivityModelInstance();
 
         if ($this->performedOn) {
             $activity->subject()->associate($this->performedOn);
@@ -181,19 +179,4 @@ class ActivityLogger
         }, $description);
     }
 
-    /**
-     * @throws \Spatie\Activitylog\Exceptions\InvalidConfiguration
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function determineActivityModel()
-    {
-        $activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
-
-        if (! is_a($activityModel, Activity::class, true)) {
-            throw InvalidConfiguration::modelIsNotValid($activityModel);
-        }
-
-        return $activityModel;
-    }
 }
