@@ -7,6 +7,7 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Category;
 use Spatie\Activitylog\Test\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
@@ -59,6 +60,8 @@ abstract class TestCase extends OrchestraTestCase
 
         $this->createTables('articles', 'users');
         $this->seedModels(Article::class, User::class);
+        $this->createNonIncrementingTables('categories');
+        $this->seedNonIncrementingModels(Category::class);
     }
 
     protected function resetDatabase()
@@ -91,11 +94,33 @@ abstract class TestCase extends OrchestraTestCase
         });
     }
 
+    protected function createNonIncrementingTables(...$tableNames)
+    {
+        collect($tableNames)->each(function (string $tableName) {
+            $this->app['db']->connection()->getSchemaBuilder()->create($tableName, function (Blueprint $table) {
+                $table->string('uuid')->primary();
+                $table->string('name')->nullable();
+                $table->string('text')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        });
+    }
+
     protected function seedModels(...$modelClasses)
     {
         collect($modelClasses)->each(function (string $modelClass) {
             foreach (range(1, 0) as $index) {
                 $modelClass::create(['name' => "name {$index}"]);
+            }
+        });
+    }
+
+    protected function seedNonIncrementingModels(...$modelClasses)
+    {
+        collect($modelClasses)->each(function (string $modelClass) {
+            foreach (range(1, 0) as $index) {
+                $modelClass::create(['uuid' => uniqid(), 'name' => "name {$index}"]);
             }
         });
     }
