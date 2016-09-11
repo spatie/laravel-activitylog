@@ -58,4 +58,24 @@ class Activity extends Eloquent
 
         return $query->whereIn('log_name', $logNames);
     }
+
+    /**
+     * Scope a query to only include activities by a give causer.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByCauser(Builder $query, $causer): Builder
+    {
+        return $query->where('causer_id', $causer->getKey());
+    }
+
+    /**
+     * Scope a query to only include activities for a give subject.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForSubject(Builder $query, $subject): Builder
+    {
+        return $query->where('subject_id', $subject->getKey());
+    }
 }
