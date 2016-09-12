@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 
@@ -63,11 +64,11 @@ class Activity extends Eloquent
      * Scope a query to only include activities by a give causer.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param $causer
+     * @param \Illuminate\Database\Eloquent\Model $causer
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCausedBy(Builder $query, $causer): Builder
+    public function scopeCausedBy(Builder $query, Model $causer): Builder
     {
         return $query->where('causer_id', $causer->getKey());
     }
@@ -76,11 +77,11 @@ class Activity extends Eloquent
      * Scope a query to only include activities for a give subject.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param $subject
+     * @param \Illuminate\Database\Eloquent\Model $subject
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeForSubject(Builder $query, $subject): Builder
+    public function scopeForSubject(Builder $query, Model $subject): Builder
     {
         return $query->where('subject_id', $subject->getKey());
     }
