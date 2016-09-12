@@ -53,7 +53,7 @@ class ActivityModelTest extends TestCase
     public function it_provides_a_scope_to_get_log_items_for_a_specific_causer()
     {
         $causer = User::first();
-        $activity = Activity::byCauser($causer)->get();
+        $activity = Activity::causedBy($causer)->get();
 
         $this->assertCount($causer->activity->count(), $activity);
     }
