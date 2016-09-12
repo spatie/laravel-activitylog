@@ -3,7 +3,7 @@
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
 ## 1.8.0 - 2016-09-12
-- added `CausedBy` and `forSubject` scopes
+- added `causedBy` and `forSubject` scopes
 
 ## 1.7.1 - 2016-08-23
 - Added L5.3 compatibility
