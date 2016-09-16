@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.9.0 - 2016-09-16
+- added `Macroable` to `ActivityLogger`
+
 ## 1.8.0 - 2016-09-12
 - added `causedBy` and `forSubject` scopes
 
