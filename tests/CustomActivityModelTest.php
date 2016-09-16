@@ -29,9 +29,9 @@ class CustomActivityModelTest extends TestCase
 
         $activity = activity()->log($this->activityDescription);
 
-        $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+        $this->assertEquals($this->activityDescription, $activity->description);
 
-        $this->assertEquals(CustomActivityModel::class, $activity->determineActivityModel());
+        $this->assertInstanceOf(CustomActivityModel::class, $activity);
     }
 
     /** @test */

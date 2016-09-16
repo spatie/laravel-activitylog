@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.9.1 - 2016-09-16
+- fixed the return value of `activity()->log()`. It will now return the created `Activity`-model.
+
 ## 1.9.0 - 2016-09-16
 - added `Macroable` to `ActivityLogger`
 

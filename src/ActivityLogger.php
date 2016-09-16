@@ -114,6 +114,11 @@ class ActivityLogger
         return $this->useLog($logName);
     }
 
+    /**
+     * @param string $description
+     *
+     * @return null|mixed
+     */
     public function log(string $description)
     {
         if (! $this->logEnabled) {
@@ -140,7 +145,7 @@ class ActivityLogger
 
         $activity->save();
 
-        return $this;
+        return $activity;
     }
 
     /**
