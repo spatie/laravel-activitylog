@@ -93,6 +93,7 @@ class DetectsChangesTest extends TestCase
             ],
         ]);
 
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
     }
 
