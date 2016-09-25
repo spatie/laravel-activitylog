@@ -84,7 +84,8 @@ class DetectsChangesTest extends TestCase
     public function it_will_store_the_values_when_deleting_the_model()
     {
         $article = $this->createArticle();
-
+        $id = $article->id;
+        $article = Article::find($id);
         $article->delete();
 
         $expectedChanges = collect([
@@ -92,7 +93,8 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
             ],
         ]);
-
+        $article = Article::find($id);
+        $this->assertNull($article);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
     }
