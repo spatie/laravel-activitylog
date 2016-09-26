@@ -15,8 +15,10 @@ trait LogsActivity
     protected static function bootLogsActivity()
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
+
             return static::$eventName(function (Model $model) use ($eventName) {
-                if (! count(array_except($model->getDirty(), $model->attributesToBeIgnored()))) {
+
+                if ($eventName != 'deleted' && (!count(array_except($model->getDirty(), $model->attributesToBeIgnored())))) {
                     return;
                 }
 
@@ -70,7 +72,7 @@ trait LogsActivity
 
     public function attributesToBeIgnored(): array
     {
-        if (! isset(static::$ignoreChangedAttributes)) {
+        if (!isset(static::$ignoreChangedAttributes)) {
             return [];
         }
 

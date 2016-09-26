@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -17,6 +18,8 @@ class LogsActivityTest extends TestCase
 
         $this->article = new class() extends Article {
             use LogsActivity;
+
+            use SoftDeletes;
         };
 
         $this->assertCount(0, Activity::all());
