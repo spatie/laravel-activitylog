@@ -52,7 +52,25 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
-    public function it_will_log_the_deletion_of_the_model()
+    public function it_will_log_the_deletion_of_a_model_without_softdeletes()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+
+        $article->save();
+
+        $this->assertEquals('created', $this->getLastActivity()->description);
+
+        $article->delete();
+
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_will_log_the_deletion_of_a_model_with_softdeletes()
     {
         $article = $this->createArticle();
 
