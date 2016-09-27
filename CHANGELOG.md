@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.9.2 - 2016-09-27 
+- fixed a bug where the delete event would not be logged
+
 ## 1.9.1 - 2016-09-16
 - fixed the return value of `activity()->log()`. It will now return the created `Activity`-model.
 
