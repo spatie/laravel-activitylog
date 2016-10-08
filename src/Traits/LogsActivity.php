@@ -16,9 +16,16 @@ trait LogsActivity
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
-                if ($eventName != 'deleted' && (! count(array_except($model->getDirty(), $model->attributesToBeIgnored())))) {
+
+                if ($eventName != 'restored' && $eventName != 'deleted' && (! count(array_except($model->getDirty(), $model->attributesToBeIgnored())))) {
                     return;
                 }
+
+                if($eventName == 'updated' && array_has($model->getDirty(), 'deleted_at')) {
+                    if($model->getDirty()['deleted_at'] === null) return;
+                }
+
+                if($model->forceDeleting) $eventName = 'force-deleted';
 
                 $description = $model->getDescriptionForEvent($eventName);
 
@@ -61,11 +68,17 @@ trait LogsActivity
             return collect(static::$recordEvents);
         }
 
-        return collect([
+        $events = [
             'created',
             'updated',
             'deleted',
-        ]);
+        ];
+
+        if(in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses(__CLASS__))) {
+            $events[] = 'restored';
+        }
+
+        return collect($events);
     }
 
     public function attributesToBeIgnored(): array
