@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.10.0 - 2016-10-10
+- add support for `restored` event
+
 ## 1.9.2 - 2016-09-27 
 - fixed a bug where the delete event would not be logged
 
