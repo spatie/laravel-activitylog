@@ -85,17 +85,17 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-        if ($eventName === 'created' || $eventName === 'updated') {
-            //do not log update event if model is restored
-            if (array_has($this->getDirty(), 'deleted_at')) {
-                if ($this->getDirty()['deleted_at'] === null) {
-                    return false;
-                }
-            }
-            //do not log update event if only ignored attributes are changed
-            return (bool) count(array_except($this->getDirty(), $this->attributesToBeIgnored()));
+        if (! in_array($eventName, ['created', 'updated'])) {
+            return true;
         }
 
-        return true;
+        if (array_has($this->getDirty(), 'deleted_at')) {
+            if ($this->getDirty()['deleted_at'] === null) {
+                return false;
+            }
+        }
+
+        //do not log update event if only ignored attributes are changed
+        return (bool) count(array_except($this->getDirty(), $this->attributesToBeIgnored()));
     }
 }
