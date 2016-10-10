@@ -100,26 +100,6 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
-    public function it_will_log_the_force_deleting_of_a_model_with_softdeletes()
-    {
-        $article = $this->createArticle();
-
-        $article->delete();
-
-        $this->assertTrue($article->trashed());
-
-        $article = null;
-        $article = $this->article::onlyTrashed()->firstOrFail();
-        $article->forceDelete();
-
-        $this->assertCount(3, Activity::all());
-
-        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
-        $this->assertEquals('force-deleted', $this->getLastActivity()->description);
-    }
-
-    /** @test */
     public function it_can_fetch_all_activity_for_a_model()
     {
         $article = $this->createArticle();

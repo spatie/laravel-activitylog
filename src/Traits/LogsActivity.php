@@ -16,16 +16,9 @@ trait LogsActivity
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
-
-                if ($eventName != 'restored' && $eventName != 'deleted' && (! count(array_except($model->getDirty(), $model->attributesToBeIgnored())))) {
+                if (! $model->shouldLogEvent($eventName)) {
                     return;
                 }
-
-                if($eventName == 'updated' && array_has($model->getDirty(), 'deleted_at')) {
-                    if($model->getDirty()['deleted_at'] === null) return;
-                }
-
-                if($model->forceDeleting) $eventName = 'force-deleted';
 
                 $description = $model->getDescriptionForEvent($eventName);
 
@@ -68,17 +61,17 @@ trait LogsActivity
             return collect(static::$recordEvents);
         }
 
-        $events = [
+        $events = collect([
             'created',
             'updated',
             'deleted',
-        ];
+        ]);
 
-        if(in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses(__CLASS__))) {
-            $events[] = 'restored';
+        if (collect(class_uses(__CLASS__))->contains(\Illuminate\Database\Eloquent\SoftDeletes::class)) {
+            $events->push('restored');
         }
 
-        return collect($events);
+        return $events;
     }
 
     public function attributesToBeIgnored(): array
@@ -88,5 +81,20 @@ trait LogsActivity
         }
 
         return static::$ignoreChangedAttributes;
+    }
+
+    protected function shouldLogEvent(string $eventName): bool
+    {
+        if ($eventName === 'created' || $eventName === 'updated') {
+            //do not log update event if model is restored
+            if (array_has($this->getDirty(), 'deleted_at')) {
+                if ($this->getDirty()['deleted_at'] === null) {
+                    return false;
+                }
+            }
+            //do not log update event if only ignored attributes are changed
+            return (bool) count(array_except($this->getDirty(), $this->attributesToBeIgnored()));
+        }
+        return true;
     }
 }
