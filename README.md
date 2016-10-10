@@ -108,6 +108,8 @@ You can publish the migration with:
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
 ```
 
+*Note*: The default migration assumes you are using integers for your model IDs. If you are using UUIDs, or some other format, adjust the format of the subject_id and causer_id fields in the published migration before continuing.
+
 After the migration has been published you can create the `activity_log` table by running the migrations:
 
 
