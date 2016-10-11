@@ -63,15 +63,18 @@ class ActivityModelTest extends TestCase
     public function it_provides_a_scope_to_get_log_items_for_a_specific_subject()
     {
         $subject = Article::first();
-        $user = User::first();
+        $causer = User::first();
 
-        activity()->on($subject)->by($user)->log('Foo');
-        activity()->on($user)->by($user)->log('Bar');
+        activity()->on($subject)->by($causer)->log('Foo');
+        activity()->on(Article::create([
+            'name' => 'Another article',
+        ]))->by($causer)->log('Bar');
 
         $activities = Activity::forSubject($subject)->get();
 
         $this->assertCount(1, $activities);
         $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
         $this->assertEquals(get_class($subject), $activities->first()->subject_type);
+        $this->assertEquals('Foo', $activities->first()->description);
     }
 }
