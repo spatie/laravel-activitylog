@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.10.1 - 2016-10-11
+- fix `scopeCausedBy` and `scopeForSubject`
+
 ## 1.10.0 - 2016-10-10
 - add support for `restored` event
 
