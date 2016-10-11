@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
 class ActivityModelTest extends TestCase
@@ -52,10 +53,20 @@ class ActivityModelTest extends TestCase
     /** @test */
     public function it_provides_a_scope_to_get_log_items_for_a_specific_causer()
     {
+        $subject = Article::first();
         $causer = User::first();
-        $activity = Activity::causedBy($causer)->get();
 
-        $this->assertCount($causer->activity->count(), $activity);
+        activity()->on($subject)->by($causer)->log('Foo');
+        activity()->on($subject)->by(User::create([
+            'name' => 'Another User'])
+        )->log('Bar');
+
+        $activities = Activity::causedBy($causer)->get();
+
+        $this->assertCount(1, $activities);
+        $this->assertEquals($causer->getKey(), $activities->first()->causer_id);
+        $this->assertEquals(get_class($causer), $activities->first()->causer_type);
+        $this->assertEquals('Foo', $activities->first()->description);
     }
 
     /** @test */

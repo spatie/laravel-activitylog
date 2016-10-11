@@ -61,7 +61,7 @@ class Activity extends Eloquent
     }
 
     /**
-     * Scope a query to only include activities by a give causer.
+     * Scope a query to only include activities by a given causer.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Database\Eloquent\Model $causer
@@ -70,7 +70,9 @@ class Activity extends Eloquent
      */
     public function scopeCausedBy(Builder $query, Model $causer): Builder
     {
-        return $query->where('causer_id', $causer->getKey());
+        return $query
+            ->where('causer_type', get_class($causer))
+            ->where('causer_id', $causer->getKey());
     }
 
     /**
