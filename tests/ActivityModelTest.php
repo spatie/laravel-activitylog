@@ -58,8 +58,8 @@ class ActivityModelTest extends TestCase
 
         activity()->on($subject)->by($causer)->log('Foo');
         activity()->on($subject)->by(User::create([
-            'name' => 'Another User'])
-        )->log('Bar');
+            'name' => 'Another User',
+        ]))->log('Bar');
 
         $activities = Activity::causedBy($causer)->get();
 
