@@ -74,7 +74,7 @@ class Activity extends Eloquent
     }
 
     /**
-     * Scope a query to only include activities for a give subject.
+     * Scope a query to only include activities for a given subject.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Database\Eloquent\Model $subject
@@ -83,6 +83,8 @@ class Activity extends Eloquent
      */
     public function scopeForSubject(Builder $query, Model $subject): Builder
     {
-        return $query->where('subject_id', $subject->getKey());
+        return $query
+            ->where('subject_type', get_class($subject))
+            ->where('subject_id', $subject->getKey());
     }
 }

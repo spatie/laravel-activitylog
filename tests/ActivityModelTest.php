@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
 class ActivityModelTest extends TestCase
@@ -61,9 +62,16 @@ class ActivityModelTest extends TestCase
     /** @test */
     public function it_provides_a_scope_to_get_log_items_for_a_specific_subject()
     {
-        $subject = User::first();
-        $activity = Activity::forSubject($subject)->get();
+        $subject = Article::first();
+        $user = User::first();
 
-        $this->assertCount($subject->activity->count(), $activity);
+        activity()->on($subject)->by($user)->log('Foo');
+        activity()->on($user)->by($user)->log('Bar');
+
+        $activities = Activity::forSubject($subject)->get();
+
+        $this->assertCount(1, $activities);
+        $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
+        $this->assertEquals(get_class($subject), $activities->first()->subject_type);
     }
 }
