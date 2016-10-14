@@ -35,7 +35,7 @@ class ActivitylogServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             'laravel-activitylog', function($app) {
-            return self::getActivityModelInstance();
+                return self::getActivityModelInstance();
         });
 
         $this->app->bind('command.activitylog:clean', CleanActivitylogCommand::class);
@@ -50,7 +50,7 @@ class ActivitylogServiceProvider extends ServiceProvider
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    static public function determineActivityModel()
+    public static function determineActivityModel()
     {
         $activityModel = config('laravel-activitylog.activity_model') != null ?
             config('laravel-activitylog.activity_model') :
@@ -63,7 +63,7 @@ class ActivitylogServiceProvider extends ServiceProvider
         return $activityModel;
     }
 
-    static public function getActivityModelInstance()
+    public static function getActivityModelInstance()
     {
         $activityModelClassName = self::determineActivityModel();
 
