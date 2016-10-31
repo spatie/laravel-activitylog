@@ -7,7 +7,7 @@ use Spatie\Activitylog\Models\Activity;
 
 trait CausesActivity
 {
-    public function activity(): MorphMany
+    public function caused(): MorphMany
     {
         return $this->morphMany(Activity::class, 'causer');
     }
@@ -15,6 +15,6 @@ trait CausesActivity
     /** @deprecated Use activity() instead */
     public function loggedActivity(): MorphMany
     {
-        return $this->activity();
+        return $this->caused();
     }
 }
