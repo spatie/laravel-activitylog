@@ -103,16 +103,6 @@ Next, you must install the service provider:
 ];
 ```
 
-If you wish, you can also register the facade:
-
-```php
-// config/app.php
-'aliases' => [
-    ...
-    'Activity' => Spatie\Activitylog\ActivitylogFacade::class,
-];
-```
-
 You can publish the migration with:
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
