@@ -34,11 +34,6 @@ class ActivitylogServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            'laravel-activitylog', function ($app) {
-                return self::getActivityModelInstance();
-            });
-
         $this->app->bind('command.activitylog:clean', CleanActivitylogCommand::class);
 
         $this->commands([
