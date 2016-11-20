@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
+use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 
 trait LogsActivity
@@ -39,7 +40,7 @@ trait LogsActivity
 
     public function activity(): MorphMany
     {
-        return $this->morphMany(Activity::class, 'subject');
+        return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
     }
 
     public function getDescriptionForEvent(string $eventName): string

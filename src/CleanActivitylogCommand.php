@@ -4,7 +4,6 @@ namespace Spatie\Activitylog;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Spatie\Activitylog\Models\Activity;
 
 class CleanActivitylogCommand extends Command
 {
@@ -30,7 +29,9 @@ class CleanActivitylogCommand extends Command
 
         $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
 
-        $amountDeleted = Activity::where('created_at', '<', $cutOffDate)->delete();
+        $activity = ActivitylogServiceProvider::getActivityModelInstance();
+
+        $amountDeleted = $activity::where('created_at', '<', $cutOffDate)->delete();
 
         $this->info("Deleted {$amountDeleted} record(s) from the activity log.");
 
