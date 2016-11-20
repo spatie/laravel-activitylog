@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Models\Activity;
@@ -45,12 +46,7 @@ class ActivitylogServiceProvider extends ServiceProvider
         ]);
     }
 
-    /**
-     * @throws \Spatie\Activitylog\Exceptions\InvalidConfiguration
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public static function determineActivityModel()
+    public static function determineActivityModel(): string
     {
         $activityModel = config('laravel-activitylog.activity_model') != null ?
             config('laravel-activitylog.activity_model') :
@@ -63,7 +59,7 @@ class ActivitylogServiceProvider extends ServiceProvider
         return $activityModel;
     }
 
-    public static function getActivityModelInstance()
+    public static function getActivityModelInstance(): Model
     {
         $activityModelClassName = self::determineActivityModel();
 

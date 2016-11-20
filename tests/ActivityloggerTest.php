@@ -202,4 +202,11 @@ class ActivityloggerTest extends TestCase
 
         $this->assertEquals($description, $this->getLastActivity()->description);
     }
+
+    public function it_returns_an_instance_of_the_activity_log_after_logging()
+    {
+        $activityModel = activity()->log('test');
+
+        $this->assertInstanceOf(Activity::class, $activityModel);
+    }
 }
