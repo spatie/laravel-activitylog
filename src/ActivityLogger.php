@@ -38,7 +38,11 @@ class ActivityLogger
 
         $authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
-        $this->causedBy = $auth->guard($authDriver)->user();
+        if (starts_with(app()->version(), '5.1')) {
+            $this->causedBy = $auth->driver($authDriver)->user();
+        } else {
+            $this->causedBy = $auth->guard($authDriver)->user();
+        }
 
         $this->logName = $config['laravel-activitylog']['default_log_name'];
 

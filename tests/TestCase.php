@@ -46,7 +46,11 @@ abstract class TestCase extends OrchestraTestCase
             'prefix'   => '',
         ]);
 
-        $app['config']->set('auth.providers.users.model', User::class);
+        if (starts_with($app->version(), '5.1')) {
+            $app['config']->set('auth.model', User::class);
+        } else {
+            $app['config']->set('auth.providers.users.model', User::class);
+        }
 
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
