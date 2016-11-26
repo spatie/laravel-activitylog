@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.10.2 - 2016-11-26
+- fix compatibilty for Laravel 5.1
+
 ## 1.10.1 - 2016-10-11
 - fix `scopeCausedBy` and `scopeForSubject`
 
