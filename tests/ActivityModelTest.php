@@ -3,8 +3,8 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
+use Spatie\Activitylog\Test\Models\Article;
 
 class ActivityModelTest extends TestCase
 {

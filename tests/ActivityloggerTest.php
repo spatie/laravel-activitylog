@@ -4,10 +4,10 @@ namespace Spatie\Activitylog\Test;
 
 use Auth;
 use Illuminate\Support\Collection;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
+use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class ActivityloggerTest extends TestCase
 {

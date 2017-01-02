@@ -3,11 +3,11 @@
 namespace Spatie\Activitylog;
 
 use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Macroable;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Contracts\Config\Repository;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class ActivityLogger
 {
