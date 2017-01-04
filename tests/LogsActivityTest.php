@@ -5,12 +5,16 @@ namespace Spatie\Activitylog\Test;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Category;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class LogsActivityTest extends TestCase
 {
-    /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
+    /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
+
+    /** @var \Spatie\Activitylog\Test\Models\Category|\Spatie\Activitylog\Traits\LogsActivity */
+    protected $category;
 
     public function setUp()
     {
@@ -20,6 +24,10 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
 
             use SoftDeletes;
+        };
+
+        $this->category = new class() extends Category {
+            use LogsActivity;
         };
 
         $this->assertCount(0, Activity::all());
@@ -33,6 +41,21 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertTrue(is_int($this->getLastActivity()->subject->id));
+        $this->assertFalse(is_string($this->getLastActivity()->subject->id));
+        $this->assertEquals('created', $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_will_log_the_creation_of_the_model_with_alternative_primaryKey()
+    {
+        $category = $this->createCategory();
+        $this->assertCount(1, Activity::all());
+
+        $this->assertInstanceOf(get_class($this->category), $this->getLastActivity()->subject);
+        $this->assertEquals($category->uuid, $this->getLastActivity()->subject->uuid);
+        $this->assertTrue(is_string($this->getLastActivity()->subject->uuid));
+        $this->assertFalse(is_int($this->getLastActivity()->subject->uuid));
         $this->assertEquals('created', $this->getLastActivity()->description);
     }
 
@@ -48,6 +71,25 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertTrue(is_int($this->getLastActivity()->subject->id));
+        $this->assertFalse(is_string($this->getLastActivity()->subject->id));
+        $this->assertEquals('updated', $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_will_log_an_update_of_the_model_with_alternative_primaryKey()
+    {
+        $category = $this->createCategory();
+
+        $category->name = 'changed name';
+        $category->save();
+
+        $this->assertCount(2, Activity::all());
+
+        $this->assertInstanceOf(get_class($this->category), $this->getLastActivity()->subject);
+        $this->assertEquals($category->uuid, $this->getLastActivity()->subject->uuid);
+        $this->assertTrue(is_string($this->getLastActivity()->subject->uuid));
+        $this->assertFalse(is_int($this->getLastActivity()->subject->uuid));
         $this->assertEquals('updated', $this->getLastActivity()->description);
     }
 
@@ -184,5 +226,15 @@ class LogsActivityTest extends TestCase
         $article->save();
 
         return $article;
+    }
+
+    protected function createCategory(): Category
+    {
+        $category = new $this->category();
+        $category->uuid = uniqid();
+        $category->name = 'my category';
+        $category->save();
+
+        return $category;
     }
 }
