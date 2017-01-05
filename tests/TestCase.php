@@ -2,12 +2,12 @@
 
 namespace Spatie\Activitylog\Test;
 
-use Illuminate\Database\Schema\Blueprint;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
+use Illuminate\Database\Schema\Blueprint;
+use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\ActivitylogServiceProvider;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
