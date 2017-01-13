@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
@@ -68,7 +69,7 @@ trait LogsActivity
             'deleted',
         ]);
 
-        if (collect(class_uses(__CLASS__))->contains(\Illuminate\Database\Eloquent\SoftDeletes::class)) {
+        if (collect(class_uses(__CLASS__))->contains(SoftDeletes::class)) {
             $events->push('restored');
         }
 
