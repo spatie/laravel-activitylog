@@ -2,13 +2,12 @@
 
 namespace Spatie\Activitylog\Models;
 
-use Eloquent;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Activity extends Eloquent
+class Activity extends Model
 {
     protected $table = 'activity_log';
 
