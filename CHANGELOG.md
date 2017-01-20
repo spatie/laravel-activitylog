@@ -2,7 +2,7 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 1.10.3 - 2017-01-20
+## 1.10.4 - 2017-01-20
 - `Activity` now extends from `Model` instead of `Eloquent`
 
 ## 1.10.2 - 2016-11-26
