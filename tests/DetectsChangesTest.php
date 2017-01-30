@@ -3,8 +3,8 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
+use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class DetectsChangesTest extends TestCase
@@ -46,7 +46,6 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_relation_values_when_creating_a_model()
     {
         $article = $this->createArticleWithRelation();
-
 
         $expectedChanges = [
             'attributes' => [

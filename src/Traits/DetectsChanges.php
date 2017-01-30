@@ -24,7 +24,7 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
-        if (!isset(static::$logAttributes)) {
+        if (! isset(static::$logAttributes)) {
             return [];
         }
 
@@ -33,11 +33,11 @@ trait DetectsChanges
                 if (strpos($value, '.') != 0) {
                     return explode('.', $value);
                 }
+
                 return $value;
             }
         )->toArray();
     }
-
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
@@ -69,8 +69,6 @@ trait DetectsChanges
                 } else {
                     return collect($model)->only($value);
                 }
-
-
             }
         )->toArray();
     }
