@@ -24,12 +24,20 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
-        if (! isset(static::$logAttributes)) {
+        if (!isset(static::$logAttributes)) {
             return [];
         }
 
-        return static::$logAttributes;
+        return collect(static::$logAttributes)->map(
+            function ($value) {
+                if (strpos($value, '.') != 0) {
+                    return explode('.', $value);
+                }
+                return $value;
+            }
+        )->toArray();
     }
+
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
@@ -50,6 +58,20 @@ trait DetectsChanges
 
     public static function logChanges(Model $model): array
     {
-        return collect($model)->only($model->attributesToBeLogged())->toArray();
+        return collect($model->attributesToBeLogged())->mapWithKeys(
+            function ($value) use ($model) {
+                if (is_iterable($value)) {
+                    foreach ($value as $methodCall) {
+                        $model = $model->$methodCall;
+                    }
+
+                    return [implode('.', $value) => $model];
+                } else {
+                    return collect($model)->only($value);
+                }
+
+
+            }
+        )->toArray();
     }
 }
