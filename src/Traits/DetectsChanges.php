@@ -3,7 +3,6 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 trait DetectsChanges
 {
@@ -61,7 +60,7 @@ trait DetectsChanges
     {
         return collect($model->attributesToBeLogged())->mapWithKeys(
             function ($value) use ($model) {
-                if ($value instanceof Collection) {
+                if (is_array($value)) {
                     foreach ($value as $methodCall) {
                         $model = $model->$methodCall;
                     }
