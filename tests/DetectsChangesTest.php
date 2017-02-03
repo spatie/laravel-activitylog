@@ -25,6 +25,12 @@ class DetectsChangesTest extends TestCase
             use LogsActivity;
         };
 
+        $this->user = new class() extends User {
+            static $logAttributes = ['name', 'text'];
+
+            use LogsActivity;
+        };
+
         $this->assertCount(0, Activity::all());
     }
 
@@ -47,10 +53,21 @@ class DetectsChangesTest extends TestCase
     {
         $article = $this->createArticleWithRelation();
 
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->user->name = 'testValue';
+
+        $article->save();
+
         $expectedChanges = [
             'attributes' => [
+                'name' => 'updated name',
+                'text' => 'updated text',
+                'user.name' => 'my name',
+            ],
+            'old' => [
                 'name' => 'my name',
-                'user.name' => 'name 1',
+                'text' => null,
             ],
         ];
 
@@ -127,10 +144,11 @@ class DetectsChangesTest extends TestCase
 
     protected function createArticleWithRelation(): Article
     {
-        $article = new $this->article();
-        $user = User::first();
+        $article = $this->createArticle();
+        $user = new $this->user();
+        $user->name = 'my name';
+        $user->save();
 
-        $article->name = 'my name';
         $article->user_id = $user->id;
         $article->save();
 
