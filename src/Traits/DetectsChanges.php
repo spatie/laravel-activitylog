@@ -62,7 +62,7 @@ trait DetectsChanges
         )->toArray();
     }
 
-    protected static function getRelatedModelAttributeValue($model, $attribute): array
+    protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
     {
         if (substr_count($attribute, '.') > 1) {
             throw CouldNotLogChanges::invalidAttribute($attribute);

@@ -43,7 +43,7 @@ class ActivitylogServiceProvider extends ServiceProvider
 
     public static function determineActivityModel(): string
     {
-        $activityModel = config('laravel-activitylog.activity_model') != null ?
+        $activityModel = config('laravel-activitylog.activity_model') !== null ?
             config('laravel-activitylog.activity_model') :
             Activity::class;
 
