@@ -85,12 +85,17 @@ abstract class TestCase extends OrchestraTestCase
     protected function createTables(...$tableNames)
     {
         collect($tableNames)->each(function (string $tableName) {
-            $this->app['db']->connection()->getSchemaBuilder()->create($tableName, function (Blueprint $table) {
+            $this->app['db']->connection()->getSchemaBuilder()->create($tableName, function (Blueprint $table) use ($tableName) {
                 $table->increments('id');
                 $table->string('name')->nullable();
                 $table->string('text')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
+
+                if ($tableName === 'articles') {
+                    $table->integer('user_id')->unsigned()->nullable();
+                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                }
             });
         });
     }
