@@ -12,20 +12,11 @@ class DetectsChangesTest extends TestCase
     /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
 
-    /** @var \Spatie\Activitylog\Test\User|\Spatie\Activitylog\Traits\LogsActivity */
-    protected $user;
-
     public function setUp()
     {
         parent::setUp();
 
         $this->article = new class() extends Article {
-            static $logAttributes = ['name', 'text'];
-
-            use LogsActivity;
-        };
-
-        $this->user = new class() extends User {
             static $logAttributes = ['name', 'text'];
 
             use LogsActivity;
@@ -51,11 +42,24 @@ class DetectsChangesTest extends TestCase
     /** @test */
     public function it_can_store_the_relation_values_when_creating_a_model()
     {
-        $article = $this->createArticleWithRelation();
+        $articleClass = new class() extends Article {
+            static $logAttributes = ['name', 'text', 'user.name'];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'original name',
+            'text' => 'original text',
+            'user_id' => $user->id,
+        ]);
 
         $article->name = 'updated name';
         $article->text = 'updated text';
-
         $article->save();
 
         $expectedChanges = [
@@ -65,8 +69,8 @@ class DetectsChangesTest extends TestCase
                 'user.name' => 'user name',
             ],
             'old' => [
-                'name' => 'old name',
-                'text' => 'old text',
+                'name' => 'original name',
+                'text' => 'original text',
                 'user.name' => 'user name'
             ],
         ];
@@ -137,27 +141,6 @@ class DetectsChangesTest extends TestCase
     {
         $article = new $this->article();
         $article->name = 'my name';
-        $article->save();
-
-        return $article;
-    }
-
-    protected function createArticleWithRelation(): Article
-    {
-        $article = new class() extends Article {
-            static $logAttributes = ['name', 'text', 'user.name'];
-
-            public $with = ['user'];
-
-            use LogsActivity;
-        };
-        $user = new $this->user();
-        $user->name = 'user name';
-        $user->save();
-
-        $article->name = 'old name';
-        $article->text = 'old text';
-        $article->user_id = $user->id;
         $article->save();
 
         return $article;
