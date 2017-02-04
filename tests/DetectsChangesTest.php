@@ -71,7 +71,7 @@ class DetectsChangesTest extends TestCase
             'old' => [
                 'name' => 'original name',
                 'text' => 'original text',
-                'user.name' => 'user name'
+                'user.name' => 'user name',
             ],
         ];
 
