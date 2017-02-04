@@ -29,7 +29,7 @@ trait DetectsChanges
         }
 
         return collect(static::$logAttributes)->map(
-            function (String $value) {
+            function (string $value) {
                 if (strpos($value, '.') != 0) {
                     return explode('.', $value);
                 }
