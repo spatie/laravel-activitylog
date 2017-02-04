@@ -2,6 +2,10 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.12.0 - 2017-02-04
+- drop support for L5.2 and lower
+- add ability to log attributes of related models
+
 ## 1.11.0 - 2017-01-23
 - add support for L5.4
 

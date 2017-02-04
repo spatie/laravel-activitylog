@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
 {
@@ -28,15 +29,7 @@ trait DetectsChanges
             return [];
         }
 
-        return collect(static::$logAttributes)->map(
-            function (string $value) {
-                if (strpos($value, '.') != 0) {
-                    return explode('.', $value);
-                }
-
-                return $value;
-            }
-        )->toArray();
+        return static::$logAttributes;
     }
 
     public function attributeValuesToBeLogged(string $processingEvent): array
@@ -59,17 +52,26 @@ trait DetectsChanges
     public static function logChanges(Model $model): array
     {
         return collect($model->attributesToBeLogged())->mapWithKeys(
-            function ($value) use ($model) {
-                if (is_array($value)) {
-                    foreach ($value as $methodCall) {
-                        $model = $model->$methodCall;
-                    }
-
-                    return [implode('.', $value) => $model];
+            function ($attribute) use ($model) {
+                if (str_contains($attribute, '.')) {
+                    return self::getRelatedModelAttributeValue($model, $attribute);
                 }
 
-                return collect($model)->only($value);
+                return collect($model)->only($attribute);
             }
         )->toArray();
+    }
+
+
+    protected static function getRelatedModelAttributeValue($model, $attribute): array {
+        if (substr_count($attribute, '.') > 1) {
+            throw CouldNotLogChanges::invalidAttribute($attribute);
+        }
+
+        list($relatedModelName, $relatedAttribute) = explode('.', $attribute);
+
+        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+
+        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute];
     }
 }
