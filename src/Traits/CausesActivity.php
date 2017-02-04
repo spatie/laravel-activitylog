@@ -2,7 +2,6 @@
 
 namespace Spatie\Activitylog\Traits;
 
-use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
