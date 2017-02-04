@@ -42,7 +42,7 @@ abstract class TestCase extends OrchestraTestCase
 
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => $this->getTempDirectory() . '/database.sqlite',
+            'database' => $this->getTempDirectory().'/database.sqlite',
             'prefix' => '',
         ]);
 
@@ -63,19 +63,19 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function resetDatabase()
     {
-        file_put_contents($this->getTempDirectory() . '/database.sqlite', null);
+        file_put_contents($this->getTempDirectory().'/database.sqlite', null);
     }
 
     protected function createActivityLogTable()
     {
-        include_once '__DIR__' . '/../migrations/create_activity_log_table.php.stub';
+        include_once '__DIR__'.'/../migrations/create_activity_log_table.php.stub';
 
         (new \CreateActivityLogTable())->up();
     }
 
     public function getTempDirectory(): string
     {
-        return __DIR__ . '/temp';
+        return __DIR__.'/temp';
     }
 
     protected function createTables(...$tableNames)
