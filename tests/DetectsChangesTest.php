@@ -55,7 +55,6 @@ class DetectsChangesTest extends TestCase
 
         $article->name = 'updated name';
         $article->text = 'updated text';
-        $article->user->name = 'testValue';
 
         $article->save();
 
@@ -63,11 +62,12 @@ class DetectsChangesTest extends TestCase
             'attributes' => [
                 'name' => 'updated name',
                 'text' => 'updated text',
-                'user.name' => 'my name',
+                'user.name' => 'user name',
             ],
             'old' => [
-                'name' => 'my name',
-                'text' => null,
+                'name' => 'old name',
+                'text' => 'old text',
+                'user.name' => 'user name'
             ],
         ];
 
@@ -144,11 +144,19 @@ class DetectsChangesTest extends TestCase
 
     protected function createArticleWithRelation(): Article
     {
-        $article = $this->createArticle();
+        $article = new class() extends Article {
+            static $logAttributes = ['name', 'text', 'user.name'];
+
+            public $with = ['user'];
+
+            use LogsActivity;
+        };
         $user = new $this->user();
-        $user->name = 'my name';
+        $user->name = 'user name';
         $user->save();
 
+        $article->name = 'old name';
+        $article->text = 'old text';
         $article->user_id = $user->id;
         $article->save();
 
