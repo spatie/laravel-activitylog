@@ -8,6 +8,7 @@ use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 
 class ActivityLogger
 {
@@ -183,6 +184,12 @@ class ActivityLogger
             $propertyName = substr($match, strpos($match, '.') + 1);
 
             $attributeValue = $activity->$attribute;
+
+            if (empty($attributeValue)) {
+                throw new InvalidConfiguration(
+                    "Attempting to replace $match, but no attribute to use for placeholder."
+                );
+            }
 
             $attributeValue = $attributeValue->toArray();
 
