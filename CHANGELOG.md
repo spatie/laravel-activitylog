@@ -2,6 +2,9 @@
 
 All Notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.12.1 - 2017-02-12
+- avoid PHP error when dealing with placeholders that cannot be filled
+
 ## 1.12.0 - 2017-02-04
 - drop support for L5.2 and lower
 - add ability to log attributes of related models
