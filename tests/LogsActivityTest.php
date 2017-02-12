@@ -182,6 +182,7 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
             use SoftDeletes;
+
             public function getDescriptionForEvent(string $eventName): string
             {
                 return ":causer.name $eventName";
