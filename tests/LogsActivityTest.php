@@ -176,6 +176,32 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('created', $this->getLastActivity()->description);
     }
 
+    /** @test */
+    public function it_will_not_fail_if_asked_to_replace_from_empty_attribute()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+            use SoftDeletes;
+            public function getDescriptionForEvent(string $eventName): string
+            {
+                return ":causer.name $eventName";
+            }
+        };
+
+        $entity = new $model();
+        $entity->save();
+        $entity->name = 'my name';
+        $entity->save();
+
+        $activities = $entity->activity;
+
+        $this->assertCount(2, $activities);
+        $this->assertEquals($entity->id, $activities[0]->subject->id);
+        $this->assertEquals($entity->id, $activities[1]->subject->id);
+        $this->assertEquals(':causer.name created', $activities[0]->description);
+        $this->assertEquals(':causer.name updated', $activities[1]->description);
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
