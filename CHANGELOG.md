@@ -1,6 +1,6 @@
 # Changelog
 
-All Notable changes to `spatie/laravel-activitylog` will be documented in this file
+All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
 ## 1.12.1 - 2017-02-12
 - avoid PHP error when dealing with placeholders that cannot be filled

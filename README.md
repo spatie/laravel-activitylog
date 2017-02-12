@@ -1,7 +1,6 @@
 # Log activity inside your Laravel app
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/spatie/laravel-activitylog/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-activitylog)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/20a38dd4-06a0-401f-bd51-1d3f05fcdff5.svg?style=flat-square)](https://insight.sensiolabs.com/projects/20a38dd4-06a0-401f-bd51-1d3f05fcdff5)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-activitylog.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-activitylog)
