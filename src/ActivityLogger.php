@@ -184,7 +184,7 @@ class ActivityLogger
 
             $attributeValue = $activity->$attribute;
 
-            if (empty($attributeValue)) {
+            if (is_null($attributeValue)) {
                 return $match;
             }
 
