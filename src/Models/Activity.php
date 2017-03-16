@@ -17,6 +17,11 @@ class Activity extends Model
         'properties' => 'collection',
     ];
 
+    public function __construct()
+    {
+        parent::setConnection(config('laravel-activitylog.default_database_connection'));
+    }
+
     public function subject(): MorphTo
     {
         if (config('laravel-activitylog.subject_returns_soft_deleted_models')) {
