@@ -112,7 +112,7 @@ class DetectsChangesTest extends TestCase
             use LogsActivity;
         };
 
-        $aUser = User::create([
+        $user = User::create([
             'name' => 'a name',
         ]);
 
@@ -123,10 +123,10 @@ class DetectsChangesTest extends TestCase
         $article = $articleClass::create([
             'name' => 'name',
             'text' => 'text',
-            'user_id' => $aUser->id,
+            'user_id' => $user->id,
         ]);
 
-        $article->User()->associate($anotherUser)->save();
+        $article->user()->associate($anotherUser)->save();
 
         $expectedChanges = [
             'attributes' => [
