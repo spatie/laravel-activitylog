@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.12.2 - 2017-03-22
+- fix a bug where changes to a releated model would not be logged
+
 ## 1.12.1 - 2017-02-12
 - avoid PHP error when dealing with placeholders that cannot be filled
 
