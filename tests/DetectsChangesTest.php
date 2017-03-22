@@ -33,6 +33,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = [
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ];
 
@@ -96,6 +97,47 @@ class DetectsChangesTest extends TestCase
             'old' => [
                 'name' => 'my name',
                 'text' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_when_updating_a_related_model()
+    {
+        $articleClass = new class() extends Article {
+            static $logAttributes = ['name', 'text', 'user.name'];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $anotherUser = User::create([
+            'name' => 'another name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'name',
+            'text' => 'text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->user()->associate($anotherUser)->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name',
+                'text' => 'text',
+                'user.name' => 'another name',
+            ],
+            'old' => [
+                'name' => 'name',
+                'text' => 'text',
+                'user.name' => 'a name',
             ],
         ];
 
