@@ -54,6 +54,15 @@ trait LogsActivity
         return config('laravel-activitylog.default_log_name');
     }
 
+    public function shouldOnlyLogDirty(): bool
+    {
+        if (! isset(static::$onlyDirty)) {
+	        return false;
+        }
+
+        return static::$onlyDirty;
+    }
+
     /*
      * Get the event names that should be recorded.
      */

@@ -46,7 +46,13 @@ trait DetectsChanges
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
         }
 
-        return $properties;
+        // Only dirty fields
+	    if(isset($properties['old']) && $this->shouldOnlyLogDirty()) {
+		    $properties['attributes'] = collect($properties['attributes'])->diff($properties['old'])->all();
+		    $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
+	    }
+
+	    return $properties;
     }
 
     public static function logChanges(Model $model): array
