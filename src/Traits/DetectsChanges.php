@@ -7,77 +7,95 @@ use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
 {
-    protected $oldAttributes = [];
+	protected $oldAttributes = [];
 
-    protected static function bootDetectsChanges()
-    {
-        if (static::eventsToBeRecorded()->contains('updated')) {
-            static::updating(function (Model $model) {
+	protected static function bootDetectsChanges()
+	{
+		if ( static::eventsToBeRecorded()->contains( 'updated' ) )
+		{
+			static::updating( function ( Model $model )
+			{
 
-                //temporary hold the original attributes on the model
-                //as we'll need these in the updating event
-                $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
+				//temporary hold the original attributes on the model
+				//as we'll need these in the updating event
+				$oldValues = $model->replicate()->setRawAttributes( $model->getOriginal() );
 
-                $model->oldAttributes = static::logChanges($oldValues);
-            });
-        }
-    }
+				$model->oldAttributes = static::logChanges( $oldValues );
+			} );
+		}
+	}
 
-    public function attributesToBeLogged(): array
-    {
-        if (! isset(static::$logAttributes)) {
-            return [];
-        }
+	public function attributesToBeLogged(): array
+	{
+		if ( ! isset( static::$logAttributes ) )
+		{
+			return [];
+		}
 
-        return static::$logAttributes;
-    }
+		return static::$logAttributes;
+	}
 
-    public function attributeValuesToBeLogged(string $processingEvent): array
-    {
-        if (! count($this->attributesToBeLogged())) {
-            return [];
-        }
+	public function shouldOnlyLogDirty(): bool
+	{
+		if (! isset(static::$onlyDirty)) {
+			return false;
+		}
 
-        $properties['attributes'] = static::logChanges($this->exists ? $this->fresh() : $this);
+		return static::$onlyDirty;
+	}
 
-        if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
-            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
+	public function attributeValuesToBeLogged( string $processingEvent ): array
+	{
+		if ( ! count( $this->attributesToBeLogged() ) )
+		{
+			return [];
+		}
 
-            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
-        }
+		$properties['attributes'] = static::logChanges( $this->exists ? $this->fresh() : $this );
 
-        // Only dirty fields
-	    if(isset($properties['old']) && $this->shouldOnlyLogDirty()) {
-		    $properties['attributes'] = collect($properties['attributes'])->diff($properties['old'])->all();
-		    $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
-	    }
+		if ( static::eventsToBeRecorded()->contains( 'updated' ) && $processingEvent == 'updated' )
+		{
+			$nullProperties = array_fill_keys( array_keys( $properties['attributes'] ), null );
 
-	    return $properties;
-    }
+			$properties['old'] = array_merge( $nullProperties, $this->oldAttributes );
+		}
 
-    public static function logChanges(Model $model): array
-    {
-        return collect($model->attributesToBeLogged())->mapWithKeys(
-            function ($attribute) use ($model) {
-                if (str_contains($attribute, '.')) {
-                    return self::getRelatedModelAttributeValue($model, $attribute);
-                }
+		// Only dirty fields
+		if ( isset( $properties['old'] ) && $this->shouldOnlyLogDirty() )
+		{
+			$properties['attributes'] = collect( $properties['attributes'] )->diff( $properties['old'] )->all();
+			$properties['old']        = collect( $properties['old'] )->only( array_keys( $properties['attributes'] ) )->all();
+		}
 
-                return collect($model)->only($attribute);
-            }
-        )->toArray();
-    }
+		return $properties;
+	}
 
-    protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
-    {
-        if (substr_count($attribute, '.') > 1) {
-            throw CouldNotLogChanges::invalidAttribute($attribute);
-        }
+	public static function logChanges( Model $model ): array
+	{
+		return collect( $model->attributesToBeLogged() )->mapWithKeys(
+			function ( $attribute ) use ( $model )
+			{
+				if ( str_contains( $attribute, '.' ) )
+				{
+					return self::getRelatedModelAttributeValue( $model, $attribute );
+				}
 
-        list($relatedModelName, $relatedAttribute) = explode('.', $attribute);
+				return collect( $model )->only( $attribute );
+			}
+		)->toArray();
+	}
 
-        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+	protected static function getRelatedModelAttributeValue( Model $model, string $attribute ): array
+	{
+		if ( substr_count( $attribute, '.' ) > 1 )
+		{
+			throw CouldNotLogChanges::invalidAttribute( $attribute );
+		}
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute];
-    }
+		list( $relatedModelName, $relatedAttribute ) = explode( '.', $attribute );
+
+		$relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+
+		return [ "{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ];
+	}
 }
