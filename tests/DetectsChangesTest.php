@@ -162,15 +162,15 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'name' => 'name',
-                'text' => 'text',
-                'user.name' => 'another name',
-            ],
+	                'name' => 'name',
+	                'text' => 'text',
+	                'user.name' => 'another name',
+	            ],
             'old' => [
-                'name' => 'name',
-                'text' => 'text',
-                'user.name' => 'a name',
-            ],
+	                'name' => 'name',
+	                'text' => 'text',
+	                'user.name' => 'a name',
+	            ],
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
