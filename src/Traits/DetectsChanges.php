@@ -13,20 +13,19 @@ trait DetectsChanges
     {
         if (static::eventsToBeRecorded()->contains('updated')) {
             static::updating(function (Model $model) {
+                //temporary hold the original attributes on the model
+                //as we'll need these in the updating event
+                $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
 
-	                //temporary hold the original attributes on the model
-	                //as we'll need these in the updating event
-	                $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
-
-	                $model->oldAttributes = static::logChanges($oldValues);
-	            });
+                $model->oldAttributes = static::logChanges($oldValues);
+            });
         }
     }
 
     public function attributesToBeLogged(): array
     {
-	        if (! isset(static::$logAttributes)) {
-		            return [];
+        if (! isset(static::$logAttributes)) {
+            return [];
         }
 
         return static::$logAttributes;
@@ -34,8 +33,8 @@ trait DetectsChanges
 
     public function shouldOnlyLogDirty(): bool
     {
-	        if (! isset(static::$onlyDirty)) {
-		            return false;
+        if (! isset(static::$onlyDirty)) {
+            return false;
         }
 
         return static::$onlyDirty;
@@ -43,44 +42,44 @@ trait DetectsChanges
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
-	        if (! count($this->attributesToBeLogged())) {
-		            return [];
+        if (! count($this->attributesToBeLogged())) {
+            return [];
         }
 
         $properties['attributes'] = static::logChanges($this->exists ? $this->fresh() : $this);
 
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
-		            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
+            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
 
-		            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
-		        }
+            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
+        }
 
         // Only dirty fields
         if (isset($properties['old']) && $this->shouldOnlyLogDirty()) {
-		            $properties['attributes'] = collect($properties['attributes'])->diff($properties['old'])->all();
-		            $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
-		        }
+            $properties['attributes'] = collect($properties['attributes'])->diff($properties['old'])->all();
+            $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
+        }
 
         return $properties;
     }
 
     public static function logChanges(Model $model): array
     {
-	        return collect($model->attributesToBeLogged())->mapWithKeys(
-		            function ($attribute) use ($model) {
-		                if (str_contains($attribute, '.')) {
-			                    return self::getRelatedModelAttributeValue($model, $attribute);
-                }
+        return collect($model->attributesToBeLogged())->mapWithKeys(
+	            function ($attribute) use ($model) {
+	                if (str_contains($attribute, '.')) {
+		                    return self::getRelatedModelAttributeValue($model, $attribute);
+                    }
 
-                return collect($model)->only($attribute);
-            }
+		            return collect($model)->only($attribute);
+		        }
         )->toArray();
     }
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
     {
-	        if (substr_count($attribute, '.') > 1) {
-		            throw CouldNotLogChanges::invalidAttribute($attribute);
+        if (substr_count($attribute, '.') > 1) {
+            throw CouldNotLogChanges::invalidAttribute($attribute);
         }
 
         list($relatedModelName, $relatedAttribute) = explode('.', $attribute);

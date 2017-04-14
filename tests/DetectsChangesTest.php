@@ -188,29 +188,29 @@ class DetectsChangesTest extends TestCase
         };
 
         $user = User::create([
-	            'name' => 'a name',
-	        ]);
+            'name' => 'a name',
+        ]);
 
         $anotherUser = User::create([
-	            'name' => 'another name',
-	        ]);
+            'name' => 'another name',
+        ]);
 
         $article = $articleClass::create([
-	            'name' => 'name',
-	            'text' => 'text',
-	            'user_id' => $user->id,
-	        ]);
+            'name' => 'name',
+            'text' => 'text',
+            'user_id' => $user->id,
+        ]);
 
         $article->user()->associate($anotherUser)->save();
 
         $expectedChanges = [
-	            'attributes' => [
-		                'user.name' => 'another name',
-		            ],
-	            'old' => [
-		                'user.name' => 'a name',
-		            ],
-	        ];
+            'attributes' => [
+	                'user.name' => 'another name',
+	            ],
+            'old' => [
+	                'user.name' => 'a name',
+	            ],
+        ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
     }
