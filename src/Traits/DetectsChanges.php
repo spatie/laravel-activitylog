@@ -31,13 +31,13 @@ trait DetectsChanges
         return static::$logAttributes;
     }
 
-    public function shouldOnlyLogDirty(): bool
+    public function shouldLogDirtyOnly(): bool
     {
-        if (! isset(static::$onlyDirty)) {
+        if (! isset(static::$logDirtyOnly)) {
             return false;
         }
 
-        return static::$onlyDirty;
+        return static::$logDirtyOnly;
     }
 
     public function attributeValuesToBeLogged(string $processingEvent): array
@@ -55,7 +55,7 @@ trait DetectsChanges
         }
 
         // Only dirty fields
-        if (isset($properties['old']) && $this->shouldOnlyLogDirty()) {
+        if (isset($properties['old']) && $this->shouldLogDirtyOnly()) {
             $properties['attributes'] = collect($properties['attributes'])->diff($properties['old'])->all();
             $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
         }
