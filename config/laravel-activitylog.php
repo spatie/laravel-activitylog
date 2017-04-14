@@ -31,6 +31,11 @@ return [
     'subject_returns_soft_deleted_models' => false,
 
     /*
+     * If set to true, only changes will be logged.
+     */
+    'only_dirty' => false,
+
+    /*
      * This model will be used to log activity. The only requirement is that
      * it should be or extend the Spatie\Activitylog\Models\Activity model.
      */
