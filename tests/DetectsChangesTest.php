@@ -177,43 +177,43 @@ class DetectsChangesTest extends TestCase
     }
 
 	/** @test */
-	public function it_can_store_the_dirty_changes_when_updating_a_related_model()
-	{
-		$articleClass = new class() extends Article {
-			static $logAttributes = ['name', 'text', 'user.name'];
+    public function it_can_store_the_dirty_changes_when_updating_a_related_model()
+    {
+        $articleClass = new class() extends Article {
+            static $logAttributes = ['name', 'text', 'user.name'];
 
-			static $onlyDirty = true;
+            static $onlyDirty = true;
 
-			use LogsActivity;
-		};
+            use LogsActivity;
+        };
 
-		$user = User::create([
-			'name' => 'a name',
-		]);
+        $user = User::create([
+	            'name' => 'a name',
+	        ]);
 
-		$anotherUser = User::create([
-			'name' => 'another name',
-		]);
+        $anotherUser = User::create([
+	            'name' => 'another name',
+	        ]);
 
-		$article = $articleClass::create([
-			'name' => 'name',
-			'text' => 'text',
-			'user_id' => $user->id,
-		]);
+        $article = $articleClass::create([
+	            'name' => 'name',
+	            'text' => 'text',
+	            'user_id' => $user->id,
+	        ]);
 
-		$article->user()->associate($anotherUser)->save();
+        $article->user()->associate($anotherUser)->save();
 
-		$expectedChanges = [
-			'attributes' => [
-				'user.name' => 'another name',
-			],
-			'old' => [
-				'user.name' => 'a name',
-			],
-		];
+        $expectedChanges = [
+	            'attributes' => [
+		                'user.name' => 'another name',
+		            ],
+	            'old' => [
+		                'user.name' => 'a name',
+		            ],
+	        ];
 
-		$this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
-	}
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+    }
 
     /** @test */
     public function it_will_store_no_changes_when_not_logging_attributes()
