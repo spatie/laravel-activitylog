@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.13.0 - 2017-04-16
+- add `logDirtyOnly`
+
 ## 1.12.2 - 2017-03-22
 - fix a bug where changes to a releated model would not be logged
 
