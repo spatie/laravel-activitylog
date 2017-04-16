@@ -13,6 +13,7 @@ trait DetectsChanges
     {
         if (static::eventsToBeRecorded()->contains('updated')) {
             static::updating(function (Model $model) {
+
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
                 $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
@@ -31,13 +32,13 @@ trait DetectsChanges
         return static::$logAttributes;
     }
 
-    public function shouldLogDirtyOnly(): bool
+    public function shouldlogOnlyDirty(): bool
     {
-        if (! isset(static::$logDirtyOnly)) {
+        if (! isset(static::$logOnlyDirty)) {
             return false;
         }
 
-        return static::$logDirtyOnly;
+        return static::$logOnlyDirty;
     }
 
     public function attributeValuesToBeLogged(string $processingEvent): array
@@ -54,8 +55,7 @@ trait DetectsChanges
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
         }
 
-        // Only dirty fields
-        if (isset($properties['old']) && $this->shouldLogDirtyOnly()) {
+        if ( $this->shouldlogOnlyDirty() && isset($properties['old'])) {
             $properties['attributes'] = collect($properties['attributes'])->diff($properties['old'])->all();
             $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
         }

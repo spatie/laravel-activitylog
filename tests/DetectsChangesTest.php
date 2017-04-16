@@ -28,7 +28,7 @@ class DetectsChangesTest extends TestCase
         $this->dirtyArticle = new class() extends Article {
             static $logAttributes = ['name', 'text'];
 
-            static $logDirtyOnly = true;
+            static $logOnlyDirty = true;
 
             use LogsActivity;
         };
@@ -182,7 +182,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             static $logAttributes = ['name', 'text', 'user.name'];
 
-            static $logDirtyOnly = true;
+            static $logOnlyDirty = true;
 
             use LogsActivity;
         };
