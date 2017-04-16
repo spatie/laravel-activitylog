@@ -162,21 +162,21 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-	                'name' => 'name',
-	                'text' => 'text',
-	                'user.name' => 'another name',
-	            ],
+                    'name' => 'name',
+                    'text' => 'text',
+                    'user.name' => 'another name',
+                ],
             'old' => [
-	                'name' => 'name',
-	                'text' => 'text',
-	                'user.name' => 'a name',
-	            ],
+                    'name' => 'name',
+                    'text' => 'text',
+                    'user.name' => 'a name',
+                ],
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
     }
 
-	/** @test */
+    /** @test */
     public function it_can_store_the_dirty_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {
@@ -205,11 +205,11 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-	                'user.name' => 'another name',
-	            ],
+                    'user.name' => 'another name',
+                ],
             'old' => [
-	                'user.name' => 'a name',
-	            ],
+                    'user.name' => 'a name',
+                ],
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());

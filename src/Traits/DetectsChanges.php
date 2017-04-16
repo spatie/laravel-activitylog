@@ -7,7 +7,7 @@ use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
 {
-	protected $oldAttributes = [];
+    protected $oldAttributes = [];
 
     protected static function bootDetectsChanges()
     {
@@ -66,14 +66,14 @@ trait DetectsChanges
     public static function logChanges(Model $model): array
     {
         return collect($model->attributesToBeLogged())->mapWithKeys(
-			function ($attribute) use ($model) {
-				if (str_contains($attribute, '.')) {
-					return self::getRelatedModelAttributeValue($model, $attribute);
+            function ($attribute) use ($model) {
+                if (str_contains($attribute, '.')) {
+                    return self::getRelatedModelAttributeValue($model, $attribute);
                 }
 
-				return collect($model)->only($attribute);
-			}
-		)->toArray();
+                return collect($model)->only($attribute);
+            }
+        )->toArray();
     }
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
