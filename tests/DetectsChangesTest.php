@@ -12,23 +12,12 @@ class DetectsChangesTest extends TestCase
     /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
 
-    /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
-    protected $dirtyArticle;
-
     public function setUp()
     {
         parent::setUp();
 
         $this->article = new class() extends Article {
             static $logAttributes = ['name', 'text'];
-
-            use LogsActivity;
-        };
-
-        $this->dirtyArticle = new class() extends Article {
-            static $logAttributes = ['name', 'text'];
-
-            static $logOnlyDirty = true;
 
             use LogsActivity;
         };
@@ -261,7 +250,15 @@ class DetectsChangesTest extends TestCase
 
     protected function createDirtyArticle(): Article
     {
-        $article = new $this->dirtyArticle();
+        $articleClass = new class() extends Article {
+            static $logAttributes = ['name', 'text'];
+
+            static $logOnlyDirty = true;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
         $article->name = 'my name';
         $article->save();
 
