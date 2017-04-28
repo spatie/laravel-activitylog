@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.14.0 - 2017-04-16
+- add support array/collection casted attributes when using `logDirtyOnly`
+
 ## 1.13.0 - 2017-04-16
 - add `logDirtyOnly`
 
