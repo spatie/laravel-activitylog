@@ -71,15 +71,15 @@ trait DetectsChanges
 
     public static function logChanges(Model $model): array
     {
-        return collect($model->attributesToBeLogged())->mapWithKeys(
-            function ($attribute) use ($model) {
-                if (str_contains($attribute, '.')) {
-                    return self::getRelatedModelAttributeValue($model, $attribute);
-                }
-
-                return collect($model)->only($attribute);
+        $changes = [];
+        foreach ($model->attributesToBeLogged() as $attribute) {
+            if (str_contains($attribute, '.')) {
+                $changes += self::getRelatedModelAttributeValue($model, $attribute);
+            } else {
+                $changes += collect($model)->only($attribute);
             }
-        )->toArray();
+        }
+        return $changes;
     }
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
