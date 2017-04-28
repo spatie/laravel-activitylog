@@ -79,6 +79,7 @@ trait DetectsChanges
                 $changes += collect($model)->only($attribute);
             }
         }
+
         return $changes;
     }
 
