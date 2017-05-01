@@ -3,6 +3,12 @@
 return [
 
     /*
+     * You can specify a default database connection.
+     * If set to null, it will use the current databse connection.
+     */
+    'default_database_connection' => env('ACTIVITY_LOGGER_DEFAULT_DB_CONNECTION', null),
+
+    /*
      * If set to false, no activities will be saved to the database.
      */
     'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
