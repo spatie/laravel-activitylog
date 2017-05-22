@@ -56,7 +56,7 @@ trait DetectsChanges
         }
 
         if ($this->shouldlogOnlyDirty() && isset($properties['old'])) {
-            $properties['attributes'] = array_udiff(
+            $properties['attributes'] = array_udiff_assoc(
                                             $properties['attributes'],
                                             $properties['old'],
                                             function ($new, $old) {

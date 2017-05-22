@@ -125,6 +125,33 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_dirty_changes_for_swapping_values()
+    {
+        $article = $this->createDirtyArticle();
+
+        $originalName = $article->name;
+        $originalText = $article->text;
+
+        $article->text = $originalName;
+        $article->name = $originalText;
+
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => $originalText,
+                'text' => $originalName,
+            ],
+            'old'        => [
+                'name' => $originalName,
+                'text' => $originalText,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+    }
+
+    /** @test */
     public function it_can_store_the_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {
