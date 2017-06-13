@@ -54,5 +54,12 @@
     "scripts": {
         "test": "vendor/bin/phpunit"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spatie\\Activitylog\\ActivitylogServiceProvider"
+            ]
+        }
+    }
 }
