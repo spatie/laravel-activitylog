@@ -94,7 +94,7 @@ trait DetectsChanges
     }
 
 
-    function array_diff_assoc_recursive($array1, $array2) {
+    public function array_diff_assoc_recursive($array1, $array2) {
         $difference = array();
         foreach ($array1 as $key => $value) {
             if (is_array($value)) {
