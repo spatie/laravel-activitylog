@@ -56,13 +56,7 @@ trait DetectsChanges
         }
 
         if ($this->shouldlogOnlyDirty() && isset($properties['old'])) {
-            $properties['attributes'] = array_udiff(
-                                            $properties['attributes'],
-                                            $properties['old'],
-                                            function ($new, $old) {
-                                                return $new <=> $old;
-                                            }
-                                        );
+            $properties['attributes'] = array_diff_assoc($properties['attributes'], $properties['old']);
             $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
         }
 
