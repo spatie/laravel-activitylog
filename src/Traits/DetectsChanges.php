@@ -93,7 +93,6 @@ trait DetectsChanges
         return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute];
     }
 
-
     private function array_diff_assoc_recursive($array1, $array2): array
     {
         $difference = [];
