@@ -21,7 +21,7 @@ class User extends Model implements Authenticatable
      */
     public function getAuthIdentifierName()
     {
-        return $this->name;
+        return 'id';
     }
 
     /**
@@ -31,7 +31,9 @@ class User extends Model implements Authenticatable
      */
     public function getAuthIdentifier()
     {
-        return $this->id;
+        $name = $this->getAuthIdentifierName();
+
+        return $this->attributes[$name];
     }
 
     /**
@@ -41,7 +43,7 @@ class User extends Model implements Authenticatable
      */
     public function getAuthPassword()
     {
-        return $this->name;
+        return $this->attributes['password'];
     }
 
     /**
