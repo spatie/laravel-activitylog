@@ -30,7 +30,7 @@ class ActivityLogger
     /** @var \Illuminate\Support\Collection */
     protected $properties;
 
-    /** @var \Illuminate\Support\Collection */
+    /** @var string */
     protected $authDriver;
 
     public function __construct(AuthManager $auth, Repository $config)
