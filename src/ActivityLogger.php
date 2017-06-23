@@ -44,7 +44,7 @@ class ActivityLogger
         if (starts_with(app()->version(), '5.1')) {
             $this->causedBy = $auth->driver($authDriver)->user();
         } else {
-            $guards = collect( $config['auth']['guards'])->keys()->all();
+            $guards = collect($config['auth']['guards'])->keys()->all();
             foreach ($guards as $guard) {
                 if($this->auth->guard($guard)->check()){
                 $this->causedBy =$this->auth->guard($guard)->user();
