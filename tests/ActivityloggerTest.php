@@ -100,25 +100,6 @@ class ActivityloggerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_log_an_activity_with_a_causer_when_there_is_no_web_guard()
-    {
-        config(['auth.guards.web' => null]);
-        config(['auth.guards.foo' => ['driver' => 'session', 'provider' => 'users']]);
-        config(['laravel-activitylog.default_auth_driver' => 'foo']);
-
-        $user = User::first();
-
-        activity()
-            ->causedBy($user)
-            ->log($this->activityDescription);
-
-        $firstActivity = Activity::first();
-
-        $this->assertEquals($user->id, $firstActivity->causer->id);
-        $this->assertInstanceOf(User::class, $firstActivity->causer);
-    }
-
-    /** @test */
     public function it_can_log_activity_with_properties()
     {
         $properties = [
