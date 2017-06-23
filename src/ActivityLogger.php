@@ -48,7 +48,6 @@ class ActivityLogger
             foreach ($guards as $guard) {
                 if($this->auth->guard($guard)->check()){
                 $this->causedBy =$this->auth->guard($guard)->user();
-                break;
            }
         }
         }
