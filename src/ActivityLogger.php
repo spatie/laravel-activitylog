@@ -46,7 +46,7 @@ class ActivityLogger
         } else {
             $guards = collect( $config['auth']['guards'])->keys()->all();
             foreach ($guards as $guard) {
-           if($this->auth->guard($guard)->check()){
+                if($this->auth->guard($guard)->check()){
             $this->causedBy =$this->auth->guard($guard)->user();
             break;
            }
