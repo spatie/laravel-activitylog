@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.15.3 - 2017-06-23
+- fix for when there is no 'web' guard
+
 ## 1.15.2 - 2017-06-15
 - fixes errors in `DetectsChanges`
 
