@@ -38,23 +38,32 @@ class ActivityLogger
         $this->auth = $auth;
 
         $this->properties = collect();
-
-        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
-
+        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $this->getUsedGuardOrDefaultDriver($config,$auth);
+        
         if (starts_with(app()->version(), '5.1')) {
-            $this->causedBy = $auth->driver($authDriver)->user();
+            $this->causedBy = $auth->driver($this->authDriver)->user();
         } else {
-            $guards = collect($config['auth']['guards'])->keys()->all();
-            foreach ($guards as $guard) {
-                if($this->auth->guard($guard)->check()){
-                $this->causedBy =$this->auth->guard($guard)->user();
-           }
-        }
-        }
-
+            $this->causedBy = $auth->guard($this->authDriver)->user();
+            }
         $this->logName = $config['laravel-activitylog']['default_log_name'];
-
         $this->logEnabled = $config['laravel-activitylog']['enabled'] ?? true;
+    }
+
+
+    private function getGuardsFromConfig($config)
+    {
+        return $guards = collect($config['auth']['guards'])->keys()->all();
+    }
+
+    private function getUsedGuardOrDefaultDriver($config,$auth)
+    {
+        $guards = $this->getGuardsFromConfig($config);
+        foreach ($guards as $guard) {
+            if($auth->guard($guard)->check()){
+                return $guard;
+            }
+        }
+        return $auth->getDefaultDriver();
     }
 
     public function performedOn(Model $model)
