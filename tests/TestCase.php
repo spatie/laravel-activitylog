@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
+use Spatie\Activitylog\Test\Models\Employee;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\ActivitylogServiceProvider;
@@ -48,6 +49,8 @@ abstract class TestCase extends OrchestraTestCase
 
         $app['config']->set('auth.providers.users.model', User::class);
 
+        $app['config']->set('auth.providers.employee.model', Employee::class);
+
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
 
@@ -57,8 +60,9 @@ abstract class TestCase extends OrchestraTestCase
 
         $this->createActivityLogTable();
 
-        $this->createTables('articles', 'users');
-        $this->seedModels(Article::class, User::class);
+        $this->createTables('articles', 'users', 'employees');
+
+        $this->seedModels(Article::class, User::class, Employee::class);
     }
 
     protected function resetDatabase()

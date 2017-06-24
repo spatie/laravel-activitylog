@@ -8,6 +8,7 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Test\Models\Employee;
 
 class ActivityloggerTest extends TestCase
 {
@@ -243,4 +244,59 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf($activityClassName, $activityModel);
     }
+    /** @test */
+    public function it_uses_any_guards_user_used()
+    {
+        Auth::logout();
+
+        $employeeID = 1;
+        $a = [
+            'driver' => 'session',
+            'provider' => 'employees',
+        ];
+        $b = [
+            'driver' => 'session',
+            'provider' => 'users',
+        ];
+
+        config(['auth.providers.users.model' => User::class]);
+        config(['auth.providers.users.driver' => 'eloquent']);
+
+        config(['auth.providers.employees.model' => Employee::class]);
+        config(['auth.providers.employees.driver' => 'eloquent']);
+
+        config(['auth.guards.employee' => $a]);
+        config(['auth.guards.web' => $b]);
+
+        Auth::guard('employee')->loginUsingId($employeeID);
+
+        $employee = Auth::guard('employee')->user();
+
+        $article = Article::create(['name' => 'article name']);
+
+        activity()->log('Employee Activity is Logged');
+        
+        $firstActivity = Activity::all()->first();
+
+        $this->assertEquals($employee->id, $firstActivity->causer->id);
+
+        $this->assertInstanceOf(Employee::class, $firstActivity->causer);
+
+        Auth::logout();
+
+        Auth::guard('web')->loginUsingId($employeeID);
+
+        $user = Auth::user();
+
+        $article = Article::create(['name' => 'article name']);
+
+        activity()->log('User Activity is Logged');
+
+        $lastActivity = Activity::all()->last();
+
+        $this->assertEquals($user->id, $lastActivity->causer->id);
+
+        $this->assertInstanceOf(User::class, $lastActivity->causer);
+    }
 }
+
