@@ -39,7 +39,7 @@ class ActivityLogger
 
         $this->properties = collect();
 
-        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $this->getUsedGuardOrDefaultDriver($config, $auth);
+        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $this->getUsedGuardOrDefaultDriver($auth, $config);
 
         if (starts_with(app()->version(), '5.1')) {
             $this->causedBy = $auth->driver($this->authDriver)->user();
@@ -55,7 +55,7 @@ class ActivityLogger
         return collect($config['auth']['guards'])->keys()->all();
     }
 
-    private function getUsedGuardOrDefaultDriver($config, $auth)
+    private function getUsedGuardOrDefaultDriver(AuthManager $auth, Repository $config)
     {
         $guards = $this->getGuardsFromConfig($config);
         foreach ($guards as $guard) {
