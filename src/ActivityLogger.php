@@ -59,7 +59,7 @@ class ActivityLogger
     {
         $guards = $this->getGuardsFromConfig($config);
         foreach ($guards as $guard) {
-             if ($auth->guard($guard)->check()) {
+            if ($auth->guard($guard)->check()) {
                 return $guard;
             }
         }
