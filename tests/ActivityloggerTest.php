@@ -299,4 +299,5 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf(User::class, $lastActivity->causer);
     }
+
 }
