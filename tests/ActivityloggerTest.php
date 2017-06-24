@@ -299,5 +299,4 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf($activityClassName, $activityModel);
     }
-
 }
