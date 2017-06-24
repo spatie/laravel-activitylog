@@ -7,8 +7,8 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Test\Models\Employee;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class ActivityloggerTest extends TestCase
 {
@@ -244,6 +244,7 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf($activityClassName, $activityModel);
     }
+
     /** @test */
     public function it_uses_any_guards_user_used()
     {
@@ -275,7 +276,7 @@ class ActivityloggerTest extends TestCase
         $article = Article::create(['name' => 'article name']);
 
         activity()->log('Employee Activity is Logged');
-        
+
         $firstActivity = Activity::all()->first();
 
         $this->assertEquals($employee->id, $firstActivity->causer->id);

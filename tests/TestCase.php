@@ -4,9 +4,9 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
-use Spatie\Activitylog\Test\Models\Employee;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Employee;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
