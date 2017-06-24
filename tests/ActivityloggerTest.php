@@ -297,6 +297,6 @@ class ActivityloggerTest extends TestCase
 
         $this->assertEquals($user->id, $lastActivity->causer->id);
 
-        $this->assertInstanceOf($activityClassName, $activityModel);
+        $this->assertInstanceOf(User::class, $lastActivity->causer);
     }
 }
