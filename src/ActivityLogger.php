@@ -61,7 +61,6 @@ class ActivityLogger
     /**
      * @param AuthManager $auth
      * @param Repository $config
-     * 
      */
     private function getUsedGuardOrDefaultDriver(AuthManager $auth, Repository $config)
     {
