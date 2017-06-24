@@ -50,11 +50,19 @@ class ActivityLogger
         $this->logEnabled = $config['laravel-activitylog']['enabled'] ?? true;
     }
 
-    private function getGuardsFromConfig($config)
+    /**
+     * @param Repository $config
+     */
+    private function getGuardsFromConfig(Repository $config)
     {
         return collect($config['auth']['guards'])->keys()->all();
     }
 
+    /**
+     * @param AuthManager $auth
+     * @param Repository $config
+     * 
+     */
     private function getUsedGuardOrDefaultDriver(AuthManager $auth, Repository $config)
     {
         $guards = $this->getGuardsFromConfig($config);
@@ -138,7 +146,7 @@ class ActivityLogger
     /**
      * @param string $description
      *
-     * @return null|mixed
+     * @return null|Model
      */
     public function log(string $description)
     {
