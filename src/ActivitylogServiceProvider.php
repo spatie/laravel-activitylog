@@ -19,14 +19,8 @@ class ActivitylogServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-activitylog.php', 'laravel-activitylog');
-
-        if (! class_exists('CreateActivityLogTable')) {
-            $timestamp = date('Y_m_d_His', time());
-
-            $this->publishes([
-                __DIR__.'/../migrations/create_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_create_activity_log_table.php"),
-            ], 'migrations');
-        }
+        
+        $this->loadMigrationsFrom(__DIR__.'/../migrations');
     }
 
     /**
