@@ -6,17 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class Employee extends Model implements Authenticatable
+class BaseUser extends Model implements Authenticatable
 {
     use CausesActivity;
-
-    protected $table = 'employees';
-
-    protected $guard = 'employee';
-
-    protected $guarded = [];
-
-    /**
+    
+     /**
      * Get the name of the unique identifier for the user.
      *
      * @return string
