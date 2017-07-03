@@ -6,7 +6,7 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\Activitylog\Test\Models\Article;
-use Spatie\Activitylog\Test\Models\Employee;
+use Spatie\Activitylog\Test\Models\OtherGuardUser;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
@@ -49,7 +49,7 @@ abstract class TestCase extends OrchestraTestCase
 
         $app['config']->set('auth.providers.users.model', User::class);
 
-        $app['config']->set('auth.providers.employee.model', Employee::class);
+        $app['config']->set('auth.providers.other_guard_users.model', OtherGuardUser::class);
 
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
@@ -60,9 +60,9 @@ abstract class TestCase extends OrchestraTestCase
 
         $this->createActivityLogTable();
 
-        $this->createTables('articles', 'users', 'employees');
+        $this->createTables('articles', 'users', 'other_guard_users');
 
-        $this->seedModels(Article::class, User::class, Employee::class);
+        $this->seedModels(Article::class, User::class, OtherGuardUser::class);
     }
 
     protected function resetDatabase()
