@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
+use Spatie\Activitylog\Test\Models\OtherGuardUser;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\ActivitylogServiceProvider;
