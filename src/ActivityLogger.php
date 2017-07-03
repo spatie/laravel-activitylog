@@ -51,18 +51,18 @@ class ActivityLogger
     }
 
     /**
-     * @param Repository $config
+     * @param Illuminate\Contracts\Config\Repository $config
      */
-    private function getGuardsFromConfig(Repository $config)
+    protected function getGuardsFromConfig(Repository $config) : array
     {
         return collect($config['auth']['guards'])->keys()->all();
     }
 
     /**
-     * @param AuthManager $auth
-     * @param Repository $config
+     * @param Illuminate\Auth\AuthManager $auth
+     * @param Illuminate\Contracts\Config\Repository $config
      */
-    private function getUsedGuardOrDefaultDriver(AuthManager $auth, Repository $config)
+    protected function getUsedGuardOrDefaultDriver(AuthManager $auth, Repository $config) : string
     {
         $guards = $this->getGuardsFromConfig($config);
         foreach ($guards as $guard) {
