@@ -3,15 +3,12 @@
 namespace Spatie\Activitylog\Test;
 
 use Auth;
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\OtherGuardUser;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class CanUseMultiAuthTest extends TestCase
-
 {
     /** @var string */
     protected $activityDescription;
@@ -26,9 +23,8 @@ class CanUseMultiAuthTest extends TestCase
     /** @test */
     public function it_uses_any_guards_user_used()
     {
-
         config(['auth.providers.users.model' => User::class]);
-        
+
         config(['auth.providers.users.driver' => 'eloquent']);
 
         config(['auth.providers.other_guard_users.model' => OtherGuardUser::class]);

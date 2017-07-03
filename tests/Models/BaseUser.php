@@ -9,7 +9,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class BaseUser extends Model implements Authenticatable
 {
     use CausesActivity;
-    
+
+
      /**
      * Get the name of the unique identifier for the user.
      *
