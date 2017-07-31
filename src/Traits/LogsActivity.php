@@ -40,17 +40,17 @@ trait LogsActivity
         });
     }
 
-	public function withoutActivityLogging() {
+    public function withoutActivityLogging() {
 		$this->withoutActivityLogging = true;
 
     	return $this;
 	}
 
-	public function withActivityLogging() {
-		$this->withoutActivityLogging = false;
+    public function withActivityLogging() {
+    	$this->withoutActivityLogging = false;
 
     	return $this;
-	}
+    }
 
     public function activity(): MorphMany
     {
