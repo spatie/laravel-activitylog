@@ -5,7 +5,6 @@ namespace Spatie\Activitylog\Traits;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Models\Activity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -13,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait LogsActivity
 {
     use DetectsChanges;
+
+    private $withoutActivityLogging = false;
 
     protected static function bootLogsActivity()
     {
@@ -38,6 +39,12 @@ trait LogsActivity
             });
         });
     }
+
+	public function withoutActivityLogging() {
+		$this->withoutActivityLogging = true;
+
+    	return $this;
+	}
 
     public function activity(): MorphMany
     {
@@ -87,6 +94,10 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
+	    if ($this->withoutActivityLogging) {
+		    return false;
+	    }
+
         if (! in_array($eventName, ['created', 'updated'])) {
             return true;
         }

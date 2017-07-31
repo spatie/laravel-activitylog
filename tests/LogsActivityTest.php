@@ -9,206 +9,233 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LogsActivityTest extends TestCase
 {
-    /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
-    protected $article;
+	/** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
+	protected $article;
 
-    public function setUp()
-    {
-        parent::setUp();
+	public function setUp()
+	{
+		parent::setUp();
 
-        $this->article = new class() extends Article {
-            use LogsActivity;
-            use SoftDeletes;
-        };
+		$this->article = new class() extends Article
+		{
+			use LogsActivity;
+			use SoftDeletes;
+		};
 
-        $this->assertCount(0, Activity::all());
-    }
+		$this->assertCount( 0, Activity::all() );
+	}
 
-    /** @test */
-    public function it_will_log_the_creation_of_the_model()
-    {
-        $article = $this->createArticle();
-        $this->assertCount(1, Activity::all());
+	/** @test */
+	public function it_will_log_the_creation_of_the_model()
+	{
+		$article = $this->createArticle();
+		$this->assertCount( 1, Activity::all() );
 
-        $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-        $this->assertEquals('created', $this->getLastActivity()->description);
-    }
+		$this->assertInstanceOf( get_class( $this->article ), $this->getLastActivity()->subject );
+		$this->assertEquals( $article->id, $this->getLastActivity()->subject->id );
+		$this->assertEquals( 'created', $this->getLastActivity()->description );
+	}
 
-    /** @test */
-    public function it_will_log_an_update_of_the_model()
-    {
-        $article = $this->createArticle();
+	/** @test */
+	public function it_can_skip_logging_model_events_if_asked_to()
+	{
+		$article = new $this->article();
+		$article->withoutActivityLogging();
+		$article->name = 'my name';
+		$article->save();
 
-        $article->name = 'changed name';
-        $article->save();
+		$this->assertCount( 0, Activity::all() );
+		$this->assertNull( $this->getLastActivity() );
+	}
 
-        $this->assertCount(2, Activity::all());
+	/** @test */
+	public function it_can_skip_logging_if_asked_to_for_update_method()
+	{
+		$article = new $this->article();
+		$article->withoutActivityLogging()->update( [ 'name' => 'How to log events' ] );
 
-        $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-        $this->assertEquals('updated', $this->getLastActivity()->description);
-    }
+		$this->assertCount( 0, Activity::all() );
+		$this->assertNull( $this->getLastActivity() );
+	}
 
-    /** @test */
-    public function it_will_log_the_deletion_of_a_model_without_softdeletes()
-    {
-        $articleClass = new class() extends Article {
-            use LogsActivity;
-        };
+	/** @test */
+	public function it_will_log_an_update_of_the_model()
+	{
+		$article = $this->createArticle();
 
-        $article = new $articleClass();
+		$article->name = 'changed name';
+		$article->save();
 
-        $article->save();
+		$this->assertCount( 2, Activity::all() );
 
-        $this->assertEquals('created', $this->getLastActivity()->description);
+		$this->assertInstanceOf( get_class( $this->article ), $this->getLastActivity()->subject );
+		$this->assertEquals( $article->id, $this->getLastActivity()->subject->id );
+		$this->assertEquals( 'updated', $this->getLastActivity()->description );
+	}
 
-        $article->delete();
+	/** @test */
+	public function it_will_log_the_deletion_of_a_model_without_softdeletes()
+	{
+		$articleClass = new class() extends Article
+		{
+			use LogsActivity;
+		};
 
-        $this->assertEquals('deleted', $this->getLastActivity()->description);
-    }
+		$article = new $articleClass();
 
-    /** @test */
-    public function it_will_log_the_deletion_of_a_model_with_softdeletes()
-    {
-        $article = $this->createArticle();
+		$article->save();
 
-        $article->delete();
+		$this->assertEquals( 'created', $this->getLastActivity()->description );
 
-        $this->assertCount(2, Activity::all());
+		$article->delete();
 
-        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
-        $this->assertEquals('deleted', $this->getLastActivity()->description);
-    }
+		$this->assertEquals( 'deleted', $this->getLastActivity()->description );
+	}
 
-    /** @test */
-    public function it_will_log_the_restoring_of_a_model_with_softdeletes()
-    {
-        $article = $this->createArticle();
+	/** @test */
+	public function it_will_log_the_deletion_of_a_model_with_softdeletes()
+	{
+		$article = $this->createArticle();
 
-        $article->delete();
+		$article->delete();
 
-        $article->restore();
+		$this->assertCount( 2, Activity::all() );
 
-        $this->assertCount(3, Activity::all());
+		$this->assertEquals( get_class( $this->article ), $this->getLastActivity()->subject_type );
+		$this->assertEquals( $article->id, $this->getLastActivity()->subject_id );
+		$this->assertEquals( 'deleted', $this->getLastActivity()->description );
+	}
 
-        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
-        $this->assertEquals('restored', $this->getLastActivity()->description);
-    }
+	/** @test */
+	public function it_will_log_the_restoring_of_a_model_with_softdeletes()
+	{
+		$article = $this->createArticle();
 
-    /** @test */
-    public function it_can_fetch_all_activity_for_a_model()
-    {
-        $article = $this->createArticle();
+		$article->delete();
 
-        $article->name = 'changed name';
-        $article->save();
+		$article->restore();
 
-        $activities = $article->activity;
+		$this->assertCount( 3, Activity::all() );
 
-        $this->assertCount(2, $activities);
-    }
+		$this->assertEquals( get_class( $this->article ), $this->getLastActivity()->subject_type );
+		$this->assertEquals( $article->id, $this->getLastActivity()->subject_id );
+		$this->assertEquals( 'restored', $this->getLastActivity()->description );
+	}
 
-    /** @test */
-    public function it_can_fetch_soft_deleted_models()
-    {
-        $this->app['config']->set('laravel-activitylog.subject_returns_soft_deleted_models', true);
+	/** @test */
+	public function it_can_fetch_all_activity_for_a_model()
+	{
+		$article = $this->createArticle();
 
-        $article = $this->createArticle();
+		$article->name = 'changed name';
+		$article->save();
 
-        $article->name = 'changed name';
-        $article->save();
+		$activities = $article->activity;
 
-        $article->delete();
+		$this->assertCount( 2, $activities );
+	}
 
-        $activities = $article->activity;
+	/** @test */
+	public function it_can_fetch_soft_deleted_models()
+	{
+		$this->app['config']->set( 'laravel-activitylog.subject_returns_soft_deleted_models', true );
 
-        $this->assertCount(3, $activities);
+		$article = $this->createArticle();
 
-        $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
-        $this->assertEquals('deleted', $this->getLastActivity()->description);
-        $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
-    }
+		$article->name = 'changed name';
+		$article->save();
 
-    /** @test */
-    public function it_can_log_activity_to_log_named_in_the_model()
-    {
-        $articleClass = new class() extends Article {
-            use LogsActivity;
+		$article->delete();
 
-            public function getLogNameToUse()
-            {
-                return 'custom_log';
-            }
-        };
+		$activities = $article->activity;
 
-        $article = new $articleClass();
-        $article->name = 'my name';
-        $article->save();
+		$this->assertCount( 3, $activities );
 
-        $this->assertEquals($article->id, Activity::inLog('custom_log')->first()->subject->id);
-        $this->assertCount(1, Activity::inLog('custom_log')->get());
-    }
+		$this->assertEquals( get_class( $this->article ), $this->getLastActivity()->subject_type );
+		$this->assertEquals( $article->id, $this->getLastActivity()->subject_id );
+		$this->assertEquals( 'deleted', $this->getLastActivity()->description );
+		$this->assertEquals( 'changed name', $this->getLastActivity()->subject->name );
+	}
 
-    /** @test */
-    public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
-    {
-        $articleClass = new class() extends Article {
-            use LogsActivity;
+	/** @test */
+	public function it_can_log_activity_to_log_named_in_the_model()
+	{
+		$articleClass = new class() extends Article
+		{
+			use LogsActivity;
 
-            protected static $ignoreChangedAttributes = ['text'];
-        };
+			public function getLogNameToUse()
+			{
+				return 'custom_log';
+			}
+		};
 
-        $article = new $articleClass();
-        $article->name = 'my name';
-        $article->save();
+		$article       = new $articleClass();
+		$article->name = 'my name';
+		$article->save();
 
-        $article->text = 'ignore me';
-        $article->save();
+		$this->assertEquals( $article->id, Activity::inLog( 'custom_log' )->first()->subject->id );
+		$this->assertCount( 1, Activity::inLog( 'custom_log' )->get() );
+	}
 
-        $this->assertCount(1, Activity::all());
+	/** @test */
+	public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
+	{
+		$articleClass = new class() extends Article
+		{
+			use LogsActivity;
 
-        $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
-        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-        $this->assertEquals('created', $this->getLastActivity()->description);
-    }
+			protected static $ignoreChangedAttributes = [ 'text' ];
+		};
 
-    /** @test */
-    public function it_will_not_fail_if_asked_to_replace_from_empty_attribute()
-    {
-        $model = new class() extends Article {
-            use LogsActivity;
-            use SoftDeletes;
+		$article       = new $articleClass();
+		$article->name = 'my name';
+		$article->save();
 
-            public function getDescriptionForEvent(string $eventName): string
-            {
-                return ":causer.name $eventName";
-            }
-        };
+		$article->text = 'ignore me';
+		$article->save();
 
-        $entity = new $model();
-        $entity->save();
-        $entity->name = 'my name';
-        $entity->save();
+		$this->assertCount( 1, Activity::all() );
 
-        $activities = $entity->activity;
+		$this->assertInstanceOf( get_class( $articleClass ), $this->getLastActivity()->subject );
+		$this->assertEquals( $article->id, $this->getLastActivity()->subject->id );
+		$this->assertEquals( 'created', $this->getLastActivity()->description );
+	}
 
-        $this->assertCount(2, $activities);
-        $this->assertEquals($entity->id, $activities[0]->subject->id);
-        $this->assertEquals($entity->id, $activities[1]->subject->id);
-        $this->assertEquals(':causer.name created', $activities[0]->description);
-        $this->assertEquals(':causer.name updated', $activities[1]->description);
-    }
+	/** @test */
+	public function it_will_not_fail_if_asked_to_replace_from_empty_attribute()
+	{
+		$model = new class() extends Article
+		{
+			use LogsActivity;
+			use SoftDeletes;
 
-    protected function createArticle(): Article
-    {
-        $article = new $this->article();
-        $article->name = 'my name';
-        $article->save();
+			public function getDescriptionForEvent( string $eventName ): string
+			{
+				return ":causer.name $eventName";
+			}
+		};
 
-        return $article;
-    }
+		$entity = new $model();
+		$entity->save();
+		$entity->name = 'my name';
+		$entity->save();
+
+		$activities = $entity->activity;
+
+		$this->assertCount( 2, $activities );
+		$this->assertEquals( $entity->id, $activities[0]->subject->id );
+		$this->assertEquals( $entity->id, $activities[1]->subject->id );
+		$this->assertEquals( ':causer.name created', $activities[0]->description );
+		$this->assertEquals( ':causer.name updated', $activities[1]->description );
+	}
+
+	protected function createArticle(): Article
+	{
+		$article       = new $this->article();
+		$article->name = 'my name';
+		$article->save();
+
+		return $article;
+	}
 }
