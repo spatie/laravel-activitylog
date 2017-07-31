@@ -48,6 +48,25 @@ class LogsActivityTest extends TestCase
 	}
 
 	/** @test */
+	public function it_can_switch_on_activity_logging_after_disabling_it()
+	{
+		$article = new $this->article();
+
+		$article->withoutActivityLogging();
+		$article->name = 'my name';
+		$article->save();
+
+		$article->withActivityLogging();
+		$article->name = 'my new name';
+		$article->save();
+
+		$this->assertCount(1, Activity::all());
+		$this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
+		$this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+		$this->assertEquals('updated', $this->getLastActivity()->description);
+	}
+
+	/** @test */
 	public function it_can_skip_logging_if_asked_to_for_update_method()
 	{
 		$article = new $this->article();

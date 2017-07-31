@@ -46,6 +46,12 @@ trait LogsActivity
     	return $this;
 	}
 
+	public function withActivityLogging() {
+		$this->withoutActivityLogging = false;
+
+    	return $this;
+	}
+
     public function activity(): MorphMany
     {
         return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
