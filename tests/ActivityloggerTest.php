@@ -172,7 +172,7 @@ class ActivityloggerTest extends TestCase
      */
     public function it_will_throw_an_exception_if_it_cannot_translate_a_causer_id()
     {
-        $this->setExpectedException(CouldNotLogActivity::class);
+        $this->expectException(CouldNotLogActivity::class);
 
         activity()->causedBy(999);
     }
