@@ -69,7 +69,7 @@ trait LogsActivity
             'deleted',
         ]);
 
-        if (collect(class_uses(__CLASS__))->contains(SoftDeletes::class)) {
+        if (collect(class_uses_recursive(__CLASS__))->contains(SoftDeletes::class)) {
             $events->push('restored');
         }
 
