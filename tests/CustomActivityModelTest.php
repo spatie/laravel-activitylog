@@ -40,6 +40,8 @@ class CustomActivityModelTest extends TestCase
         $this->app['config']->set('laravel-activitylog.activity_model', null);
 
         activity()->log($this->activityDescription);
+
+        $this->doNotMarkAsRisky();
     }
 
     /** @test */
