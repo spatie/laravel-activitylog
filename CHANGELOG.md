@@ -4,7 +4,7 @@ All notable changes to `spatie/laravel-activitylog` will be documented in this f
 
 ## 2.0.0 - 2017-XX-XX
 - added support for Laravel 5.5, dropped support for older laravel versions
-- rename config file from `laravel-activitylog` to `activitylog`
+- renamed config file from `laravel-activitylog` to `activitylog`
 
 ## 1.15.3 - 2017-06-23
 - fix for when there is no 'web' guard
