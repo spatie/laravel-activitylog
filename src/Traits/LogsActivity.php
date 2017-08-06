@@ -51,7 +51,7 @@ trait LogsActivity
 
     public function getLogNameToUse(string $eventName = ''): string
     {
-        return config('laravel-activitylog.default_log_name');
+        return config('activitylog.default_log_name');
     }
 
     /*

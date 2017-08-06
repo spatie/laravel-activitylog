@@ -15,10 +15,10 @@ class ActivitylogServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/laravel-activitylog.php' => config_path('laravel-activitylog.php'),
+            __DIR__.'/../config/activitylog.php' => config_path('activitylog.php'),
         ], 'config');
 
-        $this->mergeConfigFrom(__DIR__.'/../config/laravel-activitylog.php', 'laravel-activitylog');
+        $this->mergeConfigFrom(__DIR__.'/../config/activitylog.php', 'activitylog');
 
         if (! class_exists('CreateActivityLogTable')) {
             $timestamp = date('Y_m_d_His', time());
@@ -43,7 +43,7 @@ class ActivitylogServiceProvider extends ServiceProvider
 
     public static function determineActivityModel(): string
     {
-        $activityModel = config('laravel-activitylog.activity_model') ?? Activity::class;
+        $activityModel = config('activitylog.activity_model') ?? Activity::class;
 
         if (! is_a($activityModel, Activity::class, true)) {
             throw InvalidConfiguration::modelIsNotValid($activityModel);
