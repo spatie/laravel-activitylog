@@ -8,6 +8,11 @@ return [
     'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
 
     /*
+     * The logs table can be positioned in a different database from the main database.
+     */
+    'connection' => env('ACTIVITY_LOGGER_DB_CONNECTION', \Config::get('database.default')),
+
+    /*
      * When the clean-command is executed, all recording activities older than
      * the number of days specified here will be deleted.
      */
