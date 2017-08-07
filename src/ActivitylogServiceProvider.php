@@ -56,6 +56,6 @@ class ActivitylogServiceProvider extends ServiceProvider
     {
         $activityModelClassName = self::determineActivityModel();
 
-        return new $activityModelClassName();
+        return (new $activityModelClassName())->setConnection(config('laravel-activitylog.connection'));
     }
 }
