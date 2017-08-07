@@ -10,7 +10,7 @@ class CreateActivityLogTable extends Migration
      */
     public function up()
     {
-        Schema::connection(env('ACTIVITY_LOGGER_DB_CONNECTION', \Config::get('database.default')))
+        Schema::connection(config('laravel-activitylog.connection'))
             ->create('activity_log', function (Blueprint $table) {
             $table->increments('id');
             $table->string('log_name')->nullable();
@@ -31,6 +31,6 @@ class CreateActivityLogTable extends Migration
      */
     public function down()
     {
-        Schema::connection(env('ACTIVITY_LOGGER_DB_CONNECTION', \Config::get('database.default')))->dropIfExists('activity_log');
+        Schema::connection(config('laravel-activitylog.connection'))->dropIfExists('activity_log');
     }
 }
