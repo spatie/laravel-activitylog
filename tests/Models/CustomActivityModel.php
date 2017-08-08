@@ -6,7 +6,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class CustomActivityModel extends Activity
 {
-    function getCustomPropertyAttribute() {
+    public function getCustomPropertyAttribute() {
         return $this->changes();
     }
 }

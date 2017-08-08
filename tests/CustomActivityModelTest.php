@@ -56,7 +56,7 @@ class CustomActivityModelTest extends TestCase
 
 
     /** @test */
-    function it_doesnt_conlict_with_laravel_change_tracking()
+    public function it_doesnt_conlict_with_laravel_change_tracking()
     {
         $this->app['config']->set('activitylog.activity_model', CustomActivityModel::class);
 
