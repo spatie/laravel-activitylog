@@ -70,7 +70,7 @@ class Activity extends Model
     public function scopeCausedBy(Builder $query, Model $causer): Builder
     {
         return $query
-            ->where('causer_type', get_class($causer))
+            ->where('causer_type', $causer->getMorphClass())
             ->where('causer_id', $causer->getKey());
     }
 
@@ -85,7 +85,7 @@ class Activity extends Model
     public function scopeForSubject(Builder $query, Model $subject): Builder
     {
         return $query
-            ->where('subject_type', get_class($subject))
+            ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
     }
 }
