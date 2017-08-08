@@ -111,6 +111,8 @@ class ActivityModelTest extends TestCase
         $this->assertEquals($causer->getKey(), $activities->first()->causer_id);
         $this->assertEquals('users', $activities->first()->causer_type);
         $this->assertEquals('Foo', $activities->first()->description);
+
+        Relation::morphMap([], false);
     }
 
     /** @test */
@@ -135,5 +137,7 @@ class ActivityModelTest extends TestCase
         $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
         $this->assertEquals('articles', $activities->first()->subject_type);
         $this->assertEquals('Foo', $activities->first()->description);
+
+        Relation::morphMap([], false);
     }
 }
