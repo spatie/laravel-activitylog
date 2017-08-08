@@ -69,7 +69,7 @@ class CustomActivityModelTest extends TestCase
 
         $activity = activity()->withProperties($properties)->log($this->activityDescription);
 
-        $this->assertEquals($properties, $activity->changes->toArray());
+        $this->assertEquals($properties, $activity->changes()->toArray());
         $this->assertEquals($properties, $activity->custom_property->toArray());
     }
 }
