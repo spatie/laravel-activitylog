@@ -54,7 +54,6 @@ class CustomActivityModelTest extends TestCase
         activity()->log($this->activityDescription);
     }
 
-
     /** @test */
     public function it_doesnt_conlict_with_laravel_change_tracking()
     {
