@@ -31,7 +31,11 @@ trait LogsActivity
                     return;
                 }
 
-                app(ActivityLogger::class)->useLog($logName)->performedOn($model)->withProperties($model->attributeValuesToBeLogged($eventName))->log($description);
+                app(ActivityLogger::class)
+                    ->useLog($logName)
+                    ->performedOn($model)
+                    ->withProperties($model->attributeValuesToBeLogged($eventName))
+                    ->log($description);
             });
         });
     }
