@@ -155,7 +155,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_can_fetch_soft_deleted_models()
     {
-        $this->app['config']->set('laravel-activitylog.subject_returns_soft_deleted_models', true);
+        $this->app['config']->set('activitylog.subject_returns_soft_deleted_models', true);
 
         $article = $this->createArticle();
 

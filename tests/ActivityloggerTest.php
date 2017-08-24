@@ -32,7 +32,7 @@ class ActivityloggerTest extends TestCase
     /** @test */
     public function it_will_not_log_an_activity_when_the_log_is_not_enabled()
     {
-        config(['laravel-activitylog.enabled' => false]);
+        config(['activitylog.enabled' => false]);
 
         activity()->log($this->activityDescription);
 
@@ -42,7 +42,7 @@ class ActivityloggerTest extends TestCase
     /** @test */
     public function it_will_log_an_activity_when_enabled_option_is_null()
     {
-        config(['laravel-activitylog.enabled' => null]);
+        config(['activitylog.enabled' => null]);
 
         activity()->log($this->activityDescription);
 
@@ -54,7 +54,7 @@ class ActivityloggerTest extends TestCase
     {
         activity()->log($this->activityDescription);
 
-        $this->assertEquals(config('laravel-activitylog.default_log_name'), $this->getLastActivity()->log_name);
+        $this->assertEquals(config('activitylog.default_log_name'), $this->getLastActivity()->log_name);
     }
 
     /** @test */
@@ -104,7 +104,7 @@ class ActivityloggerTest extends TestCase
     {
         config(['auth.guards.web' => null]);
         config(['auth.guards.foo' => ['driver' => 'session', 'provider' => 'users']]);
-        config(['laravel-activitylog.default_auth_driver' => 'foo']);
+        config(['activitylog.default_auth_driver' => 'foo']);
 
         $user = User::first();
 
@@ -172,7 +172,7 @@ class ActivityloggerTest extends TestCase
      */
     public function it_will_throw_an_exception_if_it_cannot_translate_a_causer_id()
     {
-        $this->setExpectedException(CouldNotLogActivity::class);
+        $this->expectException(CouldNotLogActivity::class);
 
         activity()->causedBy(999);
     }
@@ -237,7 +237,7 @@ class ActivityloggerTest extends TestCase
 
         $activityClassName = get_class($activityClass);
 
-        $this->app['config']->set('laravel-activitylog.activity_model', $activityClassName);
+        $this->app['config']->set('activitylog.activity_model', $activityClassName);
 
         $activityModel = activity()->log('test');
 

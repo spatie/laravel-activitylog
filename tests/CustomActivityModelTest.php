@@ -25,7 +25,7 @@ class CustomActivityModelTest extends TestCase
     /** @test */
     public function it_can_log_activity_using_a_custom_model()
     {
-        $this->app['config']->set('laravel-activitylog.activity_model', CustomActivityModel::class);
+        $this->app['config']->set('activitylog.activity_model', CustomActivityModel::class);
 
         $activity = activity()->log($this->activityDescription);
 
@@ -37,15 +37,18 @@ class CustomActivityModelTest extends TestCase
     /** @test */
     public function it_does_not_throw_an_exception_when_model_config_is_null()
     {
-        $this->app['config']->set('laravel-activitylog.activity_model', null);
+        $this->app['config']->set('activitylog.activity_model', null);
 
         activity()->log($this->activityDescription);
+
+        //avoid risky test
+        $this->assertTrue(true);
     }
 
     /** @test */
     public function it_throws_an_exception_when_model_doesnt_extend_package_model()
     {
-        $this->app['config']->set('laravel-activitylog.activity_model', InvalidActivityModel::class);
+        $this->app['config']->set('activitylog.activity_model', InvalidActivityModel::class);
 
         $this->expectException(InvalidConfiguration::class);
 
