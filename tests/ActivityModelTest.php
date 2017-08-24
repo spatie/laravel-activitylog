@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Test;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ActivityModelTest extends TestCase
 {
@@ -86,5 +87,57 @@ class ActivityModelTest extends TestCase
         $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
         $this->assertEquals(get_class($subject), $activities->first()->subject_type);
         $this->assertEquals('Foo', $activities->first()->description);
+    }
+
+    /** @test */
+    public function it_provides_a_scope_to_get_log_items_for_a_specific_morphmapped_causer()
+    {
+        Relation::morphMap([
+            'articles' => 'Spatie\Activitylog\Test\Models\Article',
+            'users' => 'Spatie\Activitylog\Test\Models\User',
+        ]);
+
+        $subject = Article::first();
+        $causer = User::first();
+
+        activity()->on($subject)->by($causer)->log('Foo');
+        activity()->on($subject)->by(User::create([
+            'name' => 'Another User',
+        ]))->log('Bar');
+
+        $activities = Activity::causedBy($causer)->get();
+
+        $this->assertCount(1, $activities);
+        $this->assertEquals($causer->getKey(), $activities->first()->causer_id);
+        $this->assertEquals('users', $activities->first()->causer_type);
+        $this->assertEquals('Foo', $activities->first()->description);
+
+        Relation::morphMap([], false);
+    }
+
+    /** @test */
+    public function it_provides_a_scope_to_get_log_items_for_a_specific_morphmapped_subject()
+    {
+        Relation::morphMap([
+            'articles' => 'Spatie\Activitylog\Test\Models\Article',
+            'users' => 'Spatie\Activitylog\Test\Models\User',
+        ]);
+
+        $subject = Article::first();
+        $causer = User::first();
+
+        activity()->on($subject)->by($causer)->log('Foo');
+        activity()->on(Article::create([
+            'name' => 'Another article',
+        ]))->by($causer)->log('Bar');
+
+        $activities = Activity::forSubject($subject)->get();
+
+        $this->assertCount(1, $activities);
+        $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
+        $this->assertEquals('articles', $activities->first()->subject_type);
+        $this->assertEquals('Foo', $activities->first()->description);
+
+        Relation::morphMap([], false);
     }
 }
