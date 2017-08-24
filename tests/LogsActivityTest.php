@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class LogsActivityTest extends TestCase
 {
 	/** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
-	protected $article;
+    protected $article;
 
 	public function setUp()
 	{
@@ -39,7 +39,7 @@ class LogsActivityTest extends TestCase
 	public function it_can_skip_logging_model_events_if_asked_to()
 	{
 		$article = new $this->article();
-		$article->withoutActivityLogging();
+		$article->disableLogging();
 		$article->name = 'my name';
 		$article->save();
 
@@ -52,11 +52,11 @@ class LogsActivityTest extends TestCase
 	{
 		$article = new $this->article();
 
-		$article->withoutActivityLogging();
+		$article->disableLogging();
 		$article->name = 'my name';
 		$article->save();
 
-		$article->withActivityLogging();
+		$article->enableLogging();
 		$article->name = 'my new name';
 		$article->save();
 
@@ -70,7 +70,7 @@ class LogsActivityTest extends TestCase
 	public function it_can_skip_logging_if_asked_to_for_update_method()
 	{
 		$article = new $this->article();
-		$article->withoutActivityLogging()->update(['name' => 'How to log events']);
+		$article->disableLogging()->update(['name' => 'How to log events']);
 
 		$this->assertCount(0, Activity::all());
 		$this->assertNull($this->getLastActivity());

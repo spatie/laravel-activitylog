@@ -13,7 +13,7 @@ trait LogsActivity
 {
     use DetectsChanges;
 
-    private $withoutActivityLogging = false;
+    protected $enableLoggingModelsEvents = true;
 
     protected static function bootLogsActivity()
     {
@@ -40,14 +40,14 @@ trait LogsActivity
         });
     }
 
-    public function withoutActivityLogging() {
-		$this->withoutActivityLogging = true;
+    public function disableLogging() {
+		$this->enableLoggingModelsEvents = false;
 
     	return $this;
 	}
 
-    public function withActivityLogging() {
-    	$this->withoutActivityLogging = false;
+    public function enableLogging() {
+    	$this->enableLoggingModelsEvents = true;
 
     	return $this;
     }
@@ -100,7 +100,7 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-	    if ($this->withoutActivityLogging) {
+	    if (!$this->enableLoggingModelsEvents) {
 		    return false;
 	    }
 
