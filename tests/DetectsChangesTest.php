@@ -37,7 +37,7 @@ class DetectsChangesTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -76,7 +76,7 @@ class DetectsChangesTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -100,7 +100,7 @@ class DetectsChangesTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -121,7 +121,7 @@ class DetectsChangesTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -148,7 +148,7 @@ class DetectsChangesTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -189,7 +189,7 @@ class DetectsChangesTest extends TestCase
                 ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -228,7 +228,7 @@ class DetectsChangesTest extends TestCase
                 ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
@@ -246,7 +246,7 @@ class DetectsChangesTest extends TestCase
 
         $article->save();
 
-        $this->assertEquals(collect(), $this->getLastActivity()->changes);
+        $this->assertEquals(collect(), $this->getLastActivity()->changes());
     }
 
     /** @test */
@@ -263,7 +263,7 @@ class DetectsChangesTest extends TestCase
         ]);
 
         $this->assertEquals('deleted', $this->getLastActivity()->description);
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes);
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
     }
 
     /** @test */
@@ -296,7 +296,7 @@ class DetectsChangesTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     protected function createArticle(): Article

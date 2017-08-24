@@ -113,4 +113,9 @@ abstract class TestCase extends OrchestraTestCase
     {
         return Activity::all()->last();
     }
+
+    public function doNotMarkAsRisky()
+    {
+        $this->assertTrue(true);
+    }
 }

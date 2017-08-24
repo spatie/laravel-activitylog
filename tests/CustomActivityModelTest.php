@@ -41,8 +41,7 @@ class CustomActivityModelTest extends TestCase
 
         activity()->log($this->activityDescription);
 
-        //avoid risky test
-        $this->assertTrue(true);
+        $this->doNotMarkAsRisky();
     }
 
     /** @test */
@@ -53,5 +52,23 @@ class CustomActivityModelTest extends TestCase
         $this->expectException(InvalidConfiguration::class);
 
         activity()->log($this->activityDescription);
+    }
+
+    /** @test */
+    public function it_doesnt_conlict_with_laravel_change_tracking()
+    {
+        $this->app['config']->set('activitylog.activity_model', CustomActivityModel::class);
+
+        $properties = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => null,
+            ],
+        ];
+
+        $activity = activity()->withProperties($properties)->log($this->activityDescription);
+
+        $this->assertEquals($properties, $activity->changes()->toArray());
+        $this->assertEquals($properties, $activity->custom_property->toArray());
     }
 }
