@@ -2,12 +2,12 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\ActivitylogServiceProvider;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait LogsActivity
 {
@@ -31,25 +31,23 @@ trait LogsActivity
                     return;
                 }
 
-                app(ActivityLogger::class)
-                    ->useLog($logName)
-                    ->performedOn($model)
-                    ->withProperties($model->attributeValuesToBeLogged($eventName))
-                    ->log($description);
+                app(ActivityLogger::class)->useLog($logName)->performedOn($model)->withProperties($model->attributeValuesToBeLogged($eventName))->log($description);
             });
         });
     }
 
-    public function disableLogging() {
-		$this->enableLoggingModelsEvents = false;
+    public function disableLogging()
+    {
+        $this->enableLoggingModelsEvents = false;
 
-    	return $this;
-	}
+        return $this;
+    }
 
-    public function enableLogging() {
-    	$this->enableLoggingModelsEvents = true;
+    public function enableLogging()
+    {
+        $this->enableLoggingModelsEvents = true;
 
-    	return $this;
+        return $this;
     }
 
     public function activity(): MorphMany
@@ -100,9 +98,9 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-	    if (!$this->enableLoggingModelsEvents) {
-		    return false;
-	    }
+        if (! $this->enableLoggingModelsEvents) {
+            return false;
+        }
 
         if (! in_array($eventName, ['created', 'updated'])) {
             return true;
