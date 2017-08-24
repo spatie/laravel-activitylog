@@ -39,17 +39,39 @@ class ActivityLogger
 
         $this->properties = collect();
 
-        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
+        $this->authDriver = $config['laravel-activitylog']['default_auth_driver'] ?? $this->getUsedGuardOrDefaultDriver($auth, $config);
 
         if (starts_with(app()->version(), '5.1')) {
             $this->causedBy = $auth->driver($this->authDriver)->user();
         } else {
             $this->causedBy = $auth->guard($this->authDriver)->user();
         }
-
         $this->logName = $config['laravel-activitylog']['default_log_name'];
-
         $this->logEnabled = $config['laravel-activitylog']['enabled'] ?? true;
+    }
+
+    /**
+     * @param Illuminate\Contracts\Config\Repository $config
+     */
+    protected function getGuardsFromConfig(Repository $config) : array
+    {
+        return collect($config['auth']['guards'])->keys()->all();
+    }
+
+    /**
+     * @param Illuminate\Auth\AuthManager $auth
+     * @param Illuminate\Contracts\Config\Repository $config
+     */
+    protected function getUsedGuardOrDefaultDriver(AuthManager $auth, Repository $config) : string
+    {
+        $guards = $this->getGuardsFromConfig($config);
+        foreach ($guards as $guard) {
+            if ($auth->guard($guard)->check()) {
+                return $guard;
+            }
+        }
+
+        return $auth->getDefaultDriver();
     }
 
     public function performedOn(Model $model)
@@ -123,7 +145,7 @@ class ActivityLogger
     /**
      * @param string $description
      *
-     * @return null|mixed
+     * @return null|Model
      */
     public function log(string $description)
     {
