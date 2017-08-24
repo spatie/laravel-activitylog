@@ -2,10 +2,10 @@
 
 namespace Spatie\Activitylog\Test;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LogsActivityTest extends TestCase
 {
@@ -16,8 +16,7 @@ class LogsActivityTest extends TestCase
     {
         parent::setUp();
 
-        $this->article = new class() extends Article
-        {
+        $this->article = new class() extends Article {
             use LogsActivity;
             use SoftDeletes;
         };
@@ -95,8 +94,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_will_log_the_deletion_of_a_model_without_softdeletes()
     {
-        $articleClass = new class() extends Article
-        {
+        $articleClass = new class() extends Article {
             use LogsActivity;
         };
 
@@ -179,8 +177,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
-        $articleClass = new class() extends Article
-        {
+        $articleClass = new class() extends Article {
             use LogsActivity;
 
             public function getLogNameToUse()
@@ -200,8 +197,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
     {
-        $articleClass = new class() extends Article
-        {
+        $articleClass = new class() extends Article {
             use LogsActivity;
 
             protected static $ignoreChangedAttributes = ['text'];
@@ -224,8 +220,7 @@ class LogsActivityTest extends TestCase
     /** @test */
     public function it_will_not_fail_if_asked_to_replace_from_empty_attribute()
     {
-        $model = new class() extends Article
-        {
+        $model = new class() extends Article {
             use LogsActivity;
             use SoftDeletes;
 
