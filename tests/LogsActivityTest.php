@@ -186,7 +186,7 @@ class LogsActivityTest extends TestCase
             }
         };
 
-        $article       = new $articleClass();
+        $article = new $articleClass();
         $article->name = 'my name';
         $article->save();
 
@@ -203,7 +203,7 @@ class LogsActivityTest extends TestCase
             protected static $ignoreChangedAttributes = ['text'];
         };
 
-        $article       = new $articleClass();
+        $article = new $articleClass();
         $article->name = 'my name';
         $article->save();
 
@@ -246,7 +246,7 @@ class LogsActivityTest extends TestCase
 
     protected function createArticle(): Article
     {
-        $article       = new $this->article();
+        $article = new $this->article();
         $article->name = 'my name';
         $article->save();
 
