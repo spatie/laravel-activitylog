@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 1.16.0 - 2017-06-28
+- added `enableLogging` and `disableLogging`
+
 ## 1.15.3 - 2017-06-23
 - fix for when there is no 'web' guard
 
