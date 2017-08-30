@@ -17,7 +17,7 @@ class DetectsChangesTest extends TestCase
         parent::setUp();
 
         $this->article = new class() extends Article {
-            static $logAttributes = ['name', 'text'];
+            public static $logAttributes = ['name', 'text'];
 
             use LogsActivity;
         };
@@ -44,7 +44,7 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_relation_values_when_creating_a_model()
     {
         $articleClass = new class() extends Article {
-            static $logAttributes = ['name', 'text', 'user.name'];
+            public static $logAttributes = ['name', 'text', 'user.name'];
 
             use LogsActivity;
         };
@@ -155,7 +155,7 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {
-            static $logAttributes = ['name', 'text', 'user.name'];
+            public static $logAttributes = ['name', 'text', 'user.name'];
 
             use LogsActivity;
         };
@@ -196,9 +196,9 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_dirty_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {
-            static $logAttributes = ['name', 'text', 'user.name'];
+            public static $logAttributes = ['name', 'text', 'user.name'];
 
-            static $logOnlyDirty = true;
+            public static $logOnlyDirty = true;
 
             use LogsActivity;
         };
@@ -235,7 +235,7 @@ class DetectsChangesTest extends TestCase
     public function it_will_store_no_changes_when_not_logging_attributes()
     {
         $articleClass = new class() extends Article {
-            static $logAttributes = [];
+            public static $logAttributes = [];
 
             use LogsActivity;
         };
@@ -270,8 +270,8 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_of_array_casted_properties()
     {
         $articleClass = new class() extends Article {
-            static $logAttributes = ['json'];
-            static $logOnlyDirty = true;
+            public static $logAttributes = ['json'];
+            public static $logOnlyDirty = true;
             protected $casts = ['json' => 'collection'];
 
             use LogsActivity;
@@ -311,9 +311,9 @@ class DetectsChangesTest extends TestCase
     protected function createDirtyArticle(): Article
     {
         $articleClass = new class() extends Article {
-            static $logAttributes = ['name', 'text'];
+            public static $logAttributes = ['name', 'text'];
 
-            static $logOnlyDirty = true;
+            public static $logOnlyDirty = true;
 
             use LogsActivity;
         };
