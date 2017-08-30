@@ -50,7 +50,6 @@
             "Spatie\\Activitylog\\Test\\": "tests"
         }
     },
-
     "scripts": {
         "test": "vendor/bin/phpunit"
     },
