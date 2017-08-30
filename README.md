@@ -91,15 +91,7 @@ You can install the package via composer:
 composer require spatie/laravel-activitylog
 ```
 
-Next, you must install the service provider:
-
-```php
-// config/app.php
-'providers' => [
-    ...
-    Spatie\Activitylog\ActivitylogServiceProvider::class,
-];
-```
+The package will automatically register itself.
 
 You can publish the migration with:
 ```bash
