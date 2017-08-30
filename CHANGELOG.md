@@ -2,10 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 2.0.0 - 2017-XX-XX
+## 2.0.0 - 2017-08-30
 - added support for Laravel 5.5, dropped support for older laravel versions
 - renamed config file from `laravel-activitylog` to `activitylog`
-- rename `getChangesAttribute` function to `changes to it doesn't conflict with Laravel's native functionality
+- rename `getChangesAttribute` function to `changes` so it doesn't conflict with Laravel's native functionality
 
 ## 1.15.5 - 2017-08-08
 - fix model scope
