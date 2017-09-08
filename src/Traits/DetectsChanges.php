@@ -25,6 +25,10 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
+        if (isset(static::$logFillable)) {
+            return $this->fillable;
+        }
+
         if (! isset(static::$logAttributes)) {
             return [];
         }
