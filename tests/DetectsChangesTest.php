@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
@@ -343,6 +344,114 @@ class DetectsChangesTest extends TestCase
             'attributes' => [
                 'name' => 'my name',
                 'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_wildcard_for_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['*'];
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => null,
+                'deleted_at' => null,
+                'id' => $article->id,
+                'user_id' => null,
+                'json' => null,
+                'created_at' => '2017-01-01 12:00:00',
+                'updated_at' => '2017-01-01 12:00:00',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_wildcard_with_relation()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['*', 'user.name'];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+
+        $article = $articleClass::create([
+            'name' => 'article name',
+            'text' => 'article text',
+            'user_id' => $user->id,
+        ]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'id' => $article->id,
+                'name' => 'article name',
+                'text' => 'article text',
+                'deleted_at' => null,
+                'user_id' => $user->id,
+                'json' => null,
+                'created_at' => '2017-01-01 12:00:00',
+                'updated_at' => '2017-01-01 12:00:00',
+                'user.name' => 'user name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_wildcard_when_updating_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['*'];
+            public static $logOnlyDirty = true;
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $article = $articleClass::create([
+            'name' => 'article name',
+            'text' => 'article text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->name = 'changed name';
+        Carbon::setTestNow(Carbon::create(2018, 1, 1, 12, 0, 0));
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'changed name',
+                'updated_at' => '2018-01-01 12:00:00',
+            ],
+            'old' => [
+                'name' => 'article name',
+                'updated_at' => '2017-01-01 12:00:00',
             ],
         ];
 
