@@ -299,6 +299,56 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_use_fillable_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $fillable = ['name', 'text'];
+            protected static $logFillable = true;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_both_fillable_and_log_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $fillable = ['name'];
+            protected static $logAttributes = ['text'];
+            protected static $logFillable = true;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
