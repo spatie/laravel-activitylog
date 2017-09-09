@@ -25,15 +25,17 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
+        $attributes = [];
+
         if (isset(static::$logFillable)) {
-            return $this->fillable;
+            $attributes = array_merge($attributes, $this->fillable);
         }
 
-        if (! isset(static::$logAttributes)) {
-            return [];
+        if (isset(static::$logAttributes)) {
+            $attributes = array_merge($attributes, static::$logAttributes);
         }
 
-        return static::$logAttributes;
+        return $attributes;
     }
 
     public function shouldlogOnlyDirty(): bool
