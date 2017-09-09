@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.1.0 - 2017-09-19
+
+- added support for logging fillable attributes
 
 ## 2.0.0 - 2017-08-30
 - added support for Laravel 5.5, dropped support for older laravel versions
