@@ -47,7 +47,7 @@ class Activity extends Model
     {
         if (! $this->properties instanceof Collection) {
             return new Collection();
-        } 
+        }
         
         return collect(array_filter($this->properties->toArray(), function ($key) {
             return in_array($key, ['attributes', 'old']);
