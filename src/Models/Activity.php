@@ -45,6 +45,10 @@ class Activity extends Model
 
     public function changes(): Collection
     {
+        if (!$this->properties instanceof Collection) {
+            return new Collection();
+        } 
+        
         return collect(array_filter($this->properties->toArray(), function ($key) {
             return in_array($key, ['attributes', 'old']);
         }, ARRAY_FILTER_USE_KEY));
