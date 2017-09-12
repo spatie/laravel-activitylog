@@ -2,8 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 2.1.0 - 2017-09-19
+## 2.1.1 - 2017-09-12
+- make sure `properties` always is a collection
 
+## 2.1.0 - 2017-09-19
 - added support for logging fillable attributes
 
 ## 2.0.0 - 2017-08-30
