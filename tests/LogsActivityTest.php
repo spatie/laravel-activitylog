@@ -121,6 +121,13 @@ class LogsActivityTest extends TestCase
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
+
+        $article->forceDelete();
+
+        $this->assertCount(3, Activity::all());
+
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertNull($article->fresh());
     }
 
     /** @test */
