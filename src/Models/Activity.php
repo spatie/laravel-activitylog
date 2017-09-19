@@ -28,6 +28,10 @@ class Activity extends Model
 
     public function causer(): MorphTo
     {
+        if (config('laravel-activitylog.causer_returns_soft_deleted_models')) {
+            return $this->morphTo()->withTrashed();
+        }
+
         return $this->morphTo();
     }
 
