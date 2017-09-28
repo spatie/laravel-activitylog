@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
@@ -40,7 +41,7 @@ trait DetectsChanges
 
     public function shouldlogOnlyDirty(): bool
     {
-        if (! isset(static::$logOnlyDirty)) {
+        if (!isset(static::$logOnlyDirty)) {
             return false;
         }
 
@@ -49,12 +50,15 @@ trait DetectsChanges
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
-        if (! count($this->attributesToBeLogged())) {
+        if (!count($this->attributesToBeLogged())) {
             return [];
         }
 
-        $tmp = $this;
-        $properties['attributes'] = static::logChanges($this->exists ? $tmp->fresh() ?? $this : $this);
+        $properties['attributes'] = static::logChanges(
+            $this->exists
+                ? $this->fresh() ?? $this
+                : $this
+        );
 
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
@@ -64,13 +68,15 @@ trait DetectsChanges
 
         if ($this->shouldlogOnlyDirty() && isset($properties['old'])) {
             $properties['attributes'] = array_udiff_assoc(
-                                            $properties['attributes'],
-                                            $properties['old'],
-                                            function ($new, $old) {
-                                                return $new <=> $old;
-                                            }
-                                        );
-            $properties['old'] = collect($properties['old'])->only(array_keys($properties['attributes']))->all();
+                $properties['attributes'],
+                $properties['old'],
+                function ($new, $old) {
+                    return $new <=> $old;
+                }
+            );
+            $properties['old'] = collect($properties['old'])
+                ->only(array_keys($properties['attributes']))
+                ->all();
         }
 
         return $properties;
