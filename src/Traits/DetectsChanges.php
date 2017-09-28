@@ -3,7 +3,6 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
@@ -41,7 +40,7 @@ trait DetectsChanges
 
     public function shouldlogOnlyDirty(): bool
     {
-        if (!isset(static::$logOnlyDirty)) {
+        if (! isset(static::$logOnlyDirty)) {
             return false;
         }
 
@@ -50,7 +49,7 @@ trait DetectsChanges
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
-        if (!count($this->attributesToBeLogged())) {
+        if (! count($this->attributesToBeLogged())) {
             return [];
         }
 
