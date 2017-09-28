@@ -53,7 +53,8 @@ trait DetectsChanges
             return [];
         }
 
-        $properties['attributes'] = static::logChanges($this->exists ? $this->fresh() : $this);
+        $tmp = $this;
+        $properties['attributes'] = static::logChanges($this->exists ? $tmp->fresh() ?? $this : $this);
 
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);

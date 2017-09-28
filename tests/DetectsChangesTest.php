@@ -6,6 +6,7 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetectsChangesTest extends TestCase
 {
@@ -262,6 +263,46 @@ class DetectsChangesTest extends TestCase
             ],
         ]);
 
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
+    }
+
+    /** @test */
+    public function it_will_store_the_values_when_deleting_the_model_with_softdeletes()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text'];
+
+            use LogsActivity, SoftDeletes;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->save();
+
+        $article->delete();
+
+        $expectedChanges = collect([
+            'attributes' => [
+                'name' => 'my name',
+                'text' => null,
+            ],
+        ]);
+
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
+
+        $article->forceDelete();
+
+        $expectedChanges = collect([
+            'attributes' => [
+                'name' => 'my name',
+            ],
+        ]);
+
+        $activities = $article->activity;
+
+        $this->assertCount(3, $activities);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
     }
