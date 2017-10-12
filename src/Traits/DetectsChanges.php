@@ -84,11 +84,13 @@ trait DetectsChanges
     public static function logChanges(Model $model): array
     {
         $changes = [];
+        $collect = collect($model);
+
         foreach ($model->attributesToBeLogged() as $attribute) {
             if (str_contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
             } else {
-                $changes += collect($model)->only($attribute)->toArray();
+                $changes += $collect->only($attribute)->toArray();
             }
         }
 
