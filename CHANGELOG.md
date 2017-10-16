@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.2.0 - 2017-10-16
+- add support for logging all changed attributes using `*`
+
 ## 2.1.2 - 2017-09-28
 - fix for logging changes attributes when deleting soft deletable models
 
