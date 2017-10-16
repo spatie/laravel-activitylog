@@ -101,7 +101,7 @@ class ActivityLogger
 
     /**
      * Sets the model this activity was performed on.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Model
      * @return $this
      */
