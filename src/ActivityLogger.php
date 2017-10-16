@@ -13,26 +13,60 @@ class ActivityLogger
 {
     use Macroable;
 
-    /** @var \Illuminate\Auth\AuthManager */
+    /**
+     * The authmanager instance.
+     *
+     * @var \Illuminate\Auth\AuthManager
+     */
     protected $auth;
 
-    protected $logName = '';
-
-    /** @var bool */
-    protected $logEnabled;
-
-    /** @var \Illuminate\Database\Eloquent\Model */
-    protected $performedOn;
-
-    /** @var \Illuminate\Database\Eloquent\Model */
-    protected $causedBy;
-
-    /** @var \Illuminate\Support\Collection */
-    protected $properties;
-
-    /** @var string */
+    /**
+     * The authenticator driver.
+     *
+     * @var string
+     */
     protected $authDriver;
 
+    /**
+     * The name of the log.
+     *
+     * @var string
+     */
+    protected $logName = '';
+
+    /**
+     * Whether or not the log is enabled.
+     *
+     * @var bool
+     */
+    protected $logEnabled;
+
+    /**
+     * The model this activity was logged on.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $performedOn;
+
+    /**
+     * The model this activity was caused by.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $causedBy;
+
+    /**
+     * The additional properies to log with the activity.
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $properties;
+
+    /**
+     * @param \Illuminate\Auth\AuthManager $auth
+     * @param Illuminate\Contracts\Config\Repository $config
+     * @return null
+     */
     public function __construct(AuthManager $auth, Repository $config)
     {
         $this->auth = $auth;
@@ -52,6 +86,12 @@ class ActivityLogger
         $this->logEnabled = $config['activitylog']['enabled'] ?? true;
     }
 
+    /**
+     * Sets the model this activity was performed on. 
+     *
+     * @param \Illuminate\Database\Eloquent\Model
+     * @return $this
+     */
     public function performedOn(Model $model)
     {
         $this->performedOn = $model;
@@ -59,14 +99,21 @@ class ActivityLogger
         return $this;
     }
 
+    /**
+     * Sets the model this activity was performed on. 
+     * 
+     * @param \Illuminate\Database\Eloquent\Model
+     * @return $this
+     */
     public function on(Model $model)
     {
         return $this->performedOn($model);
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
+     * Sets the model this activity was caused by.
      *
+     * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
      * @return $this
      */
     public function causedBy($modelOrId)
@@ -78,14 +125,21 @@ class ActivityLogger
         return $this;
     }
 
+    /**
+     * Sets the model this activity was caused by.
+     *
+     * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
+     * @return $this
+     */
     public function by($modelOrId)
     {
         return $this->causedBy($modelOrId);
     }
 
     /**
-     * @param array|\Illuminate\Support\Collection $properties
+     * Define the additional properties that relates to this activity.
      *
+     * @param array|\Illuminate\Support\Collection $properties
      * @return $this
      */
     public function withProperties($properties)
@@ -96,9 +150,10 @@ class ActivityLogger
     }
 
     /**
+     * Adds an additional property that relates to this activity.
+     *
      * @param string $key
      * @param mixed  $value
-     *
      * @return $this
      */
     public function withProperty(string $key, $value)
@@ -108,6 +163,12 @@ class ActivityLogger
         return $this;
     }
 
+    /**
+     * Sets the logs name.
+     *
+     * @param string $logName
+     * @return $this
+     */
     public function useLog(string $logName)
     {
         $this->logName = $logName;
@@ -115,14 +176,21 @@ class ActivityLogger
         return $this;
     }
 
+    /**
+     * Sets the log name.
+     *
+     * @param string $logName
+     * @return $this
+     */
     public function inLog(string $logName)
     {
         return $this->useLog($logName);
     }
 
     /**
-     * @param string $description
+     * Persists this activity.
      *
+     * @param string $description
      * @return null|mixed
      */
     public function log(string $description)
@@ -153,10 +221,10 @@ class ActivityLogger
     }
 
     /**
+     * Finds the Model by either ID or Model instance.
+     *
      * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
-     *
      * @throws \Spatie\Activitylog\Exceptions\CouldNotLogActivity
-     *
      * @return \Illuminate\Database\Eloquent\Model
      */
     protected function normalizeCauser($modelOrId): Model
@@ -178,6 +246,13 @@ class ActivityLogger
         throw CouldNotLogActivity::couldNotDetermineUser($modelOrId);
     }
 
+    /**
+     * Formats the activity message against a pattern.
+     *
+     * @param string $description
+     * @param \Spatie\Activitylog\Models\Activity $activity
+     * @return string
+     */
     protected function replacePlaceholders(string $description, Activity $activity): string
     {
         return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
