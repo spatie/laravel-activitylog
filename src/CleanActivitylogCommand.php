@@ -13,7 +13,7 @@ class CleanActivitylogCommand extends Command
      * @var string
      */
     protected $signature = 'activitylog:clean
-                            {log_name=default : (optional) The log name that will be cleaned.}';
+                            {log=default : (optional) The log name that will be cleaned.}';
 
     /**
      * The console command description.
@@ -26,7 +26,7 @@ class CleanActivitylogCommand extends Command
     {
         $this->comment('Cleaning activity log...');
 
-        $log_name = $this->argument('log_name');
+        $log = $this->argument('log');
 
         $maxAgeInDays = config('activitylog.delete_records_older_than_days');
 
@@ -34,7 +34,7 @@ class CleanActivitylogCommand extends Command
 
         $activity = ActivitylogServiceProvider::getActivityModelInstance();
 
-        $amountDeleted = $activity::where('created_at', '<', $cutOffDate)->inLog($log_name)->delete();
+        $amountDeleted = $activity::where('created_at', '<', $cutOffDate)->inLog($log)->delete();
 
         $this->info("Deleted {$amountDeleted} record(s) from the activity log.");
 
