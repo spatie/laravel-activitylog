@@ -36,7 +36,7 @@ class CleanActivitylogCommand extends Command
 
         $amountDeleted = $activity::where('created_at', '<', $cutOffDate)
             ->when($log !== null, function ($query) use ($log) {
-              $query->inLog($log);
+                $query->inLog($log);
             })
             ->delete();
 
