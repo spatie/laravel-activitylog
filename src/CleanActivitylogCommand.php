@@ -13,7 +13,7 @@ class CleanActivitylogCommand extends Command
      * @var string
      */
     protected $signature = 'activitylog:clean
-                            {log=default : (optional) The log name that will be cleaned.}';
+                            {log? : (optional) The log name that will be cleaned.}';
 
     /**
      * The console command description.
