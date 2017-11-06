@@ -22,6 +22,7 @@ class CleanActivitylogCommandTest extends TestCase
     {
         collect(range(1, 60))->each(function (int $index) {
             Activity::create([
+                'log_name'    => 'default',
                 'description' => "item {$index}",
                 'created_at'  => Carbon::now()->subDays($index)->startOfDay(),
             ]);
