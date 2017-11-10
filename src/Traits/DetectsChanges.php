@@ -111,6 +111,6 @@ trait DetectsChanges
 
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute];
+        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
     }
 }
