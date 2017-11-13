@@ -82,6 +82,44 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_empty_relation_when_creating_a_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'user.name'];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'original name',
+            'text' => 'original text',
+        ]);
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'updated name',
+                'text' => 'updated text',
+                'user.name' => null,
+            ],
+            'old' => [
+                'name' => 'original name',
+                'text' => 'original text',
+                'user.name' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_store_the_changes_when_updating_a_model()
     {
         $article = $this->createArticle();
