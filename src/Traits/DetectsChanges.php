@@ -93,7 +93,7 @@ trait DetectsChanges
         $changes = [];
         foreach ($model->attributesToBeLogged() as $attribute) {
             $changes += collect([$attribute => self::getModelAttributeValue($model, $attribute)])
-                ->map(function($value) {
+                ->map(function ($value) {
                     return $value instanceof Carbon ? $value->__toString() : $value;
                 })
                 ->toArray();
@@ -106,17 +106,15 @@ trait DetectsChanges
     {
         if (str_contains($attribute, '.')) {
             return self::getRelatedModelAttributeValue($model, $attribute);
-        } elseif(in_array($attribute, $model->getHidden()) && isset($model::$logHidden) && $model::$logHidden) {
+        } elseif (in_array($attribute, $model->getHidden()) && isset($model::$logHidden) && $model::$logHidden) {
             if(isset($model::$logHiddenObfuscated) && $model::$logHiddenObfuscated) {
                 return config('activitylog.hidden_obfuscation');
             }
 
             return $model->getAttribute($attribute);
-        } elseif(!in_array($attribute, $model->getHidden()) && array_key_exists($attribute, $model->getAttributes())) {
+        } elseif (!in_array($attribute, $model->getHidden()) && array_key_exists($attribute, $model->getAttributes())) {
             return $model->getAttribute($attribute);
         }
-
-        return null;
     }
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute)
@@ -131,12 +129,10 @@ trait DetectsChanges
 
         $model->loadMissing($relationName);
 
-        if($model->relationLoaded($relationName) && $model->$relationName instanceof Model) {
+        if ($model->relationLoaded($relationName) && $model->$relationName instanceof Model) {
             $relatedModel = $model->$relationName;
 
             return self::getModelAttributeValue($relatedModel, $relatedAttribute);
         }
-
-        return null;
     }
 }
