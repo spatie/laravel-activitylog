@@ -299,6 +299,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = collect([
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ]);
 
@@ -336,6 +337,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = collect([
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ]);
 
@@ -376,6 +378,90 @@ class DetectsChangesTest extends TestCase
                 ],
             ],
         ];
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_fillable_without_hidden_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $fillable = ['name', 'text'];
+            protected $hidden = ['name'];
+            protected static $logFillable = true;
+            public static $logHidden = false;
+            public static $logHiddenObfuscated = false;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => null,
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_fillable_with_hidden_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $fillable = ['name', 'text'];
+            protected $hidden = ['name'];
+            protected static $logFillable = true;
+            public static $logHidden = true;
+            public static $logHiddenObfuscated = false;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_fillable_with_hidden_obfuscated_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $fillable = ['name', 'text'];
+            protected $hidden = ['name'];
+            protected static $logFillable = true;
+            public static $logHidden = true;
+            public static $logHiddenObfuscated = true;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => config('activitylog.hidden_obfuscation'),
+                'text' => 'my text',
+            ],
+        ];
+
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
