@@ -107,12 +107,12 @@ trait DetectsChanges
         if (str_contains($attribute, '.')) {
             return self::getRelatedModelAttributeValue($model, $attribute);
         } elseif (in_array($attribute, $model->getHidden()) && isset($model::$logHidden) && $model::$logHidden) {
-            if(isset($model::$logHiddenObfuscated) && $model::$logHiddenObfuscated) {
+            if (isset($model::$logHiddenObfuscated) && $model::$logHiddenObfuscated) {
                 return config('activitylog.hidden_obfuscation');
             }
 
             return $model->getAttribute($attribute);
-        } elseif (!in_array($attribute, $model->getHidden()) && array_key_exists($attribute, $model->getAttributes())) {
+        } elseif (! in_array($attribute, $model->getHidden()) && array_key_exists($attribute, $model->getAttributes())) {
             return $model->getAttribute($attribute);
         }
     }
