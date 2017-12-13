@@ -27,11 +27,11 @@ trait DetectsChanges
     {
         $attributes = [];
 
-        if (isset(static::$logFillable)) {
+        if (isset(static::$logFillable) && static::$logFillable) {
             $attributes = array_merge($attributes, $this->fillable);
         }
 
-        if (isset(static::$logAttributes)) {
+        if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
             if (in_array('*', static::$logAttributes)) {
                 $withoutWildcard = array_diff(static::$logAttributes, ['*']);
 
