@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.3.2 - 2017-12-13
+- fix bugs concerning `attributesToBeLogged`
+
 ## 2.3.1 - 2017-11-13
 - allow nullable relation when using `logChanges`
 
