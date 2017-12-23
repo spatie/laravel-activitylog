@@ -101,5 +101,4 @@ class Activity extends Model
     {
         return (new \ReflectionClass($this->subject))->getShortName();
     }
-
 }
