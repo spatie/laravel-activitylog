@@ -94,7 +94,7 @@ class Activity extends Model
     }
 
     /**
-     * Get the Subject Class Name without Namespace
+     * Get the Subject Class Name without Namespace.
      * @return string
      */
     public function getSubjectNameAttribute()
