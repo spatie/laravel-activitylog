@@ -92,4 +92,13 @@ class Activity extends Model
             ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
     }
+
+    /**
+     * Get the Subject Class Name without Namespace.
+     * @return string
+     */
+    public function getSubjectNameAttribute()
+    {
+        return (new \ReflectionClass($this->subject))->getShortName();
+    }
 }
