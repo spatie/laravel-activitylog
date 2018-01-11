@@ -26,19 +26,27 @@ class HasActivityTest extends TestCase
     /** @test */
     public function it_can_log_activity_on_subject_by_same_causer()
     {
-        $user = $this->createUser();
+        $user = $this->loginWithFakeUser();
+
+        $user->name = 'HasActivity Name';
+        $user->save();
+
         $this->assertCount(1, Activity::all());
 
         $this->assertInstanceOf(get_class($this->user), $this->getLastActivity()->subject);
         $this->assertEquals($user->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
         $this->assertCount(1, $user->activity);
+        $this->assertCount(1, $user->actions);
     }
 
-    protected function createUser(): User
+    public function loginWithFakeUser()
     {
         $user = new $this->user();
-        $user->name = 'my name';
-        $user->save();
+
+        $user::find(1);
+
+        $this->be($user);
 
         return $user;
     }
