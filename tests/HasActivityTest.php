@@ -2,10 +2,10 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\HasActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Models\Activity;
 
 class HasActivityTest extends TestCase
 {
