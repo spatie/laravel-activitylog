@@ -14,6 +14,8 @@ class User extends Model implements Authenticatable
 
     protected $guarded = [];
 
+    protected $fillable = ['id', 'name'];
+
     /**
      * Get the name of the unique identifier for the user.
      *
