@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.4.1 - 2018-01-20
+- use a `text` column for `description`
+
 ## 2.4.0 - 2018-01-20
 - add `HasActivity`
 
