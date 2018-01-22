@@ -25,6 +25,7 @@ class ActivitylogServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__.'/../migrations/create_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_create_activity_log_table.php"),
+                __DIR__.'/../migrations/change_description_column_in_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_change_description_column_in_activity_log_table.php"),
             ], 'migrations');
         }
     }
