@@ -66,6 +66,10 @@ trait LogsActivity
 
     public function getLogNameToUse(string $eventName = ''): string
     {
+        if (isset(static::$logName)) {
+            return static::$logName;
+        }
+
         return config('activitylog.default_log_name');
     }
 
