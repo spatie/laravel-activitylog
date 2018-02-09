@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
@@ -91,26 +92,47 @@ trait DetectsChanges
     {
         $changes = [];
         foreach ($model->attributesToBeLogged() as $attribute) {
-            if (str_contains($attribute, '.')) {
-                $changes += self::getRelatedModelAttributeValue($model, $attribute);
-            } else {
-                $changes += collect($model)->only($attribute)->toArray();
-            }
+            $changes += collect([$attribute => self::getModelAttributeValue($model, $attribute)])
+                ->map(function ($value) {
+                    return $value instanceof Carbon ? $value->__toString() : $value;
+                })
+                ->toArray();
         }
 
         return $changes;
     }
 
-    protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
+    protected static function getModelAttributeValue(Model $model, string $attribute)
+    {
+        if (str_contains($attribute, '.')) {
+            return self::getRelatedModelAttributeValue($model, $attribute);
+        } elseif (in_array($attribute, $model->getHidden()) && isset($model::$logHidden) && $model::$logHidden) {
+            if (isset($model::$logHiddenObfuscated) && $model::$logHiddenObfuscated) {
+                return config('activitylog.hidden_obfuscation');
+            }
+
+            return $model->getAttribute($attribute);
+        } elseif (! in_array($attribute, $model->getHidden()) && array_key_exists($attribute, $model->getAttributes())) {
+            return $model->getAttribute($attribute);
+        }
+    }
+
+    protected static function getRelatedModelAttributeValue(Model $model, string $attribute)
     {
         if (substr_count($attribute, '.') > 1) {
             throw CouldNotLogChanges::invalidAttribute($attribute);
         }
 
-        list($relatedModelName, $relatedAttribute) = explode('.', $attribute);
+        $keyParts = explode('.', $attribute);
+        $relationName = array_shift($keyParts);
+        $relatedAttribute = implode('.', $keyParts);
 
-        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+        $model->loadMissing($relationName);
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+        if ($model->relationLoaded($relationName) && $model->$relationName instanceof Model) {
+            $relatedModel = $model->$relationName;
+
+            return self::getModelAttributeValue($relatedModel, $relatedAttribute);
+        }
     }
 }
