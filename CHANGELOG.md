@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.5.1 - 2018-02-11
+- improve support for soft deletes
+
 ## 2.5.0 - 2018-02-09
 - allow model to override the default log name
 
