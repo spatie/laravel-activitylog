@@ -94,7 +94,7 @@ trait DetectsChanges
             if (str_contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
             } else {
-                $changes += $model->getAttribute($attribute);
+                $changes += [$attribute => $model->getAttribute($attribute)];
             }
         }
 
