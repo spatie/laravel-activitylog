@@ -27,6 +27,13 @@ return [
     'default_auth_driver' => null,
 
     /*
+     * Specify the database connection to use for logging.
+     * The config should be published before migrations in order to create
+     * the schema on the correct database.
+     */
+    'default_connection' => '',
+
+    /*
      * If set to true, the subject returns soft deleted models.
      */
     'subject_returns_soft_deleted_models' => false,
