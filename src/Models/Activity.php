@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Activity extends Model
 {
+    protected $connection = '';
+
     protected $table = 'activity_log';
 
     public $guarded = [];
@@ -16,6 +18,13 @@ class Activity extends Model
     protected $casts = [
         'properties' => 'collection',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        $this->connection = config('activitylog.default_connection', 'default');
+
+        parent::__construct($attributes);
+    }
 
     public function subject(): MorphTo
     {

@@ -243,4 +243,14 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf($activityClassName, $activityModel);
     }
+
+    /** @test */
+    public function it_can_log_an_activity_to_custom_database()
+    {
+        $this->app['config']['activitylog.default_connection'] = 'sqlite2';
+
+        activity()->log($this->activityDescription);
+
+        $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    }
 }
