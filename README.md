@@ -51,7 +51,7 @@ $activity->description; //returns 'updated'
 $activity->subject; //returns the instance of NewsItem that was created
 ```
 
-Calling `$activity->changes` will return this array:
+Calling `$activity->changes()` will return this array:
 
 ```php
 [
