@@ -32,6 +32,12 @@ return [
     'subject_returns_soft_deleted_models' => false,
 
     /*
+     * This is the name of the table that will be created to store
+     * the logs. Feel free to update it according to your needs.
+     */
+    'table_name' => 'activity_log',
+
+    /*
      * This model will be used to log activity. The only requirement is that
      * it should be or extend the Spatie\Activitylog\Models\Activity model.
      */
