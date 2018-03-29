@@ -9,13 +9,20 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Activity extends Model
 {
-    protected $table = 'activity_log';
+    protected $table;
 
     public $guarded = [];
 
     protected $casts = [
         'properties' => 'collection',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        $this->table = config('activitylog.table_name');
+
+        parent::__construct($attributes);
+    }
 
     public function subject(): MorphTo
     {
