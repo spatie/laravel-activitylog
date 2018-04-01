@@ -13,6 +13,11 @@ class Activity extends Model
 
     public $guarded = [];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
     protected $casts = [
         'properties' => 'collection',
     ];
