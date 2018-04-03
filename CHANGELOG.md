@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.6.0 - 2018-04-03
+- add `table_name` config option
+
 ## 2.5.1 - 2018-02-11
 - improve support for soft deletes
 
