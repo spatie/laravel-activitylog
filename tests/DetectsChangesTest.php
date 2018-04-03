@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetectsChangesTest extends TestCase
 {
-    /** @var \Spatie\Activitylog\Test\Article|\Spatie\Activitylog\Traits\LogsActivity */
+    /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
 
     public function setUp()
@@ -182,7 +182,7 @@ class DetectsChangesTest extends TestCase
                 'name' => $originalText,
                 'text' => $originalName,
             ],
-            'old'        => [
+            'old' => [
                 'name' => $originalName,
                 'text' => $originalText,
             ],
@@ -218,15 +218,15 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                    'name' => 'name',
-                    'text' => 'text',
-                    'user.name' => 'another name',
-                ],
+                'name' => 'name',
+                'text' => 'text',
+                'user.name' => 'another name',
+            ],
             'old' => [
-                    'name' => 'name',
-                    'text' => 'text',
-                    'user.name' => 'a name',
-                ],
+                'name' => 'name',
+                'text' => 'text',
+                'user.name' => 'a name',
+            ],
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
@@ -261,11 +261,11 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                    'user.name' => 'another name',
-                ],
+                'user.name' => 'another name',
+            ],
             'old' => [
-                    'user.name' => 'a name',
-                ],
+                'user.name' => 'a name',
+            ],
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
