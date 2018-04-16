@@ -18,7 +18,7 @@ class ActivityLogger
 
     protected $logName = '';
 
-    /** @var bool */$! $
+    /** @var bool */
     protected $logEnabled;
 
     /** @var \Illuminate\Database\Eloquent\Model */
