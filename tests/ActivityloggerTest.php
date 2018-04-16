@@ -249,8 +249,7 @@ class ActivityloggerTest extends TestCase
     {
         try {
             activity()->causedBy(null)->log('nothing');
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->assertFalse(true);
         }
     }
