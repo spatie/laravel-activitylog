@@ -18,7 +18,7 @@ class ActivityLogger
 
     protected $logName = '';
 
-    /** @var bool */
+    /** @var bool */$! $
     protected $logEnabled;
 
     /** @var \Illuminate\Database\Eloquent\Model */
@@ -71,7 +71,7 @@ class ActivityLogger
      */
     public function causedBy($modelOrId)
     {
-        if (! $modelOrId) {
+        if ($modelOrId === null) {
             return;
         }
 
