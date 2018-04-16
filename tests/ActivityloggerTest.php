@@ -243,4 +243,15 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf($activityClassName, $activityModel);
     }
+    
+    /** @test */
+    public function it_accepts_null_parameter_for_caused_by()
+    {
+        try {
+            activity()->causedBy(null)->log('nothing');
+        }
+        catch(\Exception $e) {
+            $this->assertFalse(true);
+        }
+    }
 }
