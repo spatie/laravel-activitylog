@@ -3,8 +3,8 @@
 namespace Spatie\Activitylog\Exceptions;
 
 use Exception;
-use Spatie\Activitylog\Models\Activity;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Contracts\Activity;
 
 class InvalidConfiguration extends Exception
 {

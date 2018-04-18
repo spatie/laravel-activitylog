@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 interface Activity
 {
-
-
     public function subject(): MorphTo;
 
     public function causer(): MorphTo;
@@ -47,5 +45,4 @@ interface Activity
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeForSubject(Builder $query, Model $subject): Builder;
-    
 }

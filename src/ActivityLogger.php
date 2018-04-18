@@ -4,8 +4,8 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Traits\Macroable;
+use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Contracts\Config\Repository;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
@@ -127,7 +127,7 @@ class ActivityLogger
      */
     public function log(string $description)
     {
-        if (! $this->logEnabled) {
+        if (!$this->logEnabled) {
             return;
         }
 
@@ -183,9 +183,9 @@ class ActivityLogger
         return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
             $match = $match[0];
 
-            $attribute = (string) string($match)->between(':', '.');
+            $attribute = (string)string($match)->between(':', '.');
 
-            if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
+            if (!in_array($attribute, ['subject', 'causer', 'properties'])) {
                 return $match;
             }
 

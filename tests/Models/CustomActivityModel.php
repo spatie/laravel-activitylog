@@ -2,10 +2,10 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CustomActivityModel extends Model implements Activity
