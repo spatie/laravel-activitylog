@@ -127,7 +127,7 @@ class ActivityLogger
      */
     public function log(string $description)
     {
-        if (!$this->logEnabled) {
+        if (! $this->logEnabled) {
             return;
         }
 
@@ -183,9 +183,9 @@ class ActivityLogger
         return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
             $match = $match[0];
 
-            $attribute = (string)string($match)->between(':', '.');
+            $attribute = (string) string($match)->between(':', '.');
 
-            if (!in_array($attribute, ['subject', 'causer', 'properties'])) {
+            if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
                 return $match;
             }
 
