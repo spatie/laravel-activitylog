@@ -1,7 +1,7 @@
 <?php
 
 namespace Spatie\Activitylog\Test\Models;
-
-class InvalidActivityModel
+use Illuminate\Database\Eloquent\Model;
+class InvalidActivityModel extends Model
 {
 }

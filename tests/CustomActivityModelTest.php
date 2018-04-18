@@ -45,7 +45,17 @@ class CustomActivityModelTest extends TestCase
     }
 
     /** @test */
-    public function it_throws_an_exception_when_model_doesnt_extend_package_model()
+    public function it_throws_an_exception_when_model_doesnt_implements_activity()
+    {
+        $this->app['config']->set('activitylog.activity_model', InvalidActivityModel::class);
+
+        $this->expectException(InvalidConfiguration::class);
+
+        activity()->log($this->activityDescription);
+    }
+
+    /** @test */
+    public function it_throws_an_exception_when_model_doesnt_extend_model()
     {
         $this->app['config']->set('activitylog.activity_model', InvalidActivityModel::class);
 

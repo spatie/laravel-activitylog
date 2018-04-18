@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class CustomActivityModel extends Model implements Activity
+class CustomInvalidActivityModel implements Activity
 {
     protected $table;
 
