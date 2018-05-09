@@ -11,6 +11,8 @@ class Activity extends Model
 {
     protected $table;
 
+    protected $connection;
+
     public $guarded = [];
 
     protected $casts = [
@@ -20,6 +22,7 @@ class Activity extends Model
     public function __construct(array $attributes = [])
     {
         $this->table = config('activitylog.table_name');
+        $this->connection = config('activitylog.connection_name');
 
         parent::__construct($attributes);
     }
