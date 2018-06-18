@@ -587,7 +587,7 @@ class DetectsChangesTest extends TestCase
     {
         $articleClass = new class() extends Article {
             public static $logAttributes = ['*'];
-            public static $logAttributesToIgnore = ['updated_at'];
+            public static $logAttributesToIgnore = ['name', 'updated_at'];
 
             use LogsActivity;
         };
@@ -600,7 +600,6 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'name' => 'my name',
                 'text' => null,
                 'deleted_at' => null,
                 'id' => $article->id,
