@@ -582,6 +582,37 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_use_ignored_attributes_while_updating()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['*'];
+            public static $logAttributesToIgnore = ['updated_at'];
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => null,
+                'deleted_at' => null,
+                'id' => $article->id,
+                'user_id' => null,
+                'json' => null,
+                'created_at' => '2017-01-01 12:00:00',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
