@@ -87,7 +87,17 @@ trait DetectsChanges
                 ->only(array_keys($properties['attributes']))
                 ->all();
         }
-
+        foreach (static::$logAttributes as $key => $value) {
+            if(!is_numeric($key)){ // if $logAttributes not have custom keies
+                $properties['attributes'][$key] = $properties['attributes'][$value];
+                unset($properties['attributes'][$value]);
+                // if status is update
+                if(isset($properties['old'])){ // in_array() didn't work :D
+                    $properties['old'][$key] = $properties['old'][$value];
+                    unset($properties['old'][$value]);
+                }
+            }
+        }
         return $properties;
     }
 
