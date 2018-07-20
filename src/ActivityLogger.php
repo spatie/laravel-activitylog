@@ -120,6 +120,20 @@ class ActivityLogger
         return $this->useLog($logName);
     }
 
+    public function disableLogging()
+    {
+        $this->logEnabled = false;
+
+        return $this;
+    }
+
+    public function enableLogging()
+    {
+        $this->logEnabled = true;
+
+        return $this;
+    }
+
     /**
      * @param string $description
      *
