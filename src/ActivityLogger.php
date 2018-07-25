@@ -58,6 +58,13 @@ class ActivityLogger
 
         return $this;
     }
+    
+    public function removePerformedOn()
+    {
+        $this->performedOn = null;
+
+        return $this;
+    }
 
     public function on(Model $model)
     {
