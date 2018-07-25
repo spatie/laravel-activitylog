@@ -58,7 +58,7 @@ class ActivityLogger
 
         return $this;
     }
-    
+
     public function removePerformedOn()
     {
         $this->performedOn = null;
