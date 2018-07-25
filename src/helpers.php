@@ -7,6 +7,6 @@ if (! function_exists('activity')) {
     {
         $defaultLogName = config('activitylog.default_log_name');
 
-        return app(ActivityLogger::class)->useLog($logName ?? $defaultLogName);
+        return app(ActivityLogger::class)->removePerformedOn()->useLog($logName ?? $defaultLogName);
     }
 }
