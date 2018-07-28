@@ -35,7 +35,7 @@ class ActivitylogServiceProvider extends ServiceProvider
         ]);
 
         $this->app->bind(ActivityLogger::class);
-        
+
         $this->app->singleton(ActivityLogStatus::class);
     }
 
