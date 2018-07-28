@@ -97,7 +97,7 @@ class ActivityLogger
 
     /**
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return $this
      */
@@ -118,6 +118,20 @@ class ActivityLogger
     public function inLog(string $logName)
     {
         return $this->useLog($logName);
+    }
+
+    public function disableLogging()
+    {
+        $this->logEnabled = false;
+
+        return $this;
+    }
+
+    public function enableLogging()
+    {
+        $this->logEnabled = true;
+
+        return $this;
     }
 
     /**

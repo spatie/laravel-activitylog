@@ -243,4 +243,26 @@ class ActivityloggerTest extends TestCase
 
         $this->assertInstanceOf($activityClassName, $activityModel);
     }
+
+    /** @test */
+    public function it_will_not_log_an_activity_when_the_log_is_manually_disabled()
+    {
+        activity()->disableLogging();
+
+        activity()->log($this->activityDescription);
+
+        $this->assertNull($this->getLastActivity());
+    }
+
+    /** @test */
+    public function it_will_log_an_activity_when_the_log_is_manually_enabled()
+    {
+        config(['activitylog.enabled' => false]);
+
+        activity()->enableLogging();
+
+        activity()->log($this->activityDescription);
+
+        $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    }
 }

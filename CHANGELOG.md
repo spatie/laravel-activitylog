@@ -2,6 +2,15 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.8.0 - 2018-07-21
+- add `enableLogging()` and `disableLogging()`
+
+## 2.7.0 - 2018-06-18
+- add ability to ignore changes to attributes specified in  `$logAttributesToIgnore`
+
+## 2.6.0 - 2018-04-03
+- add `table_name` config option
+
 ## 2.5.1 - 2018-02-11
 - improve support for soft deletes
 
