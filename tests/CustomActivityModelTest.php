@@ -41,7 +41,7 @@ class CustomActivityModelTest extends TestCase
 
         activity()->log($this->activityDescription);
 
-        $this->doNotMarkAsRisky();
+        $this->markTestAsPassed();
     }
 
     /** @test */

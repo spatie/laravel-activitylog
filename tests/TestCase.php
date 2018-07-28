@@ -114,7 +114,7 @@ abstract class TestCase extends OrchestraTestCase
         return Activity::all()->last();
     }
 
-    public function doNotMarkAsRisky()
+    public function markTestAsPassed()
     {
         $this->assertTrue(true);
     }

@@ -232,7 +232,8 @@ class ActivityloggerTest extends TestCase
     /** @test */
     public function it_returns_an_instance_of_the_activity_log_after_logging_when_using_a_custom_model()
     {
-        $activityClass = new class extends Activity {
+        $activityClass = new class extends Activity
+        {
         };
 
         $activityClassName = get_class($activityClass);
@@ -264,5 +265,13 @@ class ActivityloggerTest extends TestCase
         activity()->log($this->activityDescription);
 
         $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_accepts_null_parameter_for_caused_by()
+    {
+            activity()->causedBy(null)->log('nothing');
+
+            $this->markTestAsPassed();
     }
 }

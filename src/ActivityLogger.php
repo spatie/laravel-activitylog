@@ -81,7 +81,7 @@ class ActivityLogger
     public function causedBy($modelOrId)
     {
         if ($modelOrId === null) {
-            return;
+            return $this;
         }
 
         $model = $this->normalizeCauser($modelOrId);
