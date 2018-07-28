@@ -34,7 +34,9 @@ class ActivitylogServiceProvider extends ServiceProvider
             'command.activitylog:clean',
         ]);
 
-        $this->app->singleton(ActivityLogger::class);
+        $this->app->bind(ActivityLogger::class);
+        
+        $this->app->singleton(ActivityLogStatus::class);
     }
 
     public static function determineActivityModel(): string

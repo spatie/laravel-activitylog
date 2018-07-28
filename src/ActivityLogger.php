@@ -18,9 +18,6 @@ class ActivityLogger
 
     protected $logName = '';
 
-    /** @var bool */
-    protected $logEnabled;
-
     /** @var \Illuminate\Database\Eloquent\Model */
     protected $performedOn;
 
@@ -33,7 +30,10 @@ class ActivityLogger
     /** @var string */
     protected $authDriver;
 
-    public function __construct(AuthManager $auth, Repository $config)
+    /** @var \Spatie\Activitylog\ActivityLogStatus */
+    protected $logStatus;
+
+    public function __construct(AuthManager $auth, Repository $config, ActivityLogStatus $logStatus)
     {
         $this->auth = $auth;
 
@@ -50,6 +50,15 @@ class ActivityLogger
         $this->logName = $config['activitylog']['default_log_name'];
 
         $this->logEnabled = $config['activitylog']['enabled'] ?? true;
+
+        $this->logStatus = $logStatus;
+    }
+
+    public function setLogStatus(ActivityLogStatus $logStatus)
+    {
+        $this->logStatus = $logStatus;
+
+        return $this;
     }
 
     public function performedOn(Model $model)
@@ -120,16 +129,16 @@ class ActivityLogger
         return $this->useLog($logName);
     }
 
-    public function disableLogging()
+    public function enableLogging()
     {
-        $this->logEnabled = false;
+        $this->logStatus->enable();
 
         return $this;
     }
 
-    public function enableLogging()
+    public function disableLogging()
     {
-        $this->logEnabled = true;
+        $this->logStatus->disable();
 
         return $this;
     }
@@ -141,7 +150,7 @@ class ActivityLogger
      */
     public function log(string $description)
     {
-        if (! $this->logEnabled) {
+        if ($this->logStatus->disabled()) {
             return;
         }
 
