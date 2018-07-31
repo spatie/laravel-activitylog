@@ -129,7 +129,7 @@ trait LogsActivity
             }
         }
 
-        if (!$this->shouldlogEmptyChanges() && empty($this->attributeValuesToBeLogged($eventName)['attributes'])) {
+        if (! $this->shouldlogEmptyChanges() && empty($this->attributeValuesToBeLogged($eventName)['attributes'])) {
             return false;
         }
 

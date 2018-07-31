@@ -153,7 +153,7 @@ class DetectsChangesTest extends TestCase
         $article->json = '[]';
 
         $article->save();
-        
+
         $this->assertNotEquals('updated', $this->getLastActivity()->description);
     }
 
