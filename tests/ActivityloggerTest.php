@@ -151,6 +151,31 @@ class ActivityloggerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_log_activity_and_merge_properties()
+    {
+        $properties = [
+            'property' => [
+                'subProperty' => 'value',
+            ],
+        ];
+
+        $mergedProperties = [
+            'anotherProperty' => 'another_value',
+        ];
+
+        activity()
+            ->withProperties($properties)
+            ->withProperties($mergedProperties)
+            ->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+
+        $this->assertInstanceOf(Collection::class, $firstActivity->properties);
+        $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
+        $this->assertEquals('another_value', $firstActivity->getExtraProperty('anotherProperty'));
+    }
+
+    /** @test */
     public function it_can_translate_a_given_causer_id_to_an_object()
     {
         $userId = User::first()->id;

@@ -103,7 +103,7 @@ class ActivityLogger
      */
     public function withProperties($properties)
     {
-        $this->properties = collect($properties);
+        $this->properties = $this->properties->merge(collect($properties));
 
         return $this;
     }
