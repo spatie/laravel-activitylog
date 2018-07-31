@@ -144,6 +144,20 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_ignore_empty_changes()
+    {
+        $article = $this->createDirtyArticle();
+
+        $article::$logEmptyChanges = false;
+
+        $article->json = '[]';
+
+        $article->save();
+
+        $this->assertNotEquals('updated', $this->getLastActivity()->description);
+    }
+
+    /** @test */
     public function it_can_store_dirty_changes_only()
     {
         $article = $this->createDirtyArticle();
@@ -627,6 +641,8 @@ class DetectsChangesTest extends TestCase
             public static $logAttributes = ['name', 'text'];
 
             public static $logOnlyDirty = true;
+
+            public static $logEmptyChanges = true;
 
             use LogsActivity;
         };

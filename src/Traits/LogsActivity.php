@@ -104,6 +104,15 @@ trait LogsActivity
         return static::$ignoreChangedAttributes;
     }
 
+    public function shouldlogEmptyChanges(): bool
+    {
+        if (! isset(static::$logEmptyChanges)) {
+            return true;
+        }
+
+        return static::$logEmptyChanges;
+    }
+
     protected function shouldLogEvent(string $eventName): bool
     {
         if (! $this->enableLoggingModelsEvents) {
@@ -118,6 +127,10 @@ trait LogsActivity
             if ($this->getDirty()['deleted_at'] === null) {
                 return false;
             }
+        }
+
+        if (! $this->shouldlogEmptyChanges() && empty($this->attributeValuesToBeLogged($eventName)['attributes'])) {
+            return false;
         }
 
         //do not log update event if only ignored attributes are changed
