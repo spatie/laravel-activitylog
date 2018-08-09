@@ -61,7 +61,16 @@ trait LogsActivity
 
     public function getDescriptionForEvent(string $eventName): string
     {
+        if ($customDescriptions = $this->getCustomDescriptionsForEvents($eventName)) {
+            return $customDescriptions[$eventName] ?? $eventName;
+        }
+
         return $eventName;
+    }
+
+    public function getCustomDescriptionsForEvents(string $eventName): array
+    {
+        return [];
     }
 
     public function getLogNameToUse(string $eventName = ''): string
