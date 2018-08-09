@@ -267,6 +267,63 @@ class LogsActivityTest extends TestCase
         $this->assertEquals(':causer.name updated', $activities[1]->description);
     }
 
+    /** @test */
+    public function it_accepts_custom_description_for_each_event()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+
+            public function getCustomDescriptionsForEvents($eventName)
+            {
+                return [
+                    'created' => "This model was $eventName",
+                    'updated' => "This model has been $eventName"
+                ];
+            }
+        };
+
+        $entity = new $model();
+        $entity->save();
+        $entity->name = 'my name';
+        $entity->save();
+
+        $activities = $entity->activity;
+
+        $this->assertCount(2, $activities);
+        $this->assertEquals($entity->id, $activities[0]->subject->id);
+        $this->assertEquals($entity->id, $activities[1]->subject->id);
+        $this->assertEquals('This model was created', $activities[0]->description);
+        $this->assertEquals('This model has been updated', $activities[1]->description);
+    }
+
+    /** @test */
+    public function it_fallsback_to_default_description_if_it_is_not_overridden_in_custom_descriptions_array()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+
+            public function getCustomDescriptionsForEvents($eventName)
+            {
+                return [
+                    'created' => "This model was $eventName",
+                ];
+            }
+        };
+
+        $entity = new $model();
+        $entity->save();
+        $entity->name = 'my name';
+        $entity->save();
+
+        $activities = $entity->activity;
+
+        $this->assertCount(2, $activities);
+        $this->assertEquals($entity->id, $activities[0]->subject->id);
+        $this->assertEquals($entity->id, $activities[1]->subject->id);
+        $this->assertEquals('This model was created', $activities[0]->description);
+        $this->assertEquals('updated', $activities[1]->description);
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
