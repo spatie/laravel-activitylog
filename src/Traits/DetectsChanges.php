@@ -100,7 +100,6 @@ trait DetectsChanges
             } else {
                 if ($model->exists('hidden'))
                 $changes += collect($model->makeVisible($attribute))->only($attribute)->toArray();
-//                $changes += collect($model)->only($attribute)->toArray();
             }
         }
 
