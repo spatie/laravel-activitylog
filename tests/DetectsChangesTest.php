@@ -165,6 +165,39 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_dirty_changes_only_with_hidden_attribute()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            public static $logAttributes = ['name', 'text'];
+
+            public static $logOnlyDirty = true;
+
+            protected $hidden = ['name'];
+        };
+
+        $article = $articleClass::create([
+            'name' => 'user name',
+            'text' => 'article text',
+        ]);
+
+        $article->name = 'updated name';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'updated name',
+            ],
+            'old' => [
+                'name' => 'user name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_store_dirty_changes_for_swapping_values()
     {
         $article = $this->createDirtyArticle();
