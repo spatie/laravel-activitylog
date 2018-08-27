@@ -98,7 +98,6 @@ trait DetectsChanges
             if (str_contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
             } else {
-                if ($model->exists('hidden'))
                 $changes += collect($model->makeVisible($attribute))->only($attribute)->toArray();
             }
         }
