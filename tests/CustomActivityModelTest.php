@@ -3,8 +3,8 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Test\Models\Activity;
-use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Test\Models\InvalidActivity;
+use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Test\Models\AnotherInvalidActivity;
 
 class CustomActivityModelTest extends TestCase
