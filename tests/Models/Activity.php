@@ -5,8 +5,8 @@ namespace Spatie\Activitylog\Test\Models;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class Activity extends Model implements ActivityContract
 {
