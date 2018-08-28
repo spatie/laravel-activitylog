@@ -5,10 +5,10 @@ namespace Spatie\Activitylog\Test\Models;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Contracts\Activity;
+use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class CustomInvalidActivityModel implements Activity
+class Activity extends Model implements ActivityContract
 {
     protected $table;
 
@@ -40,7 +40,7 @@ class CustomInvalidActivityModel implements Activity
     }
 
     /**
-     * Get the extra properties with the given name.
+     * Get the extra property with the given name.
      *
      * @param string $propertyName
      *

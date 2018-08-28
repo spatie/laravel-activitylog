@@ -5,10 +5,10 @@ namespace Spatie\Activitylog\Test\Models;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Contracts\Activity;
+use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class CustomActivityModel extends Model implements Activity
+class AnotherInvalidActivity implements ActivityContract
 {
     protected $table;
 
