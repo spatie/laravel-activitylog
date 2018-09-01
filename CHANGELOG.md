@@ -2,6 +2,9 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 2.8.3 - 2018-09-01
+- add support for L5.7
+
 ## 2.8.2 - 2018-07-28
 - allow `null` to be passed to `causedBy`
 
