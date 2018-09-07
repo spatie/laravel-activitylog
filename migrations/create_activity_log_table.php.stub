@@ -6,11 +6,23 @@ use Illuminate\Database\Migrations\Migration;
 class CreateActivityLogTable extends Migration
 {
     /**
+     * Table name.
+
+     * @type string
+     */
+    protected $table;
+
+    public function __construct()
+    {
+        $this->table = config('activitylog.table_name');
+    }
+
+    /**
      * Run the migrations.
      */
     public function up()
     {
-        Schema::create(config('activitylog.table_name'), function (Blueprint $table) {
+        Schema::create($this->table, function (Blueprint $table) {
             $table->increments('id');
             $table->string('log_name')->nullable();
             $table->text('description');
@@ -30,6 +42,6 @@ class CreateActivityLogTable extends Migration
      */
     public function down()
     {
-        Schema::drop(config('activitylog.table_name'));
+        Schema::drop($this->table);
     }
 }
