@@ -17,7 +17,6 @@ class Activity extends Model
 
     public function __construct(array $attributes = [])
     {
-        /** Set the table name */
         if (! isset($this->table)) {
             $this->setTable(config('activitylog.table_name'));
         }
