@@ -19,12 +19,12 @@ class CustomTableNameModelTest extends TestCase
     public function it_uses_a_custom_table_name()
     {
         $model = new Activity();
-        $new_table_name = 'my_personal_activities';
+        $newTableName = 'my_personal_activities';
 
-        $model->setTable($new_table_name);
+        $model->setTable($newTableName);
 
         $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
-        $this->assertEquals($model->getTable(), $new_table_name);
+        $this->assertEquals($model->getTable(), $newTableName);
     }
 
     /** @test */
@@ -33,6 +33,6 @@ class CustomTableNameModelTest extends TestCase
         $model = new CustomTableNameOnActivityModel();
 
         $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
-        $this->assertEquals($model->getTable(), 'my_personal_activities');
+        $this->assertEquals($model->getTable(), 'custom_table_name');
     }
 }

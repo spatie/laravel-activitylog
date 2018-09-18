@@ -6,5 +6,5 @@ use Spatie\Activitylog\Models\Activity;
 
 class CustomTableNameOnActivityModel extends Activity
 {
-    protected $table = 'my_personal_activities';
+    protected $table = 'custom_table_name';
 }
