@@ -4,6 +4,7 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Builder;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
@@ -170,7 +171,9 @@ class ActivityLogger
 
         $activity->properties = $this->properties;
 
-        $activity->description = $this->replacePlaceholders($description, $activity);
+        $fullDescription = $this->replacePlaceholders($description, $activity);
+
+        $activity->description = str_limit($fullDescription, Builder::$defaultStringLength - 3);
 
         $activity->log_name = $this->logName;
 
