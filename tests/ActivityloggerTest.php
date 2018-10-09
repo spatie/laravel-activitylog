@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Auth;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
@@ -272,5 +273,13 @@ class ActivityloggerTest extends TestCase
         activity()->causedBy(null)->log('nothing');
 
         $this->markTestAsPassed();
+    }
+
+    /** @test */
+    function it_will_cut_description_text_to_fit_in_db_string_field()
+    {
+        activity()->log('The sun was shining on the sea, Shining with all his might: He did his very best to make The billows smooth and bright -- And this was odd, because it was The middle of the night. The moon was shining sulkily, Because she thought the sun Had got no business to be there After the day was done -- "It\'s very rude of him," she said, "To come and spoil the fun!');
+
+        $this->assertEquals(Builder::$defaultStringLength, mb_strlen($this->getLastActivity()->description));
     }
 }
