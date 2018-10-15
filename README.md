@@ -156,10 +156,15 @@ return [
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes.
 
+## Upgrading
+
+Please see [UPGRADING](UPGRADING.md) for details.
+
+
 ## Testing
 
 ``` bash
-$ composer test
+composer test
 ```
 
 ## Contributing
