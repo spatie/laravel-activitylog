@@ -5,7 +5,7 @@ All notable changes to `spatie/laravel-activitylog` will be documented in this f
 ## 3.0.0 - 2018-10-16 
 - the preferred way to get changes on an `Activity` model is through the `changes` property instead of the `changes()` function 
 - the `activity` relation of the `CausesActivity` trait has been renamed to `actions`
-- the `activity` relation of the `LogsActivity` trait has been renamed to `activities``$yourModel->activities`.
+- the `activity` relation of the `LogsActivity` trait has been renamed to `activities`
 - the deprecated `loggedActivity` relation has been removed
 - fix for setting a custom table name for the `Activity` model via the `$table` property
 - support for PHP 7.0 has been dropped
