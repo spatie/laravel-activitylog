@@ -20,8 +20,6 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function checkRequirements()
     {
-        parent::checkRequirements();
-
         collect($this->getAnnotations())->filter(function ($location) {
             return in_array('!Travis', array_get($location, 'requires', []));
         })->each(function ($location) {
