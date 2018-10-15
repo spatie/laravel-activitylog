@@ -4,7 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
-use Spatie\Activitylog\Traits\HasActivity;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HasActivityTest extends TestCase
@@ -16,7 +16,7 @@ class HasActivityTest extends TestCase
         parent::setUp();
 
         $this->user = new class() extends User {
-            use HasActivity;
+            use LogsActivity;
             use SoftDeletes;
         };
 
@@ -28,7 +28,7 @@ class HasActivityTest extends TestCase
     {
         $user = $this->loginWithFakeUser();
 
-        $user->name = 'HasActivity Name';
+        $user->name = 'CausesActivity Name';
         $user->save();
 
         $this->assertCount(1, Activity::all());
@@ -36,7 +36,7 @@ class HasActivityTest extends TestCase
         $this->assertInstanceOf(get_class($this->user), $this->getLastActivity()->subject);
         $this->assertEquals($user->id, $this->getLastActivity()->subject->id);
         $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
-        $this->assertCount(1, $user->activity);
+        $this->assertCount(1, $user->activities);
         $this->assertCount(1, $user->actions);
     }
 

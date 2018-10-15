@@ -154,7 +154,7 @@ class LogsActivityTest extends TestCase
         $article->name = 'changed name';
         $article->save();
 
-        $activities = $article->activity;
+        $activities = $article->activities;
 
         $this->assertCount(2, $activities);
     }
@@ -171,7 +171,7 @@ class LogsActivityTest extends TestCase
 
         $article->delete();
 
-        $activities = $article->activity;
+        $activities = $article->activities;
 
         $this->assertCount(3, $activities);
 
@@ -258,7 +258,7 @@ class LogsActivityTest extends TestCase
         $entity->name = 'my name';
         $entity->save();
 
-        $activities = $entity->activity;
+        $activities = $entity->activities;
 
         $this->assertCount(2, $activities);
         $this->assertEquals($entity->id, $activities[0]->subject->id);
