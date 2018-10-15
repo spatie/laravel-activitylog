@@ -11,10 +11,4 @@ trait CausesActivity
     {
         return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'causer');
     }
-
-    /** @deprecated Use activity() instead */
-    public function loggedActivity(): MorphMany
-    {
-        return $this->activity();
-    }
 }
