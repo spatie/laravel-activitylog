@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,12 +12,19 @@ class LogsActivityTest extends TestCase
 {
     /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
+    /** @var \Spatie\Activitylog\Test\Models\User|\Spatie\Activitylog\Traits\LogsActivity */
+    protected $user;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->article = new class() extends Article {
+            use LogsActivity;
+            use SoftDeletes;
+        };
+
+        $this->user = new class() extends User {
             use LogsActivity;
             use SoftDeletes;
         };
@@ -154,7 +162,7 @@ class LogsActivityTest extends TestCase
         $article->name = 'changed name';
         $article->save();
 
-        $activities = $article->activity;
+        $activities = $article->activities;
 
         $this->assertCount(2, $activities);
     }
@@ -171,7 +179,7 @@ class LogsActivityTest extends TestCase
 
         $article->delete();
 
-        $activities = $article->activity;
+        $activities = $article->activities;
 
         $this->assertCount(3, $activities);
 
@@ -258,13 +266,41 @@ class LogsActivityTest extends TestCase
         $entity->name = 'my name';
         $entity->save();
 
-        $activities = $entity->activity;
+        $activities = $entity->activities;
 
         $this->assertCount(2, $activities);
         $this->assertEquals($entity->id, $activities[0]->subject->id);
         $this->assertEquals($entity->id, $activities[1]->subject->id);
         $this->assertEquals(':causer.name created', $activities[0]->description);
         $this->assertEquals(':causer.name updated', $activities[1]->description);
+    }
+
+    /** @test */
+    public function it_can_log_activity_on_subject_by_same_causer()
+    {
+        $user = $this->loginWithFakeUser();
+
+        $user->name = 'LogsActivity Name';
+        $user->save();
+
+        $this->assertCount(1, Activity::all());
+
+        $this->assertInstanceOf(get_class($this->user), $this->getLastActivity()->subject);
+        $this->assertEquals($user->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
+        $this->assertCount(1, $user->activities);
+        $this->assertCount(1, $user->actions);
+    }
+
+    public function loginWithFakeUser()
+    {
+        $user = new $this->user();
+
+        $user::find(1);
+
+        $this->be($user);
+
+        return $user;
     }
 
     protected function createArticle(): Article

@@ -10,8 +10,6 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class Activity extends Model implements ActivityContract
 {
-    protected $table;
-
     public $guarded = [];
 
     protected $casts = [
@@ -20,7 +18,9 @@ class Activity extends Model implements ActivityContract
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('activitylog.table_name');
+        if (! isset($this->table)) {
+            $this->setTable(config('activitylog.table_name'));
+        }
 
         parent::__construct($attributes);
     }

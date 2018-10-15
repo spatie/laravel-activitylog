@@ -339,7 +339,7 @@ class DetectsChangesTest extends TestCase
             ],
         ]);
 
-        $activities = $article->activity;
+        $activities = $article->activities;
 
         $this->assertCount(3, $activities);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
