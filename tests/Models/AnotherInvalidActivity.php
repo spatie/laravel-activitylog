@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog\Models;
+namespace Spatie\Activitylog\Test\Models;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
-class Activity extends Model implements ActivityContract
+class AnotherInvalidActivity implements ActivityContract
 {
     protected $table;
 
@@ -99,5 +99,10 @@ class Activity extends Model implements ActivityContract
         return $query
             ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
+    }
+
+    public function getCustomPropertyAttribute()
+    {
+        return $this->changes();
     }
 }

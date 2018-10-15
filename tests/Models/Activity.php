@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog\Models;
+namespace Spatie\Activitylog\Test\Models;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +40,7 @@ class Activity extends Model implements ActivityContract
     }
 
     /**
-     * Get the extra properties with the given name.
+     * Get the extra property with the given name.
      *
      * @param string $propertyName
      *
@@ -99,5 +99,10 @@ class Activity extends Model implements ActivityContract
         return $query
             ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
+    }
+
+    public function getCustomPropertyAttribute()
+    {
+        return $this->changes();
     }
 }
