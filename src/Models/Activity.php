@@ -60,6 +60,11 @@ class Activity extends Model implements ActivityContract
         return $this->properties->only(['attributes', 'old']);
     }
 
+    public function getChangesAttribute(): Collection
+    {
+        return $this->changes();
+    }
+
     public function scopeInLog(Builder $query, ...$logNames): Builder
     {
         if (is_array($logNames[0])) {
