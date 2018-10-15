@@ -57,9 +57,7 @@ class Activity extends Model implements ActivityContract
             return new Collection();
         }
 
-        return collect(array_filter($this->properties->toArray(), function ($key) {
-            return in_array($key, ['attributes', 'old']);
-        }, ARRAY_FILTER_USE_KEY));
+        return $this->properties->only(['attributes', 'old']);
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
