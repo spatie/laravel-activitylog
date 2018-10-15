@@ -39,13 +39,6 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    /**
-     * Get the extra properties with the given name.
-     *
-     * @param string $propertyName
-     *
-     * @return mixed
-     */
     public function getExtraProperty(string $propertyName)
     {
         return array_get($this->properties->toArray(), $propertyName);
@@ -74,14 +67,6 @@ class Activity extends Model implements ActivityContract
         return $query->whereIn('log_name', $logNames);
     }
 
-    /**
-     * Scope a query to only include activities by a given causer.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $causer
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopeCausedBy(Builder $query, Model $causer): Builder
     {
         return $query
@@ -89,14 +74,6 @@ class Activity extends Model implements ActivityContract
             ->where('causer_id', $causer->getKey());
     }
 
-    /**
-     * Scope a query to only include activities for a given subject.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $subject
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopeForSubject(Builder $query, Model $subject): Builder
     {
         return $query

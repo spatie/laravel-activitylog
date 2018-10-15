@@ -9,6 +9,9 @@ trait CausesActivity
 {
     public function actions(): MorphMany
     {
-        return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'causer');
+        return $this->morphMany(
+            ActivitylogServiceProvider::determineActivityModel(),
+            'causer'
+        );
     }
 }
