@@ -37,8 +37,6 @@ abstract class TestCase extends OrchestraTestCase
     public function getEnvironmentSetUp($app)
     {
         $app['config']->set('auth.providers.users.model', User::class);
-
-        $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
 
     protected function setUpDatabase()
