@@ -612,6 +612,32 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_use_hidden_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $hidden = ['text'];
+            protected $fillable = ['name', 'text'];
+            protected static $logAttributes = ['name', 'text'];
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my new text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my new text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
