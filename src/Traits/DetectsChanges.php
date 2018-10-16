@@ -39,7 +39,7 @@ trait DetectsChanges
             $attributes = array_merge($attributes, array_diff(static::$logAttributes, ['*']));
 
             if (in_array('*', static::$logAttributes)) {
-                $attributes = array_merge($attributes, array_keys($this->attributes));
+                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
             }
         }
 
