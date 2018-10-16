@@ -4,8 +4,8 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Traits\Macroable;
+use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Contracts\Config\Repository;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
@@ -73,11 +73,6 @@ class ActivityLogger
         return $this->performedOn($model);
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
-     *
-     * @return $this
-     */
     public function causedBy($modelOrId)
     {
         if ($modelOrId === null) {
@@ -96,11 +91,6 @@ class ActivityLogger
         return $this->causedBy($modelOrId);
     }
 
-    /**
-     * @param array|\Illuminate\Support\Collection $properties
-     *
-     * @return $this
-     */
     public function withProperties($properties)
     {
         $this->properties = collect($properties);
@@ -108,12 +98,6 @@ class ActivityLogger
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
     public function withProperty(string $key, $value)
     {
         $this->properties->put($key, $value);
@@ -147,11 +131,6 @@ class ActivityLogger
         return $this;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return null|mixed
-     */
     public function log(string $description)
     {
         if ($this->logStatus->disabled()) {
@@ -179,13 +158,6 @@ class ActivityLogger
         return $activity;
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Model|int|string $modelOrId
-     *
-     * @throws \Spatie\Activitylog\Exceptions\CouldNotLogActivity
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
     protected function normalizeCauser($modelOrId): Model
     {
         if ($modelOrId instanceof Model) {

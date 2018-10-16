@@ -31,8 +31,9 @@ return [
     'subject_returns_soft_deleted_models' => false,
 
     /*
-     * This model will be used to log activity. The only requirement is that
-     * it should be or extend the Spatie\Activitylog\Models\Activity model.
+     * This model will be used to log activity.
+     * It should be implements the Spatie\Activitylog\Contracts\Activity interface
+     * and extend Illuminate\Database\Eloquent\Model.
      */
     'activity_model' => \Spatie\Activitylog\Models\Activity::class,
 

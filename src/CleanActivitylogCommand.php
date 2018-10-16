@@ -8,19 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CleanActivitylogCommand extends Command
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
     protected $signature = 'activitylog:clean
                             {log? : (optional) The log name that will be cleaned.}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Clean up old records from the activity log.';
 
     public function handle()

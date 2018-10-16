@@ -2,6 +2,8 @@
 
 namespace Spatie\Activitylog\Test;
 
+use CreateActivityLogTable;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,8 +22,6 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function checkRequirements()
     {
-        parent::checkRequirements();
-
         collect($this->getAnnotations())->filter(function ($location) {
             return in_array('!Travis', array_get($location, 'requires', []));
         })->each(function ($location) {
@@ -38,50 +38,28 @@ abstract class TestCase extends OrchestraTestCase
 
     public function getEnvironmentSetUp($app)
     {
-        $app['config']->set('database.default', 'sqlite');
-
-        $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => $this->getTempDirectory().'/database.sqlite',
-            'prefix' => '',
-        ]);
-
         $app['config']->set('auth.providers.users.model', User::class);
-
-        $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
 
     protected function setUpDatabase()
     {
-        $this->resetDatabase();
-
         $this->createActivityLogTable();
 
         $this->createTables('articles', 'users');
         $this->seedModels(Article::class, User::class);
     }
 
-    protected function resetDatabase()
-    {
-        file_put_contents($this->getTempDirectory().'/database.sqlite', null);
-    }
-
     protected function createActivityLogTable()
     {
         include_once '__DIR__'.'/../migrations/create_activity_log_table.php.stub';
 
-        (new \CreateActivityLogTable())->up();
-    }
-
-    public function getTempDirectory(): string
-    {
-        return __DIR__.'/temp';
+        (new CreateActivityLogTable())->up();
     }
 
     protected function createTables(...$tableNames)
     {
         collect($tableNames)->each(function (string $tableName) {
-            $this->app['db']->connection()->getSchemaBuilder()->create($tableName, function (Blueprint $table) use ($tableName) {
+            Schema::create($tableName, function (Blueprint $table) use ($tableName) {
                 $table->increments('id');
                 $table->string('name')->nullable();
                 $table->string('text')->nullable();
@@ -106,10 +84,7 @@ abstract class TestCase extends OrchestraTestCase
         });
     }
 
-    /**
-     * @return \Spatie\Activitylog\Models\Activity|null
-     */
-    public function getLastActivity()
+    public function getLastActivity(): ?Activity
     {
         return Activity::all()->last();
     }
