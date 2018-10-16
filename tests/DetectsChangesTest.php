@@ -647,16 +647,14 @@ class DetectsChangesTest extends TestCase
 
             use LogsActivity;
 
-            protected $description;
-
             public function setDescriptionAttribute($value)
             {
-                $this->description = $value;
+                $this->attributes['json'] = json_encode(['description' => $value]);
             }
 
             public function getDescriptionAttribute()
             {
-                return $this->description;
+                return array_get(json_decode($this->attributes['json'], true), 'description');
             }
         };
 
