@@ -625,13 +625,52 @@ class DetectsChangesTest extends TestCase
 
         $article = new $articleClass();
         $article->name = 'my name';
-        $article->text = 'my new text';
+        $article->text = 'my text';
         $article->save();
 
         $expectedChanges = [
             'attributes' => [
                 'name' => 'my name',
-                'text' => 'my new text',
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_overloaded_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $fillable = ['name', 'text'];
+            protected static $logAttributes = ['name', 'text', 'description'];
+
+            use LogsActivity;
+
+            protected $description;
+
+            public function setDescriptionAttribute($value)
+            {
+                $this->description = $value;
+            }
+
+            public function getDescriptionAttribute()
+            {
+                return $this->description;
+            }
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->description = 'my description';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+                'description' => 'my description',
             ],
         ];
 
