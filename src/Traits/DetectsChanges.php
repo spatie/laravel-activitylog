@@ -32,12 +32,10 @@ trait DetectsChanges
         }
 
         if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
-            if (in_array('*', static::$logAttributes)) {
-                $withoutWildcard = array_diff(static::$logAttributes, ['*']);
+            $attributes = array_merge($attributes, array_diff(static::$logAttributes, ['*']));
 
-                $attributes = array_merge($attributes, array_keys($this->attributes), $withoutWildcard);
-            } else {
-                $attributes = array_merge($attributes, static::$logAttributes);
+            if (in_array('*', static::$logAttributes)) {
+                $attributes = array_merge($attributes, array_keys($this->attributes));
             }
         }
 
