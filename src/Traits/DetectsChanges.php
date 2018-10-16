@@ -28,7 +28,7 @@ trait DetectsChanges
         $attributes = [];
 
         if (isset(static::$logFillable) && static::$logFillable) {
-            $attributes = array_merge($attributes, $this->fillable);
+            $attributes = array_merge($attributes, $this->getFillable());
         }
 
         if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
