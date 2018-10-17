@@ -31,7 +31,7 @@ trait DetectsChanges
             $attributes = array_merge($attributes, $this->getFillable());
         }
 
-        if (isset(static::$logUnguarded) && static::$logUnguarded && ! in_array('*', $this->getGuarded())) {
+        if ($this->shouldlogUnguarded()) {
             $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
@@ -57,6 +57,23 @@ trait DetectsChanges
         }
 
         return static::$logOnlyDirty;
+    }
+
+    public function shouldlogUnguarded(): bool
+    {
+        if (! isset(static::$logUnguarded)) {
+            return false;
+        }
+
+        if (! static::$logUnguarded) {
+            return false;
+        }
+
+        if (in_array('*', $this->getGuarded())) {
+            return false;
+        }
+
+        return true;
     }
 
     public function attributeValuesToBeLogged(string $processingEvent): array
