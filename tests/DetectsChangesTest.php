@@ -638,6 +638,24 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_will_store_no_changes_when_wildcard_guard_and_log_unguarded_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $guarded = ['*'];
+            protected static $logUnguarded = true;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my new text';
+        $article->save();
+
+        $this->assertEquals([], $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
