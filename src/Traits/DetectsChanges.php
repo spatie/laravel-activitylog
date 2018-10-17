@@ -28,16 +28,18 @@ trait DetectsChanges
         $attributes = [];
 
         if (isset(static::$logFillable) && static::$logFillable) {
-            $attributes = array_merge($attributes, $this->fillable);
+            $attributes = array_merge($attributes, $this->getFillable());
+        }
+
+        if (isset(static::$logUnguarded) && static::$logUnguarded) {
+            $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
         if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
-            if (in_array('*', static::$logAttributes)) {
-                $withoutWildcard = array_diff(static::$logAttributes, ['*']);
+            $attributes = array_merge($attributes, array_diff(static::$logAttributes, ['*']));
 
-                $attributes = array_merge($attributes, array_keys($this->attributes), $withoutWildcard);
-            } else {
-                $attributes = array_merge($attributes, static::$logAttributes);
+            if (in_array('*', static::$logAttributes)) {
+                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
             }
         }
 

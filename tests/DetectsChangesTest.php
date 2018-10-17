@@ -612,6 +612,32 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_use_unguarded_as_loggable_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected $guarded = ['text', 'json'];
+            protected static $logAttributesToIgnore = ['id', 'created_at', 'updated_at', 'deleted_at'];
+            protected static $logUnguarded = true;
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my new text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'user_id' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
