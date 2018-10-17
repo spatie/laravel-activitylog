@@ -31,7 +31,7 @@ trait DetectsChanges
             $attributes = array_merge($attributes, $this->getFillable());
         }
 
-        if (isset(static::$logUnguarded) && static::$logUnguarded && !in_array('*', $this->getGuarded())) {
+        if (isset(static::$logUnguarded) && static::$logUnguarded && ! in_array('*', $this->getGuarded())) {
             $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
