@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.1.1 - 2018-10-17
+
+- fix `$logUnguarded`
+
 ## 3.1.0 - 2018-10-17
 
 - add `$logUnguarded`
