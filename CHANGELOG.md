@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.1.0 - 2018-10-17
+
+- add `$logUnguarded`
+
 ## 3.0.0 - 2018-10-16 
 - the preferred way to get changes on an `Activity` model is through the `changes` property instead of the `changes()` function 
 - the `activity` relation of the `CausesActivity` trait has been renamed to `actions`
