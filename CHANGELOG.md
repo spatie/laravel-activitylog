@@ -2,6 +2,11 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.1.2 - 2018-10-18
+
+- add `shouldLogUnguarded()` method
+- fix typo in methodname `shouldLogOnlyDirty()`
+
 ## 3.1.1 - 2018-10-17
 
 - fix `$logUnguarded`
