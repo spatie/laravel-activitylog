@@ -583,6 +583,92 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_the_changes_when_a_boolean_field_is_changed_from_null_to_false()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['*'];
+            public static $logOnlyDirty = true;
+
+            protected $casts = [
+                'text' => 'boolean',
+            ];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $article = $articleClass::create([
+            'name' => 'article name',
+            'text' => null,
+            'user_id' => $user->id,
+        ]);
+
+        $article->text = false;
+        Carbon::setTestNow(Carbon::create(2018, 1, 1, 12, 0, 0));
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'text' => false,
+                'updated_at' => '2018-01-01 12:00:00',
+            ],
+            'old' => [
+                'text' => null,
+                'updated_at' => '2017-01-01 12:00:00',
+            ],
+        ];
+
+        $this->assertSame($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_when_a_boolean_field_is_changed_from_false_to_null()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['*'];
+            public static $logOnlyDirty = true;
+
+            protected $casts = [
+                'text' => 'boolean',
+            ];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $article = $articleClass::create([
+            'name' => 'article name',
+            'text' => false,
+            'user_id' => $user->id,
+        ]);
+
+        $article->text = null;
+        Carbon::setTestNow(Carbon::create(2018, 1, 1, 12, 0, 0));
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'text' => null,
+                'updated_at' => '2018-01-01 12:00:00',
+            ],
+            'old' => [
+                'text' => false,
+                'updated_at' => '2017-01-01 12:00:00',
+            ],
+        ];
+
+        $this->assertSame($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_use_ignored_attributes_while_updating()
     {
         $articleClass = new class() extends Article {

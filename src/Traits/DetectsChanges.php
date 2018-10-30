@@ -99,6 +99,10 @@ trait DetectsChanges
                 $properties['attributes'],
                 $properties['old'],
                 function ($new, $old) {
+                    if ($old === null || $new === null) {
+                        return $new === $old ? 0 : 1;
+                    }
+
                     return $new <=> $old;
                 }
             );
