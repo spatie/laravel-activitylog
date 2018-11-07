@@ -3,10 +3,10 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\ArticleSoftDelete;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Spatie\Activitylog\Test\Models\ArticleSoftDelete;
 
 class ActivityModelTest extends TestCase
 {
@@ -148,8 +148,8 @@ class ActivityModelTest extends TestCase
         $this->app['config']->set('activitylog.subject_returns_soft_deleted_models', true);
 
         $causer = User::first();
-        $subject1 = Article::create(['name' => "name article subject1"]);
-        $subject2 = ArticleSoftDelete::create(['name' => "name article_soft_delete subject2"]);
+        $subject1 = Article::create(['name' => 'name article subject1']);
+        $subject2 = ArticleSoftDelete::create(['name' => 'name article_soft_delete subject2']);
 
         activity()->on($subject1)->by($causer)->log('foobar subject1');
         activity()->on($subject2)->by($causer)->log('foobar subject2');
