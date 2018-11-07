@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\ArticleSoftDelete;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -139,5 +140,41 @@ class ActivityModelTest extends TestCase
         $this->assertEquals('Foo', $activities->first()->description);
 
         Relation::morphMap([], false);
+    }
+
+    /** @test */
+    public function it_does_not_throw_exception_if_with_trashed_method_is_not_defined()
+    {
+        $this->app['config']->set('activitylog.subject_returns_soft_deleted_models', true);
+
+        $causer = User::first();
+        $subject1 = Article::create(['name' => "name article subject1"]);
+        $subject2 = ArticleSoftDelete::create(['name' => "name article_soft_delete subject2"]);
+
+        activity()->on($subject1)->by($causer)->log('foobar subject1');
+        activity()->on($subject2)->by($causer)->log('foobar subject2');
+
+        $activities1 = Activity::forSubject($subject1)->get();
+        $this->assertCount(1, $activities1);
+        $this->assertEquals($subject1->getKey(), $activities1->first()->subject_id);
+        $this->assertEquals($subject1->getKey(), $activities1->first()->subject->getKey());
+        $this->assertEquals('foobar subject1', $activities1->first()->description);
+
+        $subject1->delete();
+        $activities1 = Activity::forSubject($subject1)->get();
+        $this->assertCount(1, $activities1);
+        $this->assertEquals($subject1->getKey(), $activities1->first()->subject_id);
+        $this->assertNull($activities1->first()->subject);
+
+        $activities2 = Activity::forSubject($subject2)->get();
+        $this->assertCount(1, $activities2);
+        $this->assertEquals($subject2->getKey(), $activities2->first()->subject_id);
+        $this->assertEquals('foobar subject2', $activities2->first()->description);
+
+        $subject2->delete();
+        $activities2 = Activity::forSubject($subject2)->get();
+        $this->assertCount(1, $activities2);
+        $this->assertEquals($subject2->getKey(), $activities2->first()->subject_id);
+        $this->assertEquals($subject2->getKey(), $activities2->first()->subject->getKey());
     }
 }
