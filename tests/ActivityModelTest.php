@@ -154,25 +154,25 @@ class ActivityModelTest extends TestCase
         activity()->on($subject1)->by($causer)->log('foobar subject1');
         activity()->on($subject2)->by($causer)->log('foobar subject2');
 
-        $activities1 = Activity::forSubject($subject1)->get();
+        $activities1 = Activity::forSubject($subject1)->with('subject')->get();
         $this->assertCount(1, $activities1);
         $this->assertEquals($subject1->getKey(), $activities1->first()->subject_id);
         $this->assertEquals($subject1->getKey(), $activities1->first()->subject->getKey());
         $this->assertEquals('foobar subject1', $activities1->first()->description);
 
         $subject1->delete();
-        $activities1 = Activity::forSubject($subject1)->get();
+        $activities1 = Activity::forSubject($subject1)->with('subject')->get();
         $this->assertCount(1, $activities1);
         $this->assertEquals($subject1->getKey(), $activities1->first()->subject_id);
         $this->assertNull($activities1->first()->subject);
 
-        $activities2 = Activity::forSubject($subject2)->get();
+        $activities2 = Activity::forSubject($subject2)->with('subject')->get();
         $this->assertCount(1, $activities2);
         $this->assertEquals($subject2->getKey(), $activities2->first()->subject_id);
         $this->assertEquals('foobar subject2', $activities2->first()->description);
 
         $subject2->delete();
-        $activities2 = Activity::forSubject($subject2)->get();
+        $activities2 = Activity::forSubject($subject2)->with('subject')->get();
         $this->assertCount(1, $activities2);
         $this->assertEquals($subject2->getKey(), $activities2->first()->subject_id);
         $this->assertEquals($subject2->getKey(), $activities2->first()->subject->getKey());
