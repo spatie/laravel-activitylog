@@ -31,7 +31,7 @@ trait DetectsChanges
             $attributes = array_merge($attributes, $this->getFillable());
         }
 
-        if ($this->shouldlogUnguarded()) {
+        if ($this->shouldLogUnguarded()) {
             $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
@@ -50,7 +50,7 @@ trait DetectsChanges
         return $attributes;
     }
 
-    public function shouldlogOnlyDirty(): bool
+    public function shouldLogOnlyDirty(): bool
     {
         if (! isset(static::$logOnlyDirty)) {
             return false;
@@ -59,7 +59,7 @@ trait DetectsChanges
         return static::$logOnlyDirty;
     }
 
-    public function shouldlogUnguarded(): bool
+    public function shouldLogUnguarded(): bool
     {
         if (! isset(static::$logUnguarded)) {
             return false;
@@ -94,7 +94,7 @@ trait DetectsChanges
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
         }
 
-        if ($this->shouldlogOnlyDirty() && isset($properties['old'])) {
+        if ($this->shouldLogOnlyDirty() && isset($properties['old'])) {
             $properties['attributes'] = array_udiff_assoc(
                 $properties['attributes'],
                 $properties['old'],
