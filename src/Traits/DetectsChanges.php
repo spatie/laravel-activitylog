@@ -113,11 +113,19 @@ trait DetectsChanges
     public static function logChanges(Model $model): array
     {
         $changes = [];
-        foreach ($model->attributesToBeLogged() as $attribute) {
+        $attributes = $model->attributesToBeLogged();
+        $model = clone $model;
+        $model->append(array_filter($attributes, function ($key) use ($model) {
+            return $model->hasGetMutator($key);
+        }));
+        $model->setHidden(array_diff($model->getHidden(), $attributes));
+        $collection = collect($model);
+
+        foreach ($attributes as $attribute) {
             if (str_contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
             } else {
-                $changes += collect($model)->only($attribute)->toArray();
+                $changes += $collection->only($attribute)->toArray();
             }
         }
 
