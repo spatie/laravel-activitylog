@@ -182,7 +182,7 @@ class ActivityLogger
 
     protected function getActivity(): ActivityContract
     {
-        if(!$this->activity instanceof ActivityContract) {
+        if (! $this->activity instanceof ActivityContract) {
             $this->activity = ActivitylogServiceProvider::getActivityModelInstance();
             $this
                 ->useLog($this->defaultLogName)
