@@ -9,7 +9,7 @@ use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
-class ActivityloggerTest extends TestCase
+class ActivityLoggerTest extends TestCase
 {
     /** @var string */
     protected $activityDescription;
