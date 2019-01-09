@@ -41,11 +41,7 @@ class ActivityLogger
 
         $this->authDriver = $config['activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
-        if (starts_with(app()->version(), '5.1')) {
-            $this->causedBy = $auth->driver($this->authDriver)->user();
-        } else {
-            $this->causedBy = $auth->guard($this->authDriver)->user();
-        }
+        $this->causedBy = $auth->guard($this->authDriver)->user();
 
         $this->logName = $config['activitylog']['default_log_name'];
 
