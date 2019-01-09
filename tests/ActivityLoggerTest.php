@@ -285,7 +285,7 @@ class ActivityLoggerTest extends TestCase
         ];
 
         activity()
-            ->tap(function(Activity $activity) use ($properties) {
+            ->tap(function (Activity $activity) use ($properties) {
                 $activity->properties = collect($properties);
                 $activity->created_at = Carbon::yesterday()->startOfDay();
             })
