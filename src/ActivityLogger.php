@@ -158,11 +158,7 @@ class ActivityLogger
             return $modelOrId;
         }
 
-        if (starts_with(app()->version(), '5.1')) {
-            $model = $this->auth->driver($this->authDriver)->getProvider()->retrieveById($modelOrId);
-        } else {
-            $model = $this->auth->guard($this->authDriver)->getProvider()->retrieveById($modelOrId);
-        }
+        $model = $this->auth->guard($this->authDriver)->getProvider()->retrieveById($modelOrId);
 
         if ($model) {
             return $model;
