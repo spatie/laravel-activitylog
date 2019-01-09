@@ -49,8 +49,6 @@ class ActivityLogger
 
         $this->logName = $config['activitylog']['default_log_name'];
 
-        $this->logEnabled = $config['activitylog']['enabled'] ?? true;
-
         $this->logStatus = $logStatus;
     }
 
