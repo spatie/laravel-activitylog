@@ -18,6 +18,9 @@ class ActivityLogger
 
     protected $logName = '';
 
+    /** @var array */
+    protected $scopeFields;
+
     /** @var \Illuminate\Database\Eloquent\Model */
     protected $performedOn;
 
@@ -26,6 +29,9 @@ class ActivityLogger
 
     /** @var \Illuminate\Support\Collection */
     protected $properties;
+
+    /** @var \Illuminate\Support\Collection */
+    protected $scope;
 
     /** @var string */
     protected $authDriver;
@@ -39,6 +45,8 @@ class ActivityLogger
 
         $this->properties = collect();
 
+        $this->scope = collect();
+
         $this->authDriver = $config['activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
         if (starts_with(app()->version(), '5.1')) {
@@ -50,6 +58,8 @@ class ActivityLogger
         $this->logName = $config['activitylog']['default_log_name'];
 
         $this->logEnabled = $config['activitylog']['enabled'] ?? true;
+
+        $this->scopeFields = $config['activitylog']['scope_fields'] ?? [];
 
         $this->logStatus = $logStatus;
     }
@@ -94,6 +104,13 @@ class ActivityLogger
     public function withProperties($properties)
     {
         $this->properties = collect($properties);
+
+        return $this;
+    }
+
+    public function withScope($scope)
+    {
+        $this->scope = collect($scope);
 
         return $this;
     }
@@ -152,6 +169,12 @@ class ActivityLogger
         $activity->description = $this->replacePlaceholders($description, $activity);
 
         $activity->log_name = $this->logName;
+
+        foreach ($this->scope as $scopeField => $scopeValue) {
+            if (in_array($scopeField, $this->scopeFields)) {
+                $activity->$scopeField = $scopeValue;
+            }
+        }
 
         $activity->save();
 

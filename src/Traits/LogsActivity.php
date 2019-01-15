@@ -35,6 +35,7 @@ trait LogsActivity
                     ->useLog($logName)
                     ->performedOn($model)
                     ->withProperties($model->attributeValuesToBeLogged($eventName))
+                    ->withScope($model->logScope())
                     ->log($description);
             });
         });
@@ -122,5 +123,10 @@ trait LogsActivity
 
         //do not log update event if only ignored attributes are changed
         return (bool) count(array_except($this->getDirty(), $this->attributesToBeIgnored()));
+    }
+
+    protected function logScope(): array
+    {
+        return [];
     }
 }

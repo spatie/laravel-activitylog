@@ -42,4 +42,9 @@ return [
      * used by the Activity model shipped with this package.
      */
     'table_name' => 'activity_log',
+
+    /*
+     * White list any additional table columns you want to use here.
+     */
+    'scope_fields' => [],
 ];
