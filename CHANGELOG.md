@@ -20,6 +20,7 @@ All notable changes to `spatie/laravel-activitylog` will be documented in this f
 - the `activity` relation of the `CausesActivity` trait has been renamed to `actions`
 - the `activity` relation of the `LogsActivity` trait has been renamed to `activities`
 - the deprecated `loggedActivity` relation has been removed
+- the `HasActivity` trait has been removed.
 - fix for setting a custom table name for the `Activity` model via the `$table` property
 - support for PHP 7.0 has been dropped
 

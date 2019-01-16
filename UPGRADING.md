@@ -6,3 +6,4 @@
 - the `activity` relation of the `CausesActivity` trait has been renamed to `actions`.  Rename all uses from `$user->activity` to `$user->actions`
 - the `activity` relation of the `LogsActivity` trait has been renamed to `activities`. Rename all uses from `$yourModel->activity` to `$yourModel->activities`.
 - the deprecated `loggedActivity` relation has been removed. Use `activities` instead.
+- the `HasActivity` trait has been removed. Use both `CausesActivity` and `LogsActivity` traits instead.
