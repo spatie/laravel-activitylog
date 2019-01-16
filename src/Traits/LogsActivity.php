@@ -31,11 +31,16 @@ trait LogsActivity
                     return;
                 }
 
-                app(ActivityLogger::class)
+                $logger = app(ActivityLogger::class)
                     ->useLog($logName)
                     ->performedOn($model)
-                    ->withProperties($model->attributeValuesToBeLogged($eventName))
-                    ->log($description);
+                    ->withProperties($model->attributeValuesToBeLogged($eventName));
+
+                if (method_exists($model, 'tapActivity')) {
+                    $logger->tap([$model, 'tapActivity'], $eventName);
+                }
+
+                $logger->log($description);
             });
         });
     }

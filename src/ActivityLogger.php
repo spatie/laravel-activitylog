@@ -2,7 +2,6 @@
 
 namespace Spatie\Activitylog;
 
-use Closure;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
@@ -102,9 +101,9 @@ class ActivityLogger
         return $this->useLog($logName);
     }
 
-    public function tap(Closure $callback)
+    public function tap(callable $callback, string $eventName = null)
     {
-        call_user_func($callback, $this->getActivity());
+        call_user_func($callback, $this->getActivity(), $eventName);
 
         return $this;
     }

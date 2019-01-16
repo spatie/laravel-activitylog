@@ -2,6 +2,8 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
@@ -294,6 +296,38 @@ class LogsActivityTest extends TestCase
         $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
         $this->assertCount(1, $user->activities);
         $this->assertCount(1, $user->actions);
+    }
+
+    /** @test */
+    public function it_can_log_activity_when_attributes_are_changed_with_tap()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+
+            protected $properties = [
+                'property' => [
+                    'subProperty' => 'value',
+                ],
+            ];
+
+            public function tapActivity(Activity $activity, string $eventName)
+            {
+                $properties = $this->properties;
+                $properties['event'] = $eventName;
+                $activity->properties = collect($properties);
+                $activity->created_at = Carbon::yesterday()->startOfDay();
+            }
+        };
+
+        $entity = new $model();
+        $entity->save();
+
+        $firstActivity = $entity->activities()->first();
+
+        $this->assertInstanceOf(Collection::class, $firstActivity->properties);
+        $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
+        $this->assertEquals('created', $firstActivity->getExtraProperty('event'));
+        $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
     }
 
     public function loginWithFakeUser()
