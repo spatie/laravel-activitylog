@@ -2,6 +2,12 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.2.0 - 2019-01-29
+
+- add `ActivityLogger::tap()` method
+- add `LogsActivity::tapActivity()` method
+- the `ActivityLogger` will work on an activity model instance instead of cache variables
+
 ## 3.1.2 - 2018-10-18
 
 - add `shouldLogUnguarded()` method
