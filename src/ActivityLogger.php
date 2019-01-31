@@ -132,7 +132,8 @@ class ActivityLogger
 
         $activity->description = $this->replacePlaceholders($description, $activity);
 
-        $activity->save();
+        if(count($activity->properties['attributes'])>0)
+            $activity->save();
 
         $this->activity = null;
 
