@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Support\Arr;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
@@ -175,7 +176,7 @@ class ActivityLogger
 
             $attributeValue = $attributeValue->toArray();
 
-            return array_get($attributeValue, $propertyName, $match);
+            return Arr::get($attributeValue, $propertyName, $match);
         }, $description);
     }
 
