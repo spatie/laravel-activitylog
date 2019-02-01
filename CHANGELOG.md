@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.2.1 - 2019-02-01
+
+- use Str:: and Arr:: instead of helper methods
+
 ## 3.2.0 - 2019-01-29
 
 - add `ActivityLogger::tap()` method
