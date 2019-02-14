@@ -19,7 +19,7 @@ class CleanActivitylogCommand extends Command
         $this->comment('Cleaning activity log...');
 
         $log = $this->argument('log');
-        
+
         $maxAgeInDays = $this->option('days') ?? config('activitylog.delete_records_older_than_days');
 
         $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
