@@ -10,7 +10,7 @@ class CleanActivitylogCommand extends Command
 {
     protected $signature = 'activitylog:clean
                             {log? : (optional) The log name that will be cleaned.}
-                            {days? : (optional) Records older than this number of days will be cleaned.}';
+                            {--days= : (optional) Records older than this number of days will be cleaned.}';
 
     protected $description = 'Clean up old records from the activity log.';
 
@@ -19,8 +19,8 @@ class CleanActivitylogCommand extends Command
         $this->comment('Cleaning activity log...');
 
         $log = $this->argument('log');
-
-        $maxAgeInDays = $this->argument('days') ?? config('activitylog.delete_records_older_than_days');
+        
+        $maxAgeInDays = $this->option('days') ?? config('activitylog.delete_records_older_than_days');
 
         $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
 
