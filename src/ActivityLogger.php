@@ -9,6 +9,7 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
+use Spatie\String\Str;
 
 class ActivityLogger
 {
@@ -160,7 +161,7 @@ class ActivityLogger
         return preg_replace_callback('/:[a-z0-9._-]+/i', function ($match) use ($activity) {
             $match = $match[0];
 
-            $attribute = (string) string($match)->between(':', '.');
+            $attribute = (string) (new Str($match))->between(':', '.');
 
             if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
                 return $match;
