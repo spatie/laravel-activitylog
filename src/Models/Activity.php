@@ -17,11 +17,15 @@ class Activity extends Model implements ActivityContract
         'properties' => 'collection',
     ];
 
+    protected $connection;
+
     public function __construct(array $attributes = [])
     {
         if (! isset($this->table)) {
             $this->setTable(config('activitylog.table_name'));
         }
+
+        $this->connection = config('activitylog.db_connection');
 
         parent::__construct($attributes);
     }
