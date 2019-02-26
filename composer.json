@@ -33,7 +33,7 @@
 
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.4",
+        "phpunit/phpunit": "^7.5",
         "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0|~3.8.0"
     },
     "autoload": {
