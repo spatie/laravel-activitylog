@@ -32,6 +32,7 @@
         "spatie/string": "^2.1"
     },
     "require-dev": {
+        "ext-json": "*",
         "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0",
         "phpunit/phpunit": "^7.4",
         "scrutinizer/ocular": "^1.5"
