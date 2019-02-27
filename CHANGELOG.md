@@ -2,6 +2,13 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.2.2 - 2019-02-27
+
+- add support for Laravel 5.8
+- fix logging hidden attributes
+- fix logging for a causer model without a provider
+- add code coverage reporting for repository
+
 ## 3.2.1 - 2019-02-01
 
 - use Str:: and Arr:: instead of helper methods
