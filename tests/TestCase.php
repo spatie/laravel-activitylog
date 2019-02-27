@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
@@ -23,7 +24,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function checkRequirements()
     {
         collect($this->getAnnotations())->filter(function ($location) {
-            return in_array('!Travis', array_get($location, 'requires', []));
+            return in_array('!Travis', Arr::get($location, 'requires', []));
         })->each(function ($location) {
             getenv('TRAVIS') && $this->markTestSkipped('Travis will not run this test.');
         });

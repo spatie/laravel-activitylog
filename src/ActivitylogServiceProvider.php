@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Models\Activity as ActivityModel;
+use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class ActivitylogServiceProvider extends ServiceProvider
 {
@@ -52,7 +53,7 @@ class ActivitylogServiceProvider extends ServiceProvider
         return $activityModel;
     }
 
-    public static function getActivityModelInstance(): Model
+    public static function getActivityModelInstance(): ActivityContract
     {
         $activityModelClassName = self::determineActivityModel();
 
