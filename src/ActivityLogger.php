@@ -147,9 +147,11 @@ class ActivityLogger
             return $modelOrId;
         }
 
-        $model = $this->auth->guard($this->authDriver)->getProvider()->retrieveById($modelOrId);
+        $guard = $this->auth->guard($this->authDriver);
+        $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
+        $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($modelOrId) : null;
 
-        if ($model) {
+        if ($model instanceof Model) {
             return $model;
         }
 
