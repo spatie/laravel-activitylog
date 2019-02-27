@@ -2,6 +2,11 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.3.0 - 2019-02-27
+
+- drop support for Laravel 5.7 and lower
+- drop support for PHP 7.1 and lower
+
 ## 3.2.2 - 2019-02-27
 
 - add support for Laravel 5.8
