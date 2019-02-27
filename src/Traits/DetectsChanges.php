@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
@@ -114,7 +115,7 @@ trait DetectsChanges
     {
         $changes = [];
         foreach ($model->attributesToBeLogged() as $attribute) {
-            if (str_contains($attribute, '.')) {
+            if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
             } else {
                 $changes += collect($model)->only($attribute)->toArray();

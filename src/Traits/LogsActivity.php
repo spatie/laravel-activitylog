@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
@@ -31,11 +32,16 @@ trait LogsActivity
                     return;
                 }
 
-                app(ActivityLogger::class)
+                $logger = app(ActivityLogger::class)
                     ->useLog($logName)
                     ->performedOn($model)
-                    ->withProperties($model->attributeValuesToBeLogged($eventName))
-                    ->log($description);
+                    ->withProperties($model->attributeValuesToBeLogged($eventName));
+
+                if (method_exists($model, 'tapActivity')) {
+                    $logger->tap([$model, 'tapActivity'], $eventName);
+                }
+
+                $logger->log($description);
             });
         });
     }
@@ -114,13 +120,13 @@ trait LogsActivity
             return true;
         }
 
-        if (array_has($this->getDirty(), 'deleted_at')) {
+        if (Arr::has($this->getDirty(), 'deleted_at')) {
             if ($this->getDirty()['deleted_at'] === null) {
                 return false;
             }
         }
 
         //do not log update event if only ignored attributes are changed
-        return (bool) count(array_except($this->getDirty(), $this->attributesToBeIgnored()));
+        return (bool) count(Arr::except($this->getDirty(), $this->attributesToBeIgnored()));
     }
 }

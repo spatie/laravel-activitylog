@@ -30,12 +30,12 @@
         "illuminate/database": "~5.5.0|~5.6.0|~5.7.0",
         "illuminate/support": "~5.5.0|~5.6.0|~5.7.0",
         "spatie/string": "^2.1"
-
     },
     "require-dev": {
         "ext-json": "*",
+        "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0",
         "phpunit/phpunit": "^7.4",
-        "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0"
+        "scrutinizer/ocular": "^1.5"
     },
     "autoload": {
         "psr-4": {
@@ -60,5 +60,8 @@
                 "Spatie\\Activitylog\\ActivitylogServiceProvider"
             ]
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }

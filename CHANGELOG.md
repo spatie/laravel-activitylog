@@ -2,6 +2,16 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.2.1 - 2019-02-01
+
+- use Str:: and Arr:: instead of helper methods
+
+## 3.2.0 - 2019-01-29
+
+- add `ActivityLogger::tap()` method
+- add `LogsActivity::tapActivity()` method
+- the `ActivityLogger` will work on an activity model instance instead of cache variables
+
 ## 3.1.2 - 2018-10-18
 
 - add `shouldLogUnguarded()` method
@@ -20,6 +30,7 @@ All notable changes to `spatie/laravel-activitylog` will be documented in this f
 - the `activity` relation of the `CausesActivity` trait has been renamed to `actions`
 - the `activity` relation of the `LogsActivity` trait has been renamed to `activities`
 - the deprecated `loggedActivity` relation has been removed
+- the `HasActivity` trait has been removed.
 - fix for setting a custom table name for the `Activity` model via the `$table` property
 - support for PHP 7.0 has been dropped
 
