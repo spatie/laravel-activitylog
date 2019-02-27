@@ -15,7 +15,7 @@ class ActivityLoggerTest extends TestCase
     /** @var string */
     protected $activityDescription;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->activityDescription = 'My activity';
 

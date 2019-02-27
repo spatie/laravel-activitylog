@@ -8,7 +8,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class CleanActivitylogCommandTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -14,7 +14,7 @@ class DetectsChangesTest extends TestCase
     /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\LogsActivity */
     protected $article;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
