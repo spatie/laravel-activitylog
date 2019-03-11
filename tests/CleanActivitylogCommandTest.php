@@ -52,7 +52,9 @@ class CleanActivitylogCommandTest extends TestCase
 
         Artisan::call('activitylog:clean', ['--days' => 7]);
 
-        $cutOffDate = Carbon::now()->subDay(7)->format('Y-m-d H:i:s');
+        $this->assertCount(7, Activity::all());
+
+        $cutOffDate = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
 
         $this->assertCount(0, Activity::where('created_at', '<', $cutOffDate)->get());
     }
