@@ -16,12 +16,14 @@ abstract class TestCase extends OrchestraTestCase
 {
     public function setUp(): void
     {
+        $this->checkCustomRequirements();
+
         parent::setUp();
 
         $this->setUpDatabase();
     }
 
-    protected function checkRequirements()
+    protected function checkCustomRequirements()
     {
         collect($this->getAnnotations())->filter(function ($location) {
             return in_array('!Travis', Arr::get($location, 'requires', []));
