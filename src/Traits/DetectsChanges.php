@@ -142,7 +142,13 @@ trait DetectsChanges
         list($relatedModelName, $relatedAttribute) = explode('.', $attribute);
 
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+        
+        if(is_a($relatedModel, 'Illuminate\Database\Eloquent\Collection')) {
+          $value = $relatedModel->pluck($relatedAttribute)->implode(', ');
+        } else {
+          $value = $relatedModel->$relatedAttribute ?? null;
+        }
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+        return ["{$relatedModelName}.{$relatedAttribute}" => $value];
     }
 }
