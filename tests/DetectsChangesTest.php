@@ -752,6 +752,30 @@ class DetectsChangesTest extends TestCase
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+
+        $user->name = 'my name 2';
+        $user->save();
+
+        $expectedChanges = [
+            'old' => [
+                'id' => $user->id,
+                'name' => 'MY NAME',
+                'text' => 'my text',
+                'created_at' => '2017-01-01 12:00:00',
+                'updated_at' => '2017-01-01 12:00:00',
+                'deleted_at' => null,
+            ],
+            'attributes' => [
+                'id' => $user->id,
+                'name' => 'MY NAME 2',
+                'text' => 'my text',
+                'created_at' => '2017-01-01 12:00:00',
+                'updated_at' => '2017-01-01 12:00:00',
+                'deleted_at' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     protected function createArticle(): Article
