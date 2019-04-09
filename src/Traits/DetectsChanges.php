@@ -117,7 +117,7 @@ trait DetectsChanges
         $attributes = $model->attributesToBeLogged();
         $model = clone $model;
         $model->append(array_filter($attributes, function ($key) use ($model) {
-            return $model->hasGetMutator($key);
+            return !array_key_exists($key, $model->getAttributes()) && $model->hasGetMutator($key);
         }));
         $model->setHidden(array_diff($model->getHidden(), $attributes));
         $collection = collect($model);
