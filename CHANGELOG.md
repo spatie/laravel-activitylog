@@ -2,7 +2,12 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 3.3.0 - 2019-02-27
+## 3.4.0 - 2019-04-09
+
+- use `Illuminate\Contracts\Config\Repository` instead of `Illuminate\Config\Repository` [#505](https://github.com/spatie/laravel-activitylog/pull/505)
+- fix `logChanges()` [#512](https://github.com/spatie/laravel-activitylog/pull/512)
+
+## 3.3.0 - 2019-04-08
 
 - drop support for Laravel 5.7 and lower
 - drop support for PHP 7.1 and lower
