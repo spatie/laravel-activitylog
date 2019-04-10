@@ -34,8 +34,9 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->logIsEmpty($attrs) && !$model->getSubmitEmptyLogs())
+                if ($model->isLogEmpty($attrs) && !$model->shuoldSubmitEmptyLogs()) {
                     return;
+                }
 
                 $logger = app(ActivityLogger::class)
                     ->useLog($logName)
@@ -51,12 +52,12 @@ trait LogsActivity
         });
     }
 
-    public function getSubmitEmptyLogs (): bool
+    public function shuoldSubmitEmptyLogs (): bool
     {
-        return is_null($this->submitEmptyLogs) ? true : $this->submitEmptyLogs;
+        return !isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
     }
 
-    public function logIsEmpty ($attrs): bool
+    public function isLogEmpty ($attrs): bool
     {
         return !count($attrs['attributes'] ?? []) && !count($attrs['old'] ?? []);
     }

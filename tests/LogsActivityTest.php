@@ -336,7 +336,7 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            protected $submitEmptyLogs = false;
+            protected static $submitEmptyLogs = false;
             protected static $logAttributes = ['text'];
             protected static $logOnlyDirty = true;
 
@@ -347,7 +347,7 @@ class LogsActivityTest extends TestCase
         $entity->name = 'my name';
         $entity->save();
         $activities = $entity->activities;
-        
+
         $this->assertCount(1, $activities);
     }
 
