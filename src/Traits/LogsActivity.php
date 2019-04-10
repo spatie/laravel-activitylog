@@ -32,10 +32,15 @@ trait LogsActivity
                     return;
                 }
 
+                $attrs = $model->attributeValuesToBeLogged($eventName);
+
+                if ($model->logIsEmpty($attrs) && !$model->getSubmitEmptyLogs())
+                    return;
+
                 $logger = app(ActivityLogger::class)
                     ->useLog($logName)
                     ->performedOn($model)
-                    ->withProperties($model->attributeValuesToBeLogged($eventName));
+                    ->withProperties($attrs);
 
                 if (method_exists($model, 'tapActivity')) {
                     $logger->tap([$model, 'tapActivity'], $eventName);
@@ -44,6 +49,16 @@ trait LogsActivity
                 $logger->log($description);
             });
         });
+    }
+
+    public function getSubmitEmptyLogs (): bool
+    {
+        return is_null($this->submitEmptyLogs) ? true : $this->submitEmptyLogs;
+    }
+
+    public function logIsEmpty ($attrs): bool
+    {
+        return !count($attrs['attributes'] ?? []) && !count($attrs['old'] ?? []);
     }
 
     public function disableLogging()
