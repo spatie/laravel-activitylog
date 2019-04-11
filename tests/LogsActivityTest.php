@@ -341,13 +341,15 @@ class LogsActivityTest extends TestCase
             protected static $logOnlyDirty = true;
         };
 
-        $entity = new $model();
+        $entity = new $model(['text' => 'test']);
         $entity->save();
+
+        $this->assertCount(1, Activity::all());
+
         $entity->name = 'my name';
         $entity->save();
-        $activities = $entity->activities;
 
-        $this->assertCount(1, $activities);
+        $this->assertCount(1, Activity::all());
     }
 
     public function loginWithFakeUser()
