@@ -330,7 +330,7 @@ class LogsActivityTest extends TestCase
         $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
     }
 
-        /** @test */
+    /** @test */
     public function it_will_not_submit_log_when_there_is_no_changes()
     {
         $model = new class() extends Article {
@@ -339,7 +339,6 @@ class LogsActivityTest extends TestCase
             protected static $submitEmptyLogs = false;
             protected static $logAttributes = ['text'];
             protected static $logOnlyDirty = true;
-
         };
 
         $entity = new $model();

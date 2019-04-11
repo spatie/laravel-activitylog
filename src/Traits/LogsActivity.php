@@ -34,7 +34,7 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && !$model->shouldSubmitEmptyLogs()) {
+                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
                     return;
                 }
 
@@ -52,14 +52,14 @@ trait LogsActivity
         });
     }
 
-    public function shouldSubmitEmptyLogs (): bool
+    public function shouldSubmitEmptyLogs(): bool
     {
-        return !isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
+        return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
     }
 
-    public function isLogEmpty ($attrs): bool
+    public function isLogEmpty($attrs): bool
     {
-        return empty($attrs['attributes'] ?? []) && !count($attrs['old'] ?? []);
+        return empty($attrs['attributes'] ?? []) && ! count($attrs['old'] ?? []);
     }
 
     public function disableLogging()
