@@ -59,7 +59,7 @@ trait LogsActivity
 
     public function isLogEmpty ($attrs): bool
     {
-        return !count($attrs['attributes'] ?? []) && !count($attrs['old'] ?? []);
+        return empty($attrs['attributes'] ?? []) && !count($attrs['old'] ?? []);
     }
 
     public function disableLogging()
