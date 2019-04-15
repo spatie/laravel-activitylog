@@ -2,6 +2,11 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.5.0 - 2019-04-15
+
+- add days option to clean command [#497](https://github.com/spatie/laravel-activitylog/pull/497)
+- add `LogsActivity::$submitEmptyLogs` [#514](https://github.com/spatie/laravel-activitylog/pull/514)
+
 ## 3.4.0 - 2019-04-09
 
 - use `Illuminate\Contracts\Config\Repository` instead of `Illuminate\Config\Repository` [#505](https://github.com/spatie/laravel-activitylog/pull/505)
