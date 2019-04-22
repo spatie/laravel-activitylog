@@ -4,7 +4,6 @@ namespace Spatie\Activitylog;
 
 use Spatie\String\Str;
 use Illuminate\Support\Arr;
-use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
@@ -15,13 +14,6 @@ class ActivityLogger
 {
     use Macroable;
 
-    /** @var \Illuminate\Auth\AuthManager */
-    protected $auth;
-
-    protected $defaultLogName = '';
-
-    /** @var string */
-    protected $authDriver;
 
     /** @var \Spatie\Activitylog\ActivityLogStatus */
     protected $logStatus;
@@ -29,13 +21,12 @@ class ActivityLogger
     /** @var \Spatie\Activitylog\Contracts\Activity */
     protected $activity;
 
-    public function __construct(AuthManager $auth, Repository $config, ActivityLogStatus $logStatus)
+    public function __construct(Repository $config, ActivityLogStatus $logStatus)
     {
-        $this->auth = $auth;
 
-        $this->authDriver = $config['activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
-        $this->defaultLogName = $config['activitylog']['default_log_name'];
+        $causerMngrClass = config('activitylog.causer_manager') ?? Causers\CauserManagerAuth::class;
+        $this->causerMngr = app($causerMngrClass);
 
         $this->logStatus = $logStatus;
     }
@@ -147,10 +138,7 @@ class ActivityLogger
             return $modelOrId;
         }
 
-        $guard = $this->auth->guard($this->authDriver);
-        $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
-        $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($modelOrId) : null;
-
+        $model = $this->causerMngr->getCauser($modelOrId);
         if ($model instanceof Model) {
             return $model;
         }
@@ -190,7 +178,7 @@ class ActivityLogger
             $this
                 ->useLog($this->defaultLogName)
                 ->withProperties([])
-                ->causedBy($this->auth->guard($this->authDriver)->user());
+                ->causedBy($this->causerMngr->getDefaultCauser());
         }
 
         return $this->activity;

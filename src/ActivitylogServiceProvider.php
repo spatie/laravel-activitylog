@@ -37,6 +37,8 @@ class ActivitylogServiceProvider extends ServiceProvider
         ]);
 
         $this->app->bind(ActivityLogger::class);
+        $this->app->bind(Causers\CauserManagerAuth::class);
+        $this->app->bind(Causers\CauserManagerSession::class);
 
         $this->app->singleton(ActivityLogStatus::class);
     }

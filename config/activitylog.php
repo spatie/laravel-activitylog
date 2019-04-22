@@ -20,10 +20,19 @@ return [
     'default_log_name' => 'default',
 
     /*
+     */
+    'causer_manager' => \Spatie\Activitylog\Causers\CauserManagerAuth::class,
+    //'causer_manager' => \Spatie\Activitylog\Causers\CauserManagerSession::class,
+
+    /*
      * You can specify an auth driver here that gets user models.
      * If this is null we'll use the default Laravel auth driver.
      */
     'default_auth_driver' => null,
+
+    /*
+     */
+    'session_causer_class' => \App\Session::class,
 
     /*
      * If set to true, the subject returns soft deleted models.
