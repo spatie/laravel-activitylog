@@ -15,6 +15,8 @@ class ActivityLogger
     use Macroable;
 
 
+    protected $defaultLogName = '';
+
     /** @var \Spatie\Activitylog\ActivityLogStatus */
     protected $logStatus;
 
@@ -23,7 +25,6 @@ class ActivityLogger
 
     public function __construct(Repository $config, ActivityLogStatus $logStatus)
     {
-
 
         $causerMngrClass = config('activitylog.causer_manager') ?? Causers\CauserManagerAuth::class;
         $this->causerMngr = app($causerMngrClass);
