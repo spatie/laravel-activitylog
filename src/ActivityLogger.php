@@ -46,7 +46,12 @@ class ActivityLogger
 
         return $this;
     }
-
+    
+    public function getLogStatus()
+    {
+        return $this->logStatus;
+    }
+    
     public function performedOn(Model $model)
     {
         $this->getActivity()->subject()->associate($model);
