@@ -820,7 +820,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text', 'currency'];
             protected static $logAttributes = ['name', 'text', 'currency'];
             protected static $logOnlyDirty = true;
-            protected static $logAttributesToIgnore = ['created_at','updated_at','deleted_at'];
+            protected static $logAttributesToIgnore = ['created_at', 'updated_at','deleted_at'];
 
             use LogsActivity;
         };
