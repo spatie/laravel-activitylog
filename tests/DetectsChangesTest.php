@@ -830,6 +830,7 @@ class DetectsChangesTest extends TestCase
         $user->name = 'my name';
         $user->text = 'my text';
         $user->save();
+        $user->refresh();
 
         $expectedChanges = [
             'attributes' => [
