@@ -14,7 +14,7 @@ class User extends Model implements Authenticatable
 
     protected $guarded = [];
 
-    protected $fillable = ['id', 'name'];
+    protected $fillable = ['id', 'name', 'currency'];
 
     public function getAuthIdentifierName()
     {

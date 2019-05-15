@@ -724,7 +724,7 @@ class DetectsChangesTest extends TestCase
     {
         $userClass = new class() extends User {
             protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['*'];
+            protected static $logAttributes = ['name', 'text'];
 
             use LogsActivity;
 
@@ -742,12 +742,8 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => '2017-01-01 12:00:00',
-                'updated_at' => '2017-01-01 12:00:00',
-                'deleted_at' => null,
             ],
         ];
 
@@ -758,20 +754,12 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'old' => [
-                'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => '2017-01-01 12:00:00',
-                'updated_at' => '2017-01-01 12:00:00',
-                'deleted_at' => null,
             ],
             'attributes' => [
-                'id' => $user->id,
                 'name' => 'MY NAME 2',
                 'text' => 'my text',
-                'created_at' => '2017-01-01 12:00:00',
-                'updated_at' => '2017-01-01 12:00:00',
-                'deleted_at' => null,
             ],
         ];
 
@@ -783,7 +771,7 @@ class DetectsChangesTest extends TestCase
     {
         $userClass = new class() extends User {
             protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['*'];
+            protected static $logAttributes = ['name', 'text'];
 
             use LogsActivity;
 
@@ -801,12 +789,8 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => '2017-01-01 12:00:00',
-                'updated_at' => '2017-01-01 12:00:00',
-                'deleted_at' => null,
             ],
         ];
 
@@ -817,24 +801,61 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'old' => [
-                'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => '2017-01-01 12:00:00',
-                'updated_at' => '2017-01-01 12:00:00',
-                'deleted_at' => null,
             ],
             'attributes' => [
-                'id' => $user->id,
                 'name' => 'MY NAME 2',
                 'text' => 'my text',
-                'created_at' => '2017-01-01 12:00:00',
-                'updated_at' => '2017-01-01 12:00:00',
-                'deleted_at' => null,
             ],
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_db_defaults_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text', 'currency'];
+            protected static $logAttributes = ['name', 'text', 'currency'];
+            protected static $logOnlyDirty = true;
+            protected static $logAttributesToIgnore = ['created_at','updated_at','deleted_at'];
+
+            use LogsActivity;
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+                'currency' => 'USD',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+        $this->assertEquals('USD', $user->currency);
+
+        $user->name = 'my name 2';
+        $user->save();
+
+        $expectedChanges = [
+            'old' => [
+                'name' => 'my name',
+            ],
+            'attributes' => [
+                'name' => 'my name 2',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+        $this->assertEquals('USD', $user->currency);
     }
 
     protected function createArticle(): Article

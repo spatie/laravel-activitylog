@@ -74,6 +74,10 @@ abstract class TestCase extends OrchestraTestCase
                     $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                     $table->text('json')->nullable();
                 }
+
+                if ($tableName === 'users') {
+                    $table->string('currency')->default('USD');
+                }
             });
         });
     }
