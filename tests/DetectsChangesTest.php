@@ -837,6 +837,58 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_use_encrypted_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text'];
+            protected static $logAttributes = ['name', 'text'];
+
+            use LogsActivity;
+
+            public function getNameAttribute($value)
+            {
+                return decrypt($value);
+            }
+
+            public function setNameAttribute($value)
+            {
+                $this->attributes['name'] = encrypt($value);
+            }
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+
+        $user->name = 'my name 2';
+        $user->save();
+
+        $expectedChanges = [
+            'old' => [
+                'name' => 'my name',
+                'text' => 'my text',
+            ],
+            'attributes' => [
+                'name' => 'my name 2',
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();

@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
@@ -42,6 +43,9 @@ abstract class TestCase extends OrchestraTestCase
     public function getEnvironmentSetUp($app)
     {
         $app['config']->set('auth.providers.users.model', User::class);
+        $app['config']->set('app.key', 'base64:'.base64_encode(
+            Encrypter::generateKey($app['config']['app.cipher'])
+        ));
     }
 
     protected function setUpDatabase()
