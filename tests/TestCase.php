@@ -3,8 +3,8 @@
 namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
-use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Arr;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
