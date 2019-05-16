@@ -299,6 +299,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = collect([
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ]);
 
@@ -336,6 +337,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = collect([
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ]);
 
@@ -842,18 +844,29 @@ class DetectsChangesTest extends TestCase
     {
         $userClass = new class() extends User {
             protected $fillable = ['name', 'text'];
+            protected $encryptable = ['name', 'text'];
             protected static $logAttributes = ['name', 'text'];
 
             use LogsActivity;
 
-            public function getNameAttribute($value)
+            public function getAttributeValue($key)
             {
-                return decrypt($value);
+                $value = parent::getAttributeValue($key);
+
+                if (in_array($key, $this->encryptable)) {
+                    $value = decrypt($value);
+                }
+
+                return $value;
             }
 
-            public function setNameAttribute($value)
+            public function setAttribute($key, $value)
             {
-                $this->attributes['name'] = encrypt($value);
+                if (in_array($key, $this->encryptable)) {
+                    $value = encrypt($value);
+                }
+
+                return parent::setAttribute($key, $value);
             }
         };
 
