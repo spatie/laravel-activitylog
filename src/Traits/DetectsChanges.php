@@ -93,6 +93,8 @@ trait DetectsChanges
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
 
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
+
+            $this->oldAttributes = [];
         }
 
         if ($this->shouldLogOnlyDirty() && isset($properties['old'])) {
