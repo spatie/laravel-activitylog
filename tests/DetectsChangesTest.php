@@ -499,6 +499,7 @@ class DetectsChangesTest extends TestCase
                 'id' => $article->id,
                 'user_id' => null,
                 'json' => null,
+                'price' => null,
                 'created_at' => '2017-01-01 12:00:00',
                 'updated_at' => '2017-01-01 12:00:00',
             ],
@@ -536,6 +537,7 @@ class DetectsChangesTest extends TestCase
                 'deleted_at' => null,
                 'user_id' => $user->id,
                 'json' => null,
+                'price' => null,
                 'created_at' => '2017-01-01 12:00:00',
                 'updated_at' => '2017-01-01 12:00:00',
                 'user.name' => 'user name',
@@ -607,6 +609,7 @@ class DetectsChangesTest extends TestCase
                 'id' => $article->id,
                 'user_id' => null,
                 'json' => null,
+                'price' => null,
                 'created_at' => '2017-01-01 12:00:00',
             ],
         ];
@@ -634,6 +637,7 @@ class DetectsChangesTest extends TestCase
             'attributes' => [
                 'name' => 'my name',
                 'user_id' => null,
+                'price' => null,
             ],
         ];
 
