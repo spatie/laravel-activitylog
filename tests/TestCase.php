@@ -77,6 +77,7 @@ abstract class TestCase extends OrchestraTestCase
                     $table->integer('user_id')->unsigned()->nullable();
                     $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                     $table->text('json')->nullable();
+                    $table->decimal('price')->nullable();
                 }
             });
         });
