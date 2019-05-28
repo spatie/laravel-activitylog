@@ -17,7 +17,7 @@ trait DetectsChanges
 
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
-                $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
+                $oldValues = (new static)->setRawAttributes($model->getOriginal());
 
                 $model->oldAttributes = static::logChanges($oldValues);
             });
