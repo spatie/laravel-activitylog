@@ -17,7 +17,7 @@ trait DetectsChanges
 
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
-                $oldValues = $model->replicate()->setRawAttributes($model->getOriginal());
+                $oldValues = (new static)->setRawAttributes($model->getOriginal());
 
                 $model->oldAttributes = static::logChanges($oldValues);
             });
@@ -93,6 +93,8 @@ trait DetectsChanges
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
 
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
+
+            $this->oldAttributes = [];
         }
 
         if ($this->shouldLogOnlyDirty() && isset($properties['old'])) {
@@ -115,18 +117,16 @@ trait DetectsChanges
     {
         $changes = [];
         $attributes = $model->attributesToBeLogged();
-        $model = clone $model;
-        $model->append(array_filter($attributes, function ($key) use ($model) {
-            return ! array_key_exists($key, $model->getAttributes()) && $model->hasGetMutator($key);
-        }));
-        $model->setHidden(array_diff($model->getHidden(), $attributes));
-        $collection = collect($model);
 
         foreach ($attributes as $attribute) {
             if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
+            } elseif (in_array($attribute, $model->getDates())) {
+                $changes[$attribute] = $model->serializeDate(
+                    $model->asDateTime($model->getAttribute($attribute))
+                );
             } else {
-                $changes += $collection->only($attribute)->toArray();
+                $changes[$attribute] = $model->getAttribute($attribute);
             }
         }
 
@@ -139,7 +139,7 @@ trait DetectsChanges
             throw CouldNotLogChanges::invalidAttribute($attribute);
         }
 
-        list($relatedModelName, $relatedAttribute) = explode('.', $attribute);
+        [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
 
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
 
