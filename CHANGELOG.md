@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.6.0 - 2019-05-28
+
+- update `properties` column type from `text` to `json`
+
 ## 3.5.0 - 2019-04-15
 
 - add days option to clean command [#497](https://github.com/spatie/laravel-activitylog/pull/497)
