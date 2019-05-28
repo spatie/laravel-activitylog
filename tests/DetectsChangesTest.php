@@ -299,6 +299,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = collect([
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ]);
 
@@ -336,6 +337,7 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = collect([
             'attributes' => [
                 'name' => 'my name',
+                'text' => null,
             ],
         ]);
 
@@ -831,6 +833,69 @@ class DetectsChangesTest extends TestCase
                 'created_at' => '2017-01-01 12:00:00',
                 'updated_at' => '2017-01-01 12:00:00',
                 'deleted_at' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_encrypted_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text'];
+            protected $encryptable = ['name', 'text'];
+            protected static $logAttributes = ['name', 'text'];
+
+            use LogsActivity;
+
+            public function getAttributeValue($key)
+            {
+                $value = parent::getAttributeValue($key);
+
+                if (in_array($key, $this->encryptable)) {
+                    $value = decrypt($value);
+                }
+
+                return $value;
+            }
+
+            public function setAttribute($key, $value)
+            {
+                if (in_array($key, $this->encryptable)) {
+                    $value = encrypt($value);
+                }
+
+                return parent::setAttribute($key, $value);
+            }
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+
+        $user->name = 'my name 2';
+        $user->save();
+
+        $expectedChanges = [
+            'old' => [
+                'name' => 'my name',
+                'text' => 'my text',
+            ],
+            'attributes' => [
+                'name' => 'my name 2',
+                'text' => 'my text',
             ],
         ];
 
