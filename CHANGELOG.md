@@ -4,7 +4,11 @@ All notable changes to `spatie/laravel-activitylog` will be documented in this f
 
 ## 3.6.0 - 2019-05-28
 
-- update `properties` column type from `text` to `json`
+- update `properties` column type from `text` to `json` [#525](https://github.com/spatie/laravel-activitylog/pull/525)
+- update `subject_id` and `causer_id` column type from `integer` to `big_integer` and `unsigned` [#527](https://github.com/spatie/laravel-activitylog/pull/527)
+- fix attribute getter support in `DetectsChanges` trait [#534](https://github.com/spatie/laravel-activitylog/pull/534)
+- fix old attributes retrieval in `DetectsChanges` trait [#537](https://github.com/spatie/laravel-activitylog/pull/537)
+- clean up old attributes in `DetectsChanges` trait [#538](https://github.com/spatie/laravel-activitylog/pull/538)
 
 ## 3.5.0 - 2019-04-15
 
