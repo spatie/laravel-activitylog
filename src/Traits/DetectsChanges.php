@@ -121,12 +121,17 @@ trait DetectsChanges
         foreach ($attributes as $attribute) {
             if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
-            } elseif (in_array($attribute, $model->getDates())) {
-                $changes[$attribute] = $model->serializeDate(
-                    $model->asDateTime($model->getAttribute($attribute))
-                );
             } else {
                 $changes[$attribute] = $model->getAttribute($attribute);
+
+                if (
+                    in_array($attribute, $model->getDates())
+                    && ! is_null($changes[$attribute])
+                ) {
+                    $changes[$attribute] = $model->serializeDate(
+                        $model->asDateTime($changes[$attribute])
+                    );
+                }
             }
         }
 
