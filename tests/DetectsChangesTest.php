@@ -908,6 +908,12 @@ class DetectsChangesTest extends TestCase
         $userClass = new class() extends User {
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['*'];
+            protected $dates = [
+                'created_at',
+                'updated_at',
+                'deleted_at',
+            ];
+
 
             use LogsActivity, SoftDeletes;
         };
