@@ -902,6 +902,41 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_use_nullable_date_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text'];
+            protected static $logAttributes = ['*'];
+            protected $dates = [
+                'created_at',
+                'updated_at',
+                'deleted_at',
+            ];
+
+            use LogsActivity, SoftDeletes;
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'id' => $user->getKey(),
+                'name' => 'my name',
+                'text' => 'my text',
+                'created_at' => '2017-01-01 12:00:00',
+                'updated_at' => '2017-01-01 12:00:00',
+                'deleted_at' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
