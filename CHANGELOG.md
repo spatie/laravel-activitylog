@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.6.1 - 2019-05-29
+
+- fix nullable date attributes [#546](https://github.com/spatie/laravel-activitylog/pull/546)
+
 ## 3.6.0 - 2019-05-28
 
 - update `properties` column type from `text` to `json` [#525](https://github.com/spatie/laravel-activitylog/pull/525)
