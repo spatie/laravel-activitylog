@@ -914,7 +914,6 @@ class DetectsChangesTest extends TestCase
                 'deleted_at',
             ];
 
-
             use LogsActivity, SoftDeletes;
         };
 
