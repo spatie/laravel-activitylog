@@ -111,7 +111,7 @@ trait DetectsChanges
             throw CouldNotLogChanges::invalidAttribute($attribute);
         }
 
-        list($relatedModelName, $relatedAttribute) = explode('.', $attribute);
+        [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
 
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
 
