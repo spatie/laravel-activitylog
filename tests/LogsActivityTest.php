@@ -331,6 +331,26 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
+    public function it_can_log_activity_when_description_is_changed_with_tap()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+
+            public function tapActivity(Activity $activity, string $eventName)
+            {
+                $activity->description = 'my custom description';
+            }
+        };
+
+        $entity = new $model();
+        $entity->save();
+
+        $firstActivity = $entity->activities()->first();
+
+        $this->assertEquals('my custom description', $firstActivity->description);
+    }
+
+    /** @test */
     public function it_will_not_submit_log_when_there_is_no_changes()
     {
         $model = new class() extends Article {
