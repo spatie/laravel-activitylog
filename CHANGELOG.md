@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.6.2 - 2019-07-16
+
+- fix existing description [#563](https://github.com/spatie/laravel-activitylog/pull/563)
+
 ## 3.6.1 - 2019-05-29
 
 - fix nullable date attributes [#546](https://github.com/spatie/laravel-activitylog/pull/546)
