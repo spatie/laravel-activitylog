@@ -49,7 +49,7 @@ $newsItem->save();
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'updated'
-$activity->subject; //returns the instance of NewsItem that was updated
+$activity->subject; //returns the instance of NewsItem that was saved
 ```
 
 Calling `$activity->changes()` will return this array:
