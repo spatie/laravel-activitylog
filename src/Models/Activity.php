@@ -19,6 +19,10 @@ class Activity extends Model implements ActivityContract
 
     public function __construct(array $attributes = [])
     {
+        if (! isset($this->connection)) {
+            $this->setConnection(config('activitylog.database_connection'));
+        }
+
         if (! isset($this->table)) {
             $this->setTable(config('activitylog.table_name'));
         }

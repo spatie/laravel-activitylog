@@ -42,4 +42,10 @@ return [
      * used by the Activity model shipped with this package.
      */
     'table_name' => 'activity_log',
+
+    /*
+     * This is the database connection used to migrate the table and
+     * used by the Activity model shipped with this package.
+     */
+    'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION', 'mysql'),
 ];
