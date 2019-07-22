@@ -44,7 +44,8 @@ return [
     'table_name' => 'activity_log',
 
     /*
-     * This is the database connection used by the Activity model shipped with this package.
+     * This is the database connection that will be used by the migration and
+     * the Activity model shipped with this package.
      */
     'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION', 'mysql'),
 ];
