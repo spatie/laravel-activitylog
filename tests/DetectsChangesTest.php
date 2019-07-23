@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
@@ -700,7 +701,7 @@ class DetectsChangesTest extends TestCase
 
             public function getDescriptionAttribute()
             {
-                return array_get(json_decode($this->attributes['json'], true), 'description');
+                return Arr::get(json_decode($this->attributes['json'], true), 'description');
             }
         };
 
