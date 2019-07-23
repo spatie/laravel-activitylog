@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.6.3 - 2019-07-23
+
+- fix deprecated `array_` helper [#569](https://github.com/spatie/laravel-activitylog/pull/569)
+
 ## 3.6.2 - 2019-07-16
 
 - fix existing description [#563](https://github.com/spatie/laravel-activitylog/pull/563)
