@@ -18,6 +18,10 @@ trait LogsActivity
 
     protected static function bootLogsActivity()
     {
+        if (!config('activitylog.enabled')) {
+            return;
+        }
+
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
                 if (! $model->shouldLogEvent($eventName)) {
