@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\ActivityLogStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -18,13 +19,9 @@ trait LogsActivity
 
     protected static function bootLogsActivity()
     {
-        if (! config('activitylog.enabled')) {
-            return;
-        }
-
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
-                if (! $model->shouldLogEvent($eventName)) {
+                if (! $model->shouldLogEvent($eventName) || $this->activityLoggingDisabled()) {
                     return;
                 }
 
@@ -64,6 +61,11 @@ trait LogsActivity
     public function isLogEmpty($attrs): bool
     {
         return empty($attrs['attributes'] ?? []) && empty($attrs['old'] ?? []);
+    }
+
+    public function activityLoggingDisabled()
+    {
+        return app(ActivityLogStatus::class)->disabled();
     }
 
     public function disableLogging()
