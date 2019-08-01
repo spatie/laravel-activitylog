@@ -18,7 +18,7 @@ trait LogsActivity
 
     protected static function bootLogsActivity()
     {
-        if (!config('activitylog.enabled')) {
+        if (! config('activitylog.enabled')) {
             return;
         }
 
