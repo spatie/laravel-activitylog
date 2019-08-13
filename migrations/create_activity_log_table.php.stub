@@ -19,7 +19,11 @@ class CreateActivityLogTable extends Migration
             $table->string('subject_type')->nullable();
             $table->unsignedBigInteger('causer_id')->nullable();
             $table->string('causer_type')->nullable();
-            $table->json('properties')->nullable();
+            if ((DB::connection()->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql') && version_compare(DB::connection()->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), '5.7.8', 'ge')) {
+                $table->json('properties')->nullable();
+            } else {
+                $table->text('properties')->nullable();
+            }
             $table->timestamps();
 
             $table->index('log_name');
