@@ -2,8 +2,7 @@
     "name": "spatie/laravel-activitylog",
     "description": "A very simple activity logger to monitor the users of your website or application",
     "homepage": "https://github.com/spatie/activitylog",
-    "keywords":
-    [
+    "keywords": [
         "spatie",
         "log",
         "user",
@@ -22,19 +21,25 @@
             "email": "sebastian@spatie.be",
             "homepage": "https://spatie.be",
             "role": "Developer"
+        },
+        {
+            "name": "Tom Witkowski",
+            "email": "dev.gummibeer@gmail.com",
+            "homepage": "https://gummibeer.de",
+            "role": "Developer"
         }
     ],
     "require": {
         "php" : "^7.2",
-        "illuminate/config": "~5.8.0",
-        "illuminate/database": "~5.8.0",
-        "illuminate/support": "~5.8.0",
+        "illuminate/config": "^6.0",
+        "illuminate/database": "^6.0",
+        "illuminate/support": "^6.0",
         "spatie/string": "^2.1"
     },
     "require-dev": {
         "ext-json": "*",
-        "phpunit/phpunit": "^7.5|^8.0",
-        "orchestra/testbench": "~3.8.0",
+        "phpunit/phpunit": "^8.0",
+        "orchestra/testbench": "^4.0",
         "scrutinizer/ocular": "^1.5"
     },
     "autoload": {
@@ -63,5 +68,7 @@
     },
     "config": {
         "sort-packages": true
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
