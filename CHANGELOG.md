@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.7.2 - 2019-08-28
+
+- do not export docs folder
+
 ## 3.7.1 - 2019-07-24
 
 - fix default database connection env var
