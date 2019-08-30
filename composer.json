@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "ext-json": "*",
-        "phpunit/phpunit": "^8.0",
+        "phpunit/phpunit": "^7.5|^8.0",
         "orchestra/testbench": "3.8.*|^4.0",
         "scrutinizer/ocular": "^1.5"
     },
@@ -69,6 +69,5 @@
     "config": {
         "sort-packages": true
     },
-    "minimum-stability": "dev",
     "prefer-stable": true
 }
