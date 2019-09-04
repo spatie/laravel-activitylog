@@ -1040,7 +1040,7 @@ class DetectsChangesTest extends TestCase
         $this->assertSame($expectedChanges, $changes);
         $this->assertIsFloat($changes['attributes']['price']);
     }
-      
+
     public function it_can_use_nullable_date_as_loggable_attributes()
     {
         $userClass = new class() extends User {
