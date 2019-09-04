@@ -2,6 +2,12 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 7.8.0
+
+- add support for Laravel 6
+- change fields with value `null` to be strictly compared when logging dirty fields (#453)
+- add composite indexes for subject and causer to migration
+
 ## 3.7.2 - 2019-08-28
 
 - do not export docs folder
