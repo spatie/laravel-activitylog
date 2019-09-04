@@ -2,7 +2,7 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 7.8.0
+## 7.8.0 - 2019-09-04
 
 - add support for Laravel 6
 - change fields with value `null` to be strictly compared when logging dirty fields (#453)
