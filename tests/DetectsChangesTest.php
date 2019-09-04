@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
@@ -704,7 +705,7 @@ class DetectsChangesTest extends TestCase
 
             public function getDescriptionAttribute()
             {
-                return array_get(json_decode($this->attributes['json'], true), 'description');
+                return Arr::get(json_decode($this->attributes['json'], true), 'description');
             }
         };
 
@@ -952,6 +953,40 @@ class DetectsChangesTest extends TestCase
         $changes = $this->getLastActivity()->changes()->toArray();
         $this->assertSame($expectedChanges, $changes);
         $this->assertIsFloat($changes['attributes']['price']);
+    }
+      
+    public function it_can_use_nullable_date_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text'];
+            protected static $logAttributes = ['*'];
+            protected $dates = [
+                'created_at',
+                'updated_at',
+                'deleted_at',
+            ];
+
+            use LogsActivity, SoftDeletes;
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'id' => $user->getKey(),
+                'name' => 'my name',
+                'text' => 'my text',
+                'created_at' => '2017-01-01 12:00:00',
+                'updated_at' => '2017-01-01 12:00:00',
+                'deleted_at' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     protected function createArticle(): Article

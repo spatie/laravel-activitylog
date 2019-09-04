@@ -19,7 +19,4 @@
             <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
-    <php>
-        <env name="DB_CONNECTION" value="testing" />
-    </php>
 </phpunit>
