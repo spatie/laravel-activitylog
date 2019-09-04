@@ -500,6 +500,7 @@ class DetectsChangesTest extends TestCase
                 'id' => $article->id,
                 'user_id' => null,
                 'json' => null,
+                'price' => null,
                 'created_at' => '2017-01-01 12:00:00',
                 'updated_at' => '2017-01-01 12:00:00',
             ],
@@ -537,6 +538,7 @@ class DetectsChangesTest extends TestCase
                 'deleted_at' => null,
                 'user_id' => $user->id,
                 'json' => null,
+                'price' => null,
                 'created_at' => '2017-01-01 12:00:00',
                 'updated_at' => '2017-01-01 12:00:00',
                 'user.name' => 'user name',
@@ -608,6 +610,7 @@ class DetectsChangesTest extends TestCase
                 'id' => $article->id,
                 'user_id' => null,
                 'json' => null,
+                'price' => null,
                 'created_at' => '2017-01-01 12:00:00',
             ],
         ];
@@ -635,6 +638,7 @@ class DetectsChangesTest extends TestCase
             'attributes' => [
                 'name' => 'my name',
                 'user_id' => null,
+                'price' => null,
             ],
         ];
 
@@ -904,6 +908,53 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_use_casted_as_loggable_attribute()
+    {
+        $articleClass = new class() extends Article {
+            protected static $logAttributes = ['name', 'text', 'price'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'price' => 'float',
+            ];
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->price = '9.99';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+                'price' => 9.99,
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+        $this->assertSame($expectedChanges, $changes);
+        $this->assertIsFloat($changes['attributes']['price']);
+
+        $article->price = 19.99;
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'price' => 19.99,
+            ],
+            'old' => [
+                'price' => 9.99,
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+        $this->assertSame($expectedChanges, $changes);
+        $this->assertIsFloat($changes['attributes']['price']);
+    }
+      
     public function it_can_use_nullable_date_as_loggable_attributes()
     {
         $userClass = new class() extends User {
