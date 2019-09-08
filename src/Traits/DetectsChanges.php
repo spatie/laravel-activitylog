@@ -126,7 +126,7 @@ trait DetectsChanges
             if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
             } else {
-                $changes[$attribute] = $model->getAttribute($attribute);
+                $changes[$attribute] = $model->attributes[$attribute];
 
                 if (
                     in_array($attribute, $model->getDates())
