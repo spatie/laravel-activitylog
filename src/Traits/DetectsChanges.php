@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
@@ -125,6 +126,8 @@ trait DetectsChanges
         foreach ($attributes as $attribute) {
             if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
+            } elseif (preg_match('/(->)/', $attribute)) {
+                $changes[$attribute] = static::jsonLogAttribute($model, $attribute);
             } else {
                 $changes[$attribute] = $model->getAttribute($attribute);
 
@@ -153,5 +156,13 @@ trait DetectsChanges
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
 
         return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+    }
+
+    protected static function jsonLogAttribute(Model $model, string $attribute)
+    {
+        $path = preg_split('/(->)/', $attribute);
+        $modelAttribute = array_shift($path);
+        $modelAttribute = collect($model->getAttribute($modelAttribute));
+        return Arr::get($modelAttribute->toArray() ?? [], implode('.', $path));
     }
 }
