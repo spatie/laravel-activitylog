@@ -1075,6 +1075,76 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+    /** @test */
+    public function it_can_store_the_changes_of_json_attributes()
+    {
+        $articleClass = new class() extends Article {
+            protected static $logAttributes = ['name', 'json->data'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->json = ['data' => 'test'];
+        $article->name = 'I am JSON';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'I am JSON',
+                'json->data' => 'test',
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+
+        $this->assertSame($expectedChanges, $changes);
+
+
+   
+    } 
+
+    /** @test */
+    public function it_will_not_store_changes_to_untracked_json()
+    {
+        $articleClass = new class() extends Article {
+            protected static $logAttributes = ['name', 'json->data'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            use LogsActivity;
+        };
+
+        $article = new $articleClass();
+        $article->json = ['unTracked' => 'test'];
+        $article->name = 'a name';
+        $article->save();
+
+        $article->name = 'I am JSON';
+        $article->json = ['unTracked' => 'different string'];
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'I am JSON',
+            ],
+            'old' => [
+                'name' => 'a name',
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+
+        $this->assertSame($expectedChanges, $changes);
+   
+    } 
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
