@@ -167,7 +167,7 @@ trait DetectsChanges
         $path = explode('->', $attribute);
         $modelAttribute = array_shift($path);
         $modelAttribute = collect($model->getAttribute($modelAttribute));
-        
+
         return data_get($modelAttribute, implode('.', $path));
     }
 }
