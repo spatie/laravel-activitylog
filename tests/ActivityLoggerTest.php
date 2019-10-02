@@ -202,7 +202,7 @@ class ActivityLoggerTest extends TestCase
         $userId = 1;
 
         Auth::login(User::find($userId));
-        
+
         $this->assertCount(0, AnonymousCauser::all());
 
         activity()

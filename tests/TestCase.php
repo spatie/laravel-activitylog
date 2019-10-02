@@ -12,7 +12,6 @@ use Spatie\Activitylog\Test\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\ActivitylogServiceProvider;
-use Spatie\Activitylog\Test\Models\AnonymousCauser;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
