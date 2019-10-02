@@ -195,6 +195,42 @@ class ActivityLoggerTest extends TestCase
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
 
+    /**
+     * @test
+     *
+     * @requires !Travis
+     */
+    public function it_can_log_activity_using_an_anonymous_causer()
+    {
+        activity()
+            ->causedByAnonymous()
+            ->log('hello poetsvrouwman');
+
+
+        $this->assertEquals(null, $this->getLastActivity()->causer_id);
+        $this->assertEquals(null, $this->getLastActivity()->causer_type);
+    }
+
+    /**
+     * @test
+     *
+     * @requires !Travis
+     */
+    public function it_will_override_the_logged_in_user_as_the_causer_when_an_anonymous_causer_is_specified()
+    {
+        $userId = 1;
+
+        Auth::login(User::find($userId));
+
+        activity()
+            ->causedByAnonymous()
+            ->log('hello poetsvrouwman');
+
+
+        $this->assertEquals(null, $this->getLastActivity()->causer_id);
+        $this->assertEquals(null, $this->getLastActivity()->causer_type);
+    }
+
     /** @test */
     public function it_can_replace_the_placeholders()
     {
