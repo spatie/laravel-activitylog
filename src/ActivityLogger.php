@@ -8,6 +8,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
+use Spatie\Activitylog\Models\AnonymousCauser;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
@@ -70,6 +71,13 @@ class ActivityLogger
         $this->getActivity()->causer()->associate($model);
 
         return $this;
+    }
+
+    public function causedByAnonymous(string $name)
+    {
+        $anonymousCauser = AnonymousCauser::firstOrCreate(['name' => $name]);
+
+        return $this->causedBy($anonymousCauser);
     }
 
     public function by($modelOrId)
