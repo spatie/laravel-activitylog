@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
 use Illuminate\Support\Arr;
+use CreateAnonymousCausersTable;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
@@ -11,6 +12,7 @@ use Spatie\Activitylog\Test\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\ActivitylogServiceProvider;
+use Spatie\Activitylog\Test\Models\AnonymousCauser;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -58,6 +60,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function setUpDatabase()
     {
         $this->createActivityLogTable();
+        $this->createAnonymousCausersTable();
 
         $this->createTables('articles', 'users');
         $this->seedModels(Article::class, User::class);
@@ -68,6 +71,13 @@ abstract class TestCase extends OrchestraTestCase
         include_once __DIR__.'/../migrations/create_activity_log_table.php.stub';
 
         (new CreateActivityLogTable())->up();
+    }
+
+    protected function createAnonymousCausersTable()
+    {
+        include_once __DIR__.'/../migrations/create_anonymous_causers_table.php.stub';
+
+        (new CreateAnonymousCausersTable())->up();
     }
 
     protected function createTables(...$tableNames)
