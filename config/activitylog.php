@@ -44,6 +44,12 @@ return [
     'table_name' => 'activity_log',
 
     /*
+    * This is the name of the table that will be created by the migrations and
+    * used by the Anonymous activity loggers model shipped with this package.
+    */
+    'anonymous_causers_table_name' => 'activity_loggers',
+
+    /*
      * This is the database connection that will be used by the migration and
      * the Activity model shipped with this package.
      */
