@@ -233,7 +233,7 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
-        /** @test */
+    /** @test */
     public function it_can_store_the_changes_when_updating_a_snake_case_related_model()
     {
         $articleClass = new class() extends Article {

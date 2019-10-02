@@ -17,6 +17,6 @@ class Article extends Model
 
     public function SnakeUser()
     {
-    	return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
