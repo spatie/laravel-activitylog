@@ -406,10 +406,14 @@ class LogsActivityTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json->data' => 'chips',
+                'json' => [
+                    'data' => 'chips',
+                ],
             ],
             'old' => [
-                'json->data' => 'oldish',
+                'json' => [
+                    'data' => 'oldish',
+                ],
             ],
         ];
 

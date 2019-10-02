@@ -126,8 +126,12 @@ trait DetectsChanges
         foreach ($attributes as $attribute) {
             if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
-            } elseif (preg_match('/(->)/', $attribute)) {
-                $changes[$attribute] = static::jsonLogAttribute($model, $attribute);
+            } elseif (Str::contains($attribute, '->')) {
+                Arr::set(
+                    $changes,
+                    str_replace('->', '.', $attribute),
+                    static::getModelAttributeJsonValue($model, $attribute)
+                );
             } else {
                 $changes[$attribute] = $model->getAttribute($attribute);
 
@@ -158,12 +162,12 @@ trait DetectsChanges
         return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
     }
 
-    protected static function jsonLogAttribute(Model $model, string $attribute)
+    protected static function getModelAttributeJsonValue(Model $model, string $attribute)
     {
-        $path = preg_split('/(->)/', $attribute);
+        $path = explode('->', $attribute);
         $modelAttribute = array_shift($path);
         $modelAttribute = collect($model->getAttribute($modelAttribute));
-
-        return Arr::get($modelAttribute->toArray() ?? [], implode('.', $path));
+        
+        return data_get($modelAttribute, implode('.', $path));
     }
 }

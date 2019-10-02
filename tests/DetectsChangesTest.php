@@ -1096,14 +1096,16 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = [
             'attributes' => [
                 'name' => 'I am JSON',
-                'json->data' => 'test',
+                'json' => [
+                    'data' => 'test',
+                ],
             ],
         ];
 
         $changes = $this->getLastActivity()->changes()->toArray();
 
         $this->assertSame($expectedChanges, $changes);
-    } 
+    }
 
     /** @test */
     public function it_will_not_store_changes_to_untracked_json()
@@ -1139,7 +1141,7 @@ class DetectsChangesTest extends TestCase
         $changes = $this->getLastActivity()->changes()->toArray();
 
         $this->assertSame($expectedChanges, $changes);
-    } 
+    }
 
     protected function createArticle(): Article
     {
