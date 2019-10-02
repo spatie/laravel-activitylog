@@ -26,6 +26,14 @@ class ActivitylogServiceProvider extends ServiceProvider
                 __DIR__.'/../migrations/create_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_create_activity_log_table.php"),
             ], 'migrations');
         }
+
+        if (! class_exists('CreateAnonymousCausersTable')) {
+            $timestamp = date('Y_m_d_His', time());
+
+            $this->publishes([
+                __DIR__.'/../migrations/create_anonymous_causers_table.php.stub' => database_path("/migrations/{$timestamp}_create_anonymous_causers_table.php"),
+            ], 'migrations');
+        }
     }
 
     public function register()
