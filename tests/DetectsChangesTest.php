@@ -1103,9 +1103,6 @@ class DetectsChangesTest extends TestCase
         $changes = $this->getLastActivity()->changes()->toArray();
 
         $this->assertSame($expectedChanges, $changes);
-
-
-   
     } 
 
     /** @test */
@@ -1142,7 +1139,6 @@ class DetectsChangesTest extends TestCase
         $changes = $this->getLastActivity()->changes()->toArray();
 
         $this->assertSame($expectedChanges, $changes);
-   
     } 
 
     protected function createArticle(): Article

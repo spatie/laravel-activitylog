@@ -2,8 +2,8 @@
 
 namespace Spatie\Activitylog\Traits;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
@@ -163,6 +163,7 @@ trait DetectsChanges
         $path = preg_split('/(->)/', $attribute);
         $modelAttribute = array_shift($path);
         $modelAttribute = collect($model->getAttribute($modelAttribute));
+
         return Arr::get($modelAttribute->toArray() ?? [], implode('.', $path));
     }
 }

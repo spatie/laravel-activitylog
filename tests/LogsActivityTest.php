@@ -398,10 +398,10 @@ class LogsActivityTest extends TestCase
         $this->assertCount(1, Activity::all());
 
         $entity->json = [
-            'data' => 'chips', 
+            'data' => 'chips',
             'irrelevant' => 'should not be',
         ];
-        
+
         $entity->save();
 
         $expectedChanges = [
@@ -414,7 +414,7 @@ class LogsActivityTest extends TestCase
         ];
 
         $changes = $this->getLastActivity()->changes()->toArray();
-        
+
         $this->assertCount(2, Activity::all());
         $this->assertSame($expectedChanges, $changes);
     }
