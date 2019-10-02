@@ -20,4 +20,5 @@ class AnonymousCauser extends Model
 
         parent::__construct($attributes);
     }
+    
 }
