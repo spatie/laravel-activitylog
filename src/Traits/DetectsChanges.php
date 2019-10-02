@@ -150,6 +150,10 @@ trait DetectsChanges
 
         [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
 
+        if (Str::contains($relatedModelName, '_')) {
+            $relatedModelName = Str::camel($relatedModelName);
+        }
+
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
 
         return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
