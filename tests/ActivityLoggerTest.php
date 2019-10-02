@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Models\AnonymousCauser;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class ActivityLoggerTest extends TestCase
@@ -193,6 +194,29 @@ class ActivityLoggerTest extends TestCase
 
         $this->assertInstanceOf(User::class, $this->getLastActivity()->causer);
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
+    }
+
+    /** @test */
+    public function it_can_log_an_activity_with_an_anonymous_causer()
+    {
+        $userId = 1;
+
+        Auth::login(User::find($userId));
+        
+        $this->assertCount(0, AnonymousCauser::all());
+
+        activity()
+            ->causedByAnonymous('System')
+            ->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+        $firstAnonymousCauser = AnonymousCauser::first();
+
+        $this->assertCount(1, AnonymousCauser::all());
+
+        $this->assertInstanceOf(AnonymousCauser::class, $firstActivity->causer);
+        $this->assertEquals($firstAnonymousCauser->id, $firstActivity->causer->id);
+        $this->assertEquals('System', $firstActivity->causer->name);
     }
 
     /** @test */
