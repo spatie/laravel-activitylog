@@ -240,6 +240,11 @@ class DetectsChangesTest extends TestCase
             public static $logAttributes = ['name', 'text', 'snake_user.name'];
 
             use LogsActivity;
+
+            public function snakeUser()
+            {
+                return $this->belongsTo(User::class, 'user_id');
+            }
         };
 
         $user = User::create([
