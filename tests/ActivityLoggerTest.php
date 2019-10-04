@@ -202,8 +202,8 @@ class ActivityLoggerTest extends TestCase
             ->causedByAnonymous()
             ->log('hello poetsvrouwman');
 
-        $this->assertEquals(null, $this->getLastActivity()->causer_id);
-        $this->assertEquals(null, $this->getLastActivity()->causer_type);
+        $this->assertNull($this->getLastActivity()->causer_id);
+        $this->assertNull($this->getLastActivity()->causer_type);
     }
 
     /**
