@@ -1143,6 +1143,176 @@ class DetectsChangesTest extends TestCase
         $this->assertSame($expectedChanges, $changes);
     }
 
+    /** @test */
+    public function it_will_return_null_for_missing_json_attribute()
+    {
+        $articleClass = new class() extends Article {
+            protected static $logAttributes = ['name', 'json->data->missing'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            use LogsActivity;
+        };
+
+        $jsonToStore = [];
+
+        $article = new $articleClass();
+        $article->json = $jsonToStore;
+        $article->name = 'I am JSON';
+        $article->save();
+        
+        data_set($jsonToStore, 'data.missing', 'I wasn\'t here');
+
+        $article->json = $jsonToStore;
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' =>  [
+                    'data' => [
+                        'missing' => 'I wasn\'t here',
+                    ],
+                ],
+            ],
+            'old' => [
+                'json' =>  [
+                    'data' => [
+                        'missing' => null,
+                    ],
+                ],
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+
+        $this->assertSame($expectedChanges, $changes);
+    }
+
+    /** @test */
+    public function it_will_return_an_array_for_sub_key_in_json_attribute()
+    {
+        $articleClass = new class() extends Article {
+            protected static $logAttributes = ['name', 'json->data'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            use LogsActivity;
+        };
+
+        $jsonToStore =  [
+            'data' => [
+                'data_a' => 1,
+                'data_b' => 2,
+                'data_c' => 3,
+                'data_d' => 4,
+                'data_e' => 5,
+            ]
+        ]; 
+
+        $article = new $articleClass();
+        $article->json = $jsonToStore;
+        $article->name = 'I am JSON';
+        $article->save();
+        
+        data_set($jsonToStore, 'data.data_c', 'I Got The Key');
+
+        $article->json = $jsonToStore;
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' =>  [
+                    'data' => [
+                        'data_a' => 1,
+                        'data_b' => 2,
+                        'data_c' => 'I Got The Key',
+                        'data_d' => 4,
+                        'data_e' => 5,
+                    ]
+                ],
+            ],
+            'old' => [
+                'json' =>  [
+                    'data' => [
+                        'data_a' => 1,
+                        'data_b' => 2,
+                        'data_c' => 3,
+                        'data_d' => 4,
+                        'data_e' => 5,
+                    ]
+                ],
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+
+        $this->assertSame($expectedChanges, $changes);
+    }
+
+    /** @test */
+    public function it_will_access_further_than_level_one_json_attribute()
+    {
+        $articleClass = new class() extends Article {
+            protected static $logAttributes = ['name', 'json->data->can->go->how->far'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            use LogsActivity;
+        };
+
+        $jsonToStore = [];
+        // data_set($jsonToStore, 'data.can.go.how.far', 'Data');
+
+        $article = new $articleClass();
+        $article->json = $jsonToStore;
+        $article->name = 'I am JSON';
+        $article->save();
+        
+        data_set($jsonToStore, 'data.can.go.how.far', 'This far');
+
+        $article->json = $jsonToStore;
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' =>  [
+                    'data' => [
+                        'can' => [
+                            'go' => [
+                                'how' => [
+                                    'far' => 'This far',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'old' => [
+                'json' =>  [
+                    'data' => [
+                        'can' => [
+                            'go' => [
+                                'how' => [
+                                    'far' => null,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+
+        $this->assertSame($expectedChanges, $changes);
+    }
+
     protected function createArticle(): Article
     {
         $article = new $this->article();
