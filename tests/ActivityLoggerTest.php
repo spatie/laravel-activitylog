@@ -218,7 +218,7 @@ class ActivityLoggerTest extends TestCase
         Auth::login(User::find($userId));
 
         activity()
-            ->causedByAnonymous()
+            ->byAnonymous()
             ->log('hello poetsvrouwman');
 
         $this->assertNull($this->getLastActivity()->causer_id);
