@@ -1162,7 +1162,7 @@ class DetectsChangesTest extends TestCase
         $article->json = $jsonToStore;
         $article->name = 'I am JSON';
         $article->save();
-        
+
         data_set($jsonToStore, 'data.missing', 'I wasn\'t here');
 
         $article->json = $jsonToStore;
@@ -1203,21 +1203,21 @@ class DetectsChangesTest extends TestCase
             use LogsActivity;
         };
 
-        $jsonToStore =  [
+        $jsonToStore = [
             'data' => [
                 'data_a' => 1,
                 'data_b' => 2,
                 'data_c' => 3,
                 'data_d' => 4,
                 'data_e' => 5,
-            ]
-        ]; 
+            ],
+        ];
 
         $article = new $articleClass();
         $article->json = $jsonToStore;
         $article->name = 'I am JSON';
         $article->save();
-        
+
         data_set($jsonToStore, 'data.data_c', 'I Got The Key');
 
         $article->json = $jsonToStore;
@@ -1232,7 +1232,7 @@ class DetectsChangesTest extends TestCase
                         'data_c' => 'I Got The Key',
                         'data_d' => 4,
                         'data_e' => 5,
-                    ]
+                    ],
                 ],
             ],
             'old' => [
@@ -1243,7 +1243,7 @@ class DetectsChangesTest extends TestCase
                         'data_c' => 3,
                         'data_d' => 4,
                         'data_e' => 5,
-                    ]
+                    ],
                 ],
             ],
         ];
@@ -1273,7 +1273,7 @@ class DetectsChangesTest extends TestCase
         $article->json = $jsonToStore;
         $article->name = 'I am JSON';
         $article->save();
-        
+
         data_set($jsonToStore, 'data.can.go.how.far', 'This far');
 
         $article->json = $jsonToStore;
