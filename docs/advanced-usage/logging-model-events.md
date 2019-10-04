@@ -201,7 +201,7 @@ Changing only `name` means only the `name` attribute will be logged in the activ
 
 
 
-## Logging only the specific JSON attributes sub-key
+## Logging only a specific JSON attribute sub-key
 
 If you would like to log only the changes to a specific JSON objects sub-keys. You can use the same method for logging specific columns with the difference of choosing the json key to log.
 
