@@ -215,7 +215,7 @@ class NewsItem extends Model
 
     protected $fillable = ['preferences', 'name'];
     
-    protected static $logAttributes = ['preferences->notifications->status', 'preferences->avatar_url'];
+    protected static $logAttributes = ['preferences->notifications->status', 'preferences->hero_url'];
     
     protected $casts = [
         'preferences' => 'collection' // casting the JSON database column
@@ -223,7 +223,56 @@ class NewsItem extends Model
 }
 ```
 
-Changing only `preferences->notifications->status` or `preferences->avatar_url` means only the `preferences->notifications->status` or `preferences->avatar_url` attribute will be logged in the activity, and everything else `preferences` will be left out.
+Changing only `preferences->notifications->status` or `preferences->hero_url` means only the `preferences->notifications->status` or `preferences->hero_url` attribute will be logged in the activity, and everything else `preferences` will be left out.
+
+The output of this in a activity entry would be as follows: 
+```php
+
+// Create a news item.
+$newsItem = NewsItem::create([
+    'name' => 'Title',
+    'preferences' => [
+        'notifications' => [
+            'status' => 'on',
+        ],
+        'hero_url' => ''
+    ],
+]);
+
+// Update the json object
+$newsItem->update([
+    'preferences' => [
+        'notifications' => [
+            'status' => 'on',
+        ],
+        'hero_url' => 'http://example.com/hero.png'
+    ],
+]);
+
+$lastActivity = Activity::latest()->first();
+
+$lastActivity->properties->toArray();
+
+// output
+[
+    "attributes" => [
+        "preferences" => [ // the updated values
+            "notifications" => [
+                "status" => "on",
+            ],
+            "hero_url" => "http://example.com/hero.png",
+        ],
+    ],
+    "old" => [
+        "preferences" => [ // the old settings
+            "notifications" => [
+                "status" => "off",
+            ],
+            "hero_url" => "",
+        ],
+    ],
+]
+```
 
 The result in the log entry key for the attribute will be what is in the `$logAttributes`.
 
