@@ -195,11 +195,7 @@ class ActivityLoggerTest extends TestCase
         $this->assertEquals($userId, $this->getLastActivity()->causer->id);
     }
 
-    /**
-     * @test
-     *
-     * @requires !Travis
-     */
+    /** @test */
     public function it_can_log_activity_using_an_anonymous_causer()
     {
         activity()
