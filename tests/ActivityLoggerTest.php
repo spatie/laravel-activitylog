@@ -206,11 +206,7 @@ class ActivityLoggerTest extends TestCase
         $this->assertNull($this->getLastActivity()->causer_type);
     }
 
-    /**
-     * @test
-     *
-     * @requires !Travis
-     */
+    /** @test */
     public function it_will_override_the_logged_in_user_as_the_causer_when_an_anonymous_causer_is_specified()
     {
         $userId = 1;
