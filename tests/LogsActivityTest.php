@@ -372,6 +372,57 @@ class LogsActivityTest extends TestCase
         $this->assertCount(1, Activity::all());
     }
 
+    /** @test */
+    public function it_will_submit_a_log_with_json_changes()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+
+            protected static $submitEmptyLogs = false;
+            protected static $logAttributes = ['text', 'json->data'];
+            public static $logOnlyDirty = true;
+            protected $casts = [
+                'json' => 'collection',
+            ];
+        };
+
+        $entity = new $model([
+            'text' => 'test',
+            'json' => [
+                'data' => 'oldish',
+            ],
+        ]);
+
+        $entity->save();
+
+        $this->assertCount(1, Activity::all());
+
+        $entity->json = [
+            'data' => 'chips',
+            'irrelevant' => 'should not be',
+        ];
+
+        $entity->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' => [
+                    'data' => 'chips',
+                ],
+            ],
+            'old' => [
+                'json' => [
+                    'data' => 'oldish',
+                ],
+            ],
+        ];
+
+        $changes = $this->getLastActivity()->changes()->toArray();
+
+        $this->assertCount(2, Activity::all());
+        $this->assertSame($expectedChanges, $changes);
+    }
+
     public function loginWithFakeUser()
     {
         $user = new $this->user();

@@ -200,6 +200,84 @@ class NewsItem extends Model
 Changing only `name` means only the `name` attribute will be logged in the activity, and `text` will be left out.
 
 
+
+## Logging only a specific JSON attribute sub-key
+
+If you would like to log only the changes to a specific JSON objects sub-keys. You can use the same method for logging specific columns with the difference of choosing the json key to log.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class NewsItem extends Model
+{
+    use LogsActivity;
+
+    protected $fillable = ['preferences', 'name'];
+    
+    protected static $logAttributes = ['preferences->notifications->status', 'preferences->hero_url'];
+    
+    protected $casts = [
+        'preferences' => 'collection' // casting the JSON database column
+    ];
+}
+```
+
+Changing only `preferences->notifications->status` or `preferences->hero_url` means only the `preferences->notifications->status` or `preferences->hero_url` attribute will be logged in the activity, and everything else `preferences` will be left out.
+
+The output of this in a activity entry would be as follows: 
+
+```php
+// Create a news item.
+$newsItem = NewsItem::create([
+    'name' => 'Title',
+    'preferences' => [
+        'notifications' => [
+            'status' => 'on',
+        ],
+        'hero_url' => ''
+    ],
+]);
+
+// Update the json object
+$newsItem->update([
+    'preferences' => [
+        'notifications' => [
+            'status' => 'on',
+        ],
+        'hero_url' => 'http://example.com/hero.png'
+    ],
+]);
+
+$lastActivity = Activity::latest()->first();
+
+$lastActivity->properties->toArray();
+```
+
+```php
+// output
+[
+    "attributes" => [
+        "preferences" => [ // the updated values
+            "notifications" => [
+                "status" => "on",
+            ],
+            "hero_url" => "http://example.com/hero.png",
+        ],
+    ],
+    "old" => [
+        "preferences" => [ // the old settings
+            "notifications" => [
+                "status" => "off",
+            ],
+            "hero_url" => "",
+        ],
+    ],
+]
+```
+
+The result in the log entry key for the attribute will be what is in the `$logAttributes`.
+
 ## Prevent save logs items that have no changed attribute
 
 Setting `$submitEmptyLogs` to `false` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
