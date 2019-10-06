@@ -2,10 +2,16 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.9.0 - 2019-10-06
+
+- add anonymous causer with `null` value - [#605](https://github.com/spatie/laravel-activitylog/pull/605)
+- fix relationships to allow snake case keys - [#602](https://github.com/spatie/laravel-activitylog/pull/602)
+- add JOSN sub-key attribute logging - [#601](https://github.com/spatie/laravel-activitylog/pull/601)
+
 ## 3.8.0 - 2019-09-04
 
 - add support for Laravel 6
-- change fields with value `null` to be strictly compared when logging dirty fields (#453)
+- change fields with value `null` to be strictly compared when logging dirty fields [#453](https://github.com/spatie/laravel-activitylog/pull/453)
 - add composite indexes for subject and causer to migration
 
 ## 3.7.2 - 2019-08-28
