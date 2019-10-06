@@ -226,8 +226,8 @@ class NewsItem extends Model
 Changing only `preferences->notifications->status` or `preferences->hero_url` means only the `preferences->notifications->status` or `preferences->hero_url` attribute will be logged in the activity, and everything else `preferences` will be left out.
 
 The output of this in a activity entry would be as follows: 
-```php
 
+```php
 // Create a news item.
 $newsItem = NewsItem::create([
     'name' => 'Title',
@@ -252,7 +252,9 @@ $newsItem->update([
 $lastActivity = Activity::latest()->first();
 
 $lastActivity->properties->toArray();
+```
 
+```php
 // output
 [
     "attributes" => [
