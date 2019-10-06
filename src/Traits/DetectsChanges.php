@@ -150,6 +150,8 @@ trait DetectsChanges
 
         [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
 
+        $relatedModelName = Str::camel($relatedModelName);
+
         $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
 
         return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
