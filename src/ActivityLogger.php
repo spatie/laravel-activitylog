@@ -72,17 +72,17 @@ class ActivityLogger
         return $this;
     }
 
+    public function by($modelOrId)
+    {
+        return $this->causedBy($modelOrId);
+    }
+
     public function causedByAnonymous()
     {
         $this->activity->causer_id = null;
         $this->activity->causer_type = null;
 
         return $this;
-    }
-
-    public function by($modelOrId)
-    {
-        return $this->causedBy($modelOrId);
     }
 
     public function byAnonymous()
