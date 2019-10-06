@@ -4,6 +4,10 @@ php:
   - 7.2
   - 7.3
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 env:
   matrix:
     - COMPOSER_FLAGS="--prefer-lowest"
