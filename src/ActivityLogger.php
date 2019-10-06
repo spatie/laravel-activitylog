@@ -59,11 +59,6 @@ class ActivityLogger
         return $this->performedOn($model);
     }
 
-    public function onAnonymous()
-    {
-        return $this->causedByAnonymous();
-    }
-
     public function causedBy($modelOrId)
     {
         if ($modelOrId === null) {
