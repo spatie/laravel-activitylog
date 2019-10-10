@@ -9,6 +9,7 @@ use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class DetectsChangesTest extends TestCase
 {
@@ -1357,6 +1358,31 @@ class DetectsChangesTest extends TestCase
         $changes = $this->getLastActivity()->changes()->toArray();
 
         $this->assertSame($expectedChanges, $changes);
+    }
+
+    /** @test */
+    public function it_can_log_causer_from_model()
+    {
+        $articleClass = new class() extends Article {
+            public $logCauser = true;
+
+            use LogsActivity;
+        };
+
+        $user = User::create(['name' => 'Test User']);
+        Auth::setUser($user);
+
+        $article = $articleClass->create([
+            'name' => 'Test Name',
+            'text' => 'Test Text'
+        ]);
+
+        $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
+
+        $article->name = 'Updated Test Name';
+        $article->text = 'Updated Test Text';
+
+        $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
     }
 
     protected function createArticle(): Article

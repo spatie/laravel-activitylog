@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Auth;
 
 trait LogsActivity
 {
@@ -42,6 +43,10 @@ trait LogsActivity
                     ->useLog($logName)
                     ->performedOn($model)
                     ->withProperties($attrs);
+
+                if (Auth::check() && $model->shouldLogCauser()) {
+                    $logger->causedBy(Auth::user());
+                }
 
                 if (method_exists($model, 'tapActivity')) {
                     $logger->tap([$model, 'tapActivity'], $eventName);
@@ -144,5 +149,13 @@ trait LogsActivity
 
         //do not log update event if only ignored attributes are changed
         return (bool) count(Arr::except($this->getDirty(), $this->attributesToBeIgnored()));
+    }
+
+    protected function shouldLogCauser() {
+        if (! isset($this->logCauser) || ! is_bool($this->logCauser)) {
+            return true;
+        }
+
+        return $this->logCauser;
     }
 }
