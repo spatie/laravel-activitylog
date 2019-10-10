@@ -29,7 +29,7 @@ class CustomDatabaseConnectionActivityModelTest extends TestCase
     /** @test */
     public function it_uses_the_default_database_connection_when_the_one_from_configuration_is_null()
     {
-        config()->set('activitylog.database_connection', null);
+        $this->app['config']->set('activitylog.database_connection', null);
 
         $model = new Activity();
 
