@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.9.1 - 2019-10-15
+
+- fix default database connection - [#616](https://github.com/spatie/laravel-activitylog/pull/616)
+
 ## 3.9.0 - 2019-10-06
 
 - add anonymous causer with `null` value - [#605](https://github.com/spatie/laravel-activitylog/pull/605)
