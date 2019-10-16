@@ -199,7 +199,28 @@ class NewsItem extends Model
 
 Changing only `name` means only the `name` attribute will be logged in the activity, and `text` will be left out.
 
+## Logging directly related model attributes
 
+If you would like to log an attribute of a directly related model, you may use dot notation to log an attribute of the model's relationship.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class NewsItem extends Model
+{
+    use LogsActivity;
+
+    protected $fillable = ['name', 'text', 'user_id'];
+    
+    protected static $logAttributes = ['name', 'text', 'user.name'];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}
+```
 
 ## Logging only a specific JSON attribute sub-key
 
