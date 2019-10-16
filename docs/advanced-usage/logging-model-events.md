@@ -409,7 +409,7 @@ class NewsItem extends Model
 
     public function tapActivity(Activity $activity, string $eventName)
     {
-        $activity->comment_count = $this->comments()->count();
+        $activity->description = "activity.logs.message.{$eventName}";
     }
 }
 ```
