@@ -323,4 +323,18 @@ class ActivityLoggerTest extends TestCase
         $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
         $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
     }
+
+    /** @test */
+    public function it_will_log_a_custom_created_at_date_time()
+    {
+        $activityDateTime = now()->subDays(10);
+
+        activity()
+            ->createdAt($activityDateTime)
+            ->log('created');
+
+        $firstActivity = Activity::first();
+
+        $this->assertEquals($activityDateTime->toAtomString(), $firstActivity->created_at->toAtomString());
+    }
 }

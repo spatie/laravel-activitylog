@@ -104,6 +104,18 @@ class ActivityLogger
         return $this;
     }
 
+    public function createdAt($dateTime)
+    {
+        $this->getActivity()->created_at = $dateTime;
+
+        return $this;
+    }
+
+    public function at($dateTime)
+    {
+        return $this->createdAt($dateTime);
+    }
+
     public function useLog(string $logName)
     {
         $this->getActivity()->log_name = $logName;
