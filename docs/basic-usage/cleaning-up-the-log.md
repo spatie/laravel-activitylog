@@ -29,11 +29,3 @@ If you want to clean just one log you can define it as command argument. It will
 ```bash
 php artisan activitylog:clean my_log_channel
 ```
-
-## Overwrite the days to keep per call
-
-You can define the days to keep for each call as command option. This will overwrite the config for this run.
-
-```bash
-php artisan activitylog:clean --days=7
-```
