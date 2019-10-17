@@ -2,9 +2,9 @@
 
 namespace Spatie\Activitylog;
 
-use Illuminate\Support\Carbon;
 use Spatie\String\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
