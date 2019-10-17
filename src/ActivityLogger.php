@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Support\Carbon;
 use Spatie\String\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Auth\AuthManager;
@@ -104,16 +105,11 @@ class ActivityLogger
         return $this;
     }
 
-    public function createdAt($dateTime)
+    public function createdAt(Carbon $dateTime)
     {
         $this->getActivity()->created_at = $dateTime;
 
         return $this;
-    }
-
-    public function at($dateTime)
-    {
-        return $this->createdAt($dateTime);
     }
 
     public function useLog(string $logName)
