@@ -86,6 +86,10 @@ abstract class TestCase extends OrchestraTestCase
                     $table->text('json')->nullable();
                     $table->decimal('price')->nullable();
                 }
+
+                if ($tableName === 'users') {
+                    $table->string('currency')->default('USD');
+                }
             });
         });
     }

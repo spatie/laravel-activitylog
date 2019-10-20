@@ -796,6 +796,46 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_use_db_defaults_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text', 'currency'];
+            protected static $logAttributes = ['name', 'text', 'currency'];
+            protected static $logOnlyDirty = false;
+            protected static $logAttributesToIgnore = ['created_at', 'updated_at', 'deleted_at'];
+            use LogsActivity;
+        };
+
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+                'currency' => 'USD',
+            ],
+        ];
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+        $user->name = 'my name 1';
+        $user->save();
+        $expectedChanges = [
+            'old' => [
+                'name' => 'my name',
+                'text' => 'my text',
+                'currency' => 'USD',
+            ],
+            'attributes' => [
+                'name' => 'my name 1',
+                'text' => 'my text',
+                'currency' => 'USD',
+            ],
+        ];
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_use_hidden_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
@@ -864,6 +904,7 @@ class DetectsChangesTest extends TestCase
         $userClass = new class() extends User {
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['*'];
+            protected static $logAttributesToIgnore = ['currency'];
 
             use LogsActivity;
 
@@ -923,6 +964,7 @@ class DetectsChangesTest extends TestCase
         $userClass = new class() extends User {
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['*'];
+            protected static $logAttributesToIgnore = ['currency'];
 
             use LogsActivity;
 
