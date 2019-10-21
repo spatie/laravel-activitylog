@@ -2,7 +2,6 @@
 
 namespace Spatie\Activitylog\Traits;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
