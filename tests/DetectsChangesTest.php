@@ -833,6 +833,22 @@ class DetectsChangesTest extends TestCase
             ],
         ];
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+        $user->text = 'my text 1';
+        $user->currency = 'EUR';
+        $user->save();
+        $expectedChanges = [
+            'old' => [
+                'name' => 'my name 1',
+                'text' => 'my text',
+                'currency' => 'USD',
+            ],
+            'attributes' => [
+                'name' => 'my name 1',
+                'text' => 'my text 1',
+                'currency' => 'EUR',
+            ],
+        ];
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
     /** @test */
