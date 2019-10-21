@@ -76,7 +76,7 @@ $lastActivity->where('properties->key', 'value')->get(); // get all activity whe
 
 ## Setting custom created date
 
-You can set a custom activity created_at date time by using `createdAt` or `at`
+You can set a custom activity created_at date time by using `createdAt`
 
 ```php
 activity()
