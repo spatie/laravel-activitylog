@@ -9,4 +9,4 @@ You can disable all logging activities in the current request by calling
 activity()->disableLogging();
 ```
 
-If you want to the enable logging again call `enableLogging()`.
+If you want to the enable logging again call `activity()->enableLogging()`.
