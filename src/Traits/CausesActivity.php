@@ -2,8 +2,8 @@
 
 namespace Spatie\Activitylog\Traits;
 
-use Spatie\Activitylog\ActivitylogServiceProvider;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\Activitylog\ActivitylogServiceProvider;
 
 trait CausesActivity
 {

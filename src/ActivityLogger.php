@@ -2,14 +2,14 @@
 
 namespace Spatie\Activitylog;
 
-use Spatie\String\Str;
-use Illuminate\Support\Arr;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Traits\Macroable;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\String\Str;
 
 class ActivityLogger
 {
