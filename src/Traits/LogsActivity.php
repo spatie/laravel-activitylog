@@ -34,6 +34,10 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
+                if ($model->getLogIpAddress()) {
+                    $attrs = array_merge($attrs, ["ip" => $_SERVER["REMOTE_ADDR"] ?? ""]);
+                }
+
                 if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
                     return;
                 }
@@ -55,6 +59,11 @@ trait LogsActivity
     public function shouldSubmitEmptyLogs(): bool
     {
         return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
+    }
+
+    public function getLogIpAddress(): bool
+    {
+        return ! isset(static::$logIpAdress) ? false : static::$logIpAdress;
     }
 
     public function isLogEmpty($attrs): bool
