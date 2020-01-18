@@ -7,12 +7,12 @@ use Illuminate\Support\Arr;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\ActivityLogs;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetectsChangesTest extends TestCase
 {
-    /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\LogsActivity */
+    /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\ActivityLogs */
     protected $article;
 
     public function setUp(): void
@@ -22,7 +22,7 @@ class DetectsChangesTest extends TestCase
         $this->article = new class() extends Article {
             public static $logAttributes = ['name', 'text'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $this->assertCount(0, Activity::all());
@@ -49,7 +49,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['name', 'text', 'user.name'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -88,7 +88,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['name', 'text', 'user.name'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -198,7 +198,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['name', 'text', 'user.name'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -239,7 +239,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['name', 'text', 'snake_user.name'];
 
-            use LogsActivity;
+            use ActivityLogs;
 
             public function snakeUser()
             {
@@ -287,7 +287,7 @@ class DetectsChangesTest extends TestCase
 
             public static $logOnlyDirty = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -324,7 +324,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = [];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -360,7 +360,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['name', 'text'];
 
-            use LogsActivity, SoftDeletes;
+            use ActivityLogs, SoftDeletes;
         };
 
         $article = new $articleClass();
@@ -403,7 +403,7 @@ class DetectsChangesTest extends TestCase
             public static $logOnlyDirty = true;
             protected $casts = ['json' => 'collection'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = $articleClass::create([
@@ -435,7 +435,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected static $logFillable = false;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -456,7 +456,7 @@ class DetectsChangesTest extends TestCase
             protected static $logAttributes = ['text'];
             protected static $logFillable = false;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -480,7 +480,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected static $logFillable = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -505,7 +505,7 @@ class DetectsChangesTest extends TestCase
             protected static $logAttributes = ['text'];
             protected static $logFillable = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -529,7 +529,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['*'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -561,7 +561,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             public static $logAttributes = ['*', 'user.name'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -601,7 +601,7 @@ class DetectsChangesTest extends TestCase
             public static $logAttributes = ['*'];
             public static $logOnlyDirty = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -644,7 +644,7 @@ class DetectsChangesTest extends TestCase
                 'text' => 'boolean',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -687,7 +687,7 @@ class DetectsChangesTest extends TestCase
                 'text' => 'boolean',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $user = User::create([
@@ -726,7 +726,7 @@ class DetectsChangesTest extends TestCase
             public static $logAttributes = ['*'];
             public static $logAttributesToIgnore = ['name', 'updated_at'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -758,7 +758,7 @@ class DetectsChangesTest extends TestCase
             protected static $logAttributesToIgnore = ['id', 'created_at', 'updated_at', 'deleted_at'];
             protected static $logUnguarded = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -784,7 +784,7 @@ class DetectsChangesTest extends TestCase
             protected $guarded = ['*'];
             protected static $logUnguarded = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -803,7 +803,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['name', 'text'];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -828,7 +828,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['name', 'text', 'description'];
 
-            use LogsActivity;
+            use ActivityLogs;
 
             public function setDescriptionAttribute($value)
             {
@@ -865,7 +865,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['*'];
 
-            use LogsActivity;
+            use ActivityLogs;
 
             public function setNameAttribute($value)
             {
@@ -924,7 +924,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected static $logAttributes = ['*'];
 
-            use LogsActivity;
+            use ActivityLogs;
 
             public function getNameAttribute($value)
             {
@@ -984,7 +984,7 @@ class DetectsChangesTest extends TestCase
             protected $encryptable = ['name', 'text'];
             protected static $logAttributes = ['name', 'text'];
 
-            use LogsActivity;
+            use ActivityLogs;
 
             public function getAttributeValue($key)
             {
@@ -1049,7 +1049,7 @@ class DetectsChangesTest extends TestCase
                 'price' => 'float',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -1098,7 +1098,7 @@ class DetectsChangesTest extends TestCase
                 'deleted_at',
             ];
 
-            use LogsActivity, SoftDeletes;
+            use ActivityLogs, SoftDeletes;
         };
 
         Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
@@ -1131,7 +1131,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -1163,7 +1163,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -1199,7 +1199,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $jsonToStore = [];
@@ -1246,7 +1246,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $jsonToStore = [
@@ -1309,7 +1309,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $jsonToStore = [];
@@ -1375,7 +1375,7 @@ class DetectsChangesTest extends TestCase
 
             public static $logOnlyDirty = true;
 
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
