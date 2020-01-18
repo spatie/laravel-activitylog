@@ -7,14 +7,14 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Test\Models\Article;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Traits\ActivityLogs;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class LogsActivityTest extends TestCase
+class ActivityLogsTest extends TestCase
 {
-    /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\LogsActivity */
+    /** @var \Spatie\Activitylog\Test\Models\Article|\Spatie\Activitylog\Traits\ActivityLogs */
     protected $article;
-    /** @var \Spatie\Activitylog\Test\Models\User|\Spatie\Activitylog\Traits\LogsActivity */
+    /** @var \Spatie\Activitylog\Test\Models\User|\Spatie\Activitylog\Traits\ActivityLogs */
     protected $user;
 
     public function setUp(): void
@@ -22,12 +22,12 @@ class LogsActivityTest extends TestCase
         parent::setUp();
 
         $this->article = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
             use SoftDeletes;
         };
 
         $this->user = new class() extends User {
-            use LogsActivity;
+            use ActivityLogs;
             use SoftDeletes;
         };
 
@@ -105,7 +105,7 @@ class LogsActivityTest extends TestCase
     public function it_will_log_the_deletion_of_a_model_without_softdeletes()
     {
         $articleClass = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
         };
 
         $article = new $articleClass();
@@ -195,7 +195,7 @@ class LogsActivityTest extends TestCase
     public function it_can_log_activity_to_log_returned_from_model_method_override()
     {
         $articleClass = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             public function getLogNameToUse()
             {
@@ -215,7 +215,7 @@ class LogsActivityTest extends TestCase
     public function it_can_log_activity_to_log_named_in_the_model()
     {
         $articleClass = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             protected static $logName = 'custom_log';
         };
@@ -235,7 +235,7 @@ class LogsActivityTest extends TestCase
     public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
     {
         $articleClass = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             protected static $ignoreChangedAttributes = ['text'];
         };
@@ -258,7 +258,7 @@ class LogsActivityTest extends TestCase
     public function it_will_not_fail_if_asked_to_replace_from_empty_attribute()
     {
         $model = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
             use SoftDeletes;
 
             public function getDescriptionForEvent(string $eventName): string
@@ -286,7 +286,7 @@ class LogsActivityTest extends TestCase
     {
         $user = $this->loginWithFakeUser();
 
-        $user->name = 'LogsActivity Name';
+        $user->name = 'ActivityLogs Name';
         $user->save();
 
         $this->assertCount(1, Activity::all());
@@ -302,7 +302,7 @@ class LogsActivityTest extends TestCase
     public function it_can_log_activity_when_attributes_are_changed_with_tap()
     {
         $model = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             protected $properties = [
                 'property' => [
@@ -334,7 +334,7 @@ class LogsActivityTest extends TestCase
     public function it_can_log_activity_when_description_is_changed_with_tap()
     {
         $model = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             public function tapActivity(Activity $activity, string $eventName)
             {
@@ -354,7 +354,7 @@ class LogsActivityTest extends TestCase
     public function it_will_not_submit_log_when_there_is_no_changes()
     {
         $model = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             protected static $submitEmptyLogs = false;
             protected static $logAttributes = ['text'];
@@ -376,7 +376,7 @@ class LogsActivityTest extends TestCase
     public function it_will_submit_a_log_with_json_changes()
     {
         $model = new class() extends Article {
-            use LogsActivity;
+            use ActivityLogs;
 
             protected static $submitEmptyLogs = false;
             protected static $logAttributes = ['text', 'json->data'];
