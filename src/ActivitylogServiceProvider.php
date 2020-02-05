@@ -5,9 +5,9 @@ namespace Spatie\Activitylog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Activitylog\Contracts\Activity;
+use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Models\Activity as ActivityModel;
-use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class ActivitylogServiceProvider extends ServiceProvider
 {
