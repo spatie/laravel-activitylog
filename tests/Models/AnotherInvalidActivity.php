@@ -22,8 +22,6 @@ class AnotherInvalidActivity implements ActivityContract
     public function __construct(array $attributes = [])
     {
         $this->table = config('activitylog.table_name');
-
-        parent::__construct($attributes);
     }
 
     public function subject(): MorphTo
