@@ -2,10 +2,10 @@
 
 namespace Spatie\Activitylog\Test;
 
-use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\User;
-use Spatie\Activitylog\Test\Models\Article;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\User;
 
 class ActivityModelTest extends TestCase
 {
