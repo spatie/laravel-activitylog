@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.9.2 - 2020-02-04
+
+- drop support for Laravel 5
+
 ## 3.9.1 - 2019-10-15
 
 - fix default database connection - [#616](https://github.com/spatie/laravel-activitylog/pull/616)
