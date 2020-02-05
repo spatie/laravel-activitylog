@@ -31,15 +31,15 @@
     ],
     "require": {
         "php" : "^7.2",
-        "illuminate/config": "5.8.*|^6.0",
-        "illuminate/database": "5.8.*|^6.0",
-        "illuminate/support": "5.8.*|^6.0",
+        "illuminate/config": "^5.8.36|^6.0",
+        "illuminate/database": "^5.8.36|^6.0",
+        "illuminate/support": "^5.8.36|^6.0",
         "spatie/string": "^2.1"
     },
     "require-dev": {
         "ext-json": "*",
         "phpunit/phpunit": "^7.5|^8.0",
-        "orchestra/testbench": "3.8.*|^4.0",
+        "orchestra/testbench": "^3.9.2|^4.0",
         "scrutinizer/ocular": "^1.5"
     },
     "autoload": {
