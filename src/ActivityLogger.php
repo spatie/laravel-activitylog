@@ -151,6 +151,12 @@ class ActivityLogger
         );
 
         $activity->save();
+        $subject = $this->activity->subject;
+
+        if ($subject && $subject->event_id) {
+            $activity->event_id = $subject->event_id;
+        }
+        $activity->save();
 
         $this->activity = null;
 
