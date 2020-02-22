@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.10.0 - 2020-02-22
+
+- add ability to manually set created at date - [#622](https://github.com/spatie/laravel-activitylog/pull/622)
+
 ## 3.9.2 - 2020-02-04
 
 - drop support for Laravel 5
