@@ -74,6 +74,18 @@ $lastActivity->getExtraProperty('key'); //returns 'value'
 $lastActivity->where('properties->key', 'value')->get(); // get all activity where the `key` custom property is 'value'
 ```
 
+## Setting custom created date
+
+You can set a custom activity created_at date time by using `createdAt`
+
+```php
+activity()
+    ->causedBy($userModel)
+    ->performedOn($someContentModel)
+    ->createdAt(now()->subDays(10))
+    ->log('created')
+```
+
 ## Tap Activity before logged
 
 You can use the `tap()` method to fill properties and add custom fields before the activity is saved.

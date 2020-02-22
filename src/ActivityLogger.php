@@ -2,6 +2,9 @@
 
 namespace Spatie\Activitylog;
 
+use Spatie\String\Str;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
@@ -100,6 +103,13 @@ class ActivityLogger
     public function withProperty(string $key, $value)
     {
         $this->getActivity()->properties = $this->getActivity()->properties->put($key, $value);
+
+        return $this;
+    }
+
+    public function createdAt(Carbon $dateTime)
+    {
+        $this->getActivity()->created_at = $dateTime;
 
         return $this;
     }
