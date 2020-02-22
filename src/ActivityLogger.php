@@ -2,8 +2,6 @@
 
 namespace Spatie\Activitylog;
 
-use Spatie\String\Str;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Config\Repository;
