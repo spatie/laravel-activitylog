@@ -2,11 +2,11 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class AnotherInvalidActivity implements ActivityContract
@@ -22,8 +22,6 @@ class AnotherInvalidActivity implements ActivityContract
     public function __construct(array $attributes = [])
     {
         $this->table = config('activitylog.table_name');
-
-        parent::__construct($attributes);
     }
 
     public function subject(): MorphTo
