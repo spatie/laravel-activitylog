@@ -93,6 +93,12 @@ trait DetectsChanges
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
 
+            $properties['attributes'] = static::logChanges(
+                $this->exists
+                    ? $this
+                    : $this
+            );
+
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
 
             $this->oldAttributes = [];
@@ -180,8 +186,8 @@ trait DetectsChanges
         $attributes = [];
 
         if ($model->translations && count($model->translations->toArray())) {
-            foreach ($model->translations->toArray() as $translation) {
-                $attributes[$attribute.':'.$translation['locale']] = $translation[$attribute];
+            foreach ($model->translations as $translation) {
+                $attributes[$attribute.':'.$translation->locale] = $translation->getAttribute($attribute);
             }
         }
 
