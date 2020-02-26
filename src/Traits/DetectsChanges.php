@@ -132,6 +132,8 @@ trait DetectsChanges
                     str_replace('->', '.', $attribute),
                     static::getModelAttributeJsonValue($model, $attribute)
                 );
+            } elseif ($model->isTranslationAttribute($attribute)) {
+                $changes += self::getModelAttributeTranslation($model, $attribute);
             } else {
                 $changes[$attribute] = $model->getAttribute($attribute);
 
@@ -171,5 +173,18 @@ trait DetectsChanges
         $modelAttribute = collect($model->getAttribute($modelAttribute));
 
         return data_get($modelAttribute, implode('.', $path));
+    }
+
+    protected static function getModelAttributeTranslation(Model $model, string $attribute)
+    {
+        $attributes = [];
+
+        if ($model->translations && count($model->translations->toArray())) {
+            foreach ($model->translations->toArray() as $translation) {
+                $attributes[$attribute.':'.$translation['locale']] = $translation[$attribute];
+            }
+        }
+
+        return $attributes;
     }
 }
