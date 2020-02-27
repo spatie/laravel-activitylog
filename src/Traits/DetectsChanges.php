@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
+use Astrotomic\Translatable\Translatable;
 
 trait DetectsChanges
 {
@@ -138,7 +139,7 @@ trait DetectsChanges
                     str_replace('->', '.', $attribute),
                     static::getModelAttributeJsonValue($model, $attribute)
                 );
-            } elseif ($model->isTranslationAttribute($attribute)) {
+            } elseif (collect(class_uses_recursive(static::class))->contains(Translatable::class) && $model->isTranslationAttribute($attribute)) {
                 $changes += self::getModelAttributeTranslation($model, $attribute);
             } else {
                 $changes[$attribute] = $model->getAttribute($attribute);
