@@ -6,6 +6,7 @@ use CreateActivityLogTable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Spatie\Activitylog\ActivitylogServiceProvider;
@@ -107,5 +108,12 @@ abstract class TestCase extends OrchestraTestCase
     public function markTestAsPassed()
     {
         $this->assertTrue(true);
+    }
+
+    public function isLaravel6OrLower(): bool
+    {
+        $majorVersion =  (int)substr(App::version(), 0, 1);
+
+        return $majorVersion <= 6;
     }
 }
