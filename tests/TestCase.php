@@ -112,7 +112,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function isLaravel6OrLower(): bool
     {
-        $majorVersion =  (int)substr(App::version(), 0, 1);
+        $majorVersion = (int) substr(App::version(), 0, 1);
 
         return $majorVersion <= 6;
     }
