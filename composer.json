@@ -34,8 +34,6 @@
         "illuminate/config": "^6.0|^7.0",
         "illuminate/database": "^6.0|^7.0",
         "illuminate/support": "^6.0|^7.0",
-        "laravel/framework": "^7.0",
-        "orchestra/testbench": "^5.0",
         "spatie/string": "^2.1"
     },
     "require-dev": {
