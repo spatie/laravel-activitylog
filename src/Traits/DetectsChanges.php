@@ -133,8 +133,9 @@ trait DetectsChanges
                     static::getModelAttributeJsonValue($model, $attribute)
                 );
             } else {
-                $changes[$attribute] = $model->getAttribute($attribute);
-
+                $changes[$attribute] = $model->hasCast($attribute, 'array') && is_array($model->attributes[$attribute])
+                    ? $model->attributes[$attribute]
+                    : $model->getAttribute($attribute);
                 if (
                     in_array($attribute, $model->getDates())
                     && ! is_null($changes[$attribute])
