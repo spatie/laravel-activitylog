@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
+use Spatie\Activitylog\ActivityLogStatus;
 
 trait LogsActivity
 {
@@ -128,7 +129,9 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-        if (! $this->enableLoggingModelsEvents) {
+        $logStatus = app(ActivityLogStatus::class);
+
+        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
             return false;
         }
 
