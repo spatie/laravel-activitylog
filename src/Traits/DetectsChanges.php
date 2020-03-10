@@ -135,7 +135,7 @@ trait DetectsChanges
                 );
             } else {
                 /**
-                 * Laravel 7 Hot-Fix
+                 * Laravel 7 Hot-Fix.
                  * @link https://github.com/spatie/laravel-activitylog/issues/680
                  * @see https://github.com/spatie/laravel-activitylog/pull/681
                  */
