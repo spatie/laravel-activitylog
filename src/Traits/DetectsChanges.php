@@ -18,7 +18,7 @@ trait DetectsChanges
 
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
-                if (method_exists(Model::class, 'getRawOriginal')){
+                if (method_exists(Model::class, 'getRawOriginal')) {
                     // Laravel >7.0
                     $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
                 } else {
