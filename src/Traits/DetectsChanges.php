@@ -18,8 +18,13 @@ trait DetectsChanges
 
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
-                //ToDo: Laravel 7 use getRawOriginal()
-                $oldValues = (new static)->setRawAttributes($model->getOriginal());
+                if (method_exists(Model::class, 'getRawOriginal')) {
+                    // Laravel >7.0
+                    $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
+                } else {
+                    // Laravel <7.0
+                    $oldValues = (new static)->setRawAttributes($model->getOriginal());
+                }
 
                 $model->oldAttributes = static::logChanges($oldValues);
             });
@@ -134,20 +139,7 @@ trait DetectsChanges
                     static::getModelAttributeJsonValue($model, $attribute)
                 );
             } else {
-                /**
-                 * Laravel 7 Hot-Fix.
-                 * @link https://github.com/spatie/laravel-activitylog/issues/680
-                 * @see https://github.com/spatie/laravel-activitylog/pull/681
-                 */
-                if (
-                    $model->hasCast($attribute, ['array', 'json'])
-                    && array_key_exists($attribute, $model->attributes)
-                    && is_array($model->attributes[$attribute])
-                ) {
-                    $changes[$attribute] = $model->attributes[$attribute];
-                } else {
-                    $changes[$attribute] = $model->getAttribute($attribute);
-                }
+                $changes[$attribute] = $model->getAttribute($attribute);
 
                 if (
                     in_array($attribute, $model->getDates())
