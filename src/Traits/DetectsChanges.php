@@ -18,6 +18,7 @@ trait DetectsChanges
 
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
+                //ToDo: Laravel 7 use getRawOriginal()
                 $oldValues = (new static)->setRawAttributes($model->getOriginal());
 
                 $model->oldAttributes = static::logChanges($oldValues);
