@@ -134,9 +134,21 @@ trait DetectsChanges
                     static::getModelAttributeJsonValue($model, $attribute)
                 );
             } else {
-                $changes[$attribute] = $model->hasCast($attribute, 'array') && is_array($model->attributes[$attribute])
-                    ? $model->attributes[$attribute]
-                    : $model->getAttribute($attribute);
+                /**
+                 * Laravel 7 Hot-Fix
+                 * @link https://github.com/spatie/laravel-activitylog/issues/680
+                 * @see https://github.com/spatie/laravel-activitylog/pull/681
+                 */
+                if (
+                    $model->hasCast($attribute, ['array', 'json'])
+                    && array_key_exists($attribute, $model->attributes)
+                    && is_array($model->attributes[$attribute])
+                ) {
+                    $changes[$attribute] = $model->attributes[$attribute];
+                } else {
+                    $changes[$attribute] = $model->getAttribute($attribute);
+                }
+
                 if (
                     in_array($attribute, $model->getDates())
                     && ! is_null($changes[$attribute])
