@@ -396,12 +396,78 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
-    public function it_can_store_the_changes_of_array_casted_properties()
+    public function it_can_store_the_changes_of_collection_casted_properties()
     {
         $articleClass = new class() extends Article {
             public static $logAttributes = ['json'];
             public static $logOnlyDirty = true;
             protected $casts = ['json' => 'collection'];
+
+            use LogsActivity;
+        };
+
+        $article = $articleClass::create([
+            'json' => ['value' => 'original'],
+        ]);
+
+        $article->json = collect(['value' => 'updated']);
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' => [
+                    'value' => 'updated',
+                ],
+            ],
+            'old' => [
+                'json' => [
+                    'value' => 'original',
+                ],
+            ],
+        ];
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_of_array_casted_properties()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['json'];
+            public static $logOnlyDirty = true;
+            protected $casts = ['json' => 'array'];
+
+            use LogsActivity;
+        };
+
+        $article = $articleClass::create([
+            'json' => ['value' => 'original'],
+        ]);
+
+        $article->json = collect(['value' => 'updated']);
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' => [
+                    'value' => 'updated',
+                ],
+            ],
+            'old' => [
+                'json' => [
+                    'value' => 'original',
+                ],
+            ],
+        ];
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_of_json_casted_properties()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['json'];
+            public static $logOnlyDirty = true;
+            protected $casts = ['json' => 'json'];
 
             use LogsActivity;
         };

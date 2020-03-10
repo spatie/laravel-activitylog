@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.11.2 - 2020-03-10
+
+- fix Laravel 7 array/json casted attributes [#680](https://github.com/spatie/laravel-activitylog/pull/680)
+
 ## 3.11.1 - 2020-03-02
 
 - fix requirements
