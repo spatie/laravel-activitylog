@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Auth;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Models\Activity;
@@ -336,5 +337,68 @@ class ActivityLoggerTest extends TestCase
         $firstActivity = Activity::first();
 
         $this->assertEquals($activityDateTime->toAtomString(), $firstActivity->created_at->toAtomString());
+    }
+
+    /** @test */
+    public function it_will_disable_logs_for_a_callback()
+    {
+        $result = activity()->withoutLogs(function() {
+            activity()->log('created');
+            return 'hello';
+        });
+
+        $this->assertNull($this->getLastActivity());
+        $this->assertEquals('hello', $result);
+    }
+
+    /** @test */
+    public function it_will_disable_logs_for_a_callback_without_affecting_previous_state()
+    {
+        activity()->withoutLogs(function() {
+            activity()->log('created');
+        });
+
+        $this->assertNull($this->getLastActivity());
+
+        activity()->log('outer');
+
+        $this->assertEquals('outer', $this->getLastActivity()->description);
+    }
+
+    /** @test */
+    public function it_will_disable_logs_for_a_callback_without_affecting_previous_state_even_when_already_disabled()
+    {
+        activity()->disableLogging();
+
+        activity()->withoutLogs(function() {
+            activity()->log('created');
+        });
+
+        $this->assertNull($this->getLastActivity());
+
+        activity()->log('outer');
+
+        $this->assertNull($this->getLastActivity());
+    }
+
+    /** @test */
+    public function it_will_disable_logs_for_a_callback_without_affecting_previous_state_even_with_exception()
+    {
+        activity()->disableLogging();
+
+        try {
+            activity()->withoutLogs(function() {
+                activity()->log('created');
+                throw new Exception('OH NO');
+            });
+        } catch (Exception $ex) {
+            //
+        }
+
+        $this->assertNull($this->getLastActivity());
+
+        activity()->log('outer');
+
+        $this->assertNull($this->getLastActivity());
     }
 }
