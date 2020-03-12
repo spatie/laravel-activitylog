@@ -342,8 +342,9 @@ class ActivityLoggerTest extends TestCase
     /** @test */
     public function it_will_disable_logs_for_a_callback()
     {
-        $result = activity()->withoutLogs(function() {
+        $result = activity()->withoutLogs(function () {
             activity()->log('created');
+
             return 'hello';
         });
 
@@ -354,7 +355,7 @@ class ActivityLoggerTest extends TestCase
     /** @test */
     public function it_will_disable_logs_for_a_callback_without_affecting_previous_state()
     {
-        activity()->withoutLogs(function() {
+        activity()->withoutLogs(function () {
             activity()->log('created');
         });
 
@@ -370,7 +371,7 @@ class ActivityLoggerTest extends TestCase
     {
         activity()->disableLogging();
 
-        activity()->withoutLogs(function() {
+        activity()->withoutLogs(function () {
             activity()->log('created');
         });
 
@@ -387,7 +388,7 @@ class ActivityLoggerTest extends TestCase
         activity()->disableLogging();
 
         try {
-            activity()->withoutLogs(function() {
+            activity()->withoutLogs(function () {
                 activity()->log('created');
                 throw new Exception('OH NO');
             });
