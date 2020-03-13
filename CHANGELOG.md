@@ -2,9 +2,13 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.12.0 - 2020-03-13
+
+- respect custom date casts [#627](https://github.com/spatie/laravel-activitylog/pull/627)
+
 ## 3.11.4 - 2020-03-11
 
-- remove `spatie/string` dependency
+- remove `spatie/string` dependency [#690](https://github.com/spatie/laravel-activitylog/pull/690)
 
 ## 3.11.3 - 2020-03-10
 
