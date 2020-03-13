@@ -1111,6 +1111,7 @@ class DetectsChangesTest extends TestCase
         $this->assertIsFloat($changes['attributes']['price']);
     }
 
+    /** @test */
     public function it_can_use_nullable_date_as_loggable_attributes()
     {
         $userClass = new class() extends User {
@@ -1137,6 +1138,39 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'text' => 'my text',
                 'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'deleted_at' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_use_custom_date_cast_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            protected $fillable = ['name', 'text'];
+            protected static $logAttributes = ['*'];
+            protected $casts = [
+                'created_at' => 'date:d.m.Y',
+            ];
+
+            use LogsActivity;
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'id' => $user->getKey(),
+                'name' => 'my name',
+                'text' => 'my text',
+                'created_at' => '01.01.2017',
                 'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],

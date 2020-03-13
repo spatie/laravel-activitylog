@@ -132,22 +132,37 @@ trait DetectsChanges
         foreach ($attributes as $attribute) {
             if (Str::contains($attribute, '.')) {
                 $changes += self::getRelatedModelAttributeValue($model, $attribute);
-            } elseif (Str::contains($attribute, '->')) {
+
+                continue;
+            }
+
+            if (Str::contains($attribute, '->')) {
                 Arr::set(
                     $changes,
                     str_replace('->', '.', $attribute),
                     static::getModelAttributeJsonValue($model, $attribute)
                 );
-            } else {
-                $changes[$attribute] = $model->getAttribute($attribute);
 
-                if (
-                    in_array($attribute, $model->getDates())
-                    && ! is_null($changes[$attribute])
-                ) {
-                    $changes[$attribute] = $model->serializeDate(
-                        $model->asDateTime($changes[$attribute])
-                    );
+                continue;
+            }
+
+            $changes[$attribute] = $model->getAttribute($attribute);
+
+            if (is_null($changes[$attribute])) {
+                continue;
+            }
+
+            if ($model->isDateAttribute($attribute)) {
+                $changes[$attribute] = $model->serializeDate(
+                    $model->asDateTime($changes[$attribute])
+                );
+            }
+
+            if ($model->hasCast($attribute)) {
+                $cast = $model->getCasts()[$attribute];
+
+                if ($model->isCustomDateTimeCast($cast)) {
+                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
                 }
             }
         }
