@@ -2,13 +2,14 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\ActivitylogServiceProvider;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\Activitylog\ActivityLogStatus;
 
 trait LogsActivity
 {
@@ -128,7 +129,9 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-        if (! $this->enableLoggingModelsEvents) {
+        $logStatus = app(ActivityLogStatus::class);
+
+        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
             return false;
         }
 

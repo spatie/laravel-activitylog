@@ -2,6 +2,34 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.11.4 - 2020-03-11
+
+- remove `spatie/string` dependency
+
+## 3.11.3 - 2020-03-10
+
+- fix performance issue around global vs model log disabling [#682](https://github.com/spatie/laravel-activitylog/pull/682)
+
+## 3.11.2 - 2020-03-10
+
+- fix Laravel 7 array/json casted attributes [#680](https://github.com/spatie/laravel-activitylog/pull/680)
+
+## 3.11.1 - 2020-03-02
+
+- fix requirements
+
+## 3.11.0 - 2020-03-02
+
+- add support for Laravel 7
+
+## 3.10.0 - 2020-02-22
+
+- add ability to manually set created at date - [#622](https://github.com/spatie/laravel-activitylog/pull/622)
+
+## 3.9.2 - 2020-02-04
+
+- drop support for Laravel 5
+
 ## 3.9.1 - 2019-10-15
 
 - fix default database connection - [#616](https://github.com/spatie/laravel-activitylog/pull/616)

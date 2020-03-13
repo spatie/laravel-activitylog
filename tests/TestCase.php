@@ -3,15 +3,16 @@
 namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
-use Illuminate\Support\Arr;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Facades\Schema;
-use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Test\Models\User;
 use Illuminate\Database\Schema\Blueprint;
-use Spatie\Activitylog\Test\Models\Article;
-use Spatie\Activitylog\ActivitylogServiceProvider;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Spatie\Activitylog\ActivitylogServiceProvider;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -107,5 +108,12 @@ abstract class TestCase extends OrchestraTestCase
     public function markTestAsPassed()
     {
         $this->assertTrue(true);
+    }
+
+    public function isLaravel6OrLower(): bool
+    {
+        $majorVersion = (int) substr(App::version(), 0, 1);
+
+        return $majorVersion <= 6;
     }
 }
