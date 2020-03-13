@@ -165,6 +165,21 @@ class ActivityLogger
         return $activity;
     }
 
+    public function withoutLogs(callable $callback)
+    {
+        if ($this->logStatus->disabled()) {
+            return $callback();
+        }
+
+        $this->logStatus->disable();
+
+        try {
+            return $callback();
+        } finally {
+            $this->logStatus->enable();
+        }
+    }
+
     protected function normalizeCauser($modelOrId): Model
     {
         if ($modelOrId instanceof Model) {
