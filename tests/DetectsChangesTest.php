@@ -1171,7 +1171,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'text' => 'my text',
                 'created_at' => '01.01.2017',
-                'updated_at' => '2017-01-01 12:00:00',
+                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
