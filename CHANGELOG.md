@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.11.4 - 2020-03-11
+
+- remove `spatie/string` dependency
+
 ## 3.11.3 - 2020-03-10
 
 - fix performance issue around global vs model log disabling [#682](https://github.com/spatie/laravel-activitylog/pull/682)

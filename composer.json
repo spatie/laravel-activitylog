@@ -33,8 +33,7 @@
         "php": "^7.2",
         "illuminate/config": "^6.0|^7.0",
         "illuminate/database": "^6.0|^7.0",
-        "illuminate/support": "^6.0|^7.0",
-        "spatie/string": "^2.1"
+        "illuminate/support": "^6.0|^7.0"
     },
     "require-dev": {
         "ext-json": "*",
