@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use AddEventColumnToActivityLogTable;
 use CreateActivityLogTable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
@@ -12,7 +13,6 @@ use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
-use AddEventColumnToActivityLogTable;
 
 abstract class TestCase extends OrchestraTestCase
 {

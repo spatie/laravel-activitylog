@@ -109,5 +109,4 @@ class AnotherInvalidActivity implements ActivityContract
     {
         return $query->where('event', $event);
     }
-
 }

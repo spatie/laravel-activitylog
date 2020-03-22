@@ -99,6 +99,7 @@ class ActivityLogger
     public function setEvent(string $event)
     {
         $this->activity->event = $event;
+
         return $this;
     }
 
