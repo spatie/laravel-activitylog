@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
+use UpdateActivityLogTable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Arr;
@@ -67,7 +68,10 @@ abstract class TestCase extends OrchestraTestCase
     {
         include_once __DIR__.'/../migrations/create_activity_log_table.php.stub';
 
+        include_once __DIR__.'/../migrations/update_activity_log_table.php.stub';
+
         (new CreateActivityLogTable())->up();
+        (new UpdateActivityLogTable())->up();
     }
 
     protected function createTables(...$tableNames)

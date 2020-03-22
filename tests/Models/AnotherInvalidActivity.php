@@ -104,4 +104,10 @@ class AnotherInvalidActivity implements ActivityContract
     {
         return $this->changes();
     }
+
+    public function scopeForEvent(Builder $query, string $event)
+    {
+        return $query->where('event',$event);
+    }
+
 }

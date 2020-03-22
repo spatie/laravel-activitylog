@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 
-interface Activity
-{
+interface Activity {
+
     public function subject(): MorphTo;
 
     public function causer(): MorphTo;
@@ -21,5 +21,8 @@ interface Activity
 
     public function scopeCausedBy(Builder $query, Model $causer): Builder;
 
+    public function scopeForEvent(Builder $query, string $event);
+
     public function scopeForSubject(Builder $query, Model $subject): Builder;
+
 }

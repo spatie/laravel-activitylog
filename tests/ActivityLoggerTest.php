@@ -240,6 +240,18 @@ class ActivityLoggerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_log_an_activity_with_event()
+    {
+        $article = Article::create(['name' => 'article name']);
+        activity()
+            ->performedOn($article)
+            ->event('create')
+            ->log('test event');
+
+        $this->assertEquals('create', $this->getLastActivity()->event);
+    }
+
+    /** @test */
     public function it_will_not_replace_non_placeholders()
     {
         $description = 'hello: :hello';
@@ -297,6 +309,14 @@ class ActivityLoggerTest extends TestCase
     public function it_accepts_null_parameter_for_caused_by()
     {
         activity()->causedBy(null)->log('nothing');
+
+        $this->markTestAsPassed();
+    }
+
+    /** @test */
+    public function it_accepts_null_parameter_for_event()
+    {
+        activity()->event(NULL)->log('Foo');
 
         $this->markTestAsPassed();
     }
