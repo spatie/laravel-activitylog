@@ -86,9 +86,8 @@ class Activity extends Model implements ActivityContract
             ->where('subject_id', $subject->getKey());
     }
 
-    public function scopeForEvent(Builder $query, string $event)
+    public function scopeForEvent(Builder $query, string $event): Builder
     {
         return $query->where('event', $event);
     }
-
 }

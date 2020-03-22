@@ -42,6 +42,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('created', $this->getLastActivity()->description);
         $this->assertEquals('created', $this->getLastActivity()->event);
     }
 
@@ -73,6 +74,7 @@ class LogsActivityTest extends TestCase
         $this->assertCount(1, Activity::all());
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('updated', $this->getLastActivity()->description);
         $this->assertEquals('updated', $this->getLastActivity()->event);
     }
 
@@ -98,6 +100,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('updated', $this->getLastActivity()->description);
         $this->assertEquals('updated', $this->getLastActivity()->event);
     }
 
@@ -112,10 +115,11 @@ class LogsActivityTest extends TestCase
 
         $article->save();
 
+        $this->assertEquals('created', $this->getLastActivity()->description);
         $this->assertEquals('created', $this->getLastActivity()->event);
 
         $article->delete();
-
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals('deleted', $this->getLastActivity()->event);
     }
 
@@ -130,12 +134,14 @@ class LogsActivityTest extends TestCase
 
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals('deleted', $this->getLastActivity()->event);
 
         $article->forceDelete();
 
         $this->assertCount(3, Activity::all());
 
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals('deleted', $this->getLastActivity()->event);
         $this->assertNull($article->fresh());
     }
@@ -153,6 +159,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('restored', $this->getLastActivity()->description);
         $this->assertEquals('restored', $this->getLastActivity()->event);
     }
 
@@ -187,6 +194,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals('deleted', $this->getLastActivity()->event);
         $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
     }
@@ -251,6 +259,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertEquals('created', $this->getLastActivity()->description);
         $this->assertEquals('created', $this->getLastActivity()->event);
     }
 
@@ -326,6 +335,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $firstActivity->properties);
         $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
+        $this->assertEquals('created', $firstActivity->description);
         $this->assertEquals('created', $firstActivity->event);
         $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
     }
@@ -351,7 +361,7 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
-    public function it_can_log_activity_when_event_is_changed_with_tab()
+    public function it_can_log_activity_when_event_is_changed_with_tap()
     {
         $model = new class() extends Article {
             use LogsActivity;

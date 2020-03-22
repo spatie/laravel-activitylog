@@ -3,7 +3,6 @@
 namespace Spatie\Activitylog\Test;
 
 use CreateActivityLogTable;
-use UpdateActivityLogTable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Arr;
@@ -13,6 +12,7 @@ use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
+use AddEventColumnToActivityLogTable;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -68,10 +68,11 @@ abstract class TestCase extends OrchestraTestCase
     {
         include_once __DIR__.'/../migrations/create_activity_log_table.php.stub';
 
-        include_once __DIR__.'/../migrations/update_activity_log_table.php.stub';
+        include_once __DIR__
+                     . '/../migrations/add_event_column_to_activity_log_table.php.stub';
 
         (new CreateActivityLogTable())->up();
-        (new UpdateActivityLogTable())->up();
+        (new AddEventColumnToActivityLogTable())->up();
     }
 
     protected function createTables(...$tableNames)

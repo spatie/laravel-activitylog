@@ -314,14 +314,6 @@ class ActivityLoggerTest extends TestCase
     }
 
     /** @test */
-    public function it_accepts_null_parameter_for_event()
-    {
-        activity()->event(NULL)->log('Foo');
-
-        $this->markTestAsPassed();
-    }
-
-    /** @test */
     public function it_can_log_activity_when_attributes_are_changed_with_tap()
     {
         $properties = [

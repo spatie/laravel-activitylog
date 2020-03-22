@@ -27,11 +27,12 @@ class ActivitylogServiceProvider extends ServiceProvider
             ], 'migrations');
         }
 
-        if (!class_exists('UpdateActivityLogTable')) {
-            $timestamp = date('Y_m_d_His', time());
+        if (! class_exists('AddEventColumnToActivityLogTable')) {
+            $timestamp = date('Y_m_d_His', time()+1);
 
             $this->publishes([
-                __DIR__ . '/../migrations/update_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_update_activity_log_table.php"),
+              __DIR__
+              . '/../migrations/add_event_column_to_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_update_activity_log_table.php"),
             ], 'migrations');
         }
     }

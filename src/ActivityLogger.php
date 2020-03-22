@@ -91,12 +91,12 @@ class ActivityLogger
         return $this->causedByAnonymous();
     }
 
-    public function event(?string $event)
+    public function event(string $event)
     {
         return $this->setEvent($event);
     }
 
-    public function setEvent(?string $event)
+    public function setEvent(string $event)
     {
         $this->activity->event = $event;
         return $this;
