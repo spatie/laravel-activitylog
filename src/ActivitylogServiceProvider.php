@@ -61,7 +61,7 @@ class ActivitylogServiceProvider extends ServiceProvider
 
     protected function bootMigrations(): void
     {
-        foreach([
+        foreach ([
             'CreateActivityLogTable',
             'AddEventColumnToActivityLogTable',
         ] as $i => $migration) {
