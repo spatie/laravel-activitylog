@@ -91,6 +91,18 @@ class ActivityLogger
         return $this->causedByAnonymous();
     }
 
+    public function event(string $event)
+    {
+        return $this->setEvent($event);
+    }
+
+    public function setEvent(string $event)
+    {
+        $this->activity->event = $event;
+
+        return $this;
+    }
+
     public function withProperties($properties)
     {
         $this->getActivity()->properties = collect($properties);

@@ -21,5 +21,7 @@ interface Activity
 
     public function scopeCausedBy(Builder $query, Model $causer): Builder;
 
+    public function scopeForEvent(Builder $query, string $event): Builder;
+
     public function scopeForSubject(Builder $query, Model $subject): Builder;
 }

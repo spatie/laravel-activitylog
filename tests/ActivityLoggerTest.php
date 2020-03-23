@@ -241,6 +241,18 @@ class ActivityLoggerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_log_an_activity_with_event()
+    {
+        $article = Article::create(['name' => 'article name']);
+        activity()
+            ->performedOn($article)
+            ->event('create')
+            ->log('test event');
+
+        $this->assertEquals('create', $this->getLastActivity()->event);
+    }
+
+    /** @test */
     public function it_will_not_replace_non_placeholders()
     {
         $description = 'hello: :hello';
