@@ -59,17 +59,16 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function setUpDatabase()
     {
-        $this->createActivityLogTable();
+        $this->migrateActivityLogTable();
 
         $this->createTables('articles', 'users');
         $this->seedModels(Article::class, User::class);
     }
 
-    protected function createActivityLogTable()
+    protected function migrateActivityLogTable()
     {
-        include_once __DIR__.'/../migrations/create_activity_log_table.php.stub';
-
-        include_once __DIR__.'/../migrations/add_event_column_to_activity_log_table.php.stub';
+        require_once __DIR__.'/../migrations/create_activity_log_table.php.stub';
+        require_once __DIR__.'/../migrations/add_event_column_to_activity_log_table.php.stub';
 
         (new CreateActivityLogTable())->up();
         (new AddEventColumnToActivityLogTable())->up();

@@ -4,6 +4,7 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
@@ -13,28 +14,8 @@ class ActivitylogServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/../config/activitylog.php' => config_path('activitylog.php'),
-        ], 'config');
-
-        $this->mergeConfigFrom(__DIR__.'/../config/activitylog.php', 'activitylog');
-
-        if (! class_exists('CreateActivityLogTable')) {
-            $timestamp = date('Y_m_d_His', time());
-
-            $this->publishes([
-                __DIR__.'/../migrations/create_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_create_activity_log_table.php"),
-            ], 'migrations');
-        }
-
-        if (! class_exists('AddEventColumnToActivityLogTable')) {
-            $timestamp = date('Y_m_d_His', time() + 1);
-
-            $this->publishes([
-                __DIR__
-                .'/../migrations/add_event_column_to_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_update_activity_log_table.php"),
-            ], 'migrations');
-        }
+        $this->bootConfig();
+        $this->bootMigrations();
     }
 
     public function register()
@@ -67,5 +48,32 @@ class ActivitylogServiceProvider extends ServiceProvider
         $activityModelClassName = self::determineActivityModel();
 
         return new $activityModelClassName();
+    }
+
+    protected function bootConfig(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/activitylog.php' => config_path('activitylog.php'),
+        ], 'config');
+
+        $this->mergeConfigFrom(__DIR__.'/../config/activitylog.php', 'activitylog');
+    }
+
+    protected function bootMigrations(): void
+    {
+        foreach([
+            'CreateActivityLogTable',
+            'AddEventColumnToActivityLogTable',
+        ] as $i => $migration) {
+            if (! class_exists($migration)) {
+                $this->publishes([
+                    __DIR__.'/../migrations/'.Str::snake($migration).'.php.stub' => database_path(sprintf(
+                        '/migrations/%s_%s.php',
+                        date('Y_m_d_His', time() + $i),
+                        Str::snake($migration)
+                    )),
+                ], 'migrations');
+            }
+        }
     }
 }
