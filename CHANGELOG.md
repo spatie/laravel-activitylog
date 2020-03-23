@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.14.0 - 2020-03-23
+
+- add `\Spatie\Activitylog\ActivityLogger::event()` method and column [#702](https://github.com/spatie/laravel-activitylog/pull/702)
+
 ## 3.13.0 - 2020-03-13
 
 - add `\Spatie\Activitylog\ActivityLogger::withoutLogs()` method [#695](https://github.com/spatie/laravel-activitylog/pull/695)
