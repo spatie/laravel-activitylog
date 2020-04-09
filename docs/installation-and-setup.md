@@ -11,6 +11,10 @@ composer require spatie/laravel-activitylog
 
 The package will automatically register the service provider.
 
+Add ACTIVITY_LOGGER_DB_CONNECTION to .env.
+
+Clear the config cache.
+
 You can publish the migration with:
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
