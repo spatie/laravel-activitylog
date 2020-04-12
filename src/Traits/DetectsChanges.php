@@ -177,12 +177,12 @@ trait DetectsChanges
 
         [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
 
-        $relatedModelName = self::snake($relatedModelName);
+        $relatedModelName = Str::snake($relatedModelName);
 
         if ($relatedModel = $model->$relatedModelName) {
             return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
         }
-        $relatedModelName = self::camel($relatedModelName);
+        $relatedModelName = Str::camel($relatedModelName);
 
         if ($relatedModel = $model->$relatedModelName ?? $model->$relatedModelName()) {
 
