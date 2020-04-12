@@ -159,9 +159,7 @@ trait DetectsChanges
                 $cast = $model->getCasts()[$attribute];
 
                 if ($model->isCustomDateTimeCast($cast)) {
-                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':',
-                        $cast, 2)[1])
-                    ;
+                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
                 }
             }
         }
@@ -185,7 +183,6 @@ trait DetectsChanges
         $relatedModelName = Str::camel($relatedModelName);
 
         if ($relatedModel = $model->$relatedModelName ?? $model->$relatedModelName()) {
-
             return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
         }
     }
