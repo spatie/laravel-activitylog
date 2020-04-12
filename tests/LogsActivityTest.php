@@ -29,6 +29,7 @@ class LogsActivityTest extends TestCase
         $this->user = new class() extends User {
             use LogsActivity;
             use SoftDeletes;
+
         };
 
         $this->assertCount(0, Activity::all());
