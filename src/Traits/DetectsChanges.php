@@ -30,6 +30,7 @@ trait DetectsChanges
             });
         }
     }
+
     public function attributesToBeLogged(): array
     {
         $attributes = [];
@@ -122,6 +123,7 @@ trait DetectsChanges
 
         return $properties;
     }
+    
     public static function logChanges(Model $model): array
     {
         $changes = [];

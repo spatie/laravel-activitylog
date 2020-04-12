@@ -278,6 +278,7 @@ class DetectsChangesTest extends TestCase
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
+
     /** @test */
     public function it_can_store_the_changes_when_updating_a_camel_case_related_model()
     {
