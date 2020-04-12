@@ -278,6 +278,51 @@ class DetectsChangesTest extends TestCase
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
+    /** @test */
+    public function it_can_store_the_changes_when_updating_a_camel_case_related_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'camelUser.name'];
+
+            use LogsActivity;
+
+            public function camelUser()
+            {
+                return $this->belongsTo(User::class, 'user_id');
+            }
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $anotherUser = User::create([
+            'name' => 'another name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'name',
+            'text' => 'text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->user()->associate($anotherUser)->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name',
+                'text' => 'text',
+                'camelUser.name' => 'another name',
+            ],
+            'old' => [
+                'name' => 'name',
+                'text' => 'text',
+                'camelUser.name' => 'a name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
 
     /** @test */
     public function it_can_store_the_dirty_changes_when_updating_a_related_model()
