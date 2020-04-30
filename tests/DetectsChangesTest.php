@@ -280,6 +280,52 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_the_changes_when_updating_a_snake_case_related_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'snake_user.name'];
+
+            use LogsActivity;
+
+            public function snake_user()
+            {
+                return $this->belongsTo(User::class, 'user_id');
+            }
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $anotherUser = User::create([
+            'name' => 'another name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'name',
+            'text' => 'text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->user()->associate($anotherUser)->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name',
+                'text' => 'text',
+                'snake_user.name' => 'another name',
+            ],
+            'old' => [
+                'name' => 'name',
+                'text' => 'text',
+                'snake_user.name' => 'a name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_store_the_dirty_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {

@@ -178,11 +178,20 @@ trait DetectsChanges
 
         [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
 
-        $relatedModelName = Str::camel($relatedModelName);
-
-        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+        [$relatedModelName, $relatedModel] = self::getRelatedModelWithRelationName($model, $relatedModelName);
 
         return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+    }
+
+    protected static function getRelatedModelWithRelationName(Model $model, string $relation): array
+    {
+        $relation = method_exists($model, $relation)
+            ? $relation
+            : Str::camel($relation);
+
+        $relationName = $model->$relation ?? $model->$relation();
+
+        return [$relation, $relationName];
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute)
