@@ -234,14 +234,14 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
-    public function it_can_store_the_changes_when_updating_a_snake_case_related_model()
+    public function it_can_store_the_changes_when_updating_a_camel_case_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'snake_user.name'];
+            public static $logAttributes = ['name', 'text', 'camel_user.name'];
 
             use LogsActivity;
 
-            public function snakeUser()
+            public function camelUser()
             {
                 return $this->belongsTo(User::class, 'user_id');
             }
@@ -267,12 +267,12 @@ class DetectsChangesTest extends TestCase
             'attributes' => [
                 'name' => 'name',
                 'text' => 'text',
-                'snakeUser.name' => 'another name',
+                'camelUser.name' => 'another name',
             ],
             'old' => [
                 'name' => 'name',
                 'text' => 'text',
-                'snakeUser.name' => 'a name',
+                'camelUser.name' => 'a name',
             ],
         ];
 
