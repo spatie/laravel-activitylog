@@ -37,8 +37,6 @@ trait LogsActivity
                     return;
                 }
 
-
-
                 $logger = app(ActivityLogger::class)
                     ->useLog($logName)
                     ->performedOn($model)
