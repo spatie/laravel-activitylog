@@ -21,12 +21,12 @@ trait LogsActivity
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
-                if (! $model->shouldLogEvent($eventName)) {
+                if (!$model->shouldLogEvent($eventName)) {
                     return;
                 }
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
+                if ($model->isLogEmpty($attrs) && !$model->shouldSubmitEmptyLogs()) {
                     return;
                 }
                 $description = $model->getDescriptionForEvent($eventName, $attrs);
@@ -53,7 +53,7 @@ trait LogsActivity
 
     public function shouldSubmitEmptyLogs(): bool
     {
-        return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
+        return !isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
     }
 
     public function isLogEmpty($attrs): bool
@@ -80,7 +80,7 @@ trait LogsActivity
         return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
     }
 
-    public function getDescriptionForEvent(string $eventName): string
+    public function getDescriptionForEvent(string $eventName, array $attributes): string
     {
         return $eventName;
     }
@@ -118,7 +118,7 @@ trait LogsActivity
 
     public function attributesToBeIgnored(): array
     {
-        if (! isset(static::$ignoreChangedAttributes)) {
+        if (!isset(static::$ignoreChangedAttributes)) {
             return [];
         }
 
@@ -129,11 +129,11 @@ trait LogsActivity
     {
         $logStatus = app(ActivityLogStatus::class);
 
-        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
+        if (!$this->enableLoggingModelsEvents || $logStatus->disabled()) {
             return false;
         }
 
-        if (! in_array($eventName, ['created', 'updated'])) {
+        if (!in_array($eventName, ['created', 'updated'])) {
             return true;
         }
 
