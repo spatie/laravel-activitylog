@@ -437,7 +437,6 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($article), $activity->subject);
         $this->assertTrue($article->is($activity->subject));
         $this->assertEquals('retrieved', $activity->description);
-        $this->assertEquals('retrieved', $activity->event);
     }
 
     public function loginWithFakeUser()
