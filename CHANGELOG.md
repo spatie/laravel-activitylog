@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.14.2 - 2020-05-19
+
+- fix `retrieved` event logging
+
 ## 3.14.1 - 2020-03-23
 
 - revert breaking changes in `v3.14.0`
