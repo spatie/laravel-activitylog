@@ -86,7 +86,7 @@ trait DetectsChanges
 
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
-        if (! count($this->attributesToBeLogged())) {
+        if (! count($this->attributesToBeLogged()) || $processingEvent == 'retrieved') {
             return [];
         }
 
