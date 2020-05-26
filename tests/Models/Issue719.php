@@ -16,8 +16,8 @@ class Issue719 extends Article
     {
         parent::boot();
 
-        static::creating(function (Issue719 $model): void {
+        static::creating(function (self $model): void {
             Issue719Sub::create(['name' => 'my sub model created during creation']);
         });
-  }
+    }
 }
