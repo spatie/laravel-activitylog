@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Issue719;
+use Spatie\Activitylog\Test\Models\Issue719Sub;
 use Spatie\Activitylog\Test\Models\Issue733;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -437,6 +439,17 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($article), $activity->subject);
         $this->assertTrue($article->is($activity->subject));
         $this->assertEquals('retrieved', $activity->description);
+    }
+
+    /** @test */
+    public function it_will_log_activity_triggered_in_model_event_listener()
+    {
+        Issue719::create(['name' => 'my name']);
+
+        $this->assertEquals(2, Activity::count());
+        $this->assertEquals(2, Activity::where('description', 'created')->count());
+        $this->assertEquals(1, Activity::where('subject_type', Issue719::class)->where('description', 'created')->count());
+        $this->assertEquals(1, Activity::where('subject_type', Issue719Sub::class)->where('description', 'created')->count());
     }
 
     public function loginWithFakeUser()
