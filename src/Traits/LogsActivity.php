@@ -34,7 +34,7 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
+                if ($model->isLogEmpty($attrs) && $description == 'updated' && ! $model->shouldSubmitEmptyLogs()) {
                     return;
                 }
 
