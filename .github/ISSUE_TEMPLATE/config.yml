@@ -10,6 +10,6 @@ contact_links:
       url: https://github.com/spatie/laravel-activitylog/discussions/new?category_id=4507852
       about: Share gratitude with the team
     - name: 🚨 Report Security Vulnerability
-      url: mailto:freek@spatie.be
-      about: Please report security vulnerabilities by email.
+      url: https://github.com/spatie/laravel-activitylog#security
+      about: Please report security vulnerabilities by email to freek@spatie.be
 
