@@ -69,7 +69,11 @@ Calling `$activity->changes()` will return this array:
 
 ## Support us
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us). 
+Learn how to create a package like this one, by watching our premium video course:
+
+[![Laravel Package training](https://spatie.be/github/package-training.jpg)](https://laravelpackage.training)
+
+We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
 We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
@@ -79,7 +83,6 @@ You'll find the documentation on [https://docs.spatie.be/laravel-activitylog](ht
 Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the activity log? Feel free to [create an issue on GitHub](https://github.com/spatie/laravel-activitylog/issues), we'll try to address it as soon as possible.
 
 If you've found a security issue please mail [freek@spatie.be](mailto:freek@spatie.be) instead of using the issue tracker.
-
 
 ## Installation
 
@@ -172,7 +175,6 @@ Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes.
 ## Upgrading
 
 Please see [UPGRADING](UPGRADING.md) for details.
-
 
 ## Testing
 
