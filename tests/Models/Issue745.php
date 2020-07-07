@@ -10,6 +10,6 @@ class Issue745 extends Article
 
     protected static $logAttributes = ['*'];
     protected static $ignoreChangedAttributes = ['created_at', 'updated_at', 'deleted_at'];
-    protected static $logAttributesToIgnore  = ['created_at', 'updated_at', 'deleted_at'];
+    protected static $logAttributesToIgnore = ['created_at', 'updated_at', 'deleted_at'];
     protected static $submitEmptyLogs = false;
 }
