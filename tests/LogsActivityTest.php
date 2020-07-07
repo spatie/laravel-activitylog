@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\Issue733;
+use Spatie\Activitylog\Test\Models\Issue745;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -437,6 +438,36 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($article), $activity->subject);
         $this->assertTrue($article->is($activity->subject));
         $this->assertEquals('retrieved', $activity->description);
+    }
+
+    /** @test */
+    public function it_will_log_the_all_attributes_if_one_changed()
+    {
+        $article = Issue745::create([
+            'name' => 'my name',
+            'text' => 'my text',
+        ]);
+
+        $article->update(['name' => 'my changed name']);
+
+        $activity = $this->getLastActivity();
+        $changes = $activity->changes();
+
+        $this->assertCount(6, $changes['attributes']);
+        $this->assertArrayHasKey('id', $changes['attributes']);
+        $this->assertArrayHasKey('name', $changes['attributes']);
+        $this->assertArrayHasKey('text', $changes['attributes']);
+        $this->assertArrayHasKey('user_id', $changes['attributes']);
+        $this->assertArrayHasKey('json', $changes['attributes']);
+        $this->assertArrayHasKey('price', $changes['attributes']);
+
+        $this->assertCount(6, $changes['old']);
+        $this->assertArrayHasKey('id', $changes['old']);
+        $this->assertArrayHasKey('name', $changes['old']);
+        $this->assertArrayHasKey('text', $changes['old']);
+        $this->assertArrayHasKey('user_id', $changes['old']);
+        $this->assertArrayHasKey('json', $changes['old']);
+        $this->assertArrayHasKey('price', $changes['old']);
     }
 
     public function loginWithFakeUser()
