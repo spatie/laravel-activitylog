@@ -176,17 +176,23 @@ trait DetectsChanges
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
     {
-        if (substr_count($attribute, '.') > 1) {
-            throw CouldNotLogChanges::invalidAttribute($attribute);
-        }
+        $relatedAttributes = explode('.', $attribute);
 
-        [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
+		$relatedAttribute = last($relatedAttributes);
 
-        $relatedModelName = Str::camel($relatedModelName);
+		$attr = [];
+		foreach ($relatedAttributes as $index => $attribute) {
+			if ($index == sizeof($relatedAttributes) - 1) {
+				break;
+			}
+			$relatedModelName = Str::camel($attribute);
+			$attr[] = $relatedModelName;
+			$model = $model->$relatedModelName ?? $model->$relatedModelName();
+		}
 
-        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+		$relatedModel = $model;
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+        return [implode('.', $attr) . '.' . $relatedAttribute => $relatedModel->$relatedAttribute ?? null];
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute)
