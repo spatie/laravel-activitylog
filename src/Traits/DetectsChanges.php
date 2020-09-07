@@ -178,19 +178,19 @@ trait DetectsChanges
     {
         $relatedAttributes = explode('.', $attribute);
 
-		$relatedAttribute = last($relatedAttributes);
+        $relatedAttribute = last($relatedAttributes);
 
-		$attr = [];
-		foreach ($relatedAttributes as $index => $attribute) {
-			if ($index == sizeof($relatedAttributes) - 1) {
-				break;
-			}
-			$relatedModelName = Str::camel($attribute);
-			$attr[] = $relatedModelName;
-			$model = $model->$relatedModelName ?? $model->$relatedModelName();
-		}
+        $attr = [];
+        foreach ($relatedAttributes as $index => $attribute) {
+            if ($index == sizeof($relatedAttributes) - 1) {
+                break;
+            }
+            $relatedModelName = Str::camel($attribute);
+            $attr[] = $relatedModelName;
+            $model = $model->$relatedModelName ?? $model->$relatedModelName();
+        }
 
-		$relatedModel = $model;
+        $relatedModel = $model;
 
         return [implode('.', $attr) . '.' . $relatedAttribute => $relatedModel->$relatedAttribute ?? null];
     }
