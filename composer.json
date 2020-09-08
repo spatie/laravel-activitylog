@@ -1,7 +1,6 @@
 {
     "name": "spatie/laravel-activitylog",
     "description": "A very simple activity logger to monitor the users of your website or application",
-    "homepage": "https://github.com/spatie/activitylog",
     "keywords": [
         "spatie",
         "log",
@@ -9,6 +8,8 @@
         "activity",
         "laravel"
     ],
+    "homepage": "https://github.com/spatie/activitylog",
+    "license": "MIT",
     "authors": [
         {
             "name": "Freek Van der Herten",
@@ -31,14 +32,24 @@
     ],
     "require": {
         "php": "^7.2",
-        "illuminate/config": "^6.0|^7.0|^8.0",
-        "illuminate/database": "^6.0|^7.0|^8.0",
-        "illuminate/support": "^6.0|^7.0|^8.0"
+        "illuminate/config": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/database": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/support": "^6.0 || ^7.0 || ^8.0"
     },
     "require-dev": {
         "ext-json": "*",
-        "orchestra/testbench": "^4.0|^5.0|^6.0",
-        "phpunit/phpunit": "^8.0|^9.0|^9.3"
+        "orchestra/testbench": "^4.0 || ^5.0 || ^6.0",
+        "phpunit/phpunit": "^8.0 || ^9.0 || ^9.3"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spatie\\Activitylog\\ActivitylogServiceProvider"
+            ]
+        }
     },
     "autoload": {
         "psr-4": {
@@ -53,20 +64,9 @@
             "Spatie\\Activitylog\\Test\\": "tests"
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "scripts": {
         "test": "vendor/bin/phpunit"
-    },
-    "license": "MIT",
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Spatie\\Activitylog\\ActivitylogServiceProvider"
-            ]
-        }
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
