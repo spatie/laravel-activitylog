@@ -1274,14 +1274,14 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'missing' => 'I wasn\'t here',
                     ],
                 ],
             ],
             'old' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'missing' => null,
                     ],
@@ -1329,7 +1329,7 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'data_a' => 1,
                         'data_b' => 2,
@@ -1340,7 +1340,7 @@ class DetectsChangesTest extends TestCase
                 ],
             ],
             'old' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'data_a' => 1,
                         'data_b' => 2,
@@ -1385,7 +1385,7 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'can' => [
                             'go' => [
@@ -1398,7 +1398,7 @@ class DetectsChangesTest extends TestCase
                 ],
             ],
             'old' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'can' => [
                             'go' => [
