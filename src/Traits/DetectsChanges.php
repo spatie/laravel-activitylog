@@ -191,7 +191,7 @@ trait DetectsChanges
 
         $relatedModel = $model;
 
-        return [implode('.', $attr).'.'.$relatedAttribute => $relatedModel->$relatedAttribute ?? null];
+        return [implode('.', $attr).'.'.$relatedAttribute => (method_exists($relatedModel, $relatedAttribute) ? $relatedModel->$relatedAttribute() : null) ?? $relatedModel->$relatedAttribute ?? null];
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute)
