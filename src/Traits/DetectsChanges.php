@@ -5,7 +5,6 @@ namespace Spatie\Activitylog\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
 {
@@ -186,7 +185,7 @@ trait DetectsChanges
             $attributeName[] = $relatedModelName = Str::camel(array_shift($relatedModelNames));
 
             $relatedModel = $relatedModel->$relatedModelName ?? $relatedModel->$relatedModelName();
-        } while (!empty($relatedModelNames));
+        } while (! empty($relatedModelNames));
 
         $attributeName[] = $relatedAttribute;
 
