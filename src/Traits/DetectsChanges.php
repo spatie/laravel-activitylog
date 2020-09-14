@@ -5,7 +5,6 @@ namespace Spatie\Activitylog\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
 {
@@ -176,17 +175,21 @@ trait DetectsChanges
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
     {
-        if (substr_count($attribute, '.') > 1) {
-            throw CouldNotLogChanges::invalidAttribute($attribute);
-        }
+        $relatedModelNames = explode('.', $attribute);
+        $relatedAttribute = array_pop($relatedModelNames);
 
-        [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
+        $attributeName = [];
+        $relatedModel = $model;
 
-        $relatedModelName = Str::camel($relatedModelName);
+        do {
+            $attributeName[] = $relatedModelName = Str::camel(array_shift($relatedModelNames));
 
-        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+            $relatedModel = $relatedModel->$relatedModelName ?? $relatedModel->$relatedModelName();
+        } while (! empty($relatedModelNames));
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+        $attributeName[] = $relatedAttribute;
+
+        return [implode('.', $attributeName) => $relatedModel->$relatedAttribute ?? null];
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute)
