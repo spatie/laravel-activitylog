@@ -319,6 +319,42 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_store_the_changes_when_saving_including_multi_level_related_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'user.latest_article.name'];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $articleClass::create([
+            'name' => 'name #1',
+            'text' => 'text #1',
+            'user_id' => $user->id,
+        ]);
+
+        $articleClass::create([
+            'name' => 'name #2',
+            'text' => 'text #2',
+            'user_id' => $user->id,
+        ]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name #2',
+                'text' => 'text #2',
+                'user.latestArticle.name' => 'name #1',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_will_store_no_changes_when_not_logging_attributes()
     {
         $articleClass = new class() extends Article {
