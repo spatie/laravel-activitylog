@@ -149,7 +149,7 @@ trait DetectsChanges
                 continue;
             }
 
-            $changes[$attribute] = $model->getAttribute($attribute);
+            $changes[$attribute] = method_exists($model, $attribute) ? $model->$attribute() : $model->getAttribute($attribute);
 
             if (is_null($changes[$attribute])) {
                 continue;
