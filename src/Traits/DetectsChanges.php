@@ -182,7 +182,7 @@ trait DetectsChanges
         $relatedModel = $model;
 
         do {
-            $attributeName[] = $relatedModelName = Str::camel(array_shift($relatedModelNames));
+            $attributeName[] = $relatedModelName = static::getRelatedModelRelationName($relatedModel, array_shift($relatedModelNames));
 
             $relatedModel = $relatedModel->$relatedModelName ?? $relatedModel->$relatedModelName();
         } while (! empty($relatedModelNames));
@@ -190,6 +190,17 @@ trait DetectsChanges
         $attributeName[] = $relatedAttribute;
 
         return [implode('.', $attributeName) => $relatedModel->$relatedAttribute ?? null];
+    }
+
+    protected static function getRelatedModelRelationName(Model $model, string $relation): string
+    {
+        return Arr::first([
+            $relation,
+            Str::snake($relation),
+            Str::camel($relation),
+        ], function(string $method) use ($model): bool {
+            return method_exists($model, $method);
+        }, $relation);
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute)
