@@ -11,9 +11,9 @@ composer require spatie/laravel-activitylog
 
 The package will automatically register the service provider.
 
-Add ACTIVITY_LOGGER_DB_CONNECTION to .env.
+If you want your activities to be stored in a special database connection you can define `ACTIVITY_LOGGER_DB_CONNECTION` in your `.env` file.
 
-Clear the config cache.
+After you've configured everything you should clear the application config cache via `artisan config:clear`.
 
 You can publish the migration with:
 ```bash
