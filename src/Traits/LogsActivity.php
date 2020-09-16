@@ -24,18 +24,16 @@ trait LogsActivity
                 if (! $model->shouldLogEvent($eventName)) {
                     return;
                 }
+                $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                $description = $model->getDescriptionForEvent($eventName);
+                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
+                    return;
+                }
+                $description = $model->getDescriptionForEvent($eventName, $attrs);
 
                 $logName = $model->getLogNameToUse($eventName);
 
                 if ($description == '') {
-                    return;
-                }
-
-                $attrs = $model->attributeValuesToBeLogged($eventName);
-
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
                     return;
                 }
 
@@ -83,7 +81,7 @@ trait LogsActivity
         return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
     }
 
-    public function getDescriptionForEvent(string $eventName): string
+    public function getDescriptionForEvent(string $eventName, array $attributes): string
     {
         return $eventName;
     }

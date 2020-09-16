@@ -271,7 +271,7 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getDescriptionForEvent(string $eventName): string
+            public function getDescriptionForEvent(string $eventName, array $attributes): string
             {
                 return ":causer.name $eventName";
             }
