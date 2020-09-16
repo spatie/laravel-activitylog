@@ -24,11 +24,13 @@ trait LogsActivity
                 if (! $model->shouldLogEvent($eventName)) {
                     return;
                 }
+
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
                 if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
                     return;
                 }
+
                 $description = $model->getDescriptionForEvent($eventName, $attrs);
 
                 $logName = $model->getLogNameToUse($eventName);
