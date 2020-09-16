@@ -198,7 +198,7 @@ trait DetectsChanges
             $relation,
             Str::snake($relation),
             Str::camel($relation),
-        ], function(string $method) use ($model): bool {
+        ], function (string $method) use ($model): bool {
             return method_exists($model, $method);
         }, $relation);
     }
