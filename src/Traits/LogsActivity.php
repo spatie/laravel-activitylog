@@ -21,6 +21,8 @@ trait LogsActivity
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
+                /** @var Model|LogsActivity $model */
+
                 if (! $model->shouldLogEvent($eventName)) {
                     return;
                 }
