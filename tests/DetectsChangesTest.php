@@ -237,11 +237,11 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_updating_a_snake_case_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'snake_user.name'];
+            public static $logAttributes = ['name', 'text', 'snakeUser.name'];
 
             use LogsActivity;
 
-            public function snakeUser()
+            public function snake_user()
             {
                 return $this->belongsTo(User::class, 'user_id');
             }
@@ -267,12 +267,104 @@ class DetectsChangesTest extends TestCase
             'attributes' => [
                 'name' => 'name',
                 'text' => 'text',
-                'snakeUser.name' => 'another name',
+                'snake_user.name' => 'another name',
             ],
             'old' => [
                 'name' => 'name',
                 'text' => 'text',
-                'snakeUser.name' => 'a name',
+                'snake_user.name' => 'a name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_when_updating_a_camel_case_related_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'camel_user.name'];
+
+            use LogsActivity;
+
+            public function camelUser()
+            {
+                return $this->belongsTo(User::class, 'user_id');
+            }
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $anotherUser = User::create([
+            'name' => 'another name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'name',
+            'text' => 'text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->user()->associate($anotherUser)->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name',
+                'text' => 'text',
+                'camelUser.name' => 'another name',
+            ],
+            'old' => [
+                'name' => 'name',
+                'text' => 'text',
+                'camelUser.name' => 'a name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_when_updating_a_custom_case_related_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'Custom_Case_User.name'];
+
+            use LogsActivity;
+
+            public function Custom_Case_User()
+            {
+                return $this->belongsTo(User::class, 'user_id');
+            }
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $anotherUser = User::create([
+            'name' => 'another name',
+        ]);
+
+        $article = $articleClass::create([
+            'name' => 'name',
+            'text' => 'text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->user()->associate($anotherUser)->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name',
+                'text' => 'text',
+                'Custom_Case_User.name' => 'another name',
+            ],
+            'old' => [
+                'name' => 'name',
+                'text' => 'text',
+                'Custom_Case_User.name' => 'a name',
             ],
         ];
 
@@ -312,6 +404,42 @@ class DetectsChangesTest extends TestCase
             ],
             'old' => [
                 'user.name' => 'a name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_the_changes_when_saving_including_multi_level_related_model()
+    {
+        $articleClass = new class() extends Article {
+            public static $logAttributes = ['name', 'text', 'user.latest_article.name'];
+
+            use LogsActivity;
+        };
+
+        $user = User::create([
+            'name' => 'a name',
+        ]);
+
+        $articleClass::create([
+            'name' => 'name #1',
+            'text' => 'text #1',
+            'user_id' => $user->id,
+        ]);
+
+        $articleClass::create([
+            'name' => 'name #2',
+            'text' => 'text #2',
+            'user_id' => $user->id,
+        ]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'name #2',
+                'text' => 'text #2',
+                'user.latestArticle.name' => 'name #1',
             ],
         ];
 
@@ -1274,14 +1402,14 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'missing' => 'I wasn\'t here',
                     ],
                 ],
             ],
             'old' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'missing' => null,
                     ],
@@ -1329,7 +1457,7 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'data_a' => 1,
                         'data_b' => 2,
@@ -1340,7 +1468,7 @@ class DetectsChangesTest extends TestCase
                 ],
             ],
             'old' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'data_a' => 1,
                         'data_b' => 2,
@@ -1385,7 +1513,7 @@ class DetectsChangesTest extends TestCase
 
         $expectedChanges = [
             'attributes' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'can' => [
                             'go' => [
@@ -1398,7 +1526,7 @@ class DetectsChangesTest extends TestCase
                 ],
             ],
             'old' => [
-                'json' =>  [
+                'json' => [
                     'data' => [
                         'can' => [
                             'go' => [

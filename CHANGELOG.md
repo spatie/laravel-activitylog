@@ -2,7 +2,25 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 3.14.0 - 2020-03-23
+## 3.15.0 - 2020-09-14
+
+- Add multiple/chained relation attribute logging support - [#784](https://github.com/spatie/laravel-activitylog/pull/784)
+
+## 3.14.3 - 2020-09-09
+
+- Add support for Laravel 8
+
+## 3.14.2 - 2020-05-19
+
+- fix `retrieved` event logging
+
+## 3.14.1 - 2020-03-23
+
+- revert breaking changes in `v3.14.0`
+
+## 3.14.0 - 2020-03-23 - BC
+
+Please use `v3.14.1` instead - this release is breaking because of the new column. There is also a `v4.0.0-rc.1` release that equals to this one.
 
 - add `\Spatie\Activitylog\ActivityLogger::event()` method and column [#702](https://github.com/spatie/laravel-activitylog/pull/702)
 

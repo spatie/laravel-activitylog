@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Issue733;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -451,6 +452,21 @@ class LogsActivityTest extends TestCase
 
         $this->assertCount(2, Activity::all());
         $this->assertSame($expectedChanges, $changes);
+    }
+
+    /** @test */
+    public function it_will_log_the_retrieval_of_the_model()
+    {
+        $article = Issue733::create(['name' => 'my name']);
+
+        $retrieved = Issue733::whereKey($article->getKey())->first();
+        $this->assertTrue($article->is($retrieved));
+
+        $activity = $this->getLastActivity();
+
+        $this->assertInstanceOf(get_class($article), $activity->subject);
+        $this->assertTrue($article->is($activity->subject));
+        $this->assertEquals('retrieved', $activity->description);
     }
 
     public function loginWithFakeUser()

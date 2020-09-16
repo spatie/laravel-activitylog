@@ -51,4 +51,9 @@ class User extends Model implements Authenticatable
     {
         return $this->hasMany(Article::class);
     }
+
+    public function latestArticle()
+    {
+        return $this->hasOne(Article::class)->latest()->limit(1);
+    }
 }

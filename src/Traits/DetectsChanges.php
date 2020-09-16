@@ -5,7 +5,6 @@ namespace Spatie\Activitylog\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Exceptions\CouldNotLogChanges;
 
 trait DetectsChanges
 {
@@ -91,9 +90,13 @@ trait DetectsChanges
         }
 
         $properties['attributes'] = static::logChanges(
-            $this->exists
-                ? $this->fresh() ?? $this
-                : $this
+            $processingEvent == 'retrieved'
+                ? $this
+                : (
+                    $this->exists
+                        ? $this->fresh() ?? $this
+                        : $this
+                )
         );
 
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
@@ -172,17 +175,32 @@ trait DetectsChanges
 
     protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
     {
-        if (substr_count($attribute, '.') > 1) {
-            throw CouldNotLogChanges::invalidAttribute($attribute);
-        }
+        $relatedModelNames = explode('.', $attribute);
+        $relatedAttribute = array_pop($relatedModelNames);
 
-        [$relatedModelName, $relatedAttribute] = explode('.', $attribute);
+        $attributeName = [];
+        $relatedModel = $model;
 
-        $relatedModelName = Str::camel($relatedModelName);
+        do {
+            $attributeName[] = $relatedModelName = static::getRelatedModelRelationName($relatedModel, array_shift($relatedModelNames));
 
-        $relatedModel = $model->$relatedModelName ?? $model->$relatedModelName();
+            $relatedModel = $relatedModel->$relatedModelName ?? $relatedModel->$relatedModelName();
+        } while (! empty($relatedModelNames));
 
-        return ["{$relatedModelName}.{$relatedAttribute}" => $relatedModel->$relatedAttribute ?? null];
+        $attributeName[] = $relatedAttribute;
+
+        return [implode('.', $attributeName) => $relatedModel->$relatedAttribute ?? null];
+    }
+
+    protected static function getRelatedModelRelationName(Model $model, string $relation): string
+    {
+        return Arr::first([
+            $relation,
+            Str::snake($relation),
+            Str::camel($relation),
+        ], function (string $method) use ($model): bool {
+            return method_exists($model, $method);
+        }, $relation);
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute)

@@ -402,6 +402,7 @@ class ActivityLoggerTest extends TestCase
         try {
             activity()->withoutLogs(function () {
                 activity()->log('created');
+
                 throw new Exception('OH NO');
             });
         } catch (Exception $ex) {
