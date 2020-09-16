@@ -2,6 +2,11 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.16.0 - 2020-09-16
+
+- use `nullableMorphs()` in default migration - [#707](https://github.com/spatie/laravel-activitylog/pull/707)
+- add support for snake and camel cased related model attribute logging - [#721](https://github.com/spatie/laravel-activitylog/pull/721)
+
 ## 3.15.0 - 2020-09-14
 
 - Add multiple/chained relation attribute logging support - [#784](https://github.com/spatie/laravel-activitylog/pull/784)
