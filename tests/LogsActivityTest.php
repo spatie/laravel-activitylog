@@ -110,18 +110,27 @@ class LogsActivityTest extends TestCase
     {
         $articleClass = new class() extends Article {
             use LogsActivity;
+            protected static $logAttributes = ['name'];
         };
 
         $article = new $articleClass();
-
+        $article->name = 'my name';
         $article->save();
 
         $this->assertEquals('created', $this->getLastActivity()->description);
         $this->assertEquals('created', $this->getLastActivity()->event);
 
         $article->delete();
-        $this->assertEquals('deleted', $this->getLastActivity()->description);
-        $this->assertEquals('deleted', $this->getLastActivity()->event);
+
+        $activity = $this->getLastActivity();
+
+        $this->assertEquals('deleted', $activity->description);
+        $this->assertArrayHasKey('old', $activity->changes());
+        $this->assertEquals('my name', $activity->changes()['old']['name']);
+        $this->assertArrayNotHasKey('attributes', $activity->changes());
+
+        $this->assertEquals('deleted', $activity->description);
+        $this->assertEquals('deleted', $activity->event);
     }
 
     /** @test */

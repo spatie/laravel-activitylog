@@ -124,6 +124,11 @@ trait DetectsChanges
                 ->all();
         }
 
+        if (static::eventsToBeRecorded()->contains('deleted') && $processingEvent == 'deleted') {
+            $properties['old'] = $properties['attributes'];
+            unset($properties['attributes']);
+        }
+
         return $properties;
     }
 

@@ -472,7 +472,7 @@ class DetectsChangesTest extends TestCase
         $article->delete();
 
         $expectedChanges = collect([
-            'attributes' => [
+            'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
@@ -498,7 +498,7 @@ class DetectsChangesTest extends TestCase
         $article->delete();
 
         $expectedChanges = collect([
-            'attributes' => [
+            'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
@@ -510,7 +510,7 @@ class DetectsChangesTest extends TestCase
         $article->forceDelete();
 
         $expectedChanges = collect([
-            'attributes' => [
+            'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
