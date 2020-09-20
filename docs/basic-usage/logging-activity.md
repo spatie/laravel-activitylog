@@ -54,7 +54,7 @@ The `causedBy()`-function has a shorter alias named: `by`
 
 If you're not using `causedBy` the package will automatically use the logged in user.
 
-If you don't want to associate a model as causer of activity, you can use `causedByAnonynmous` (or the shorter alias: `byAnonymous`).
+If you don't want to associate a model as causer of activity, you can use `causedByAnonymous` (or the shorter alias: `byAnonymous`).
 
 ## Setting custom properties
 
