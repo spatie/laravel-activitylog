@@ -65,9 +65,6 @@ Calling `$activity->changes()` will return this array:
 ];
 ```
 
-Need to enable logging on a pivot table?
-Make sure that your pivot table as a PK and that `$incrementing = true` is set on the pivot model
-
 ## Support us
 
 Learn how to create a package like this one, by watching our premium video course:
