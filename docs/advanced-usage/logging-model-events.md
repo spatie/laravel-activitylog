@@ -413,3 +413,23 @@ class NewsItem extends Model
     }
 }
 ```
+
+## Logging on Pivot Models
+
+Sometimes you want to log changes on your pivot model - for example if it contains additional data.
+By default pivot models don't have a primary key/column and because of this can't be used in eloquent relations.
+To solve this you have to add a primary key column `id` to your pivot table (`$table->id('id')`) and configure your pivot model to use this primary key.
+
+```php
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+final class PivotModel extends Pivot
+{
+    use LogsActivity;
+
+    public $incrementing = true;
+}
+```
+
+After these changes you can log activities on your pivot models as expected.
