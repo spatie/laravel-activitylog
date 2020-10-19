@@ -149,7 +149,7 @@ trait DetectsChanges
                 continue;
             }
 
-            $changes[$attribute] = $model->getAttribute($attribute);
+            $changes[$attribute] = $model->attributeDataToRecord($attribute) ?? $model->getAttribute($attribute);
 
             if (is_null($changes[$attribute])) {
                 continue;

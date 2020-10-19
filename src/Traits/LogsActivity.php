@@ -53,6 +53,11 @@ trait LogsActivity
         });
     }
 
+    public function attributeDataToRecord($attribute)
+    {
+        return null;
+    }
+
     public function shouldSubmitEmptyLogs(): bool
     {
         return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
