@@ -1,3 +1,5 @@
+<p align="center"><img src="/art/socialcard.png" alt="Social Card of Laravel Activity Log"></p>
+
 # Log activity inside your Laravel app
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
@@ -191,6 +193,8 @@ If you discover any security related issues, please email freek@spatie.be instea
 - [Freek Van der Herten](https://github.com/freekmurze)
 - [Sebastian De Deyne](https://github.com/sebastiandedeyne)
 - [All Contributors](../../contributors)
+
+And a special thanks to [Caneco](https://twitter.com/caneco) for the logo ✨
 
 ## License
 
