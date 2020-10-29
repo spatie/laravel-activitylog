@@ -27,6 +27,9 @@ class ActivityLogger
     /** @var \Spatie\Activitylog\ActivityLogStatus */
     protected $logStatus;
 
+    /** @var boolean */
+    protected $temporaryLogStatus;
+
     /** @var \Spatie\Activitylog\Contracts\Activity */
     protected $activity;
 
@@ -126,7 +129,7 @@ class ActivityLogger
 
     public function tap(callable $callback, string $eventName = null)
     {
-        call_user_func($callback, $this->getActivity(), $eventName);
+        $this->temporaryLogStatus = call_user_func($callback, $this->getActivity(), $eventName);
 
         return $this;
     }
@@ -147,6 +150,10 @@ class ActivityLogger
 
     public function log(string $description)
     {
+        if ($this->temporaryLogStatus === true) {
+            return;
+        }
+
         if ($this->logStatus->disabled()) {
             return;
         }
