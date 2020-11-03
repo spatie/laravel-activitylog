@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.16.1 - 2020-11-03
+
+- add PHP8 support - [#806](https://github.com/spatie/laravel-activitylog/pull/806)
+
 ## 3.16.0 - 2020-09-16
 
 - use `nullableMorphs()` in default migration - [#707](https://github.com/spatie/laravel-activitylog/pull/707)
