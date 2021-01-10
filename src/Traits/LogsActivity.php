@@ -94,7 +94,9 @@ trait LogsActivity
             return static::$logName;
         }
 
-        return Str::ucfirst(Str::snake(Str::pluralStudly(class_basename($this))));
+        $config = config('activitylog.default_log_name');
+
+        return $config ?: Str::ucfirst(Str::snake(Str::pluralStudly(class_basename($this))));
     }
 
     /*
