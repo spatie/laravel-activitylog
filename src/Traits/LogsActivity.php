@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
+use Str;
 
 trait LogsActivity
 {
@@ -21,7 +22,7 @@ trait LogsActivity
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
-                if (! $model->shouldLogEvent($eventName)) {
+                if (!$model->shouldLogEvent($eventName)) {
                     return;
                 }
 
@@ -35,7 +36,7 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
+                if ($model->isLogEmpty($attrs) && !$model->shouldSubmitEmptyLogs()) {
                     return;
                 }
 
@@ -55,7 +56,7 @@ trait LogsActivity
 
     public function shouldSubmitEmptyLogs(): bool
     {
-        return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
+        return !isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
     }
 
     public function isLogEmpty($attrs): bool
@@ -93,7 +94,7 @@ trait LogsActivity
             return static::$logName;
         }
 
-        return config('activitylog.default_log_name');
+        return Str::ucfirst(Str::snake(Str::pluralStudly(class_basename($this))));
     }
 
     /*
@@ -120,7 +121,7 @@ trait LogsActivity
 
     public function attributesToBeIgnored(): array
     {
-        if (! isset(static::$ignoreChangedAttributes)) {
+        if (!isset(static::$ignoreChangedAttributes)) {
             return [];
         }
 
@@ -131,11 +132,11 @@ trait LogsActivity
     {
         $logStatus = app(ActivityLogStatus::class);
 
-        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
+        if (!$this->enableLoggingModelsEvents || $logStatus->disabled()) {
             return false;
         }
 
-        if (! in_array($eventName, ['created', 'updated'])) {
+        if (!in_array($eventName, ['created', 'updated'])) {
             return true;
         }
 
