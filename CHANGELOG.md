@@ -2,7 +2,7 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 3.17.0 - 2021-xx-xx
+## 3.17.0 - 2021-03-02
 
 - drop PHP 7.2 support - [#855](https://github.com/spatie/laravel-activitylog/pull/855)
 

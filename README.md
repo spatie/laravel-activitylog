@@ -3,8 +3,8 @@
 # Log activity inside your Laravel app
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-activitylog/run-tests?label=tests)
-![Check & fix styling](https://github.com/spatie/laravel-activitylog/workflows/Check%20&%20fix%20styling/badge.svg)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-activitylog/run-tests?label=tests)](https://github.com/spatie/laravel-activitylog/actions/workflows/run-tests.yml)
+[![Check & fix styling](https://github.com/spatie/laravel-activitylog/workflows/Check%20&%20fix%20styling/badge.svg)](https://github.com/spatie/laravel-activitylog/actions/workflows/php-cs-fixer.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
 
 The `spatie/laravel-activitylog` package provides easy to use functions to log the activities of the users of your app. It can also automatically log model events.
