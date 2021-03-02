@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use PHPUnit\Util\Test;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
@@ -27,7 +28,9 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function checkCustomRequirements()
     {
-        collect($this->getAnnotations())->filter(function ($location) {
+        $annotations = Test::parseTestMethodAnnotations(static::class, $this->getName());
+
+        collect($annotations)->filter(function ($location) {
             return in_array('!Travis', Arr::get($location, 'requires', []));
         })->each(function ($location) {
             getenv('TRAVIS') && $this->markTestSkipped('Travis will not run this test.');
