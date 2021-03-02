@@ -2,9 +2,13 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.17.0 - 2021-xx-xx
+
+- drop PHP 7.2 support - [#855](https://github.com/spatie/laravel-activitylog/pull/855)
+
 ## 3.16.1 - 2020-11-03
 
-- add PHP8 support - [#806](https://github.com/spatie/laravel-activitylog/pull/806)
+- add PHP 8.0 support - [#806](https://github.com/spatie/laravel-activitylog/pull/806)
 
 ## 3.16.0 - 2020-09-16
 
