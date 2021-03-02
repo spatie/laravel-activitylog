@@ -19,22 +19,9 @@ abstract class TestCase extends OrchestraTestCase
 {
     public function setUp(): void
     {
-        $this->checkCustomRequirements();
-
         parent::setUp();
 
         $this->setUpDatabase();
-    }
-
-    protected function checkCustomRequirements()
-    {
-        $annotations = Test::parseTestMethodAnnotations(static::class, $this->getName());
-
-        collect($annotations)->filter(function ($location) {
-            return in_array('!Travis', Arr::get($location, 'requires', []));
-        })->each(function ($location) {
-            getenv('TRAVIS') && $this->markTestSkipped('Travis will not run this test.');
-        });
     }
 
     protected function getPackageProviders($app)

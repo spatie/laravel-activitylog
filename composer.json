@@ -39,7 +39,7 @@
     "require-dev": {
         "ext-json": "*",
         "orchestra/testbench": "^4.0 || ^5.0 || ^6.0",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.3"
     },
     "config": {
         "sort-packages": true
