@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Models\Activity;
@@ -159,6 +160,42 @@ class DetectsChangesTest extends TestCase
             ],
             'old' => [
                 'name' => 'my name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_store_dirty_changes_only_event_with_scope()
+    {
+
+        $class = new class() extends User {
+            use LogsActivity;
+
+            protected $fillable = [];
+
+            protected static $logOnlyDirty = true;
+            protected static $logUnguarded = true;
+
+            public function scopeTextOnly(Builder $query)
+            {
+                return $query->select("id", "text");
+            }
+        };
+
+        $instance = new $class();
+        $instance->create(["name" => "test"]);
+
+        $user = $instance->textOnly()->first();
+        $user->update(["text" => "updated text"]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'text' => 'updated text',
+            ],
+            'old' => [
+                'text' => null,
             ],
         ];
 
