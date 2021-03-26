@@ -171,7 +171,7 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
-    public function it_can_fetch_soft_deleted_models()
+    public function it_can_fetch_soft_deleted_subject_models()
     {
         $this->app['config']->set('activitylog.subject_returns_soft_deleted_models', true);
 
@@ -190,6 +190,28 @@ class LogsActivityTest extends TestCase
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
+    }
+
+    /** @test */
+    public function it_can_fetch_soft_deleted_causer_models()
+    {
+        $this->app['config']->set('activitylog.causer_returns_soft_deleted_models', true);
+
+        $article = $this->createArticle();
+
+        $article->name = 'changed name';
+        $article->save();
+
+        $article->delete();
+
+        $activities = $article->activities;
+
+        $this->assertCount(3, $activities);
+
+        $this->assertEquals(get_class($this->article), $this->getLastActivity()->causer_type);
+        $this->assertEquals($article->id, $this->getLastActivity()->causer_id);
+        $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals('changed name', $this->getLastActivity()->causer->name);
     }
 
     /** @test */
