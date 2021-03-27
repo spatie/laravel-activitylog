@@ -15,19 +15,21 @@ trait LogsActivity
 {
     use DetectsChanges;
 
-    protected $enableLoggingModelsEvents = true;
+    public bool $enableLoggingModelsEvents = true;
 
-    protected static function bootLogsActivity()
+    protected static function bootLogsActivity(): void
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
+                $model->activitylogOptions = $model->getActivitylogOptions();
+
                 if (! $model->shouldLogEvent($eventName)) {
                     return;
                 }
 
                 $description = $model->getDescriptionForEvent($eventName);
 
-                $logName = $model->getLogNameToUse($eventName);
+                $logName = $model->getLogNameToUse();
 
                 if ($description == '') {
                     return;
@@ -35,7 +37,7 @@ trait LogsActivity
 
                 $attrs = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
+                if ($model->isLogEmpty($attrs) && ! $model->activitylogOptions->submitEmptyLogs) {
                     return;
                 }
 
@@ -53,29 +55,26 @@ trait LogsActivity
         });
     }
 
-    public function shouldSubmitEmptyLogs(): bool
-    {
-        return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
-    }
 
     public function isLogEmpty($attrs): bool
     {
         return empty($attrs['attributes'] ?? []) && empty($attrs['old'] ?? []);
     }
 
-    public function disableLogging()
+    public function disableLogging(): self
     {
         $this->enableLoggingModelsEvents = false;
 
         return $this;
     }
 
-    public function enableLogging()
+    public function enableLogging(): self
     {
         $this->enableLoggingModelsEvents = true;
 
         return $this;
     }
+
 
     public function activities(): MorphMany
     {
@@ -84,20 +83,24 @@ trait LogsActivity
 
     public function getDescriptionForEvent(string $eventName): string
     {
+        if (! empty($this->activitylogOptions->descriptionForEvent)) {
+            return ($this->activitylogOptions->descriptionForEvent)($eventName);
+        }
+
         return $eventName;
     }
 
-    public function getLogNameToUse(string $eventName = ''): string
+    public function getLogNameToUse(): string
     {
-        if (isset(static::$logName)) {
-            return static::$logName;
+        if (! empty($this->activitylogOptions->logName)) {
+            return $this->activitylogOptions->logName;
         }
 
         return config('activitylog.default_log_name');
     }
 
     /*
-     * Get the event names that should be recorded.
+     ** Get the event names that should be recorded.
      */
     protected static function eventsToBeRecorded(): Collection
     {
@@ -118,14 +121,6 @@ trait LogsActivity
         return $events;
     }
 
-    public function attributesToBeIgnored(): array
-    {
-        if (! isset(static::$ignoreChangedAttributes)) {
-            return [];
-        }
-
-        return static::$ignoreChangedAttributes;
-    }
 
     protected function shouldLogEvent(string $eventName): bool
     {
@@ -146,6 +141,6 @@ trait LogsActivity
         }
 
         //do not log update event if only ignored attributes are changed
-        return (bool) count(Arr::except($this->getDirty(), $this->attributesToBeIgnored()));
+        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedBag));
     }
 }

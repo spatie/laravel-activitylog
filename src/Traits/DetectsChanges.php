@@ -5,25 +5,25 @@ namespace Spatie\Activitylog\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\ActivitylogOptions;
 
 trait DetectsChanges
 {
-    protected $oldAttributes = [];
+    protected array $oldAttributes = [];
 
-    protected static function bootDetectsChanges()
+    protected ActivitylogOptions $activitylogOptions;
+
+    abstract public function getActivitylogOptions(): ActivitylogOptions;
+
+    protected static function bootDetectsChanges(): void
     {
         if (static::eventsToBeRecorded()->contains('updated')) {
             static::updating(function (Model $model) {
+                $model->activitylogOptions = $model->getActivitylogOptions();
 
                 //temporary hold the original attributes on the model
                 //as we'll need these in the updating event
-                if (method_exists(Model::class, 'getRawOriginal')) {
-                    // Laravel >7.0
-                    $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
-                } else {
-                    // Laravel <7.0
-                    $oldValues = (new static)->setRawAttributes($model->getOriginal());
-                }
+                $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
 
                 $model->oldAttributes = static::logChanges($oldValues);
             });
@@ -32,9 +32,11 @@ trait DetectsChanges
 
     public function attributesToBeLogged(): array
     {
+        $this->activitylogOptions = $this->getActivitylogOptions();
+
         $attributes = [];
 
-        if (isset(static::$logFillable) && static::$logFillable) {
+        if ($this->activitylogOptions->logFillable) {
             $attributes = array_merge($attributes, $this->getFillable());
         }
 
@@ -42,37 +44,25 @@ trait DetectsChanges
             $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
-        if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
-            $attributes = array_merge($attributes, array_diff(static::$logAttributes, ['*']));
+        if (! empty($this->activitylogOptions->logAttributes)) {
+            $attributes = array_merge($attributes, array_diff($this->activitylogOptions->logAttributes, ['*']));
 
-            if (in_array('*', static::$logAttributes)) {
+            if (in_array('*', $this->activitylogOptions->logAttributes)) {
                 $attributes = array_merge($attributes, array_keys($this->getAttributes()));
             }
         }
 
-        if (isset(static::$logAttributesToIgnore) && is_array(static::$logAttributesToIgnore)) {
-            $attributes = array_diff($attributes, static::$logAttributesToIgnore);
+        if ($this->activitylogOptions->ignoredAttributes) {
+            $attributes = array_diff($attributes, $this->activitylogOptions->ignoredAttributes);
         }
 
         return $attributes;
     }
 
-    public function shouldLogOnlyDirty(): bool
-    {
-        if (! isset(static::$logOnlyDirty)) {
-            return false;
-        }
-
-        return static::$logOnlyDirty;
-    }
 
     public function shouldLogUnguarded(): bool
     {
-        if (! isset(static::$logUnguarded)) {
-            return false;
-        }
-
-        if (! static::$logUnguarded) {
+        if (! $this->activitylogOptions->logUnguarded) {
             return false;
         }
 
@@ -107,7 +97,7 @@ trait DetectsChanges
             $this->oldAttributes = [];
         }
 
-        if ($this->shouldLogOnlyDirty() && isset($properties['old'])) {
+        if ($this->activitylogOptions->logOnlyDirty && isset($properties['old'])) {
             $properties['attributes'] = array_udiff_assoc(
                 $properties['attributes'],
                 $properties['old'],
@@ -203,7 +193,7 @@ trait DetectsChanges
         }, $relation);
     }
 
-    protected static function getModelAttributeJsonValue(Model $model, string $attribute)
+    protected static function getModelAttributeJsonValue(Model $model, string $attribute): mixed
     {
         $path = explode('->', $attribute);
         $modelAttribute = array_shift($path);
