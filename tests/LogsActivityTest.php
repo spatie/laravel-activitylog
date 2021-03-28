@@ -197,21 +197,25 @@ class LogsActivityTest extends TestCase
     {
         $this->app['config']->set('activitylog.causer_returns_soft_deleted_models', true);
 
+        $user = $this->loginWithFakeUser();
+        $user->name = 'Causer Name';
+        $user->save();
+
         $article = $this->createArticle();
-
-        $article->name = 'changed name';
+        $article->name = 'causer soft deleted';
         $article->save();
-
         $article->delete();
+        
+        $user->delete();
 
         $activities = $article->activities;
 
-        $this->assertCount(4, $activities);
+        $this->assertCount(3, $activities);
 
-        $this->assertEquals(get_class($this->article), $this->getLastActivity()->causer_type);
+        $this->assertEquals(get_class($this->user), $this->getLastActivity()->causer_type);
         $this->assertEquals($article->id, $this->getLastActivity()->causer_id);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
-        $this->assertEquals('changed name', $this->getLastActivity()->causer->name);
+        $this->assertEquals('Causer Name', $this->getLastActivity()->causer->name);
     }
 
     /** @test */
