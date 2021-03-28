@@ -206,7 +206,7 @@ class LogsActivityTest extends TestCase
 
         $activities = $article->activities;
 
-        $this->assertCount(3, $activities);
+        $this->assertCount(4, $activities);
 
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->causer_type);
         $this->assertEquals($article->id, $this->getLastActivity()->causer_id);
