@@ -216,6 +216,8 @@ class LogsActivityTest extends TestCase
         $this->assertEquals($article->id, $this->getLastActivity()->causer_id);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
         $this->assertEquals('Causer Name', $this->getLastActivity()->causer->name);
+        
+        $user->restore();
     }
 
     /** @test */
