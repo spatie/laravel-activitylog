@@ -3,9 +3,12 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\ActivitylogOptions;
+use Spatie\Activitylog\Contracts\LoggablePipe;
+use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
@@ -48,6 +51,78 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
+
+
+    /** @test */
+    public function it_deep_diff_check_json_field()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty()
+                ->logOnly(['json->phone', 'json->details', 'json->address']);
+            }
+        };
+
+        $articleClass::addLogChange(new class() implements LoggablePipe {
+            public function handle(EventLogBag $event, Closure $next): EventLogBag
+            {
+                if ($event->name === "updated") {
+                    $event->changes['attributes']['json'] = array_udiff_assoc(
+                        $event->changes['attributes']['json'],
+                        $event->changes['old']['json'],
+                        function ($new, $old) {
+                            if ($old === null || $new === null) {
+                                return 0;
+                            }
+
+                            return $new <=> $old;
+                        }
+                    );
+
+                    $event->changes['old']['json'] = collect($event->changes['old']['json'])
+                    ->only(array_keys($event->changes['attributes']['json']))
+                    ->all();
+                }
+
+
+                return $next($event);
+            }
+        });
+
+        $article = $articleClass::create([
+            'name' => 'Hamburg',
+            'json' => ['details' => '', 'phone' => '1231231234', 'address' => 'new address'],
+          ]);
+
+
+        $article->update(['json' => ['details' => 'new details']]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' => [
+                    'details' => 'new details',
+                ],
+            ],
+            'old' => [
+                'json' => [
+                    'details' => '',
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+
     /** @test */
     public function it_can_store_the_relation_values_when_creating_a_model()
     {
@@ -83,6 +158,56 @@ class DetectsChangesTest extends TestCase
             ],
             'old' => [
                 'name' => 'original name',
+                'text' => 'original text',
+                'user.name' => 'user name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_can_removes_key_event_if_it_was_loggable()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                ->logOnly(['name', 'text', 'user.name']);
+            }
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        $articleClass::addLogChange(new class() implements LoggablePipe {
+            public function handle(EventLogBag $event, Closure $next): EventLogBag
+            {
+                Arr::forget($event->changes, ['attributes.name', 'old.name']);
+
+                return $next($event);
+            }
+        });
+
+        $article = $articleClass::create([
+            'name' => 'original name',
+            'text' => 'original text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'text' => 'updated text',
+                'user.name' => 'user name',
+            ],
+            'old' => [
                 'text' => 'original text',
                 'user.name' => 'user name',
             ],

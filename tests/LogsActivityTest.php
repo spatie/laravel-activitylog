@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivitylogOptions;
@@ -385,6 +386,7 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('my custom description', $firstActivity->description);
     }
 
+
     /** @test */
     public function it_will_not_submit_log_when_there_is_no_changes()
     {
@@ -395,7 +397,7 @@ class LogsActivityTest extends TestCase
             {
                 return ActivitylogOptions::create()
                 ->logOnly(['text'])
-                ->DontSubmitEmptyLogs()
+                ->dontSubmitEmptyLogs()
                 ->logOnlyDirty();
             }
         };
@@ -425,7 +427,7 @@ class LogsActivityTest extends TestCase
             {
                 return ActivitylogOptions::create()
                 ->logOnly(['text', 'json->data'])
-                ->DontSubmitEmptyLogs()
+                ->dontSubmitEmptyLogs()
                 ->logOnlyDirty();
             }
         };

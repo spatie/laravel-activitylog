@@ -69,7 +69,6 @@ class ActivitylogOptions
         return $this;
     }
 
-
     public function logOnly(array $attributes): self
     {
         $this->logAttributes = $attributes;
@@ -77,15 +76,12 @@ class ActivitylogOptions
         return $this;
     }
 
-
     public function ignore(array $attributes): self
     {
         $this->ignoredAttributes = $attributes;
 
         return $this;
     }
-
-
 
     public function dontLogIfAttributesChanged(array $attributes): self
     {
@@ -95,7 +91,7 @@ class ActivitylogOptions
     }
 
 
-    public function DontSubmitEmptyLogs(): self
+    public function dontSubmitEmptyLogs(): self
     {
         $this->submitEmptyLogs = false;
 
