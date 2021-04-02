@@ -83,11 +83,11 @@ trait LogsActivity
 
                 // User can define a custom pipelines to mutate, add or remove from changes
                 // each pipe receives the event carrier bag with changes and the model.
-
                 $event = app(Pipeline::class)
                 ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
                 ->through(static::$changesPipes)
                 ->thenReturn();
+
 
                 $logger = app(ActivityLogger::class)
                     ->useLog($logName)

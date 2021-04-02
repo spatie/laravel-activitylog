@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Closure;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Spatie\Activitylog\ActivityLoggerBatch;
 use Spatie\Activitylog\ActivitylogOptions;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
@@ -164,6 +165,108 @@ class DetectsChangesTest extends TestCase
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+
+    /** @test */
+    public function it_retruns_same_uuid_for_all_log_changes_under_one_batch()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+            use SoftDeletes;
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                    ->logOnly(['name', 'text']);
+            }
+        };
+
+        app(ActivityLoggerBatch::class)->startBatch();
+
+        $user = User::create([
+                'name' => 'user name',
+            ]);
+
+        $article = $articleClass::create([
+                'name' => 'original name',
+                'text' => 'original text',
+                'user_id' => $user->id,
+            ]);
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+
+        $article->delete();
+        $article->forceDelete();
+
+        $batchUuid = app(ActivityLoggerBatch::class)->getUuid();
+
+        app(ActivityLoggerBatch::class)->endBatch();
+
+
+        $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $batchUuid));
+    }
+
+
+    /** @test */
+    public function it_assigns_new_uuid_for_multiple_change_logs_in_different_batches()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+            use SoftDeletes;
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                      ->logOnly(['name', 'text']);
+            }
+        };
+
+        app(ActivityLoggerBatch::class)->startBatch();
+
+        $uuidForCreatedEvent = app(ActivityLoggerBatch::class)->getUuid();
+        $user = User::create([
+                  'name' => 'user name',
+              ]);
+
+        $article = $articleClass::create([
+                  'name' => 'original name',
+                  'text' => 'original text',
+                  'user_id' => $user->id,
+              ]);
+
+        app(ActivityLoggerBatch::class)->endBatch();
+
+        $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $uuidForCreatedEvent));
+
+
+        app(ActivityLoggerBatch::class)->startBatch();
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+        $uuidForUpdatedEvents = app(ActivityLoggerBatch::class)->getUuid();
+
+        app(ActivityLoggerBatch::class)->endBatch();
+
+        $this->assertCount(1, Activity::where('description', 'updated')->get());
+
+        $this->assertEquals($uuidForUpdatedEvents, Activity::where('description', 'updated')->first()->batch_uuid);
+
+        app(ActivityLoggerBatch::class)->startBatch();
+        $article->delete();
+        $article->forceDelete();
+
+        $uuidForDeletedEvents = app(ActivityLoggerBatch::class)->getUuid();
+
+        app(ActivityLoggerBatch::class)->endBatch();
+
+
+        $this->assertCount(2, Activity::where('batch_uuid', $uuidForDeletedEvents)->get());
+
+        $this->assertNotSame($uuidForCreatedEvent, $uuidForDeletedEvents);
     }
 
     /** @test */

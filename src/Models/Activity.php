@@ -85,4 +85,15 @@ class Activity extends Model implements ActivityContract
             ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
     }
+
+
+    public function scopeHasBatch(Builder $query): Builder
+    {
+        return $query->whereNotNull('batch_uuid');
+    }
+
+    public function scopeForBatch(Builder $query, string $batchUuid): Builder
+    {
+        return $query->where('batch_uuid', $batchUuid);
+    }
 }

@@ -3,7 +3,6 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivitylogOptions;
