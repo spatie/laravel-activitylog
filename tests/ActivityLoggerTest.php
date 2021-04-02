@@ -167,11 +167,7 @@ class ActivityLoggerTest extends TestCase
         $this->assertEquals($userId, $firstActivity->causer->id);
     }
 
-    /**
-     * @test
-     *
-     * @requires !Travis
-     */
+    /** @test */
     public function it_will_throw_an_exception_if_it_cannot_translate_a_causer_id()
     {
         $this->expectException(CouldNotLogActivity::class);
@@ -179,11 +175,7 @@ class ActivityLoggerTest extends TestCase
         activity()->causedBy(999);
     }
 
-    /**
-     * @test
-     *
-     * @requires !Travis
-     */
+    /** @test */
     public function it_will_use_the_logged_in_user_as_the_causer_by_default()
     {
         $userId = 1;

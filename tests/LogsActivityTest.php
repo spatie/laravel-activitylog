@@ -245,11 +245,7 @@ class LogsActivityTest extends TestCase
         $this->assertSame('custom_log', Activity::latest()->first()->log_name);
     }
 
-    /**
-     * @test
-     *
-     * @requires !Travis
-     */
+    /** @test */
     public function it_will_not_log_an_update_of_the_model_if_only_ignored_attributes_are_changed()
     {
         $articleClass = new class() extends Article {

@@ -2,6 +2,19 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 3.17.0 - 2021-03-02
+
+- drop PHP 7.2 support - [#855](https://github.com/spatie/laravel-activitylog/pull/855)
+
+## 3.16.1 - 2020-11-03
+
+- add PHP 8.0 support - [#806](https://github.com/spatie/laravel-activitylog/pull/806)
+
+## 3.16.0 - 2020-09-16
+
+- use `nullableMorphs()` in default migration - [#707](https://github.com/spatie/laravel-activitylog/pull/707)
+- add support for snake and camel cased related model attribute logging - [#721](https://github.com/spatie/laravel-activitylog/pull/721)
+
 ## 3.15.0 - 2020-09-14
 
 - Add multiple/chained relation attribute logging support - [#784](https://github.com/spatie/laravel-activitylog/pull/784)

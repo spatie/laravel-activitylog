@@ -6,7 +6,6 @@ use AddEventColumnToActivityLogTable;
 use CreateActivityLogTable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
@@ -19,20 +18,9 @@ abstract class TestCase extends OrchestraTestCase
 {
     public function setUp(): void
     {
-        $this->checkCustomRequirements();
-
         parent::setUp();
 
         $this->setUpDatabase();
-    }
-
-    protected function checkCustomRequirements()
-    {
-        collect($this->getAnnotations())->filter(function ($location) {
-            return in_array('!Travis', Arr::get($location, 'requires', []));
-        })->each(function ($location) {
-            getenv('TRAVIS') && $this->markTestSkipped('Travis will not run this test.');
-        });
     }
 
     protected function getPackageProviders($app)
