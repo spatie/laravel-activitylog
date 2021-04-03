@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
+use Spatie\Activitylog\ActivitylogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Issue733 extends Article
@@ -12,7 +13,10 @@ class Issue733 extends Article
         'retrieved',
     ];
 
-    protected static $submitEmptyLogs = false;
-    protected static $logAttributes = ['name'];
-    public static $logOnlyDirty = false;
+    public function getActivitylogOptions() : ActivitylogOptions
+    {
+        return ActivitylogOptions::create()
+        ->dontSubmitEmptyLogs()
+        ->logOnly(['name']);
+    }
 }

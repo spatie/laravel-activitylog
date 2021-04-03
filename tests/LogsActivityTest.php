@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Test;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\ActivitylogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\Issue733;
@@ -25,11 +26,22 @@ class LogsActivityTest extends TestCase
         $this->article = new class() extends Article {
             use LogsActivity;
             use SoftDeletes;
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::defaults();
+            }
         };
 
         $this->user = new class() extends User {
             use LogsActivity;
             use SoftDeletes;
+
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::defaults();
+            }
         };
 
         $this->assertCount(0, Activity::all());
@@ -53,6 +65,7 @@ class LogsActivityTest extends TestCase
         $article = new $this->article();
         $article->disableLogging();
         $article->name = 'my name';
+
         $article->save();
 
         $this->assertCount(0, Activity::all());
@@ -110,7 +123,11 @@ class LogsActivityTest extends TestCase
     {
         $articleClass = new class() extends Article {
             use LogsActivity;
-            protected static $logAttributes = ['name'];
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::defaults()->logOnly(['name']);
+            }
         };
 
         $article = new $articleClass();
@@ -209,25 +226,26 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
     }
 
-    /** @test */
-    public function it_can_log_activity_to_log_returned_from_model_method_override()
-    {
-        $articleClass = new class() extends Article {
-            use LogsActivity;
+    /** remove this test? */
+    // public function it_can_log_activity_to_log_returned_from_model_method_override()
+    // {
+    //     $articleClass = new class() extends Article {
+    //         use LogsActivity;
 
-            public function getLogNameToUse()
-            {
-                return 'custom_log';
-            }
-        };
+    //         public function getActivitylogOptions() : ActivitylogOptions
+    //         {
+    //             return ActivitylogOptions::create()
+    //             ->useLogName('custom_log');
+    //         }
+    //     };
 
-        $article = new $articleClass();
-        $article->name = 'my name';
-        $article->save();
+    //     $article = new $articleClass();
+    //     $article->name = 'my name';
+    //     $article->save();
 
-        $this->assertEquals($article->id, Activity::inLog('custom_log')->first()->subject->id);
-        $this->assertCount(1, Activity::inLog('custom_log')->get());
-    }
+    //     $this->assertEquals($article->id, Activity::inLog('custom_log')->first()->subject->id);
+    //     $this->assertCount(1, Activity::inLog('custom_log')->get());
+    // }
 
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
@@ -235,7 +253,11 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            protected static $logName = 'custom_log';
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                ->useLogName('custom_log');
+            }
         };
 
         $article = new $articleClass();
@@ -251,7 +273,11 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            protected static $ignoreChangedAttributes = ['text'];
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                ->dontLogIfAttributesChanged([ 'text']);
+            }
         };
 
         $article = new $articleClass();
@@ -276,9 +302,10 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getDescriptionForEvent(string $eventName, array $attributes): string
+            public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ":causer.name $eventName";
+                return ActivitylogOptions::create()
+                ->setDescriptionForEvent(fn (string $eventName):string => ":causer.name $eventName");
             }
         };
 
@@ -319,6 +346,11 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::defaults();
+            }
+
             protected $properties = [
                 'property' => [
                     'subProperty' => 'value',
@@ -352,6 +384,11 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::defaults();
+            }
+
             public function tapActivity(Activity $activity, string $eventName)
             {
                 $activity->description = 'my custom description';
@@ -366,11 +403,17 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('my custom description', $firstActivity->description);
     }
 
+
     /** @test */
     public function it_can_log_activity_when_event_is_changed_with_tap()
     {
         $model = new class() extends Article {
             use LogsActivity;
+
+            public function getActivitylogOptions(): ActivitylogOptions
+            {
+                return ActivitylogOptions::defaults();
+            }
 
             public function tapActivity(Activity $activity, string $eventName)
             {
@@ -392,9 +435,13 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            protected static $submitEmptyLogs = false;
-            protected static $logAttributes = ['text'];
-            protected static $logOnlyDirty = true;
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                ->logOnly(['text'])
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty();
+            }
         };
 
         $entity = new $model(['text' => 'test']);
@@ -414,12 +461,17 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            protected static $submitEmptyLogs = false;
-            protected static $logAttributes = ['text', 'json->data'];
-            public static $logOnlyDirty = true;
             protected $casts = [
                 'json' => 'collection',
             ];
+
+            public function getActivitylogOptions() : ActivitylogOptions
+            {
+                return ActivitylogOptions::create()
+                ->logOnly(['text', 'json->data'])
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty();
+            }
         };
 
         $entity = new $model([

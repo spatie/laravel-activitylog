@@ -30,9 +30,13 @@ class ActivityLogger
     /** @var \Spatie\Activitylog\Contracts\Activity */
     protected $activity;
 
-    public function __construct(AuthManager $auth, Repository $config, ActivityLogStatus $logStatus)
+    protected ActivityLoggerBatch $batch;
+
+    public function __construct(AuthManager $auth, Repository $config, ActivityLogStatus $logStatus, ActivityLoggerBatch $batch)
     {
         $this->auth = $auth;
+
+        $this->batch = $batch;
 
         $this->authDriver = $config['activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
@@ -242,6 +246,8 @@ class ActivityLogger
                 ->useLog($this->defaultLogName)
                 ->withProperties([])
                 ->causedBy($this->auth->guard($this->authDriver)->user());
+
+            $this->activity->batch_uuid = $this->batch->getUuid();
         }
 
         return $this->activity;

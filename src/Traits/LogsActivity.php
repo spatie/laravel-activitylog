@@ -5,47 +5,99 @@ namespace Spatie\Activitylog\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityLogger;
+use Spatie\Activitylog\ActivitylogOptions;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
+use Spatie\Activitylog\EventLogBag;
 
 trait LogsActivity
 {
-    use DetectsChanges;
+    /**
+     * User defined pipes that will interact with the changes.
+     **/
+    public static array $changesPipes = [];
 
-    protected $enableLoggingModelsEvents = true;
+    /**
+     * Hold original attributes to compare it against changes.
+     **/
+    protected array $oldAttributes = [];
 
-    protected static function bootLogsActivity()
+    /**
+     * Configuration object on the model.
+     **/
+    protected ActivitylogOptions $activitylogOptions;
+
+    /**
+     * Indicates if logging is currently active.
+     **/
+    public bool $enableLoggingModelsEvents = true;
+
+    /**
+     * Contract function to define desired settings on the model.
+     **/
+    abstract public function getActivitylogOptions(): ActivitylogOptions;
+
+    /**
+     * Boot instantly after model is booted.
+     **/
+    protected static function bootLogsActivity(): void
     {
+        // Hook into eloquent events that only specified in $eventToBeRecorded array,
+        // checking for "updated" event hook explicitly to temporary hold original
+        // attributes on the model as we'll need them later to compare against.
+
         static::eventsToBeRecorded()->each(function ($eventName) {
-            return static::$eventName(function (Model $model) use ($eventName) {
-                /** @var Model|LogsActivity $model */
+            if ($eventName === "updated") {
+                static::updating(function (Model $model) {
+                    $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
+                    $model->oldAttributes = static::logChanges($oldValues);
+                });
+            }
+
+            static::$eventName(function (Model $model) use ($eventName) {
+                $model->activitylogOptions = $model->getActivitylogOptions();
+
 
                 if (! $model->shouldLogEvent($eventName)) {
                     return;
                 }
 
-                $attrs = $model->attributeValuesToBeLogged($eventName);
+                $changes = $model->attributeValuesToBeLogged($eventName);
 
-                if ($model->isLogEmpty($attrs) && ! $model->shouldSubmitEmptyLogs()) {
-                    return;
-                }
 
-                $description = $model->getDescriptionForEvent($eventName, $attrs);
 
-                $logName = $model->getLogNameToUse($eventName);
+                $description = $model->getDescriptionForEvent($eventName);
 
+                $logName = $model->getLogNameToUse();
+
+                // Submiting empty description will cause place holder replacer to fail.
                 if ($description == '') {
                     return;
                 }
+
+
+                if ($model->isLogEmpty($changes) && ! $model->activitylogOptions->submitEmptyLogs) {
+                    return;
+                }
+
+                // User can define a custom pipelines to mutate, add or remove from changes
+                // each pipe receives the event carrier bag with changes and the model.
+                $event = app(Pipeline::class)
+                ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
+                ->through(static::$changesPipes)
+                ->thenReturn();
+
 
                 $logger = app(ActivityLogger::class)
                     ->useLog($logName)
                     ->event($eventName)
                     ->performedOn($model)
-                    ->withProperties($attrs);
+                    ->withProperties($event->changes);
 
                 if (method_exists($model, 'tapActivity')) {
                     $logger->tap([$model, 'tapActivity'], $eventName);
@@ -56,24 +108,27 @@ trait LogsActivity
         });
     }
 
-    public function shouldSubmitEmptyLogs(): bool
+    /**
+     * Undocumented function
+    **/
+    public static function addLogChange($pipe)
     {
-        return ! isset(static::$submitEmptyLogs) ? true : static::$submitEmptyLogs;
+        static::$changesPipes[] = $pipe;
     }
 
-    public function isLogEmpty($attrs): bool
+    public function isLogEmpty(array $changes): bool
     {
-        return empty($attrs['attributes'] ?? []) && empty($attrs['old'] ?? []);
+        return empty($changes['attributes'] ?? []) && empty($changes['old'] ?? []);
     }
 
-    public function disableLogging()
+    public function disableLogging(): self
     {
         $this->enableLoggingModelsEvents = false;
 
         return $this;
     }
 
-    public function enableLogging()
+    public function enableLogging(): self
     {
         $this->enableLoggingModelsEvents = true;
 
@@ -85,23 +140,27 @@ trait LogsActivity
         return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
     }
 
-    public function getDescriptionForEvent(string $eventName, array $attributes): string
+    public function getDescriptionForEvent(string $eventName): string
     {
+        if (! empty($this->activitylogOptions->descriptionForEvent)) {
+            return ($this->activitylogOptions->descriptionForEvent)($eventName);
+        }
+
         return $eventName;
     }
 
-    public function getLogNameToUse(string $eventName = ''): string
+    public function getLogNameToUse(): string
     {
-        if (isset(static::$logName)) {
-            return static::$logName;
+        if (! empty($this->activitylogOptions->logName)) {
+            return $this->activitylogOptions->logName;
         }
 
         return config('activitylog.default_log_name');
     }
 
-    /*
+    /**
      * Get the event names that should be recorded.
-     */
+     **/
     protected static function eventsToBeRecorded(): Collection
     {
         if (isset(static::$recordEvents)) {
@@ -121,14 +180,6 @@ trait LogsActivity
         return $events;
     }
 
-    public function attributesToBeIgnored(): array
-    {
-        if (! isset(static::$ignoreChangedAttributes)) {
-            return [];
-        }
-
-        return static::$ignoreChangedAttributes;
-    }
 
     protected function shouldLogEvent(string $eventName): bool
     {
@@ -148,7 +199,216 @@ trait LogsActivity
             }
         }
 
-        //do not log update event if only ignored attributes are changed
-        return (bool) count(Arr::except($this->getDirty(), $this->attributesToBeIgnored()));
+        // Do not log update event if only ignored attributes are changed.
+        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedBag));
+    }
+
+    /**
+     * Determines what attributes needs to be logged based on the configuration.
+     **/
+    public function attributesToBeLogged(): array
+    {
+        $this->activitylogOptions = $this->getActivitylogOptions();
+
+        $attributes = [];
+
+        // Check if fillable attributes will be logged then merge it to the local attributes array.
+        if ($this->activitylogOptions->logFillable) {
+            $attributes = array_merge($attributes, $this->getFillable());
+        }
+
+        // Determine if unguarded attributes will be logged.
+        if ($this->shouldLogUnguarded()) {
+
+            // Get only attribute names, not intrested in the values here then guarded
+            // attributes. get only keys than not present in guarded array, because
+            // we are logging the unguarded attributes and we cant have both!
+
+            $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
+        }
+
+        if (! empty($this->activitylogOptions->logAttributes)) {
+
+            // Filter * from the logAttributes because will deal with it separately
+            $attributes = array_merge($attributes, array_diff($this->activitylogOptions->logAttributes, ['*']));
+
+            // If there's * get all attributes then merge it, dont respect $guarded or $fillable.
+            if (in_array('*', $this->activitylogOptions->logAttributes)) {
+                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
+            }
+        }
+
+        if ($this->activitylogOptions->ignoredAttributes) {
+
+            // Filter out the attributes defined in ignoredAttributes out of the local array
+            $attributes = array_diff($attributes, $this->activitylogOptions->ignoredAttributes);
+        }
+
+        return $attributes;
+    }
+
+    public function shouldLogUnguarded(): bool
+    {
+        if (! $this->activitylogOptions->logUnguarded) {
+            return false;
+        }
+
+        // This case means all of the attributes are guarded
+        // so we'll not have any unguarded anyway.
+        if (in_array('*', $this->getGuarded())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Determines values that will be logged based on the difference.
+     **/
+    public function attributeValuesToBeLogged(string $processingEvent): array
+    {
+        // no loggable attributes, no values to be logged!
+        if (! count($this->attributesToBeLogged())) {
+            return [];
+        }
+
+        $properties['attributes'] = static::logChanges(
+
+            // if the current event is retrieved, get the model itself
+            // else get the fresh default properties from database
+            // as wouldn't be part of the saved model instance.
+            $processingEvent == 'retrieved'
+                ? $this
+                : (
+                    $this->exists
+                        ? $this->fresh() ?? $this
+                        : $this
+                )
+        );
+
+        if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
+
+            // Fill the attributes with null values.
+            $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
+
+            // Populate the old key with keys from database and from old attributes.
+            $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
+
+            // Fail safe.
+            $this->oldAttributes = [];
+        }
+
+        if ($this->activitylogOptions->logOnlyDirty && isset($properties['old'])) {
+
+            // Get difference between the old and new attributes.
+            $properties['attributes'] = array_udiff_assoc(
+                $properties['attributes'],
+                $properties['old'],
+                function ($new, $old) {
+                    // Strict check for php's weird behaviors
+                    if ($old === null || $new === null) {
+                        return $new === $old ? 0 : 1;
+                    }
+
+                    return $new <=> $old;
+                }
+            );
+
+            $properties['old'] = collect($properties['old'])
+                ->only(array_keys($properties['attributes']))
+                ->all();
+        }
+
+        if (static::eventsToBeRecorded()->contains('deleted') && $processingEvent == 'deleted') {
+            $properties['old'] = $properties['attributes'];
+            unset($properties['attributes']);
+        }
+
+        return $properties;
+    }
+
+    public static function logChanges(Model $model): array
+    {
+        $changes = [];
+        $attributes = $model->attributesToBeLogged();
+
+        foreach ($attributes as $attribute) {
+            if (Str::contains($attribute, '.')) {
+                $changes += self::getRelatedModelAttributeValue($model, $attribute);
+
+                continue;
+            }
+
+            if (Str::contains($attribute, '->')) {
+                Arr::set(
+                    $changes,
+                    str_replace('->', '.', $attribute),
+                    static::getModelAttributeJsonValue($model, $attribute)
+                );
+
+                continue;
+            }
+
+            $changes[$attribute] = $model->getAttribute($attribute);
+
+            if (is_null($changes[$attribute])) {
+                continue;
+            }
+
+            if ($model->isDateAttribute($attribute)) {
+                $changes[$attribute] = $model->serializeDate(
+                    $model->asDateTime($changes[$attribute])
+                );
+            }
+
+            if ($model->hasCast($attribute)) {
+                $cast = $model->getCasts()[$attribute];
+
+                if ($model->isCustomDateTimeCast($cast)) {
+                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
+                }
+            }
+        }
+
+        return $changes;
+    }
+
+    protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
+    {
+        $relatedModelNames = explode('.', $attribute);
+        $relatedAttribute = array_pop($relatedModelNames);
+
+        $attributeName = [];
+        $relatedModel = $model;
+
+        do {
+            $attributeName[] = $relatedModelName = static::getRelatedModelRelationName($relatedModel, array_shift($relatedModelNames));
+
+            $relatedModel = $relatedModel->$relatedModelName ?? $relatedModel->$relatedModelName();
+        } while (! empty($relatedModelNames));
+
+        $attributeName[] = $relatedAttribute;
+
+        return [implode('.', $attributeName) => $relatedModel->$relatedAttribute ?? null];
+    }
+
+    protected static function getRelatedModelRelationName(Model $model, string $relation): string
+    {
+        return Arr::first([
+            $relation,
+            Str::snake($relation),
+            Str::camel($relation),
+        ], function (string $method) use ($model): bool {
+            return method_exists($model, $method);
+        }, $relation);
+    }
+
+    protected static function getModelAttributeJsonValue(Model $model, string $attribute): mixed
+    {
+        $path = explode('->', $attribute);
+        $modelAttribute = array_shift($path);
+        $modelAttribute = collect($model->getAttribute($modelAttribute));
+
+        return data_get($modelAttribute, implode('.', $path));
     }
 }
