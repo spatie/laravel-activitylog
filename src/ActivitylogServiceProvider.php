@@ -66,6 +66,7 @@ class ActivitylogServiceProvider extends ServiceProvider
         foreach ([
             'CreateActivityLogTable',
             'AddEventColumnToActivityLogTable',
+            'AddBatchUuidColumnToActivityLogTable',
         ] as $i => $migration) {
             if (! class_exists($migration)) {
                 $this->publishes([
