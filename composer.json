@@ -48,7 +48,10 @@
         "laravel": {
             "providers": [
                 "Spatie\\Activitylog\\ActivitylogServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "LogBatch": "Spatie\\Activitylog\\Facades\\LogBatch"
+            }
         }
     },
     "autoload": {

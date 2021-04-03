@@ -29,7 +29,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text']);
             }
         };
@@ -66,7 +66,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->dontSubmitEmptyLogs()
                 ->logOnlyDirty()
                 ->logOnly(['json->phone', 'json->details', 'json->address']);
@@ -76,7 +76,7 @@ class DetectsChangesTest extends TestCase
         $articleClass::addLogChange(new class() implements LoggablePipe {
             public function handle(EventLogBag $event, Closure $next): EventLogBag
             {
-                if ($event->name === "updated") {
+                if ($event->event === "updated") {
                     $event->changes['attributes']['json'] = array_udiff_assoc(
                         $event->changes['attributes']['json'],
                         $event->changes['old']['json'],
@@ -132,7 +132,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
             }
         };
@@ -177,7 +177,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                     ->logOnly(['name', 'text']);
             }
         };
@@ -219,7 +219,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                       ->logOnly(['name', 'text']);
             }
         };
@@ -277,7 +277,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
             }
         };
@@ -327,7 +327,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
             }
         };
@@ -441,7 +441,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
             }
         };
@@ -486,7 +486,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'snakeUser.name']);
             }
 
@@ -536,7 +536,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'camel_user.name']);
             }
 
@@ -586,7 +586,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'Custom_Case_User.name']);
             }
 
@@ -636,7 +636,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name'])
                 ->logOnlyDirty();
             }
@@ -678,7 +678,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.latest_article.name'])
                 ->logOnlyDirty();
             }
@@ -719,7 +719,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly([]);
             }
         };
@@ -759,7 +759,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text']);
             }
         };
@@ -806,7 +806,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['json'])
                 ->logOnlyDirty();
             }
@@ -844,7 +844,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['json'])
                 ->logOnlyDirty();
             }
@@ -882,7 +882,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['json'])
                 ->logOnlyDirty();
             }
@@ -920,7 +920,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->dontLogFillable();
             }
         };
@@ -945,7 +945,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['text'])
                 ->dontLogFillable();
             }
@@ -975,7 +975,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logFillable();
             }
         };
@@ -1004,7 +1004,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['text'])
                 ->logFillable();
             }
@@ -1034,7 +1034,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll();
             }
         };
@@ -1070,7 +1070,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['*', 'user.name']);
             }
         };
@@ -1113,7 +1113,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll()
                 ->logOnlyDirty();
             }
@@ -1160,7 +1160,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll()
                 ->logOnlyDirty();
             }
@@ -1204,9 +1204,9 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll()
-                ->ignore(['name', 'updated_at']);
+                ->logExcept(['name', 'updated_at']);
             }
         };
 
@@ -1240,9 +1240,9 @@ class DetectsChangesTest extends TestCase
             protected $guarded = ['text', 'json'];
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logUnguarded()
-                ->ignore(['id', 'created_at', 'updated_at', 'deleted_at']);
+                ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
             }
         };
 
@@ -1272,7 +1272,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logUnguarded();
             }
         };
@@ -1296,7 +1296,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text']);
             }
         };
@@ -1326,7 +1326,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'description']);
             }
 
@@ -1368,7 +1368,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll();
             }
 
@@ -1432,7 +1432,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll();
             }
 
@@ -1498,7 +1498,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text']);
             }
 
@@ -1567,7 +1567,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text', 'price'])
                 ->logOnlyDirty();
             }
@@ -1624,7 +1624,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll();
             }
         };
@@ -1662,7 +1662,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logAll();
             }
         };
@@ -1699,7 +1699,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'json->data'])
                 ->logOnlyDirty();
             }
@@ -1736,7 +1736,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'json->data'])
                 ->logOnlyDirty();
             }
@@ -1777,7 +1777,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'json->data->missing'])
                 ->logOnlyDirty();
             }
@@ -1829,7 +1829,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'json->data'])
                 ->logOnlyDirty();
             }
@@ -1897,7 +1897,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'json->data->can->go->how->far'])
                 ->logOnlyDirty();
             }
@@ -1966,7 +1966,7 @@ class DetectsChangesTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['name', 'text'])
                 ->logOnlyDirty();
             }

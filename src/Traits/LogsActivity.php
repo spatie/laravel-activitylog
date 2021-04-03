@@ -238,10 +238,10 @@ trait LogsActivity
             }
         }
 
-        if ($this->activitylogOptions->ignoredAttributes) {
+        if ($this->activitylogOptions->logExceptAttributes) {
 
             // Filter out the attributes defined in ignoredAttributes out of the local array
-            $attributes = array_diff($attributes, $this->activitylogOptions->ignoredAttributes);
+            $attributes = array_diff($attributes, $this->activitylogOptions->logExceptAttributes);
         }
 
         return $attributes;

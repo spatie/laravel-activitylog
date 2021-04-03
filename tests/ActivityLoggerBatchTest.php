@@ -2,47 +2,50 @@
 
 namespace Spatie\Activitylog\Test;
 
-use Spatie\Activitylog\ActivityLoggerBatch;
+use Spatie\Activitylog\Facades\LogBatch;
 
 class ActivityLoggerBatchTest extends TestCase
 {
-
     /** @test */
     public function it_generates_uuid_after_start_and_end_batch_properely()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
-        $uuid = app(ActivityLoggerBatch::class)->getUuid();
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::startBatch();
+        $uuid = LogBatch::getUuid();
+        LogBatch::endBatch();
 
+        $this->assertFalse(LogBatch::isopen());
 
-        $this->assertNotEmpty($uuid);
+        $this->assertIsString($uuid);
     }
 
     /** @test */
     public function it_returns_null_uuid_after_end_batch_properely()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
-        $uuid = app(ActivityLoggerBatch::class)->getUuid();
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::startBatch();
+        $uuid = LogBatch::getUuid();
+        LogBatch::endBatch();
 
 
+        $this->assertFalse(LogBatch::isopen());
         $this->assertNotNull($uuid);
-        $this->assertNull(app(ActivityLoggerBatch::class)->getUuid());
+        $this->assertNull(LogBatch::getUuid());
     }
 
 
     /** @test */
     public function it_generates_a_new_uuid_after_starting_new_batch_properly()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
-        $firstBatchUuid = app(ActivityLoggerBatch::class)->getUuid();
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::startBatch();
+        $firstBatchUuid = LogBatch::getUuid();
+        LogBatch::endBatch();
 
-        app(ActivityLoggerBatch::class)->startBatch();
-        $secondBatchUuid = app(ActivityLoggerBatch::class)->getUuid();
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::startBatch();
 
+        LogBatch::startBatch();
+        $secondBatchUuid = LogBatch::getUuid();
+        LogBatch::endBatch();
 
+        $this->assertTrue(LogBatch::isopen());
         $this->assertNotNull($firstBatchUuid);
         $this->assertNotNull($secondBatchUuid);
 
@@ -53,16 +56,18 @@ class ActivityLoggerBatchTest extends TestCase
     /** @test */
     public function it_will_not_generate_new_uuid_if_start_already_started_batch()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
-        $firstUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $firstUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
-        $secondUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $secondUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
+
+        $this->assertTrue(LogBatch::isopen());
 
         $this->assertEquals($firstUuid, $secondUuid);
     }
@@ -71,10 +76,10 @@ class ActivityLoggerBatchTest extends TestCase
     /** @test */
     public function it_will_not_generate_uuid_if_end_batch_before_starting()
     {
-        app(ActivityLoggerBatch::class)->endBatch();
-        $uuid = app(ActivityLoggerBatch::class)->getUuid();
+        LogBatch::endBatch();
+        $uuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
         $this->assertNull($uuid);
     }
@@ -82,14 +87,14 @@ class ActivityLoggerBatchTest extends TestCase
     /** @test */
     public function it_will_not_return_null_uuid_if_end_batch_that_started_twice()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
-        $firstUuid = app(ActivityLoggerBatch::class)->getUuid();
+        LogBatch::startBatch();
+        $firstUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
-        $notNullUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $notNullUuid = LogBatch::getUuid();
 
 
         $this->assertNotNull($firstUuid);
@@ -101,15 +106,15 @@ class ActivityLoggerBatchTest extends TestCase
     /** @test */
     public function it_will_return_null_uuid_if_end_batch_that_started_twice_properly()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
-        $firstUuid = app(ActivityLoggerBatch::class)->getUuid();
+        LogBatch::startBatch();
+        $firstUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
-        app(ActivityLoggerBatch::class)->endBatch();
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
+        LogBatch::endBatch();
 
-        $nullUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $nullUuid = LogBatch::getUuid();
 
         $this->assertNotNull($firstUuid);
         $this->assertNull($nullUuid);
@@ -121,44 +126,44 @@ class ActivityLoggerBatchTest extends TestCase
     /** @test */
     public function batch_stress_test()
     {
-        app(ActivityLoggerBatch::class)->startBatch();
-        app(ActivityLoggerBatch::class)->startBatch();
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
+        LogBatch::startBatch();
+        LogBatch::startBatch();
 
-        $firstUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $firstUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
-        $firstUuidAfterFirstEnd = app(ActivityLoggerBatch::class)->getUuid();
+        $firstUuidAfterFirstEnd = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
-        $firstUuidAfterSecondEnd = app(ActivityLoggerBatch::class)->getUuid();
+        $firstUuidAfterSecondEnd = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
-        $firstUuidAfterThirdEnd = app(ActivityLoggerBatch::class)->getUuid();
+        $firstUuidAfterThirdEnd = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
-        app(ActivityLoggerBatch::class)->endBatch();
-        app(ActivityLoggerBatch::class)->endBatch();
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
+        LogBatch::endBatch();
+        LogBatch::endBatch();
+        LogBatch::endBatch();
 
-        $stillNullUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $stillNullUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
-        app(ActivityLoggerBatch::class)->startBatch();
+        LogBatch::startBatch();
 
-        $secondUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $secondUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
-        $SameSecondUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $SameSecondUuid = LogBatch::getUuid();
 
-        app(ActivityLoggerBatch::class)->endBatch();
+        LogBatch::endBatch();
 
-        $nullSecondUuid = app(ActivityLoggerBatch::class)->getUuid();
+        $nullSecondUuid = LogBatch::getUuid();
 
 
         $this->assertNotNull($firstUuid);

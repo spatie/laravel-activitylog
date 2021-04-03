@@ -234,7 +234,7 @@ class LogsActivityTest extends TestCase
 
     //         public function getActivitylogOptions() : ActivitylogOptions
     //         {
-    //             return ActivitylogOptions::create()
+    //             return ActivitylogOptions::defaults()
     //             ->useLogName('custom_log');
     //         }
     //     };
@@ -255,7 +255,7 @@ class LogsActivityTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->useLogName('custom_log');
             }
         };
@@ -275,8 +275,8 @@ class LogsActivityTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
-                ->dontLogIfAttributesChanged([ 'text']);
+                return ActivitylogOptions::defaults()
+                ->dontLogIfAttributesChangedOnly([ 'text']);
             }
         };
 
@@ -304,7 +304,7 @@ class LogsActivityTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->setDescriptionForEvent(fn (string $eventName):string => ":causer.name $eventName");
             }
         };
@@ -437,7 +437,7 @@ class LogsActivityTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['text'])
                 ->dontSubmitEmptyLogs()
                 ->logOnlyDirty();
@@ -467,7 +467,7 @@ class LogsActivityTest extends TestCase
 
             public function getActivitylogOptions() : ActivitylogOptions
             {
-                return ActivitylogOptions::create()
+                return ActivitylogOptions::defaults()
                 ->logOnly(['text', 'json->data'])
                 ->dontSubmitEmptyLogs()
                 ->logOnlyDirty();

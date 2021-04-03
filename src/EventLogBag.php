@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class EventLogBag
 {
     public function __construct(
-        public string $name,
+        public string $event,
         public Model $model,
         public array $changes,
         public ?ActivitylogOptions $options = null

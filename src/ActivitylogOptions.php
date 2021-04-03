@@ -18,22 +18,16 @@ class ActivitylogOptions
 
     public array $logAttributes = [];
 
-    public array $ignoredAttributes = [];
+    public array $logExceptAttributes = [];
 
     public array $dontLogIfAttributesChangedBag = [];
 
     public ?Closure $descriptionForEvent;
 
-    public static function create(): self
+    public static function defaults(): self
     {
         return new static;
     }
-
-    public static function defaults(): self
-    {
-        return static::create();
-    }
-
 
     public function logAll(): self
     {
@@ -76,14 +70,14 @@ class ActivitylogOptions
         return $this;
     }
 
-    public function ignore(array $attributes): self
+    public function logExcept(array $attributes): self
     {
-        $this->ignoredAttributes = $attributes;
+        $this->logExceptAttributes = $attributes;
 
         return $this;
     }
 
-    public function dontLogIfAttributesChanged(array $attributes): self
+    public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
         $this->dontLogIfAttributesChangedBag = $attributes;
 
@@ -94,20 +88,6 @@ class ActivitylogOptions
     public function dontSubmitEmptyLogs(): self
     {
         $this->submitEmptyLogs = false;
-
-        return $this;
-    }
-
-    public function disableLogging(): self
-    {
-        $this->enableLoggingModelsEvents = false;
-
-        return $this;
-    }
-
-    public function enableLogging(): self
-    {
-        $this->enableLoggingModelsEvents = true;
 
         return $this;
     }

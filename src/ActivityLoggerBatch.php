@@ -10,7 +10,7 @@ class ActivityLoggerBatch
 
     public int $transactions = 0;
 
-    private function generateUUID(): string
+    protected function generateUUID(): string
     {
         return Uuid::uuid4()->toString();
     }
