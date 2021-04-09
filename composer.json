@@ -47,8 +47,8 @@
     "extra": {
         "laravel": {
             "aliases": {
-                "LogBatch": "Spatie\\Activitylog\\Facades\\LogBatch",
-                "CauserResolver": "Spatie\\Activitylog\\Facades\\CauserResolver"
+                "CauserResolver": "Spatie\\Activitylog\\Facades\\CauserResolver",
+                "LogBatch": "Spatie\\Activitylog\\Facades\\LogBatch"
             },
             "providers": [
                 "Spatie\\Activitylog\\ActivitylogServiceProvider"
