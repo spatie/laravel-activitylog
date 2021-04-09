@@ -2,7 +2,6 @@
 
 namespace Spatie\Activitylog;
 
-use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -10,79 +9,70 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class ActivityLogger
 {
     use Macroable;
 
-    /** @var \Illuminate\Auth\AuthManager */
-    protected $auth;
+    protected string $defaultLogName = '';
 
-    protected $defaultLogName = '';
+    protected CauserResolver $causerResolver;
 
-    /** @var string */
-    protected $authDriver;
+    protected ActivityLogStatus $logStatus;
 
-    /** @var \Spatie\Activitylog\ActivityLogStatus */
-    protected $logStatus;
-
-    /** @var \Spatie\Activitylog\Contracts\Activity */
-    protected $activity;
+    protected ?ActivityContract $activity = null;
 
     protected ActivityLoggerBatch $batch;
 
-    public function __construct(AuthManager $auth, Repository $config, ActivityLogStatus $logStatus, ActivityLoggerBatch $batch)
+    public function __construct(Repository $config, ActivityLogStatus $logStatus, ActivityLoggerBatch $batch, CauserResolver $causerResolver)
     {
-        $this->auth = $auth;
+        $this->causerResolver = $causerResolver;
 
         $this->batch = $batch;
-
-        $this->authDriver = $config['activitylog']['default_auth_driver'] ?? $auth->getDefaultDriver();
 
         $this->defaultLogName = $config['activitylog']['default_log_name'];
 
         $this->logStatus = $logStatus;
     }
 
-    public function setLogStatus(ActivityLogStatus $logStatus)
+    public function setLogStatus(ActivityLogStatus $logStatus): self
     {
         $this->logStatus = $logStatus;
 
         return $this;
     }
 
-    public function performedOn(Model $model)
+    public function performedOn(Model $model): self
     {
         $this->getActivity()->subject()->associate($model);
 
         return $this;
     }
 
-    public function on(Model $model)
+    public function on(Model $model): self
     {
         return $this->performedOn($model);
     }
 
-    public function causedBy($modelOrId)
+    public function causedBy(mixed $modelOrId): self
     {
         if ($modelOrId === null) {
             return $this;
         }
 
-        $model = $this->normalizeCauser($modelOrId);
+        $model = $this->causerResolver->resolve($modelOrId);
 
         $this->getActivity()->causer()->associate($model);
 
         return $this;
     }
 
-    public function by($modelOrId)
+    public function by(mixed $modelOrId): self
     {
         return $this->causedBy($modelOrId);
     }
 
-    public function causedByAnonymous()
+    public function causedByAnonymous(): self
     {
         $this->activity->causer_id = null;
         $this->activity->causer_type = null;
@@ -90,45 +80,45 @@ class ActivityLogger
         return $this;
     }
 
-    public function byAnonymous()
+    public function byAnonymous(): self
     {
         return $this->causedByAnonymous();
     }
 
-    public function event(string $event)
+    public function event(string $event): self
     {
         return $this->setEvent($event);
     }
 
-    public function setEvent(string $event)
+    public function setEvent(string $event): self
     {
         $this->activity->event = $event;
 
         return $this;
     }
 
-    public function withProperties($properties)
+    public function withProperties(mixed $properties): self
     {
         $this->getActivity()->properties = collect($properties);
 
         return $this;
     }
 
-    public function withProperty(string $key, $value)
+    public function withProperty(string $key, mixed $value): self
     {
         $this->getActivity()->properties = $this->getActivity()->properties->put($key, $value);
 
         return $this;
     }
 
-    public function createdAt(Carbon $dateTime)
+    public function createdAt(Carbon $dateTime): self
     {
         $this->getActivity()->created_at = $dateTime;
 
         return $this;
     }
 
-    public function useLog(string $logName)
+    public function useLog(string $logName): self
     {
         $this->getActivity()->log_name = $logName;
 
@@ -147,14 +137,14 @@ class ActivityLogger
         return $this;
     }
 
-    public function enableLogging()
+    public function enableLogging(): self
     {
         $this->logStatus->enable();
 
         return $this;
     }
 
-    public function disableLogging()
+    public function disableLogging(): self
     {
         $this->logStatus->disable();
 
@@ -181,7 +171,7 @@ class ActivityLogger
         return $activity;
     }
 
-    public function withoutLogs(callable $callback)
+    public function withoutLogs(callable $callback): mixed
     {
         if ($this->logStatus->disabled()) {
             return $callback();
@@ -194,23 +184,6 @@ class ActivityLogger
         } finally {
             $this->logStatus->enable();
         }
-    }
-
-    protected function normalizeCauser($modelOrId): Model
-    {
-        if ($modelOrId instanceof Model) {
-            return $modelOrId;
-        }
-
-        $guard = $this->auth->guard($this->authDriver);
-        $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
-        $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($modelOrId) : null;
-
-        if ($model instanceof Model) {
-            return $model;
-        }
-
-        throw CouldNotLogActivity::couldNotDetermineUser($modelOrId);
     }
 
     protected function replacePlaceholders(string $description, ActivityContract $activity): string
@@ -245,7 +218,7 @@ class ActivityLogger
             $this
                 ->useLog($this->defaultLogName)
                 ->withProperties([])
-                ->causedBy($this->auth->guard($this->authDriver)->user());
+                ->causedBy($this->causerResolver->resolve());
 
             $this->activity->batch_uuid = $this->batch->getUuid();
         }

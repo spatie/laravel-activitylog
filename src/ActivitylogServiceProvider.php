@@ -30,6 +30,8 @@ class ActivitylogServiceProvider extends ServiceProvider
 
         $this->app->singleton(ActivityLoggerBatch::class);
 
+        $this->app->singleton(CauserResolver::class);
+
         $this->app->singleton(ActivityLogStatus::class);
     }
 
