@@ -2,7 +2,7 @@
 namespace Spatie\Activitylog\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Spatie\Activitylog\ActivityLoggerBatch;
+use Spatie\Activitylog\LoggerBatch;
 
 /**
  * @method static string getUuid()
@@ -11,12 +11,12 @@ use Spatie\Activitylog\ActivityLoggerBatch;
  * @method static bool isOpen()
  * @method static void endBatch()
  *
- * @see \Spatie\Activitylog\ActivityLoggerBatch
+ * @see \Spatie\Activitylog\LoggerBatch
  */
 class LogBatch extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return ActivityLoggerBatch::class;
+        return LoggerBatch::class;
     }
 }

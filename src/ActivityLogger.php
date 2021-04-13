@@ -22,9 +22,9 @@ class ActivityLogger
 
     protected ?ActivityContract $activity = null;
 
-    protected ActivityLoggerBatch $batch;
+    protected LoggerBatch $batch;
 
-    public function __construct(Repository $config, ActivityLogStatus $logStatus, ActivityLoggerBatch $batch, CauserResolver $causerResolver)
+    public function __construct(Repository $config, ActivityLogStatus $logStatus, LoggerBatch $batch, CauserResolver $causerResolver)
     {
         $this->causerResolver = $causerResolver;
 

@@ -4,7 +4,7 @@ namespace Spatie\Activitylog;
 
 use Closure;
 
-class ActivitylogOptions
+class LogOptions
 {
     public ?string $logName;
 

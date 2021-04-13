@@ -4,7 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Facades\LogBatch;
 
-class ActivityLoggerBatchTest extends TestCase
+class LoggerBatchTest extends TestCase
 {
     /** @test */
     public function it_generates_uuid_after_start_and_end_batch_properely()

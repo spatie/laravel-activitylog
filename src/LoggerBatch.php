@@ -4,7 +4,7 @@ namespace Spatie\Activitylog;
 use Closure;
 use Ramsey\Uuid\Uuid;
 
-class ActivityLoggerBatch
+class LoggerBatch
 {
     public ?string $uuid = null;
 

@@ -5,7 +5,7 @@ namespace Spatie\Activitylog\Test;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
-use Spatie\Activitylog\ActivitylogOptions;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\Issue733;
@@ -27,9 +27,9 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults();
+                return LogOptions::defaults();
             }
         };
 
@@ -38,9 +38,9 @@ class LogsActivityTest extends TestCase
             use SoftDeletes;
 
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults();
+                return LogOptions::defaults();
             }
         };
 
@@ -124,9 +124,9 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults()->logOnly(['name']);
+                return LogOptions::defaults()->logOnly(['name']);
             }
         };
 
@@ -253,9 +253,9 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults()
+                return LogOptions::defaults()
                 ->useLogName('custom_log');
             }
         };
@@ -273,9 +273,9 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults()
+                return LogOptions::defaults()
                 ->dontLogIfAttributesChangedOnly([ 'text']);
             }
         };
@@ -302,9 +302,9 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults()
+                return LogOptions::defaults()
                 ->setDescriptionForEvent(fn (string $eventName):string => ":causer.name $eventName");
             }
         };
@@ -346,9 +346,9 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults();
+                return LogOptions::defaults();
             }
 
             protected $properties = [
@@ -384,9 +384,9 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults();
+                return LogOptions::defaults();
             }
 
             public function tapActivity(Activity $activity, string $eventName)
@@ -410,9 +410,9 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions(): ActivitylogOptions
+            public function getActivitylogOptions(): LogOptions
             {
-                return ActivitylogOptions::defaults();
+                return LogOptions::defaults();
             }
 
             public function tapActivity(Activity $activity, string $eventName)
@@ -435,9 +435,9 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults()
+                return LogOptions::defaults()
                 ->logOnly(['text'])
                 ->dontSubmitEmptyLogs()
                 ->logOnlyDirty();
@@ -465,9 +465,9 @@ class LogsActivityTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : ActivitylogOptions
+            public function getActivitylogOptions() : LogOptions
             {
-                return ActivitylogOptions::defaults()
+                return LogOptions::defaults()
                 ->logOnly(['text', 'json->data'])
                 ->dontSubmitEmptyLogs()
                 ->logOnlyDirty();

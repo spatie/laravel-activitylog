@@ -10,7 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\ActivitylogOptions;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\EventLogBag;
@@ -30,7 +30,7 @@ trait LogsActivity
     /**
      * Configuration object on the model.
      **/
-    protected ActivitylogOptions $activitylogOptions;
+    protected LogOptions $activitylogOptions;
 
     /**
      * Indicates if logging is currently active.
@@ -40,7 +40,7 @@ trait LogsActivity
     /**
      * Contract function to define desired settings on the model.
      **/
-    abstract public function getActivitylogOptions(): ActivitylogOptions;
+    abstract public function getActivitylogOptions(): LogOptions;
 
     /**
      * Boot instantly after model is booted.
