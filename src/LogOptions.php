@@ -6,7 +6,7 @@ use Closure;
 
 class LogOptions
 {
-    public ?string $logName;
+    public ?string $logName = null;
 
     public bool $submitEmptyLogs = true;
 
@@ -20,9 +20,9 @@ class LogOptions
 
     public array $logExceptAttributes = [];
 
-    public array $dontLogIfAttributesChangedBag = [];
+    public array $dontLogIfAttributesChangedOnly = [];
 
-    public ?Closure $descriptionForEvent;
+    public ?Closure $descriptionForEvent = null;
 
     public static function defaults(): self
     {
@@ -79,7 +79,7 @@ class LogOptions
 
     public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
-        $this->dontLogIfAttributesChangedBag = $attributes;
+        $this->dontLogIfAttributesChangedOnly = $attributes;
 
         return $this;
     }
@@ -88,6 +88,13 @@ class LogOptions
     public function dontSubmitEmptyLogs(): self
     {
         $this->submitEmptyLogs = false;
+
+        return $this;
+    }
+
+    public function submitEmptyLogs(): self
+    {
+        $this->submitEmptyLogs = true;
 
         return $this;
     }

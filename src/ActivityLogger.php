@@ -2,6 +2,8 @@
 
 namespace Spatie\Activitylog;
 
+use Closure;
+use DateTimeInterface;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -14,7 +16,7 @@ class ActivityLogger
 {
     use Macroable;
 
-    protected string $defaultLogName = '';
+    protected ?string $defaultLogName = null;
 
     protected CauserResolver $causerResolver;
 
@@ -22,9 +24,9 @@ class ActivityLogger
 
     protected ?ActivityContract $activity = null;
 
-    protected LoggerBatch $batch;
+    protected LogBatch $batch;
 
-    public function __construct(Repository $config, ActivityLogStatus $logStatus, LoggerBatch $batch, CauserResolver $causerResolver)
+    public function __construct(Repository $config, ActivityLogStatus $logStatus, LogBatch $batch, CauserResolver $causerResolver)
     {
         $this->causerResolver = $causerResolver;
 
@@ -35,26 +37,26 @@ class ActivityLogger
         $this->logStatus = $logStatus;
     }
 
-    public function setLogStatus(ActivityLogStatus $logStatus): self
+    public function setLogStatus(ActivityLogStatus $logStatus): static
     {
         $this->logStatus = $logStatus;
 
         return $this;
     }
 
-    public function performedOn(Model $model): self
+    public function performedOn(Model $model): static
     {
         $this->getActivity()->subject()->associate($model);
 
         return $this;
     }
 
-    public function on(Model $model): self
+    public function on(Model $model): static
     {
         return $this->performedOn($model);
     }
 
-    public function causedBy(mixed $modelOrId): self
+    public function causedBy(Model | int | null $modelOrId): static
     {
         if ($modelOrId === null) {
             return $this;
@@ -67,12 +69,12 @@ class ActivityLogger
         return $this;
     }
 
-    public function by(mixed $modelOrId): self
+    public function by(mixed $modelOrId): static
     {
         return $this->causedBy($modelOrId);
     }
 
-    public function causedByAnonymous(): self
+    public function causedByAnonymous(): static
     {
         $this->activity->causer_id = null;
         $this->activity->causer_type = null;
@@ -80,81 +82,81 @@ class ActivityLogger
         return $this;
     }
 
-    public function byAnonymous(): self
+    public function byAnonymous(): static
     {
         return $this->causedByAnonymous();
     }
 
-    public function event(string $event): self
+    public function event(string $event): static
     {
         return $this->setEvent($event);
     }
 
-    public function setEvent(string $event): self
+    public function setEvent(string $event): static
     {
         $this->activity->event = $event;
 
         return $this;
     }
 
-    public function withProperties(mixed $properties): self
+    public function withProperties(mixed $properties): static
     {
         $this->getActivity()->properties = collect($properties);
 
         return $this;
     }
 
-    public function withProperty(string $key, mixed $value): self
+    public function withProperty(string $key, mixed $value): static
     {
         $this->getActivity()->properties = $this->getActivity()->properties->put($key, $value);
 
         return $this;
     }
 
-    public function createdAt(Carbon $dateTime): self
+    public function createdAt(DateTimeInterface $dateTime): static
     {
-        $this->getActivity()->created_at = $dateTime;
+        $this->getActivity()->created_at = Carbon::instance($dateTime);
 
         return $this;
     }
 
-    public function useLog(string $logName): self
+    public function useLog(string $logName): static
     {
         $this->getActivity()->log_name = $logName;
 
         return $this;
     }
 
-    public function inLog(string $logName)
+    public function inLog(string $logName): static
     {
         return $this->useLog($logName);
     }
 
-    public function tap(callable $callback, string $eventName = null)
+    public function tap(callable $callback, string $eventName = null): static
     {
         call_user_func($callback, $this->getActivity(), $eventName);
 
         return $this;
     }
 
-    public function enableLogging(): self
+    public function enableLogging(): static
     {
         $this->logStatus->enable();
 
         return $this;
     }
 
-    public function disableLogging(): self
+    public function disableLogging(): static
     {
         $this->logStatus->disable();
 
         return $this;
     }
 
-    public function log(string $description)
+    public function log(string $description): mixed
     {
         if ($this->logStatus->disabled()) {
-            return;
+            return null;
         }
 
         $activity = $this->activity;
@@ -171,7 +173,7 @@ class ActivityLogger
         return $activity;
     }
 
-    public function withoutLogs(callable $callback): mixed
+    public function withoutLogs(Closure $callback): mixed
     {
         if ($this->logStatus->disabled()) {
             return $callback();

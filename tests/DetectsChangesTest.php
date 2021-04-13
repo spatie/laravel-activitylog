@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Closure;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use Spatie\Activitylog\LoggerBatch;
+use Spatie\Activitylog\LogBatch;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
@@ -182,7 +182,7 @@ class DetectsChangesTest extends TestCase
             }
         };
 
-        app(LoggerBatch::class)->startBatch();
+        app(LogBatch::class)->startBatch();
 
         $user = User::create([
                 'name' => 'user name',
@@ -201,9 +201,9 @@ class DetectsChangesTest extends TestCase
         $article->delete();
         $article->forceDelete();
 
-        $batchUuid = app(LoggerBatch::class)->getUuid();
+        $batchUuid = app(LogBatch::class)->getUuid();
 
-        app(LoggerBatch::class)->endBatch();
+        app(LogBatch::class)->endBatch();
 
 
         $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $batchUuid));
@@ -224,9 +224,9 @@ class DetectsChangesTest extends TestCase
             }
         };
 
-        app(LoggerBatch::class)->startBatch();
+        app(LogBatch::class)->startBatch();
 
-        $uuidForCreatedEvent = app(LoggerBatch::class)->getUuid();
+        $uuidForCreatedEvent = app(LogBatch::class)->getUuid();
         $user = User::create([
                   'name' => 'user name',
               ]);
@@ -237,31 +237,31 @@ class DetectsChangesTest extends TestCase
                   'user_id' => $user->id,
               ]);
 
-        app(LoggerBatch::class)->endBatch();
+        app(LogBatch::class)->endBatch();
 
         $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $uuidForCreatedEvent));
 
 
-        app(LoggerBatch::class)->startBatch();
+        app(LogBatch::class)->startBatch();
 
         $article->name = 'updated name';
         $article->text = 'updated text';
         $article->save();
-        $uuidForUpdatedEvents = app(LoggerBatch::class)->getUuid();
+        $uuidForUpdatedEvents = app(LogBatch::class)->getUuid();
 
-        app(LoggerBatch::class)->endBatch();
+        app(LogBatch::class)->endBatch();
 
         $this->assertCount(1, Activity::where('description', 'updated')->get());
 
         $this->assertEquals($uuidForUpdatedEvents, Activity::where('description', 'updated')->first()->batch_uuid);
 
-        app(LoggerBatch::class)->startBatch();
+        app(LogBatch::class)->startBatch();
         $article->delete();
         $article->forceDelete();
 
-        $uuidForDeletedEvents = app(LoggerBatch::class)->getUuid();
+        $uuidForDeletedEvents = app(LogBatch::class)->getUuid();
 
-        app(LoggerBatch::class)->endBatch();
+        app(LogBatch::class)->endBatch();
 
 
         $this->assertCount(2, Activity::where('batch_uuid', $uuidForDeletedEvents)->get());

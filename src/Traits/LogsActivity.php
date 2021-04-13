@@ -10,10 +10,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\EventLogBag;
+use Spatie\Activitylog\LogOptions;
 
 trait LogsActivity
 {
@@ -200,7 +200,7 @@ trait LogsActivity
         }
 
         // Do not log update event if only ignored attributes are changed.
-        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedBag));
+        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedOnly));
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Facades\LogBatch;
 
-class LoggerBatchTest extends TestCase
+class LogBatchTest extends TestCase
 {
     /** @test */
     public function it_generates_uuid_after_start_and_end_batch_properely()
@@ -120,59 +120,5 @@ class LoggerBatchTest extends TestCase
         $this->assertNull($nullUuid);
 
         $this->assertNotSame($firstUuid, $nullUuid);
-    }
-
-
-    /** @test */
-    public function batch_stress_test()
-    {
-        LogBatch::startBatch();
-        LogBatch::startBatch();
-        LogBatch::startBatch();
-
-        $firstUuid = LogBatch::getUuid();
-
-        LogBatch::endBatch();
-
-        $firstUuidAfterFirstEnd = LogBatch::getUuid();
-
-        LogBatch::endBatch();
-
-        $firstUuidAfterSecondEnd = LogBatch::getUuid();
-
-        LogBatch::endBatch();
-
-        $firstUuidAfterThirdEnd = LogBatch::getUuid();
-
-        LogBatch::endBatch();
-        LogBatch::endBatch();
-        LogBatch::endBatch();
-        LogBatch::endBatch();
-
-        $stillNullUuid = LogBatch::getUuid();
-
-        LogBatch::startBatch();
-
-        LogBatch::startBatch();
-
-        $secondUuid = LogBatch::getUuid();
-
-        LogBatch::endBatch();
-
-        $SameSecondUuid = LogBatch::getUuid();
-
-        LogBatch::endBatch();
-
-        $nullSecondUuid = LogBatch::getUuid();
-
-
-        $this->assertNotNull($firstUuid);
-
-        $this->assertEquals($firstUuid, $firstUuidAfterFirstEnd);
-        $this->assertEquals($firstUuid, $firstUuidAfterSecondEnd);
-        $this->assertNull($firstUuidAfterThirdEnd);
-        $this->assertNull($stillNullUuid);
-        $this->assertEquals($secondUuid, $SameSecondUuid);
-        $this->assertNull($nullSecondUuid);
     }
 }

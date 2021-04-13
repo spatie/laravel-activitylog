@@ -7,7 +7,7 @@ use Spatie\Activitylog\CauserResolver as ActivitylogCauserResolver;
 
 /**
  * @method static null|Model resolve(Model|int|Closure|null $subject = null)
- * @method static ActivitylogCauserResolver withResolver(Closure $callback)
+ * @method static ActivitylogCauserResolver resolveUsing(Closure $callback)
  * @method static ActivitylogCauserResolver setCauser(Model $causer)
  *
  * @see \Spatie\Activitylog\CauserResolver
