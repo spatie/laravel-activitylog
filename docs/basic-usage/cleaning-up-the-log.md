@@ -37,3 +37,18 @@ You can define the days to keep for each call as command option. This will overw
 ```bash
 php artisan activitylog:clean --days=7
 ```
+
+## MySQL - Rebuild index & get back space after clean.
+
+After clean, you might experience database table size still allocated more than actual lines in table,
+execute this line in MySQL to OPTIMIZE / ANALYZE table.
+
+```bash
+OPTIMIZE TABLE activity_log;
+```
+OR
+```bash
+ANALYZE TABLE activity_log;
+```
+
+*this SQL operation will lock write/read of database, use ONLY when server under maintanance mode.
