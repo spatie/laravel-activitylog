@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
@@ -100,6 +101,42 @@ class ActivityLoggerTest extends TestCase
         $this->assertEquals($user->id, $firstActivity->causer->id);
         $this->assertInstanceOf(User::class, $firstActivity->causer);
     }
+
+    /** @test */
+    public function it_can_log_an_activity_with_a_causer_other_than_user_model()
+    {
+        $article = Article::first();
+
+        activity()
+            ->causedBy($article)
+            ->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+
+        $this->assertEquals($article->id, $firstActivity->causer->id);
+        $this->assertInstanceOf(Article::class, $firstActivity->causer);
+    }
+
+
+    /** @test */
+    public function it_can_log_an_activity_with_a_causer_that_has_been_set_from_other_context()
+    {
+        $causer = Article::first();
+        CauserResolver::setCauser($causer);
+
+
+        $article = Article::first();
+
+
+        activity()
+               ->log($this->activityDescription);
+
+        $firstActivity = Activity::first();
+
+        $this->assertEquals($article->id, $firstActivity->causer->id);
+        $this->assertInstanceOf(Article::class, $firstActivity->causer);
+    }
+
 
     /** @test */
     public function it_can_log_an_activity_with_a_causer_when_there_is_no_web_guard()
