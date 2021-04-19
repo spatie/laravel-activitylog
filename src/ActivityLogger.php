@@ -56,7 +56,7 @@ class ActivityLogger
         return $this->performedOn($model);
     }
 
-    public function causedBy(Model | int | null $modelOrId): static
+    public function causedBy(Model | int | string | null $modelOrId): static
     {
         if ($modelOrId === null) {
             return $this;
@@ -69,7 +69,7 @@ class ActivityLogger
         return $this;
     }
 
-    public function by(mixed $modelOrId): static
+    public function by(Model | int | string | null $modelOrId): static
     {
         return $this->causedBy($modelOrId);
     }
@@ -153,7 +153,7 @@ class ActivityLogger
         return $this;
     }
 
-    public function log(string $description): mixed
+    public function log(string $description): ?ActivityContract
     {
         if ($this->logStatus->disabled()) {
             return null;

@@ -41,20 +41,20 @@ class CauserResolver
      * @throws InvalidArgumentException
      * @throws CouldNotLogActivity
      */
-    public function resolve(Model | int | null $subject = null) : ?Model
+    public function resolve(Model | int | string | null $subject = null) : ?Model
     {
+        if ($this->causerOverride !== null) {
+            return $this->causerOverride;
+        }
+
         if ($this->resolverOverride !== null) {
-            $resultCauser = call_user_func($this->resolverOverride);
+            $resultCauser = ($this->resolverOverride)($subject);
 
             if (! $this->isResolveable($resultCauser)) {
                 throw CouldNotLogActivity::couldNotDetermineUser($resultCauser);
             }
 
             return $resultCauser;
-        }
-
-        if ($this->causerOverride !== null) {
-            return $this->causerOverride;
         }
 
         return $this->getCauser($subject);
@@ -69,7 +69,7 @@ class CauserResolver
     * @throws InvalidArgumentException
     * @throws CouldNotLogActivity
     */
-    protected function resolveUsingId(int $subject) : Model
+    protected function resolveUsingId(int | string $subject) : Model
     {
         $guard = $this->authManager->guard($this->authDriver);
 
@@ -92,7 +92,7 @@ class CauserResolver
      * @throws InvalidArgumentException
      * @throws CouldNotLogActivity
      */
-    protected function getCauser(Model | int | null $subject = null): ?Model
+    protected function getCauser(Model | int | string | null $subject = null): ?Model
     {
         if ($subject instanceof Model) {
             return $subject;
@@ -112,7 +112,7 @@ class CauserResolver
         return $this;
     }
 
-    public function setCauser(Model $causer): static
+    public function setCauser(?Model $causer): static
     {
         $this->causerOverride = $causer;
 

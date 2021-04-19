@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Facade;
 use Spatie\Activitylog\CauserResolver as ActivitylogCauserResolver;
 
 /**
- * @method static null|Model resolve(Model|int|Closure|null $subject = null)
+ * @method static null|Model resolve(Model|int|string|null $subject = null)
  * @method static ActivitylogCauserResolver resolveUsing(Closure $callback)
- * @method static ActivitylogCauserResolver setCauser(Model $causer)
+ * @method static ActivitylogCauserResolver setCauser(?Model $causer)
  *
  * @see \Spatie\Activitylog\CauserResolver
  */
