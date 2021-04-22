@@ -2,6 +2,8 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Carbon\CarbonInterval;
+use DateInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -308,6 +310,14 @@ trait LogsActivity
                     // Strict check for php's weird behaviors
                     if ($old === null || $new === null) {
                         return $new === $old ? 0 : 1;
+                    }
+
+                    // Handels Date intervels comparsons since php cannot use spaceship
+                    // Operator to compare them and will throw ErrorException.
+                    if ($old instanceof DateInterval) {
+                        return CarbonInterval::make($old)->equalTo($new);
+                    } elseif ($new instanceof DateInterval) {
+                        return CarbonInterval::make($new)->equalTo($old);
                     }
 
                     return $new <=> $old;
