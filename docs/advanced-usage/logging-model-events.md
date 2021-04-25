@@ -367,7 +367,7 @@ class NewsItem extends Model
 
 ## Ignoring attributes from logging
 
-If you use wildcard logging, but do not want to log certain attributes, you can specify those attributes in `$logAttributesToIgnore`.
+If you use wildcard logging, but do not want to log certain attributes, you can specify those attributes by calling `->dontLogIfAttributesChangedOnly()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
