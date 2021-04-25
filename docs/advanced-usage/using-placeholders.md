@@ -1,6 +1,6 @@
 ---
 title: Using placeholders
-weight: 2
+weight: 4
 ---
 
 When logging an activity you may use placeholders that start with `:subject`, `:causer` or `:properties`. These placeholders will get replaced with the properties of the given subject, causer or property.

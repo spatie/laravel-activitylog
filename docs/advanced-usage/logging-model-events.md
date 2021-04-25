@@ -40,7 +40,7 @@ If you want to log changes to all the `$fillable` attributes of the model, you c
 
 If you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
 
-For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or no `->logUnguarded()` methods.
+For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or  `->logUnguarded()` methods.
 
 Let's see what gets logged when creating an instance of that model.
 

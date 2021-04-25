@@ -82,14 +82,20 @@ class CauserResolver
         return $causer;
     }
 
-    public function withResolver(Closure $callback): self
+    /**
+     * Override the resover using callback
+     */
+    public function resolveUsing(Closure $callback): static
     {
         $this->override = $callback;
 
         return $this;
     }
 
-    public function setCauser(Model $causer):self
+    /**
+     * Override default causer
+     */
+    public function setCauser(?Model $causer): static
     {
         $this->override = $causer;
 
