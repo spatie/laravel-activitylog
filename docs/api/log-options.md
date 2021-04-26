@@ -3,9 +3,9 @@ title: Log Options
 weight: 1
 ---
 
-To customize how your models will be logged by implementing `getActivitylogOptions` in your model.
+Customization of how your models will be logged is controlled when implementing `getActivitylogOptions`. You can start from the defaults and override values as needed.
 
-You can start by override the default options.
+The most basic example of an Activity logged model would be:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -23,27 +23,26 @@ class YourModel extends Model
 }
 ```
 
-Default options:
+This call to `LogOptions::defaults()` yields the following default options:
 
 ```php
-    public ?string $logName = null;
+public ?string $logName = null;
 
-    public bool $submitEmptyLogs = true;
+public bool $submitEmptyLogs = true;
 
-    public bool $logFillable = false;
+public bool $logFillable = false;
 
-    public bool $logOnlyDirty = false;
+public bool $logOnlyDirty = false;
 
-    public bool $logUnguarded = false;
+public bool $logUnguarded = false;
 
-    public array $logAttributes = [];
+public array $logAttributes = [];
 
-    public array $logExceptAttributes = [];
+public array $logExceptAttributes = [];
 
-    public array $dontLogIfAttributesChangedOnly = [];
+public array $dontLogIfAttributesChangedOnly = [];
 
-    public ?Closure $descriptionForEvent = null;
-
+public ?Closure $descriptionForEvent = null;
 ```
 
 ## Options methods
@@ -51,12 +50,10 @@ Default options:
 ### defaults
 
 ```php
-
 /**
  * Start configuring model with the default options.
  */
 public static function defaults(): LogOption;
-
 ```
 
 ### logAll
@@ -64,12 +61,10 @@ public static function defaults(): LogOption;
 This method is equivalent to `->logOnly(['*'])`.
 
 ```php
-
-    /**
-     * Log all attributes on the model
-     */
-    public function logAll(): LogOption;
-
+/**
+ * Log all attributes on the model
+ */
+public function logAll(): LogOption;
 ```
 
 ### logUnguarded
@@ -77,12 +72,10 @@ This method is equivalent to `->logOnly(['*'])`.
 This option will respect the wildcard `*`, `->logAll()` and `->logFillable()` methods.
 
 ```php
-
-    /**
-     * log changes to all the $guarded attributes of the model
-     */
-    public function logUnguarded(): LogOption;
-
+/**
+ * log changes to all the $guarded attributes of the model
+ */
+public function logUnguarded(): LogOption;
 ```
 
 ### logFillable
@@ -90,45 +83,37 @@ This option will respect the wildcard `*`, `->logAll()` and `->logFillable()` me
 This option will respect the wildcard `*`, `->logAll()` and `->logUnguarded()` methods.
 
 ```php
-
-    /**
-     * log changes to all the $fillable attributes of the model
-     */
-    public function logFillable(): LogOption;
-
+/**
+ * log changes to all the $fillable attributes of the model
+ */
+public function logFillable(): LogOption;
 ```
 
 ### dontLogFillable
 
 ```php
-
-    /**
-     * Stop logging $fillable attributes of the model
-     */
-    public function dontLogFillable(): LogOption;
-
+/**
+ * Stop logging $fillable attributes of the model
+ */
+public function dontLogFillable(): LogOption;
 ```
 
 ### logOnlyDirty
 
 ```php
-
-    /**
-     * Log changes that has actually changed after the update
-     */
-    public function logOnlyDirty(): LogOption;
-
+/**
+ * Log changes that has actually changed after the update
+ */
+public function logOnlyDirty(): LogOption;
 ```
 
 ### logOnly
 
 ```php
-
-    /**
-     * Log changes only if these attributes changed
-     */
-    public function logOnly(array $attributes): LogOption;
-
+/**
+ * Log changes only if these attributes changed
+ */
+public function logOnly(array $attributes): LogOption;
 ```
 
 ### logExcept
@@ -136,67 +121,55 @@ This option will respect the wildcard `*`, `->logAll()` and `->logUnguarded()` m
 Convenient method for `logOnly()`
 
 ```php
-
-    /**
-     * Exclude these attributes from being logged
-     */
-    public function logExcept(array $attributes): LogOption;
-
+/**
+ * Exclude these attributes from being logged
+ */
+public function logExcept(array $attributes): LogOption;
 ```
 
 ### dontLogIfAttributesChangedOnly
 
 ```php
-
-    /**
-     * Don't trigger an activity if these attributes changed logged
-     */
-    public function dontLogIfAttributesChangedOnly(array $attributes): LogOption;
-
+/**
+ * Don't trigger an activity if these attributes changed logged
+ */
+public function dontLogIfAttributesChangedOnly(array $attributes): LogOption;
 ```
 
 ### dontSubmitEmptyLogs
 
 ```php
-
-    /**
-     * Dont store empty logs. Storing empty logs can happen when you only
-     * want to log a certain attribute but only another changes.
-     */
-    public function dontSubmitEmptyLogs(): LogOption;
-
+/**
+ * Dont store empty logs. Storing empty logs can happen when you only
+ * want to log a certain attribute but only another changes.
+ */
+public function dontSubmitEmptyLogs(): LogOption;
 ```
 
 ### submitEmptyLogs
 
 ```php
-
-    /**
-     * Allow storing empty logs. Storing empty logs can happen when you only
-     * want to log a certain attribute but only another changes.
-     */
-    public function submitEmptyLogs(): LogOption;
-
+/**
+ * Allow storing empty logs. Storing empty logs can happen when you only
+ * want to log a certain attribute but only another changes.
+ */
+public function submitEmptyLogs(): LogOption;
 ```
 
 ### useLogName
 
 ```php
-
-    /**
-     * Customize log name
-     */
-    public function useLogName(string $logName): LogOption;
-
+/**
+ * Customize log name
+ */
+public function useLogName(string $logName): LogOption;
 ```
 
 ### setDescriptionForEvent
 
 ```php
-
-    /**
-     * Customize log description using callback
-     */
-    public function setDescriptionForEvent(Closure $callback): LogOption;
-
+/**
+ * Customize log description using callback
+ */
+public function setDescriptionForEvent(Closure $callback): LogOption;
 ```
