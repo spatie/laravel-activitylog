@@ -31,6 +31,7 @@ Once the batch is closed, if you save the batch's UUID, then you can retrieve al
 
 For example:
 ```php
+// ... started batch and other code
 $batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
 LogBatch::endBatch();
 
@@ -38,6 +39,9 @@ $batchActivities = Activity::forBatch($batchUuid)->get();
 ```
 
 Example results:
+
+**Note** that in the examples both `Author` and `Book` are implementing `LogsActivity` trait.
+
 ```php
 use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
