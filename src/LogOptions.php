@@ -134,12 +134,6 @@ class LogOptions
         return $this;
     }
 
-    public function useLogName(string $logname): self
-    {
-        $this->submitEmptyLogs = true;
-
-        return $this;
-    }
 
     /**
      * Customize log name
