@@ -20,14 +20,28 @@ $author = Author::create(['name' => 'Philip K. Dick']);
 $book = Book::create(['name' => 'A Scanner Brightly', 'author_id' => $author->id]);
 $book->update(['name' => 'A Scanner Darkly']);
 $author->delete();
+LogBatch::endBatch();
+```
 
+Doing this would allow all the activities within this batch to log together as described. This helps ensure those non-explict actions like the cascade delete of the book get captured too.
+
+## Retrieve Activities by batch
+
+Once the batch is closed, if you save the batch's UUID, then you can retrieve all activities related to that batch. Simply do this by using the `Activity::whereBatchUuid($batchUuid)` lookup scope.
+
+For example:
+```php
 $batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
 LogBatch::endBatch();
 
-Activity::forBatch($batchUuid)->get(); // TODO: unsure what the output would be...
+$batchActvities = Activity::whereBatchUuid($batchUuid)->get();
 ```
 
-Once the batch is closed, if you save the batch's UUID, then you can retrieve all activities related to that batch. Simply do this by using the `Activity::forBatch($batchUuid)` lookup scope.
+Example of retreiving a batch activity:
+```php
+// TODO: get this...
+```
+
 
 ## Note on starting new batches
 
@@ -37,7 +51,9 @@ Activity batches works similarly to database transactions where number of starte
 
 ## Check if batch is open
 
-During any batch you can check if the batch is open or not, that would be useful in queue job or middleware.
+It's important to not open a new batch from within an existing batch. This type of thing may come up within a queue job or middleware.
+
+To verify if a batch is open or closed you can do the following:
 
 ```php
 // in middleware
@@ -53,7 +69,7 @@ if(LogBatch::isOpen()) {
 
 ## Batch activities using callback
 
-If you feel like it, you can batch activities using closure passed to `LogBatch::withinBatch()`, every activity will happen inside that closure will be assigned to the same batch uuid.
+You can also batch activities using closure passed to `LogBatch::withinBatch()`. Every activity executed will happen inside that closure will be included in the same batch.
 
 Here's an example:
 
@@ -71,7 +87,3 @@ LogBatch::withinBatch(function(string $uuid) {
 Activity::latest()->get(); // batch_uuid: 5cce9cb3-3144-4d35-9015-830cf0f20691
 
 ```
-
-## Retrive Activities by batch
-
-You can get all activities that happend in a single batch using `Activity::forBatch($batchUuid)` scope or check if the `Activity::hasBatch()`.
