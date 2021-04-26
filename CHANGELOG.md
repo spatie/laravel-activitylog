@@ -7,12 +7,12 @@ All notable changes to `spatie/laravel-activitylog` will be documented in this f
 Reference - [#866](https://github.com/spatie/laravel-activitylog/pull/866) and [#787](https://github.com/spatie/laravel-activitylog/pull/787)
 
 - Drop Laravel 6 and 7 support.
-- Drop php 7.x support.
+- Drop PHP 7.x support.
+- Add `LogOptions` configuration object to replace all configuration properties.
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
-- Add Pipelines.
-- Add configuration object.
-- Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ...[#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
-- Implement a `CauserResolver` to define causer for runtime [#582](https://github.com/spatie/laravel-activitylog/issues/582).
+- Add Pipeline to customize logged changes data.
+  - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- Implement a `CauserResolver` to define causer for current runtime [#582](https://github.com/spatie/laravel-activitylog/issues/582).
 
 ## 3.17.0 - 2021-03-02
 

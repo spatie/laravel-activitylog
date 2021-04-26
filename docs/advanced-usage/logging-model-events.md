@@ -7,7 +7,7 @@ The package can automatically log events such as when a model is created, update
 
 As a bonus the package will also log the changed attributes for all these events when you define our own options method.
 
-The trait contains an abstract method `getActivitylogOptions()` that you can use to customize options. It just needs to return a `LogOptions` instance built form `LogOptions::defaults()` using fluent methods.
+The trait contains an abstract method `getActivitylogOptions()` that you can use to customize options. It needs to return a `LogOptions` instance built form `LogOptions::defaults()` using fluent methods.
 
 The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
 
@@ -204,7 +204,7 @@ class NewsItem extends Model
 
 Changing `text` will not trigger an activity being logged.
 
-By default the `updated_at` attribute is _not_ ignored and will trigger an activity being logged. You can simply add the `updated_at` attribute to the `->dontLogIfAttributesChangedOnly()` array to override this behavior.
+By default the `updated_at` attribute is _not_ ignored and will trigger an activity being logged. You can add the `updated_at` attribute to the `->dontLogIfAttributesChangedOnly()` array to override this behavior.
 
 ## Logging only the changed attributes
 

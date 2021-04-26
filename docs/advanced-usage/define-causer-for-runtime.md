@@ -3,7 +3,7 @@ title: Define causer for runtime
 weight: 4
 ---
 
-In many cases you may want to set causer globally maybe inside jobs where there's no logged user, v4 made this possible by introducing `CauserResolver` that will allow you to set the causer globally. See the example:
+In many cases you may want to set causer globally maybe inside jobs where there's no logged-in user, v4 made this possible by introducing `CauserResolver` that will allow you to set the causer globally. See the example:
 
 ```php
 // in a queue job or controller
@@ -20,7 +20,7 @@ CauserResover::setCauser($causer);
 $product->update(['name' => 'New name']);
 
 Activity::all()->last()->causer; // Product Model
-Activity::all()->last()->causer->id; // 1
+Activity::all()->last()->causer->id; // Product#1 Owner
 
 ```
 

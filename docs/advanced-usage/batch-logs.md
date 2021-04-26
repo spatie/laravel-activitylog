@@ -3,7 +3,7 @@ title: Batch Logs
 weight: 3
 ---
 
-In some situations you may want to process multiple activities back to a single batch activity.
+In some situations you may want to process multiple activities back to a single activity batch.
 
 For example when a `User` deletes an `Author`, then that cascades soft deletes to the `Book`s that were owned by the `Author`. This way all modifications caused by that initial action are still associated with the same causer and batch UUID.
 
@@ -23,11 +23,11 @@ $author->delete();
 LogBatch::endBatch();
 ```
 
-Doing this would allow all the activities within this batch to log together as described. This helps ensure those non-explict actions like the cascade delete of the book get captured too.
+Doing this would allow all the activities within this batch to log together as described. This helps ensure those non-explicit actions like the cascade delete of the book get captured too.
 
 ## Retrieve Activities by batch
 
-Once the batch is closed, if you save the batch's UUID, then you can retrieve all activities related to that batch. Simply do this by using the `Activity::whereBatchUuid($batchUuid)` lookup scope.
+Once the batch is closed, if you save the batch's UUID, then you can retrieve all activities related to that batch. Do this by using the `Activity::whereBatchUuid($batchUuid)` lookup scope.
 
 For example:
 ```php
