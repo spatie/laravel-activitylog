@@ -30,6 +30,7 @@ Doing this would allow all the activities within this batch to log together as d
 Once the batch is closed, if you save the batch's UUID, then you can retrieve all activities related to that batch. Do this by using the `Activity::whereBatchUuid($batchUuid)` lookup scope.
 
 For example:
+
 ```php
 // ... started batch and other code
 $batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
@@ -63,7 +64,6 @@ var_dump($batchActivities); // A collection of Activity models...
 // They will be in order: Author;created, Book;created, Book;updated,
 //      Book;created, Author;deleted, Book;deleted and Book;deleted
 ```
-
 
 ## Note on starting new batches
 

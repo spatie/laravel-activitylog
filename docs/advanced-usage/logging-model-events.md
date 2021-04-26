@@ -3,7 +3,7 @@ title: Logging model events
 weight: 1
 ---
 
-The package can automatically log events such as when a model is created, updated and deleted.  To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait.
+The package can automatically log events such as when a model is created, updated and deleted. To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait.
 
 As a bonus the package will also log the changed attributes for all these events when you define our own options method.
 
@@ -33,7 +33,7 @@ class NewsItem extends Model
 }
 ```
 
-Note that we start from sensible defaults, but any of them can be overridden as needed by cianing fluent methods.  Review the `Spatie\Activitylog\LogOptions` class for full list of supported options.
+Note that we start from sensible defaults, but any of them can be overridden as needed by cianing fluent methods. Review the `Spatie\Activitylog\LogOptions` class for full list of supported options.
 
 ## Basics of Logging Configuration
 
@@ -41,7 +41,7 @@ If you want to log changes to all the `$fillable` attributes of the model, you c
 
 Alternatively, if you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
 
-For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or  `->logUnguarded()` methods.
+For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or `->logUnguarded()` methods.
 
 ## Basic example of what is logged
 
@@ -75,6 +75,7 @@ $activity->subject; //returns the instance of NewsItem that was created
 ```
 
 Calling `$activity->changes` will return this array:
+
 ```php
 [
    'attributes' => [
