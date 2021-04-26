@@ -3,27 +3,31 @@ title: Batch Logs
 weight: 3
 ---
 
-In some cases you may want to link multiple activities back to a single activity that started it all. For example author was deleted, that cascades soft deletes to the books for that author.
-Now the deleted author and deleted books are now having the same `uuid`.
+In some situations you may want to process multiple activities back to a single batch activity.
 
-You can start new batch by calling `LogBatch::startBatch()` before any activity is done then all of following activities will link back by UUID to that batch. After finishing activities you should end the batch `LogBatch::endBatch()`.
+For example when a `User` deletes an `Author`, then that cascades soft deletes to the `Book`s that were owned by the `Author`. This way all modifications caused by that initial action are still associated with the same causer and batch UUID.
+
+To start a new batch call `LogBatch::startBatch()` before any activity is done. Then all following actions will link back by UUID to that batch. After finishing activities you should end the batch by calling `LogBatch::endBatch()`.
+
+Here's an example:
 
 ```php
 use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
 
 LogBatch::startBatch();
-$article = NewsItem::create(['name' => 'new article']);
-$article->update(['name' => 'update article']);
-$article->delete();
+$author = Author::create(['name' => 'Philip K. Dick']);
+$book = Book::create(['name' => 'A Scanner Brightly', 'author_id' => $author->id]);
+$book->update(['name' => 'A Scanner Darkly']);
+$author->delete();
 
-$batchUuid = LogBatch::getUuid(); // save batch id to retrive activities later
+$batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
 LogBatch::endBatch();
 
-Activity::forBatch($batchUuid)->get(); // collection of 3 activity models ['created', 'updated', 'deleted']
+Activity::forBatch($batchUuid)->get(); // TODO: unsure what the output would be...
 ```
 
-You can now retrive all activities related to a single batch by using `Activity::forBatch($batchUuid);` scope.
+Once the batch is closed, if you save the batch's UUID, then you can retrieve all activities related to that batch. Simply do this by using the `Activity::forBatch($batchUuid)` lookup scope.
 
 ## Note on starting new batches
 

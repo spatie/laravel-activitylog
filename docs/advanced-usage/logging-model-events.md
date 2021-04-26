@@ -3,11 +3,15 @@ title: Logging model events
 weight: 1
 ---
 
-The package can automatically log events such as when a model is created, updated and deleted.  To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait and the `Spatie\Activitylog\LogOptions` class.
+The package can automatically log events such as when a model is created, updated and deleted.  To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait.
 
-The trait contains an abstract method `getActivitylogOptions()` that must return `LogOptions` class  and you must implement yourself.
+As a bonus the package will also log the changed attributes for all these events when you define our own options method.
 
-Here's an example of how to implement the trait:
+The trait contains an abstract method `getActivitylogOptions()` that you can use to customize options. It just needs to return a `LogOptions` instance built form `LogOptions::defaults()` using fluent methods.
+
+The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
+
+Here's an example:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -23,24 +27,23 @@ class NewsItem extends Model
     public function getActivitylogOptions()
     {
         return LogOptions::defaults()
-        ->logOnly(['name', 'text'])
-        ->logOnlyDirty();
-        // Chain other configration options
+        ->logOnly(['name', 'text']);
+        // Chain fluent methods for configuration options
     }
 }
 ```
 
-Note that we start from sinceable defaults that you can override them by chaining more options as you need, look at Log Options tap for full list of supported options.
+Note that we start from sensible defaults, but any of them can be overridden as needed by cianing fluent methods.  Review the `Spatie\Activitylog\LogOptions` class for full list of supported options.
 
-Also, You can configure this package to log changed attributes for all these events when calling `logOnly()` method on the `Spatie\Activitylog\LogOptions` like in the previous example.
-
-The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
+## Basics of Logging Configuration
 
 If you want to log changes to all the `$fillable` attributes of the model, you can chain `->logFillable()` on the `LogOptions` class.
 
-If you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
+Alternatively, if you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
 
 For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or  `->logUnguarded()` methods.
+
+## Basic example of what is logged
 
 Let's see what gets logged when creating an instance of that model.
 
@@ -61,7 +64,7 @@ $activity->changes; //returns ['attributes' => ['name' => 'original name', 'text
 Now let's update some that `$newsItem`.
 
 ```php
-$newsItem->name = 'updated name'
+$newsItem->name = 'updated name';
 $newsItem->save();
 
 //updating the newsItem will cause an activity being logged
@@ -205,7 +208,7 @@ By default the `updated_at` attribute is _not_ ignored and will trigger an activ
 
 ## Logging only the changed attributes
 
-If you do not want to log every attribute in your specified felids in `->logOnly()`, but only those that has actually changed after the update, you can use `->logOnlyDirty()`
+If you do not want to log every attribute passed into `->logOnly()`, but only those that have actually changed after the update, you can call `->logOnlyDirty()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
