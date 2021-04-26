@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
-use Spatie\Activitylog\LoggerBatch;
 use Spatie\Activitylog\LogBatch;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
