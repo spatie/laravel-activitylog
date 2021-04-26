@@ -34,12 +34,28 @@ For example:
 $batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
 LogBatch::endBatch();
 
-$batchActvities = Activity::whereBatchUuid($batchUuid)->get();
+$batchActivities = Activity::forBatch($batchUuid)->get();
 ```
 
-Example of retreiving a batch activity:
+Example results:
 ```php
-// TODO: get this...
+use Spatie\Activitylog\Facades\LogBatch;
+use Spatie\Activitylog\Models\Activity;
+
+LogBatch::startBatch();
+
+$author = Author::create(['name' => 'Philip K. Dick']);
+$book = Book::create(['name' => 'A Scanner Brightly', 'author_id' => $author->id]);
+$book->update(['name' => 'A Scanner Darkly']);
+$book2 = Book::create(['name' => 'Paycheck', 'author_id' => $author->id]);
+
+$author->delete();
+
+$batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
+LogBatch::endBatch();
+
+$batchActivities = Activity::forBatch($batchUuid)->get();
+var_dump($batchActivities);
 ```
 
 

@@ -8,7 +8,7 @@ Reference - [#866](https://github.com/spatie/laravel-activitylog/pull/866) and [
 
 - Drop Laravel 6 and 7 support.
 - Drop php 7.x support.
-- Add ability to log Activity batches [#560](https://github.com/spatie/laravel-activitylog/issues/560)
+- Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipelines.
 - Add configuration object.
 - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ...[#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
