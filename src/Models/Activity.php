@@ -9,9 +9,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
-/**
- * @method static Builder|Activity whereBatchUuid(string $value)
- */
 class Activity extends Model implements ActivityContract
 {
     public $guarded = [];
@@ -97,5 +94,10 @@ class Activity extends Model implements ActivityContract
     public function scopeHasBatch(Builder $query): Builder
     {
         return $query->whereNotNull('batch_uuid');
+    }
+
+    public function scopeForBatch(Builder $query, string $batchUuid): Builder
+    {
+        return $query->where('batch_uuid', $batchUuid);
     }
 }
