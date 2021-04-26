@@ -55,7 +55,9 @@ $batchUuid = LogBatch::getUuid(); // save batch id to retrieve activities later
 LogBatch::endBatch();
 
 $batchActivities = Activity::forBatch($batchUuid)->get();
-var_dump($batchActivities);
+var_dump($batchActivities); // A collection of Activity models...
+// They will be in order: Author;created, Book;created, Book;updated,
+//      Book;created, Author;deleted, Book;deleted and Book;deleted
 ```
 
 
