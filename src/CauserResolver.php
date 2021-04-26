@@ -15,94 +15,119 @@ class CauserResolver
     protected string $authDriver;
 
     /**
-     * User defined model or callback to override default reslover logic
+     * User defined callback to override default reslover logic
      */
-    protected Model | Closure | null $override = null;
+    protected Closure | null $resolverOverride = null;
 
-    public function __construct()
+    /**
+     * User defined model to override default reslover logic
+     */
+    protected Model | null $causerOverride = null;
+
+    public function __construct(Repository $config, AuthManager $authManager)
     {
-        $config = app(Repository::class);
-        $this->authManager = app(AuthManager::class);
+        $this->authManager = $authManager;
 
         $this->authDriver = $config['activitylog']['default_auth_driver'] ?? $this->authManager->getDefaultDriver();
     }
 
     /**
-     * Reslove causer based different arguments
-
-     * @param Model|int|Closure|null $subject
+     * Reslove causer based different arguments first we'll check for override closure
+     * Then check for the result causer if it valid. In other case will return the
+     * override causer defined by the user or delgate to the getCauser() method
+     *
+     * @param Model|int|null $subject
      * @return null|Model
      * @throws InvalidArgumentException
      * @throws CouldNotLogActivity
      */
-    public function resolve(Model | int | Closure | null $subject = null) : ?Model
+    public function resolve(Model | int | string | null $subject = null) : ?Model
     {
-        if ($subject instanceof Closure) {
-            $this->override = $subject;
+        if ($this->causerOverride !== null) {
+            return $this->causerOverride;
         }
 
-        if (! is_null($this->override) || is_null($subject)) {
-            return $this->getCauser();
+        if ($this->resolverOverride !== null) {
+            $resultCauser = ($this->resolverOverride)($subject);
+
+            if (! $this->isResolveable($resultCauser)) {
+                throw CouldNotLogActivity::couldNotDetermineUser($resultCauser);
+            }
+
+            return $resultCauser;
         }
 
-        if ($this->isValidCauser($subject)) {
-            return $subject;
-        }
+        return $this->getCauser($subject);
+    }
 
 
-        // Resolve the user based on passed id
+    /**
+    * Resolve the user based on passed id
+    *
+    * @param int $subject
+    * @return Model
+    * @throws InvalidArgumentException
+    * @throws CouldNotLogActivity
+    */
+    protected function resolveUsingId(int | string $subject) : Model
+    {
         $guard = $this->authManager->guard($this->authDriver);
 
         $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
         $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($subject) : null;
 
-        if ($model instanceof Model) {
-            return $model;
-        }
 
-        throw CouldNotLogActivity::couldNotDetermineUser($subject);
+        throw_unless($model instanceof Model, CouldNotLogActivity::couldNotDetermineUser($subject));
+
+        return $model;
     }
 
-    protected function getCauser(): ?Model
+    /**
+     * Return the subject if it was model. If the subject wasn't set will try to resolve
+     * current authenticated user using the auth manager, else resolve the causer
+     * from users table using id else throw couldNotDetermineUser exception
+     *
+     * @param Model|int|null $subject
+     * @return null|Model
+     * @throws InvalidArgumentException
+     * @throws CouldNotLogActivity
+     */
+    protected function getCauser(Model | int | string | null $subject = null): ?Model
     {
-        if (! $this->isValidOverrideType()) {
+        if ($subject instanceof Model) {
+            return $subject;
+        }
+
+        if (is_null($subject)) {
             return $this->getDefaultCauser();
         }
 
-        $causer = $this->override;
-
-        if ($this->override instanceof Closure) {
-            $causer = ($this->override)();
-        }
-
-        if (! $this->isValidCauser($causer)) {
-            throw CouldNotLogActivity::couldNotDetermineUser($causer);
-        }
-
-        return $causer;
+        return $this->resolveUsingId($subject);
     }
 
+  
     /**
      * Override the resover using callback
      */
     public function resolveUsing(Closure $callback): static
     {
-        $this->override = $callback;
+        $this->resolverOverride = $callback;
 
         return $this;
     }
+
 
     /**
      * Override default causer
      */
     public function setCauser(?Model $causer): static
     {
-        $this->override = $causer;
+        $this->causerOverride = $causer;
 
         return $this;
     }
 
-    protected function isValidCauser(mixed $model): bool
+    protected function isResolveable(mixed $model): bool
     {
         return ($model instanceof Model || is_null($model));
     }
@@ -110,12 +135,5 @@ class CauserResolver
     protected function getDefaultCauser(): ?Model
     {
         return $this->authManager->guard($this->authDriver)->user();
-    }
-
-    protected function isValidOverrideType(): bool
-    {
-        return ($this->override instanceof Model)
-        || ($this->override instanceof Closure)
-        || null;
     }
 }

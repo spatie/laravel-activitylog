@@ -226,26 +226,6 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
     }
 
-    /** remove this test? */
-    // public function it_can_log_activity_to_log_returned_from_model_method_override()
-    // {
-    //     $articleClass = new class() extends Article {
-    //         use LogsActivity;
-
-    //         public function getActivitylogOptions() : ActivitylogOptions
-    //         {
-    //             return ActivitylogOptions::defaults()
-    //             ->useLogName('custom_log');
-    //         }
-    //     };
-
-    //     $article = new $articleClass();
-    //     $article->name = 'my name';
-    //     $article->save();
-
-    //     $this->assertEquals($article->id, Activity::inLog('custom_log')->first()->subject->id);
-    //     $this->assertCount(1, Activity::inLog('custom_log')->get());
-    // }
 
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()

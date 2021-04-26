@@ -11,8 +11,6 @@ class EventLogBag
         public array $changes,
         public ?LogOptions $options = null
     ) {
-        if (is_null($this->options)) {
-            $this->options = $model->getActivitylogOptions();
-        }
+        $this->options ??= $model->getActivitylogOptions();
     }
 }

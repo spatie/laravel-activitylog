@@ -200,7 +200,7 @@ trait LogsActivity
         }
 
         // Do not log update event if only ignored attributes are changed.
-        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedBag));
+        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedOnly));
     }
 
     /**

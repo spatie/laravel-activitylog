@@ -4,7 +4,7 @@ namespace Spatie\Activitylog;
 use Closure;
 use Ramsey\Uuid\Uuid;
 
-class LoggerBatch
+class LogBatch
 {
     public ?string $uuid = null;
 
@@ -20,7 +20,7 @@ class LoggerBatch
         return $this->uuid;
     }
 
-    public function useBatch(Closure $callback): mixed
+    public function withinBatch(Closure $callback): mixed
     {
         $this->startBatch();
         $result = $callback();
@@ -47,7 +47,7 @@ class LoggerBatch
     {
         $this->transactions = max(0, $this->transactions - 1);
 
-        if ($this->transactions == 0) {
+        if ($this->transactions === 0) {
             $this->uuid = null;
         }
     }

@@ -21,14 +21,6 @@ class CauserResolverTest extends TestCase
         $this->assertEquals($user->id, $causer->id);
     }
 
-    /** @test */
-    public function it_will_resolve_a_null_callback()
-    {
-        $causer = CauserResolver::resolve(fn () => null);
-
-        $this->assertNull($causer);
-    }
-
 
     /** @test */
     public function it_will_throw_an_exception_if_it_cannot_resolve_user_by_id()
@@ -39,20 +31,6 @@ class CauserResolverTest extends TestCase
     }
 
 
-    /** @test */
-    public function it_will_throw_an_exception_if_callback_resolved_invalid_causer_type()
-    {
-        $this->expectException(CouldNotLogActivity::class);
-
-        $invalidCauserType = new class() {
-            public function __toString()
-            {
-                return 'invalidCauserType';
-            }
-        };
-
-        CauserResolver::resolve(fn () => $invalidCauserType);
-    }
 
 
     /** @test */
@@ -68,7 +46,7 @@ class CauserResolverTest extends TestCase
     /** @test */
     public function it_will_resolve_the_provided_override_callback()
     {
-        CauserResolver::withResolver(fn () => Article::first());
+        CauserResolver::resolveUsing(fn () => Article::first());
 
         $causer = CauserResolver::resolve();
 

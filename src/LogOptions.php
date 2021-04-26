@@ -6,7 +6,7 @@ use Closure;
 
 class LogOptions
 {
-    public ?string $logName;
+    public ?string $logName = null;
 
     public bool $submitEmptyLogs = true;
 
@@ -20,9 +20,9 @@ class LogOptions
 
     public array $logExceptAttributes = [];
 
-    public array $dontLogIfAttributesChangedBag = [];
+    public array $dontLogIfAttributesChangedOnly = [];
 
-    public ?Closure $descriptionForEvent;
+    public ?Closure $descriptionForEvent = null;
 
     /**
      * Start configuring model with the default options.
@@ -105,7 +105,7 @@ class LogOptions
      */
     public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
-        $this->dontLogIfAttributesChangedBag = $attributes;
+        $this->dontLogIfAttributesChangedOnly = $attributes;
 
         return $this;
     }
@@ -122,11 +122,20 @@ class LogOptions
         return $this;
     }
 
+  
     /**
      * Allow storing empty logs. Storing empty logs can happen when you only
      * want to log a certain attribute but only another changes.
      */
     public function submitEmptyLogs(): self
+    {
+        $this->submitEmptyLogs = true;
+
+        return $this;
+    }
+
+    public function useLogName(string $logname): self
+
     {
         $this->submitEmptyLogs = true;
 
