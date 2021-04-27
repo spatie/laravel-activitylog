@@ -35,7 +35,7 @@
         "illuminate/config": "^8.0",
         "illuminate/database": "^8.0",
         "illuminate/support": "^8.0",
-        "spatie/laravel-package-tools": "^1.6"
+        "spatie/laravel-package-tools": "^1.6.3"
     },
     "require-dev": {
         "ext-json": "*",
