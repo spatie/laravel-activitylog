@@ -3,11 +3,14 @@
 namespace Spatie\Activitylog;
 
 use Carbon\Carbon;
+use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 
 class CleanActivitylogCommand extends Command
 {
+    use ConfirmableTrait;
+
     protected $signature = 'activitylog:clean
                             {log? : (optional) The log name that will be cleaned.}
                             {--days= : (optional) Records older than this number of days will be cleaned.}';
@@ -16,6 +19,10 @@ class CleanActivitylogCommand extends Command
 
     public function handle()
     {
+        if (!$this->confirmToProceed()) {
+            return 1;
+        }
+
         $this->comment('Cleaning activity log...');
 
         $log = $this->argument('log');
