@@ -316,9 +316,9 @@ trait LogsActivity
                     // Handels Date intervels comparsons since php cannot use spaceship
                     // Operator to compare them and will throw ErrorException.
                     if ($old instanceof DateInterval) {
-                        return CarbonInterval::make($old)->equalTo($new);
+                        return intval(! CarbonInterval::make($old)->equalTo($new));
                     } elseif ($new instanceof DateInterval) {
-                        return CarbonInterval::make($new)->equalTo($old);
+                        return intval(! CarbonInterval::make($new)->equalTo($old));
                     }
 
                     return $new <=> $old;
