@@ -2,6 +2,8 @@
 
 namespace Spatie\Activitylog\Traits;
 
+use Carbon\CarbonInterval;
+use DateInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +14,7 @@ use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
+use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogOptions;
 
@@ -69,8 +72,6 @@ trait LogsActivity
 
                 $changes = $model->attributeValuesToBeLogged($eventName);
 
-
-
                 $description = $model->getDescriptionForEvent($eventName);
 
                 $logName = $model->getLogNameToUse();
@@ -86,13 +87,15 @@ trait LogsActivity
                 }
 
                 // User can define a custom pipelines to mutate, add or remove from changes
-                // each pipe receives the event carrier bag with changes and the model.
+                // each pipe receives the event carrier bag with changes and the model in
+                // question every pipe should manipulate new and old attributes.
                 $event = app(Pipeline::class)
                 ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
                 ->through(static::$changesPipes)
                 ->thenReturn();
 
 
+                // Actual logging
                 $logger = app(ActivityLogger::class)
                     ->useLog($logName)
                     ->event($eventName)
@@ -109,9 +112,9 @@ trait LogsActivity
     }
 
     /**
-     * Undocumented function
+     * Add new pipe to changes pipes array, the order of added pipes matters.
     **/
-    public static function addLogChange($pipe)
+    public static function addLogChange(LoggablePipe $pipe): void
     {
         static::$changesPipes[] = $pipe;
     }
@@ -308,6 +311,14 @@ trait LogsActivity
                     // Strict check for php's weird behaviors
                     if ($old === null || $new === null) {
                         return $new === $old ? 0 : 1;
+                    }
+
+                    // Handels Date intervels comparsons since php cannot use spaceship
+                    // Operator to compare them and will throw ErrorException.
+                    if ($old instanceof DateInterval) {
+                        return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
+                    } elseif ($new instanceof DateInterval) {
+                        return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
                     }
 
                     return $new <=> $old;

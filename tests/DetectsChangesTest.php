@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Closure;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
@@ -11,6 +12,7 @@ use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogBatch;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Casts\IntervalCasts;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -121,6 +123,112 @@ class DetectsChangesTest extends TestCase
         ];
 
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_detect_changes_for_date_inteval_attributes()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                'interval' => IntervalCasts::class,
+            ];
+
+            public function getActivitylogOptions() : LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll()
+                ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at', 'deleted_at'])
+                ->logOnlyDirty();
+            }
+        };
+
+        $article = $articleClass::create([
+            'name' => 'Hamburg',
+            'interval' => CarbonInterval::minute(),
+          ]);
+
+
+        $article->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
+
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'New name',
+                'interval' => '1 month',
+            ],
+            'old' => [
+                'name' => 'Hamburg',
+                'interval' => '1 minute',
+            ],
+        ];
+
+        // test case when intervals changing from interval to another
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_detect_changes_for_null_date_inteval_attributes()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                    'interval' => IntervalCasts::class,
+                ];
+
+            public function getActivitylogOptions() : LogOptions
+            {
+                return LogOptions::defaults()
+                    ->logAll()
+                    ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at', 'deleted_at'])
+                    ->logOnlyDirty();
+            }
+        };
+
+        $nullIntevalArticle = $articleClass::create([
+                'name' => 'Hamburg',
+              ]);
+
+
+        $nullIntevalArticle->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
+
+
+        $expectedChangesForNullInterval = [
+                'attributes' => [
+                    'name' => 'New name',
+                    'interval' => '1 month',
+                ],
+                'old' => [
+                    'name' => 'Hamburg',
+                    'interval' => null,
+                ],
+            ];
+        $this->assertEquals($expectedChangesForNullInterval, $this->getLastActivity()->changes()->toArray());
+
+
+        $intervalArticle = $articleClass::create([
+            'name' => 'Hamburg',
+            'interval' => CarbonInterval::month(),
+          ]);
+
+        $intervalArticle->update(['name' => 'New name', 'interval' => null]);
+
+        $expectedChangesForInterval = [
+                'attributes' => [
+                    'name' => 'New name',
+                    'interval' => null,
+                ],
+                'old' => [
+                    'name' => 'Hamburg',
+                    'interval' => '1 month',
+                ],
+            ];
+
+
+
+        $this->assertEquals($expectedChangesForInterval, $this->getLastActivity()->changes()->toArray());
     }
 
 
@@ -1054,6 +1162,7 @@ class DetectsChangesTest extends TestCase
                 'user_id' => null,
                 'json' => null,
                 'price' => null,
+                'interval' => null,
                 'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
                 'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
             ],
@@ -1099,6 +1208,7 @@ class DetectsChangesTest extends TestCase
                 'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
                 'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
                 'user.name' => 'user name',
+                'interval' => null,
             ],
         ];
 
@@ -1224,6 +1334,7 @@ class DetectsChangesTest extends TestCase
                 'user_id' => null,
                 'json' => null,
                 'price' => null,
+                'interval' => null,
                 'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
             ],
         ];
@@ -1256,6 +1367,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'user_id' => null,
                 'price' => null,
+                'interval' => null,
             ],
         ];
 
