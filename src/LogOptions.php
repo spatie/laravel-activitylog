@@ -26,7 +26,7 @@ class LogOptions
 
     public static function defaults(): self
     {
-        return new static;
+        return new static();
     }
 
     public function logAll(): self
@@ -54,7 +54,6 @@ class LogOptions
 
         return $this;
     }
-
 
     public function logOnlyDirty(): self
     {
@@ -84,7 +83,6 @@ class LogOptions
         return $this;
     }
 
-
     public function dontSubmitEmptyLogs(): self
     {
         $this->submitEmptyLogs = false;
@@ -105,7 +103,6 @@ class LogOptions
 
         return $this;
     }
-
 
     public function setDescriptionForEvent(Closure $callback): self
     {

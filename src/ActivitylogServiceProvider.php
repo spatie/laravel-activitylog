@@ -25,7 +25,6 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         ->hasCommand(CleanActivitylogCommand::class);
     }
 
-
     public function registeringPackage()
     {
         $this->app->bind(ActivityLogger::class);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Spatie\Activitylog\Facades;
 
 use Illuminate\Database\Eloquent\Model;

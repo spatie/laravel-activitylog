@@ -55,16 +55,15 @@ trait LogsActivity
         // attributes on the model as we'll need them later to compare against.
 
         static::eventsToBeRecorded()->each(function ($eventName) {
-            if ($eventName === "updated") {
+            if ($eventName === 'updated') {
                 static::updating(function (Model $model) {
-                    $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
+                    $oldValues = (new static())->setRawAttributes($model->getRawOriginal());
                     $model->oldAttributes = static::logChanges($oldValues);
                 });
             }
 
             static::$eventName(function (Model $model) use ($eventName) {
                 $model->activitylogOptions = $model->getActivitylogOptions();
-
 
                 if (! $model->shouldLogEvent($eventName)) {
                     return;
@@ -81,7 +80,6 @@ trait LogsActivity
                     return;
                 }
 
-
                 if ($model->isLogEmpty($changes) && ! $model->activitylogOptions->submitEmptyLogs) {
                     return;
                 }
@@ -93,7 +91,6 @@ trait LogsActivity
                 ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
                 ->through(static::$changesPipes)
                 ->thenReturn();
-
 
                 // Actual logging
                 $logger = app(ActivityLogger::class)
@@ -113,7 +110,7 @@ trait LogsActivity
 
     /**
      * Add new pipe to changes pipes array, the order of added pipes matters.
-    **/
+     **/
     public static function addLogChange(LoggablePipe $pipe): void
     {
         static::$changesPipes[] = $pipe;
@@ -182,7 +179,6 @@ trait LogsActivity
 
         return $events;
     }
-
 
     protected function shouldLogEvent(string $eventName): bool
     {

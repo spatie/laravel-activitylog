@@ -1,4 +1,5 @@
 <?php
+
 namespace Spatie\Activitylog;
 
 use Closure;
@@ -15,12 +16,12 @@ class CauserResolver
     protected string $authDriver;
 
     /**
-     * User defined callback to override default reslover logic
+     * User defined callback to override default reslover logic.
      */
     protected Closure | null $resolverOverride = null;
 
     /**
-     * User defined model to override default reslover logic
+     * User defined model to override default reslover logic.
      */
     protected Model | null $causerOverride = null;
 
@@ -34,14 +35,16 @@ class CauserResolver
     /**
      * Reslove causer based different arguments first we'll check for override closure
      * Then check for the result causer if it valid. In other case will return the
-     * override causer defined by the user or delgate to the getCauser() method
+     * override causer defined by the user or delgate to the getCauser() method.
      *
      * @param Model|int|null $subject
-     * @return null|Model
+     *
      * @throws InvalidArgumentException
      * @throws CouldNotLogActivity
+     *
+     * @return null|Model
      */
-    public function resolve(Model | int | string | null $subject = null) : ?Model
+    public function resolve(Model | int | string | null $subject = null): ?Model
     {
         if ($this->causerOverride !== null) {
             return $this->causerOverride;
@@ -60,22 +63,22 @@ class CauserResolver
         return $this->getCauser($subject);
     }
 
-
     /**
-    * Resolve the user based on passed id
-    *
-    * @param int $subject
-    * @return Model
-    * @throws InvalidArgumentException
-    * @throws CouldNotLogActivity
-    */
-    protected function resolveUsingId(int | string $subject) : Model
+     * Resolve the user based on passed id.
+     *
+     * @param int $subject
+     *
+     * @throws InvalidArgumentException
+     * @throws CouldNotLogActivity
+     *
+     * @return Model
+     */
+    protected function resolveUsingId(int | string $subject): Model
     {
         $guard = $this->authManager->guard($this->authDriver);
 
         $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
         $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($subject) : null;
-
 
         throw_unless($model instanceof Model, CouldNotLogActivity::couldNotDetermineUser($subject));
 
@@ -85,12 +88,14 @@ class CauserResolver
     /**
      * Return the subject if it was model. If the subject wasn't set will try to resolve
      * current authenticated user using the auth manager, else resolve the causer
-     * from users table using id else throw couldNotDetermineUser exception
+     * from users table using id else throw couldNotDetermineUser exception.
      *
      * @param Model|int|null $subject
-     * @return null|Model
+     *
      * @throws InvalidArgumentException
      * @throws CouldNotLogActivity
+     *
+     * @return null|Model
      */
     protected function getCauser(Model | int | string | null $subject = null): ?Model
     {
@@ -121,7 +126,7 @@ class CauserResolver
 
     protected function isResolveable(mixed $model): bool
     {
-        return ($model instanceof Model || is_null($model));
+        return $model instanceof Model || is_null($model);
     }
 
     protected function getDefaultCauser(): ?Model

@@ -1,4 +1,5 @@
 <?php
+
 namespace Spatie\Activitylog;
 
 use Closure;

@@ -29,7 +29,7 @@ class DetectsChangesTest extends TestCase
         $this->article = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text']);
@@ -54,8 +54,6 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
-
-
     /** @test */
     public function it_deep_diff_check_json_field()
     {
@@ -66,7 +64,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->dontSubmitEmptyLogs()
@@ -78,7 +76,7 @@ class DetectsChangesTest extends TestCase
         $articleClass::addLogChange(new class() implements LoggablePipe {
             public function handle(EventLogBag $event, Closure $next): EventLogBag
             {
-                if ($event->event === "updated") {
+                if ($event->event === 'updated') {
                     $event->changes['attributes']['json'] = array_udiff_assoc(
                         $event->changes['attributes']['json'],
                         $event->changes['old']['json'],
@@ -96,7 +94,6 @@ class DetectsChangesTest extends TestCase
                     ->all();
                 }
 
-
                 return $next($event);
             }
         });
@@ -105,7 +102,6 @@ class DetectsChangesTest extends TestCase
             'name' => 'Hamburg',
             'json' => ['details' => '', 'phone' => '1231231234', 'address' => 'new address'],
           ]);
-
 
         $article->update(['json' => ['details' => 'new details']]);
 
@@ -135,7 +131,7 @@ class DetectsChangesTest extends TestCase
                 'interval' => IntervalCasts::class,
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'interval'])
@@ -148,9 +144,7 @@ class DetectsChangesTest extends TestCase
             'interval' => CarbonInterval::minute(),
           ]);
 
-
         $article->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
-
 
         $expectedChanges = [
             'attributes' => [
@@ -177,7 +171,7 @@ class DetectsChangesTest extends TestCase
                     'interval' => IntervalCasts::class,
                 ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                     ->logAll()
@@ -190,9 +184,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'Hamburg',
               ]);
 
-
         $nullIntevalArticle->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
-
 
         $expectedChangesForNullInterval = [
                 'attributes' => [
@@ -205,7 +197,6 @@ class DetectsChangesTest extends TestCase
                 ],
             ];
         $this->assertEquals($expectedChangesForNullInterval, $this->getLastActivity()->changes()->toArray());
-
 
         $intervalArticle = $articleClass::create([
             'name' => 'Hamburg',
@@ -225,11 +216,8 @@ class DetectsChangesTest extends TestCase
                 ],
             ];
 
-
-
         $this->assertEquals($expectedChangesForInterval, $this->getLastActivity()->changes()->toArray());
     }
-
 
     /** @test */
     public function it_can_store_the_relation_values_when_creating_a_model()
@@ -237,7 +225,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
@@ -274,7 +262,6 @@ class DetectsChangesTest extends TestCase
         $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
     }
 
-
     /** @test */
     public function it_retruns_same_uuid_for_all_log_changes_under_one_batch()
     {
@@ -282,7 +269,7 @@ class DetectsChangesTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                     ->logOnly(['name', 'text']);
@@ -312,10 +299,8 @@ class DetectsChangesTest extends TestCase
 
         app(LogBatch::class)->endBatch();
 
-
         $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $batchUuid));
     }
-
 
     /** @test */
     public function it_assigns_new_uuid_for_multiple_change_logs_in_different_batches()
@@ -324,7 +309,7 @@ class DetectsChangesTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                       ->logOnly(['name', 'text']);
@@ -348,7 +333,6 @@ class DetectsChangesTest extends TestCase
 
         $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $uuidForCreatedEvent));
 
-
         app(LogBatch::class)->startBatch();
 
         $article->name = 'updated name';
@@ -370,7 +354,6 @@ class DetectsChangesTest extends TestCase
 
         app(LogBatch::class)->endBatch();
 
-
         $this->assertCount(2, Activity::where('batch_uuid', $uuidForDeletedEvents)->get());
 
         $this->assertNotSame($uuidForCreatedEvent, $uuidForDeletedEvents);
@@ -382,7 +365,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
@@ -432,7 +415,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
@@ -546,7 +529,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name']);
@@ -591,7 +574,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'snakeUser.name']);
@@ -641,7 +624,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'camel_user.name']);
@@ -691,7 +674,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'Custom_Case_User.name']);
@@ -741,7 +724,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.name'])
@@ -783,7 +766,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'user.latest_article.name'])
@@ -824,7 +807,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly([]);
@@ -862,9 +845,10 @@ class DetectsChangesTest extends TestCase
     public function it_will_store_the_values_when_deleting_the_model_with_softdeletes()
     {
         $articleClass = new class() extends Article {
-            use LogsActivity, SoftDeletes;
+            use LogsActivity;
+            use SoftDeletes;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text']);
@@ -911,7 +895,7 @@ class DetectsChangesTest extends TestCase
 
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['json'])
@@ -949,7 +933,7 @@ class DetectsChangesTest extends TestCase
 
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['json'])
@@ -987,7 +971,7 @@ class DetectsChangesTest extends TestCase
 
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['json'])
@@ -1025,7 +1009,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->dontLogFillable();
@@ -1050,7 +1034,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['text'])
@@ -1080,7 +1064,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logFillable();
@@ -1109,7 +1093,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['text'])
@@ -1138,8 +1122,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll();
@@ -1176,7 +1159,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['*', 'user.name']);
@@ -1220,7 +1203,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll()
@@ -1267,7 +1250,7 @@ class DetectsChangesTest extends TestCase
                 'text' => 'boolean',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll()
@@ -1311,7 +1294,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll()
@@ -1348,7 +1331,8 @@ class DetectsChangesTest extends TestCase
             use LogsActivity;
 
             protected $guarded = ['text', 'json'];
-            public function getActivitylogOptions() : LogOptions
+
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logUnguarded()
@@ -1381,7 +1365,7 @@ class DetectsChangesTest extends TestCase
 
             protected $guarded = ['*'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logUnguarded();
@@ -1405,7 +1389,7 @@ class DetectsChangesTest extends TestCase
             protected $hidden = ['text'];
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text']);
@@ -1435,7 +1419,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'description']);
@@ -1477,7 +1461,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll();
@@ -1541,7 +1525,7 @@ class DetectsChangesTest extends TestCase
 
             protected $fillable = ['name', 'text'];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll();
@@ -1606,8 +1590,7 @@ class DetectsChangesTest extends TestCase
             protected $fillable = ['name', 'text'];
             protected $encryptable = ['name', 'text'];
 
-
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text']);
@@ -1676,7 +1659,7 @@ class DetectsChangesTest extends TestCase
                 'price' => 'float',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text', 'price'])
@@ -1723,7 +1706,8 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_nullable_date_as_loggable_attributes()
     {
         $userClass = new class() extends User {
-            use LogsActivity, SoftDeletes;
+            use LogsActivity;
+            use SoftDeletes;
 
             protected $fillable = ['name', 'text'];
 
@@ -1733,7 +1717,7 @@ class DetectsChangesTest extends TestCase
                 'deleted_at',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll();
@@ -1771,7 +1755,7 @@ class DetectsChangesTest extends TestCase
                 'created_at' => 'date:d.m.Y',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logAll();
@@ -1808,7 +1792,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'json->data'])
@@ -1845,7 +1829,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'json->data'])
@@ -1886,7 +1870,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'json->data->missing'])
@@ -1938,7 +1922,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'json->data'])
@@ -2006,7 +1990,7 @@ class DetectsChangesTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'json->data->can->go->how->far'])
@@ -2075,7 +2059,7 @@ class DetectsChangesTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['name', 'text'])

@@ -25,12 +25,10 @@ class LogBatchTest extends TestCase
         $uuid = LogBatch::getUuid();
         LogBatch::endBatch();
 
-
         $this->assertFalse(LogBatch::isopen());
         $this->assertNotNull($uuid);
         $this->assertNull(LogBatch::getUuid());
     }
-
 
     /** @test */
     public function it_generates_a_new_uuid_after_starting_new_batch_properly()
@@ -52,7 +50,6 @@ class LogBatchTest extends TestCase
         $this->assertNotEquals($firstBatchUuid, $secondBatchUuid);
     }
 
-
     /** @test */
     public function it_will_not_generate_new_uuid_if_start_already_started_batch()
     {
@@ -66,12 +63,10 @@ class LogBatchTest extends TestCase
 
         LogBatch::endBatch();
 
-
         $this->assertTrue(LogBatch::isopen());
 
         $this->assertEquals($firstUuid, $secondUuid);
     }
-
 
     /** @test */
     public function it_will_not_generate_uuid_if_end_batch_before_starting()
@@ -95,7 +90,6 @@ class LogBatchTest extends TestCase
         LogBatch::endBatch();
 
         $notNullUuid = LogBatch::getUuid();
-
 
         $this->assertNotNull($firstUuid);
         $this->assertNotNull($notNullUuid);

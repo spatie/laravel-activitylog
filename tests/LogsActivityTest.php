@@ -27,7 +27,7 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults();
             }
@@ -37,8 +37,7 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults();
             }
@@ -124,7 +123,7 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()->logOnly(['name']);
             }
@@ -226,14 +225,13 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
     }
 
-
     /** @test */
     public function it_can_log_activity_to_log_named_in_the_model()
     {
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->useLogName('custom_log');
@@ -253,10 +251,10 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
-                ->dontLogIfAttributesChangedOnly([ 'text']);
+                ->dontLogIfAttributesChangedOnly(['text']);
             }
         };
 
@@ -282,10 +280,10 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
-                ->setDescriptionForEvent(fn (string $eventName):string => ":causer.name $eventName");
+                ->setDescriptionForEvent(fn (string $eventName): string => ":causer.name $eventName");
             }
         };
 
@@ -326,7 +324,7 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults();
             }
@@ -364,7 +362,7 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults();
             }
@@ -382,7 +380,6 @@ class LogsActivityTest extends TestCase
 
         $this->assertEquals('my custom description', $firstActivity->description);
     }
-
 
     /** @test */
     public function it_can_log_activity_when_event_is_changed_with_tap()
@@ -415,7 +412,7 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['text'])
@@ -445,7 +442,7 @@ class LogsActivityTest extends TestCase
                 'json' => 'collection',
             ];
 
-            public function getActivitylogOptions() : LogOptions
+            public function getActivitylogOptions(): LogOptions
             {
                 return LogOptions::defaults()
                 ->logOnly(['text', 'json->data'])
