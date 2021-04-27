@@ -22,6 +22,8 @@ protected function schedule(Schedule $schedule)
 }
 ```
 
+If you want to automatically cleanup your `production` system you should append the `--force` option as the command will otherwise ask you to confirm the action. This is to prevent accidental data loss.
+
 ## Define the log to clean
 
 If you want to clean just one log you can define it as command argument. It will filter the `log_name` attribute of the `Activity` model.
