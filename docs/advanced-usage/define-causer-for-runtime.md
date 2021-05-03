@@ -15,7 +15,7 @@ use Spatie\Activitylog\Facade\CauserResolver;
 $product = Product::first(1);
 $causer = $product->owner;
 
-CauserResover::setCauser($causer);
+CauserResolver::setCauser($causer);
 
 $product->update(['name' => 'New name']);
 
