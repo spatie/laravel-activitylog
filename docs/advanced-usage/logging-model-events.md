@@ -122,7 +122,7 @@ class NewsItem extends Model
 
 ## Customizing the description
 
-By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by provideing callback to the `->setDescriptionForEvent()` method on `LogOptions` class.
+By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by providing callback to the `->setDescriptionForEvent()` method on `LogOptions` class.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
