@@ -20,34 +20,16 @@ use Spatie\Activitylog\LogOptions;
 
 trait LogsActivity
 {
-    /**
-     * User defined pipes that will interact with the changes.
-     **/
     public static array $changesPipes = [];
 
-    /**
-     * Hold original attributes to compare it against changes.
-     **/
     protected array $oldAttributes = [];
 
-    /**
-     * Configuration object on the model.
-     **/
     protected LogOptions $activitylogOptions;
 
-    /**
-     * Indicates if logging is currently active.
-     **/
     public bool $enableLoggingModelsEvents = true;
 
-    /**
-     * Contract function to define desired settings on the model.
-     **/
     abstract public function getActivitylogOptions(): LogOptions;
 
-    /**
-     * Boot instantly after model is booted.
-     **/
     protected static function bootLogsActivity(): void
     {
         // Hook into eloquent events that only specified in $eventToBeRecorded array,
@@ -75,7 +57,7 @@ trait LogsActivity
 
                 $logName = $model->getLogNameToUse();
 
-                // Submiting empty description will cause place holder replacer to fail.
+                // Submitting empty description will cause place holder replacer to fail.
                 if ($description == '') {
                     return;
                 }
@@ -108,9 +90,6 @@ trait LogsActivity
         });
     }
 
-    /**
-     * Add new pipe to changes pipes array, the order of added pipes matters.
-     **/
     public static function addLogChange(LoggablePipe $pipe): void
     {
         static::$changesPipes[] = $pipe;

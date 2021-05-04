@@ -1145,8 +1145,8 @@ class DetectsChangesTest extends TestCase
                 'json' => null,
                 'price' => null,
                 'interval' => null,
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -1187,8 +1187,8 @@ class DetectsChangesTest extends TestCase
                 'user_id' => $user->id,
                 'json' => null,
                 'price' => null,
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'user.name' => 'user name',
                 'interval' => null,
             ],
@@ -1229,11 +1229,11 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = [
             'attributes' => [
                 'name' => 'changed name',
-                'updated_at' => $this->isLaravel6OrLower() ? '2018-01-01 12:00:00' : '2018-01-01T12:00:00.000000Z',
+                'updated_at' => '2018-01-01T12:00:00.000000Z',
             ],
             'old' => [
                 'name' => 'article name',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -1276,12 +1276,12 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = [
             'attributes' => [
                 'text' => null,
-                'updated_at' => $this->isLaravel6OrLower() ? '2018-01-01 12:00:00' : '2018-01-01T12:00:00.000000Z',
+                'updated_at' => '2018-01-01T12:00:00.000000Z',
 
             ],
             'old' => [
                 'text' => false,
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -1317,7 +1317,7 @@ class DetectsChangesTest extends TestCase
                 'json' => null,
                 'price' => null,
                 'interval' => null,
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -1484,8 +1484,8 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1500,16 +1500,16 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
             'attributes' => [
                 'id' => $user->id,
                 'name' => 'MY NAME 2',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1548,8 +1548,8 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1564,16 +1564,16 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
             'attributes' => [
                 'id' => $user->id,
                 'name' => 'MY NAME 2',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1735,8 +1735,8 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->getKey(),
                 'name' => 'my name',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1774,7 +1774,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'text' => 'my text',
                 'created_at' => '01.01.2017',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];

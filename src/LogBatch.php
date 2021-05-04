@@ -11,7 +11,7 @@ class LogBatch
 
     public int $transactions = 0;
 
-    protected function generateUUID(): string
+    protected function generateUuid(): string
     {
         return Uuid::uuid4()->toString();
     }
@@ -33,7 +33,7 @@ class LogBatch
     public function startBatch(): void
     {
         if (! $this->isOpen()) {
-            $this->uuid = $this->generateUUID();
+            $this->uuid = $this->generateUuid();
         }
 
         $this->transactions++;
