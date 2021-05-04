@@ -33,7 +33,7 @@ class LogOptions
     }
 
     /**
-     * Log all attributes on the model
+     * Log all attributes on the model.
      */
     public function logAll(): self
     {
@@ -41,7 +41,7 @@ class LogOptions
     }
 
     /**
-     * log changes to all the $guarded attributes of the model
+     * log changes to all the $guarded attributes of the model.
      */
     public function logUnguarded(): self
     {
@@ -51,7 +51,7 @@ class LogOptions
     }
 
     /**
-     * log changes to all the $fillable attributes of the model
+     * log changes to all the $fillable attributes of the model.
      */
     public function logFillable(): self
     {
@@ -61,7 +61,7 @@ class LogOptions
     }
 
     /**
-     * Stop logging $fillable attributes of the model
+     * Stop logging $fillable attributes of the model.
      */
     public function dontLogFillable(): self
     {
@@ -71,7 +71,7 @@ class LogOptions
     }
 
     /**
-     * Log changes that has actually changed after the update
+     * Log changes that has actually changed after the update.
      */
     public function logOnlyDirty(): self
     {
@@ -81,7 +81,7 @@ class LogOptions
     }
 
     /**
-     * Log changes only if these attributes changed
+     * Log changes only if these attributes changed.
      */
     public function logOnly(array $attributes): self
     {
@@ -91,7 +91,7 @@ class LogOptions
     }
 
     /**
-     * Exclude these attributes from being logged
+     * Exclude these attributes from being logged.
      */
     public function logExcept(array $attributes): self
     {
@@ -101,7 +101,7 @@ class LogOptions
     }
 
     /**
-     * Don't trigger an activity if these attributes changed logged
+     * Don't trigger an activity if these attributes changed logged.
      */
     public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
@@ -121,7 +121,6 @@ class LogOptions
         return $this;
     }
 
-  
     /**
      * Allow storing empty logs. Storing empty logs can happen when you only
      * want to log a certain attribute but only another changes.
@@ -133,9 +132,8 @@ class LogOptions
         return $this;
     }
 
-
     /**
-     * Customize log name
+     * Customize log name.
      */
     public function useLogName(string $logName): self
     {
@@ -145,7 +143,7 @@ class LogOptions
     }
 
     /**
-     * Customize log description using callback
+     * Customize log description using callback.
      */
     public function setDescriptionForEvent(Closure $callback): self
     {

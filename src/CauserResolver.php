@@ -69,9 +69,8 @@ class CauserResolver
         return $this->resolveUsingId($subject);
     }
 
-  
     /**
-     * Override the resover using callback
+     * Override the resover using callback.
      */
     public function resolveUsing(Closure $callback): static
     {
@@ -80,9 +79,8 @@ class CauserResolver
         return $this;
     }
 
-
     /**
-     * Override default causer
+     * Override default causer.
      */
     public function setCauser(?Model $causer): static
     {
