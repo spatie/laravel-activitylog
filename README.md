@@ -76,11 +76,10 @@ We invest a lot of resources into creating [best in class open source packages](
 We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
 ## Documentation
+
 You'll find the documentation on [https://docs.spatie.be/laravel-activitylog](https://docs.spatie.be/laravel-activitylog).
 
 Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the activity log? Feel free to [create an issue on GitHub](https://github.com/spatie/laravel-activitylog/issues), we'll try to address it as soon as possible.
-
-If you've found a security issue please mail [freek@spatie.be](mailto:freek@spatie.be) instead of using the issue tracker.
 
 ## Installation
 
@@ -101,7 +100,6 @@ php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProv
 
 After publishing the migration you can create the `activity_log` table by running the migrations:
 
-
 ```bash
 php artisan migrate
 ```
@@ -109,61 +107,6 @@ php artisan migrate
 You can optionally publish the config file with:
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-
-    /*
-     * If set to false, no activities will be saved to the database.
-     */
-    'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
-
-    /*
-     * When the clean-command is executed, all recording activities older than
-     * the number of days specified here will be deleted.
-     */
-    'delete_records_older_than_days' => 365,
-
-    /*
-     * If no log name is passed to the activity() helper
-     * we use this default log name.
-     */
-    'default_log_name' => 'default',
-
-    /*
-     * You can specify an auth driver here that gets user models.
-     * If this is null we'll use the default Laravel auth driver.
-     */
-    'default_auth_driver' => null,
-
-    /*
-     * If set to true, the subject returns soft deleted models.
-     */
-    'subject_returns_soft_deleted_models' => false,
-
-    /*
-     * This model will be used to log activity.
-     * It should be implements the Spatie\Activitylog\Contracts\Activity interface
-     * and extend Illuminate\Database\Eloquent\Model.
-     */
-    'activity_model' => \Spatie\Activitylog\Models\Activity::class,
-
-    /*
-     * This is the name of the table that will be created by the migration and
-     * used by the Activity model shipped with this package.
-     */
-    'table_name' => 'activity_log',
-
-     /*
-      * This is the database connection that will be used by the migration and
-      * the Activity model shipped with this package. In case it's not set
-      * Laravel database.default will be used instead.
-      */
-    'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION'),
-];
 ```
 
 ## Changelog
@@ -192,9 +135,10 @@ If you discover any security related issues, please email freek@spatie.be instea
 
 - [Freek Van der Herten](https://github.com/freekmurze)
 - [Sebastian De Deyne](https://github.com/sebastiandedeyne)
+- [Tom Witkowski](https://github.com/Gummibeer)
 - [All Contributors](../../contributors)
 
-And a special thanks to [Caneco](https://twitter.com/caneco) for the logo ✨
+And a special thanks to [Caneco](https://twitter.com/caneco) for the logo and [Ahmed Nagi](https://github.com/nagi1) for all the work hee put in `v4`.
 
 ## License
 
