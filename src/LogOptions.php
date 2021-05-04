@@ -24,16 +24,25 @@ class LogOptions
 
     public ?Closure $descriptionForEvent = null;
 
+    /**
+     * Start configuring model with the default options.
+     */
     public static function defaults(): self
     {
         return new static();
     }
 
+    /**
+     * Log all attributes on the model
+     */
     public function logAll(): self
     {
         return $this->logOnly(['*']);
     }
 
+    /**
+     * log changes to all the $guarded attributes of the model
+     */
     public function logUnguarded(): self
     {
         $this->logUnguarded = true;
@@ -41,6 +50,9 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * log changes to all the $fillable attributes of the model
+     */
     public function logFillable(): self
     {
         $this->logFillable = true;
@@ -48,6 +60,9 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * Stop logging $fillable attributes of the model
+     */
     public function dontLogFillable(): self
     {
         $this->logFillable = false;
@@ -55,6 +70,9 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * Log changes that has actually changed after the update
+     */
     public function logOnlyDirty(): self
     {
         $this->logOnlyDirty = true;
@@ -62,6 +80,9 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * Log changes only if these attributes changed
+     */
     public function logOnly(array $attributes): self
     {
         $this->logAttributes = $attributes;
@@ -69,6 +90,9 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * Exclude these attributes from being logged
+     */
     public function logExcept(array $attributes): self
     {
         $this->logExceptAttributes = $attributes;
@@ -76,6 +100,9 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * Don't trigger an activity if these attributes changed logged
+     */
     public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
         $this->dontLogIfAttributesChangedOnly = $attributes;
@@ -83,6 +110,10 @@ class LogOptions
         return $this;
     }
 
+    /**
+     * Dont store empty logs. Storing empty logs can happen when you only
+     * want to log a certain attribute but only another changes.
+     */
     public function dontSubmitEmptyLogs(): self
     {
         $this->submitEmptyLogs = false;
@@ -90,6 +121,11 @@ class LogOptions
         return $this;
     }
 
+  
+    /**
+     * Allow storing empty logs. Storing empty logs can happen when you only
+     * want to log a certain attribute but only another changes.
+     */
     public function submitEmptyLogs(): self
     {
         $this->submitEmptyLogs = true;
@@ -97,13 +133,20 @@ class LogOptions
         return $this;
     }
 
-    public function useLogName(string $logname): self
+
+    /**
+     * Customize log name
+     */
+    public function useLogName(string $logName): self
     {
-        $this->logName = $logname;
+        $this->logName = $logName;
 
         return $this;
     }
 
+    /**
+     * Customize log description using callback
+     */
     public function setDescriptionForEvent(Closure $callback): self
     {
         $this->descriptionForEvent = $callback;

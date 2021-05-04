@@ -44,10 +44,10 @@ activity()
    ->causedBy($userModel)
    ->performedOn($someContentModel)
    ->log('edited');
-   
+
 $lastActivity = Activity::all()->last(); //returns the last logged activity
 
-$lastActivity->causer; //returns the model that was passed to `causedBy`;   
+$lastActivity->causer; //returns the model that was passed to `causedBy`;
 ```
 
 The `causedBy()`-function has a shorter alias named: `by()`
@@ -66,10 +66,10 @@ activity()
    ->performedOn($someContentModel)
    ->withProperties(['key' => 'value'])
    ->log('edited');
-   
+
 $lastActivity = Activity::all()->last(); //returns the last logged activity
-   
-$lastActivity->getExtraProperty('key'); //returns 'value' 
+
+$lastActivity->getExtraProperty('key'); //returns 'value'
 
 $lastActivity->where('properties->key', 'value')->get(); // get all activity where the `key` custom property is 'value'
 ```
@@ -112,7 +112,7 @@ activity()
       $activity->my_custom_field = 'my special value';
    })
    ->log('edited');
-   
+
 $lastActivity = Activity::all()->last();
 
 $lastActivity->my_custom_field; // returns 'my special value'

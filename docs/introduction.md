@@ -18,13 +18,14 @@ Activity::all();
 ```
 
 Here's a more advanced example:
+
 ```php
 activity()
    ->performedOn($anEloquentModel)
    ->causedBy($user)
    ->withProperties(['customProperty' => 'customValue'])
    ->log('Look mum, I logged something');
-   
+
 $lastLoggedActivity = Activity::all()->last();
 
 $lastLoggedActivity->subject; //returns an instance of an eloquent model
@@ -32,7 +33,6 @@ $lastLoggedActivity->causer; //returns an instance of your user model
 $lastLoggedActivity->getExtraProperty('customProperty'); //returns 'customValue'
 $lastLoggedActivity->description; //returns 'Look mum, I logged something'
 ```
-
 
 Here's an example on [event logging](/laravel-activitylog/v3/advanced-usage/logging-model-events).
 

@@ -3,29 +3,47 @@ title: Logging model events
 weight: 1
 ---
 
-The package can automatically log events such as when a model is created, updated and deleted.  To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait.
+The package can automatically log events such as when a model is created, updated and deleted. To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait.
 
-As a bonus the package will also log the changed attributes for all these events when setting `$logAttributes` property on the model.
+As a bonus the package will also log the changed attributes for all these events when you define our own options method.
 
-The attributes that need to be logged can be defined either by their name or you can put in a wildcard `'*'` to log any attribute that has changed.
+The trait contains an abstract method `getActivitylogOptions()` that you can use to customize options. It needs to return a `LogOptions` instance built form `LogOptions::defaults()` using fluent methods.
+
+The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
 
 Here's an example:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
     protected $fillable = ['name', 'text'];
-    
-    protected static $logAttributes = ['name', 'text'];
+
+    public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logOnly(['name', 'text']);
+        // Chain fluent methods for configuration options
+    }
 }
 ```
 
-If you want to log changes to all the `$fillable` attributes of the model, you can specify `protected static $logFillable = true;` on the model. If you have a lot of attributes and use `$guarded` instead of `$fillable` you can also set `protected static $logUnguarded = true;` to add all attributes that are not listed in `$guarded`. For both boolean flags it will respect the possible wildcard and add all (`$logFillable`) or no (`$logUnguarded`) attributes.
+Note that we start from sensible defaults, but any of them can be overridden as needed by cianing fluent methods. Review the `Spatie\Activitylog\LogOptions` class for full list of supported options.
+
+## Basics of Logging Configuration
+
+If you want to log changes to all the `$fillable` attributes of the model, you can chain `->logFillable()` on the `LogOptions` class.
+
+Alternatively, if you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
+
+For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or `->logUnguarded()` methods.
+
+## Basic example of what is logged
 
 Let's see what gets logged when creating an instance of that model.
 
@@ -46,7 +64,7 @@ $activity->changes; //returns ['attributes' => ['name' => 'original name', 'text
 Now let's update some that `$newsItem`.
 
 ```php
-$newsItem->name = 'updated name'
+$newsItem->name = 'updated name';
 $newsItem->save();
 
 //updating the newsItem will cause an activity being logged
@@ -57,6 +75,7 @@ $activity->subject; //returns the instance of NewsItem that was created
 ```
 
 Calling `$activity->changes` will return this array:
+
 ```php
 [
    'attributes' => [
@@ -103,11 +122,12 @@ class NewsItem extends Model
 
 ## Customizing the description
 
-By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by overriding the `getDescriptionForEvent` function.
+By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by providing callback to the `->setDescriptionForEvent()` method on `LogOptions` class.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
@@ -115,9 +135,10 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-    public function getDescriptionForEvent(string $eventName): string
+    public function getActivitylogOptions()
     {
-        return "This model has been {$eventName}";
+        return LogOptions::defaults()
+        ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}");
     }
 
 }
@@ -139,61 +160,74 @@ $activity->description; //returns 'This model has been created'
 
 ## Customizing the log name
 
-Specify `$logName` to make the model use another name than the default.
+Specify name by provide string to `->useLogName()` to make the model use another name than the default.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
-    protected static $logName = 'system';
+    public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->useLogName('system');
+    }
 }
 ```
 
 ## Ignoring changes to certain attributes
 
-If your model contains attributes whose change don't need to trigger an activity being logged you can use `$ignoreChangedAttributes`
+If your model contains attributes whose change don't need to trigger an activity being logged you can use `->dontLogIfAttributesChangedOnly()`
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
-    
-    protected static $ignoreChangedAttributes = ['text'];
 
     protected $fillable = ['name', 'text'];
-    
-    protected static $logAttributes = ['name', 'text'];
+
+    public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logOnly(['name', 'text'])
+        ->dontLogIfAttributesChangedOnly(['text']);
+    }
 }
 ```
 
 Changing `text` will not trigger an activity being logged.
 
-By default the `updated_at` attribute is _not_ ignored and will trigger an activity being logged. You can simply add the `updated_at` attribute to the `$ignoreChangedAttributes` array to override this behaviour.
+By default the `updated_at` attribute is _not_ ignored and will trigger an activity being logged. You can add the `updated_at` attribute to the `->dontLogIfAttributesChangedOnly()` array to override this behavior.
 
 ## Logging only the changed attributes
 
-If you do not want to log every attribute in your `$logAttributes` variable, but only those that has actually changed after the update, you can use `$logOnlyDirty`
+If you do not want to log every attribute passed into `->logOnly()`, but only those that have actually changed after the update, you can call `->logOnlyDirty()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
     protected $fillable = ['name', 'text'];
-    
-    protected static $logAttributes = ['name', 'text'];
-    
-    protected static $logOnlyDirty = true;
+
+    public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logOnly(['name', 'text'])
+        ->logOnlyDirty();
+    }
 }
 ```
 
@@ -206,15 +240,20 @@ If you would like to log an attribute of a directly related model, you may use d
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
     protected $fillable = ['name', 'text', 'user_id'];
-    
-    protected static $logAttributes = ['name', 'text', 'user.name'];
-    
+
+    public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logOnly(['name', 'text', 'user.name']);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -235,18 +274,23 @@ class NewsItem extends Model
     use LogsActivity;
 
     protected $fillable = ['preferences', 'name'];
-    
-    protected static $logAttributes = ['preferences->notifications->status', 'preferences->hero_url'];
-    
+
     protected $casts = [
         'preferences' => 'collection' // casting the JSON database column
     ];
+
+    public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logOnly(['preferences->notifications->status', 'preferences->hero_url']);
+    }
+
 }
 ```
 
 Changing only `preferences->notifications->status` or `preferences->hero_url` means only the `preferences->notifications->status` or `preferences->hero_url` attribute will be logged in the activity, and everything else `preferences` will be left out.
 
-The output of this in a activity entry would be as follows: 
+The output of this in a activity entry would be as follows:
 
 ```php
 // Create a news item.
@@ -297,47 +341,55 @@ $lastActivity->properties->toArray();
 ]
 ```
 
-The result in the log entry key for the attribute will be what is in the `$logAttributes`.
+The result in the log entry key for the attribute will be what is in the `->logOnly()`.
 
 ## Prevent save logs items that have no changed attribute
 
-Setting `$submitEmptyLogs` to `false` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
+Calling `->dontSubmitEmptyLogs()` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
     protected $fillable = ['name', 'text'];
-    
-    protected static $logAttributes = ['text'];
-    
-    protected static $logOnlyDirty = true;
-    
-    protected static $submitEmptyLogs = false;
+
+   public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logOnly(['text'])
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
+    }
+
 }
 ```
 
 ## Ignoring attributes from logging
 
-If you use wildcard logging, but do not want to log certain attributes, you can specify those attributes in `$logAttributesToIgnore`.
+If you use wildcard logging, but do not want to log certain attributes, you can specify those attributes by calling `->dontLogIfAttributesChangedOnly()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
-    protected static $logAttributes = ['*'];
-    
-    protected static $logAttributesToIgnore = [ 'text'];
-    
-    protected static $logOnlyDirty = true;
+   public function getActivitylogOptions()
+    {
+        return LogOptions::defaults()
+        ->logAll()
+        ->dontLogIfAttributesChangedOnly(['text'])
+        ->logOnlyDirty();
+    }
+
 }
 ```
 
