@@ -40,7 +40,7 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    public function getExtraProperty(string $propertyName)
+    public function getExtraProperty(string $propertyName): mixed
     {
         return Arr::get($this->properties->toArray(), $propertyName);
     }
@@ -77,6 +77,11 @@ class Activity extends Model implements ActivityContract
         return $query
             ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
+    }
+
+    public function scopeForEvent(Builder $query, string $event): Builder
+    {
+        return $query->where('event', $event);
     }
 
     public function getCustomPropertyAttribute()

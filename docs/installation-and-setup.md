@@ -5,7 +5,7 @@ weight: 4
 
 The package can be installed via composer:
 
-``` bash
+```bash
 composer require spatie/laravel-activitylog
 ```
 
@@ -16,6 +16,7 @@ If you want your activities to be stored in a special database connection you ca
 After you've configured everything you should clear the application config cache via `artisan config:clear`.
 
 You can publish the migration with:
+
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
 ```
@@ -27,6 +28,7 @@ php artisan migrate
 ```
 
 You can optionally publish the config file with:
+
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="config"
 ```

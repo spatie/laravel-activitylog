@@ -71,6 +71,19 @@ class ActivityModelTest extends TestCase
     }
 
     /** @test */
+    public function it_provides_a_scope_to_get_log_items_for_a_specific_event()
+    {
+        $subject = Article::first();
+        activity()
+            ->on($subject)
+            ->event('create')
+            ->log('Foo');
+        $activities = Activity::forEvent('create')->get();
+        $this->assertCount(1, $activities);
+        $this->assertEquals('create', $activities->first()->event);
+    }
+
+    /** @test */
     public function it_provides_a_scope_to_get_log_items_for_a_specific_subject()
     {
         $subject = Article::first();

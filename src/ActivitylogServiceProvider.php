@@ -3,40 +3,35 @@
 namespace Spatie\Activitylog;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\ServiceProvider;
 use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Models\Activity as ActivityModel;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class ActivitylogServiceProvider extends ServiceProvider
+class ActivitylogServiceProvider extends PackageServiceProvider
 {
-    public function boot()
+    public function configurePackage(Package $package): void
     {
-        $this->publishes([
-            __DIR__.'/../config/activitylog.php' => config_path('activitylog.php'),
-        ], 'config');
-
-        $this->mergeConfigFrom(__DIR__.'/../config/activitylog.php', 'activitylog');
-
-        if (! class_exists('CreateActivityLogTable')) {
-            $timestamp = date('Y_m_d_His', time());
-
-            $this->publishes([
-                __DIR__.'/../migrations/create_activity_log_table.php.stub' => database_path("/migrations/{$timestamp}_create_activity_log_table.php"),
-            ], 'migrations');
-        }
+        $package
+        ->name('laravel-activitylog')
+        ->hasConfigFile('activitylog')
+        ->hasMigrations([
+            'CreateActivityLogTable',
+            'AddEventColumnToActivityLogTable',
+            'AddBatchUuidColumnToActivityLogTable',
+        ])
+        ->hasCommand(CleanActivitylogCommand::class);
     }
 
-    public function register()
+    public function registeringPackage()
     {
-        $this->app->bind('command.activitylog:clean', CleanActivitylogCommand::class);
-
-        $this->commands([
-            'command.activitylog:clean',
-        ]);
-
         $this->app->bind(ActivityLogger::class);
+
+        $this->app->singleton(LogBatch::class);
+
+        $this->app->singleton(CauserResolver::class);
 
         $this->app->singleton(ActivityLogStatus::class);
     }

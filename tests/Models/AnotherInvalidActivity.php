@@ -45,7 +45,7 @@ class AnotherInvalidActivity implements ActivityContract
      *
      * @return mixed
      */
-    public function getExtraProperty(string $propertyName)
+    public function getExtraProperty(string $propertyName): mixed
     {
         return Arr::get($this->properties->toArray(), $propertyName);
     }
@@ -103,5 +103,10 @@ class AnotherInvalidActivity implements ActivityContract
     public function getCustomPropertyAttribute()
     {
         return $this->changes();
+    }
+
+    public function scopeForEvent(Builder $query, string $event): Builder
+    {
+        return $query->where('event', $event);
     }
 }

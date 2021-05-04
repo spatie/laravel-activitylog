@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Test;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\Issue733;
@@ -25,11 +26,21 @@ class LogsActivityTest extends TestCase
         $this->article = new class() extends Article {
             use LogsActivity;
             use SoftDeletes;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults();
+            }
         };
 
         $this->user = new class() extends User {
             use LogsActivity;
             use SoftDeletes;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults();
+            }
         };
 
         $this->assertCount(0, Activity::all());
@@ -44,6 +55,7 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
         $this->assertEquals('created', $this->getLastActivity()->description);
+        $this->assertEquals('created', $this->getLastActivity()->event);
     }
 
     /** @test */
@@ -52,6 +64,7 @@ class LogsActivityTest extends TestCase
         $article = new $this->article();
         $article->disableLogging();
         $article->name = 'my name';
+
         $article->save();
 
         $this->assertCount(0, Activity::all());
@@ -75,6 +88,7 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
         $this->assertEquals('updated', $this->getLastActivity()->description);
+        $this->assertEquals('updated', $this->getLastActivity()->event);
     }
 
     /** @test */
@@ -100,6 +114,7 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
         $this->assertEquals('updated', $this->getLastActivity()->description);
+        $this->assertEquals('updated', $this->getLastActivity()->event);
     }
 
     /** @test */
@@ -107,17 +122,31 @@ class LogsActivityTest extends TestCase
     {
         $articleClass = new class() extends Article {
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()->logOnly(['name']);
+            }
         };
 
         $article = new $articleClass();
-
+        $article->name = 'my name';
         $article->save();
 
         $this->assertEquals('created', $this->getLastActivity()->description);
+        $this->assertEquals('created', $this->getLastActivity()->event);
 
         $article->delete();
 
-        $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $activity = $this->getLastActivity();
+
+        $this->assertEquals('deleted', $activity->description);
+        $this->assertArrayHasKey('old', $activity->changes());
+        $this->assertEquals('my name', $activity->changes()['old']['name']);
+        $this->assertArrayNotHasKey('attributes', $activity->changes());
+
+        $this->assertEquals('deleted', $activity->description);
+        $this->assertEquals('deleted', $activity->event);
     }
 
     /** @test */
@@ -132,12 +161,14 @@ class LogsActivityTest extends TestCase
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals('deleted', $this->getLastActivity()->event);
 
         $article->forceDelete();
 
         $this->assertCount(3, Activity::all());
 
         $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals('deleted', $this->getLastActivity()->event);
         $this->assertNull($article->fresh());
     }
 
@@ -155,6 +186,7 @@ class LogsActivityTest extends TestCase
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
         $this->assertEquals('restored', $this->getLastActivity()->description);
+        $this->assertEquals('restored', $this->getLastActivity()->event);
     }
 
     /** @test */
@@ -189,27 +221,8 @@ class LogsActivityTest extends TestCase
         $this->assertEquals(get_class($this->article), $this->getLastActivity()->subject_type);
         $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
         $this->assertEquals('deleted', $this->getLastActivity()->description);
+        $this->assertEquals('deleted', $this->getLastActivity()->event);
         $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
-    }
-
-    /** @test */
-    public function it_can_log_activity_to_log_returned_from_model_method_override()
-    {
-        $articleClass = new class() extends Article {
-            use LogsActivity;
-
-            public function getLogNameToUse()
-            {
-                return 'custom_log';
-            }
-        };
-
-        $article = new $articleClass();
-        $article->name = 'my name';
-        $article->save();
-
-        $this->assertEquals($article->id, Activity::inLog('custom_log')->first()->subject->id);
-        $this->assertCount(1, Activity::inLog('custom_log')->get());
     }
 
     /** @test */
@@ -218,7 +231,11 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            protected static $logName = 'custom_log';
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->useLogName('custom_log');
+            }
         };
 
         $article = new $articleClass();
@@ -234,7 +251,11 @@ class LogsActivityTest extends TestCase
         $articleClass = new class() extends Article {
             use LogsActivity;
 
-            protected static $ignoreChangedAttributes = ['text'];
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->dontLogIfAttributesChangedOnly(['text']);
+            }
         };
 
         $article = new $articleClass();
@@ -249,6 +270,7 @@ class LogsActivityTest extends TestCase
         $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
         $this->assertEquals('created', $this->getLastActivity()->description);
+        $this->assertEquals('created', $this->getLastActivity()->event);
     }
 
     /** @test */
@@ -258,9 +280,10 @@ class LogsActivityTest extends TestCase
             use LogsActivity;
             use SoftDeletes;
 
-            public function getDescriptionForEvent(string $eventName): string
+            public function getActivitylogOptions(): LogOptions
             {
-                return ":causer.name $eventName";
+                return LogOptions::defaults()
+                ->setDescriptionForEvent(fn (string $eventName): string => ":causer.name $eventName");
             }
         };
 
@@ -301,6 +324,11 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults();
+            }
+
             protected $properties = [
                 'property' => [
                     'subProperty' => 'value',
@@ -323,7 +351,8 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $firstActivity->properties);
         $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
-        $this->assertEquals('created', $firstActivity->getExtraProperty('event'));
+        $this->assertEquals('created', $firstActivity->description);
+        $this->assertEquals('created', $firstActivity->event);
         $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
     }
 
@@ -332,6 +361,11 @@ class LogsActivityTest extends TestCase
     {
         $model = new class() extends Article {
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults();
+            }
 
             public function tapActivity(Activity $activity, string $eventName)
             {
@@ -348,14 +382,43 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
+    public function it_can_log_activity_when_event_is_changed_with_tap()
+    {
+        $model = new class() extends Article {
+            use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults();
+            }
+
+            public function tapActivity(Activity $activity, string $eventName)
+            {
+                $activity->event = 'my custom event';
+            }
+        };
+
+        $entity = new $model();
+        $entity->save();
+
+        $firstActivity = $entity->activities()->first();
+
+        $this->assertEquals('my custom event', $firstActivity->event);
+    }
+
+    /** @test */
     public function it_will_not_submit_log_when_there_is_no_changes()
     {
         $model = new class() extends Article {
             use LogsActivity;
 
-            protected static $submitEmptyLogs = false;
-            protected static $logAttributes = ['text'];
-            protected static $logOnlyDirty = true;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['text'])
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty();
+            }
         };
 
         $entity = new $model(['text' => 'test']);
@@ -375,12 +438,17 @@ class LogsActivityTest extends TestCase
         $model = new class() extends Article {
             use LogsActivity;
 
-            protected static $submitEmptyLogs = false;
-            protected static $logAttributes = ['text', 'json->data'];
-            public static $logOnlyDirty = true;
             protected $casts = [
                 'json' => 'collection',
             ];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['text', 'json->data'])
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty();
+            }
         };
 
         $entity = new $model([

@@ -3,9 +3,16 @@
 namespace Spatie\Activitylog\Test;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
+use Closure;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Spatie\Activitylog\Contracts\LoggablePipe;
+use Spatie\Activitylog\EventLogBag;
+use Spatie\Activitylog\LogBatch;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Casts\IntervalCasts;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -20,9 +27,13 @@ class DetectsChangesTest extends TestCase
         parent::setUp();
 
         $this->article = new class() extends Article {
-            public static $logAttributes = ['name', 'text'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text']);
+            }
         };
 
         $this->assertCount(0, Activity::all());
@@ -44,12 +55,181 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_deep_diff_check_json_field()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                'json' => 'collection',
+            ];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty()
+                ->logOnly(['json->phone', 'json->details', 'json->address']);
+            }
+        };
+
+        $articleClass::addLogChange(new class() implements LoggablePipe {
+            public function handle(EventLogBag $event, Closure $next): EventLogBag
+            {
+                if ($event->event === 'updated') {
+                    $event->changes['attributes']['json'] = array_udiff_assoc(
+                        $event->changes['attributes']['json'],
+                        $event->changes['old']['json'],
+                        function ($new, $old) {
+                            if ($old === null || $new === null) {
+                                return 0;
+                            }
+
+                            return $new <=> $old;
+                        }
+                    );
+
+                    $event->changes['old']['json'] = collect($event->changes['old']['json'])
+                    ->only(array_keys($event->changes['attributes']['json']))
+                    ->all();
+                }
+
+                return $next($event);
+            }
+        });
+
+        $article = $articleClass::create([
+            'name' => 'Hamburg',
+            'json' => ['details' => '', 'phone' => '1231231234', 'address' => 'new address'],
+          ]);
+
+        $article->update(['json' => ['details' => 'new details']]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'json' => [
+                    'details' => 'new details',
+                ],
+            ],
+            'old' => [
+                'json' => [
+                    'details' => '',
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_detect_changes_for_date_inteval_attributes()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                'interval' => IntervalCasts::class,
+            ];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'interval'])
+                ->logOnlyDirty();
+            }
+        };
+
+        $article = $articleClass::create([
+            'name' => 'Hamburg',
+            'interval' => CarbonInterval::minute(),
+          ]);
+
+        $article->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'New name',
+                'interval' => '1 month',
+            ],
+            'old' => [
+                'name' => 'Hamburg',
+                'interval' => '1 minute',
+            ],
+        ];
+
+        // test case when intervals changing from interval to another
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
+    public function it_detect_changes_for_null_date_inteval_attributes()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                    'interval' => IntervalCasts::class,
+                ];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                    ->logAll()
+                    ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at', 'deleted_at'])
+                    ->logOnlyDirty();
+            }
+        };
+
+        $nullIntevalArticle = $articleClass::create([
+                'name' => 'Hamburg',
+              ]);
+
+        $nullIntevalArticle->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
+
+        $expectedChangesForNullInterval = [
+                'attributes' => [
+                    'name' => 'New name',
+                    'interval' => '1 month',
+                ],
+                'old' => [
+                    'name' => 'Hamburg',
+                    'interval' => null,
+                ],
+            ];
+        $this->assertEquals($expectedChangesForNullInterval, $this->getLastActivity()->changes()->toArray());
+
+        $intervalArticle = $articleClass::create([
+            'name' => 'Hamburg',
+            'interval' => CarbonInterval::month(),
+          ]);
+
+        $intervalArticle->update(['name' => 'New name', 'interval' => null]);
+
+        $expectedChangesForInterval = [
+                'attributes' => [
+                    'name' => 'New name',
+                    'interval' => null,
+                ],
+                'old' => [
+                    'name' => 'Hamburg',
+                    'interval' => '1 month',
+                ],
+            ];
+
+        $this->assertEquals($expectedChangesForInterval, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_store_the_relation_values_when_creating_a_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'user.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'user.name']);
+            }
         };
 
         $user = User::create([
@@ -83,12 +263,163 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_retruns_same_uuid_for_all_log_changes_under_one_batch()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+            use SoftDeletes;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                    ->logOnly(['name', 'text']);
+            }
+        };
+
+        app(LogBatch::class)->startBatch();
+
+        $user = User::create([
+                'name' => 'user name',
+            ]);
+
+        $article = $articleClass::create([
+                'name' => 'original name',
+                'text' => 'original text',
+                'user_id' => $user->id,
+            ]);
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+
+        $article->delete();
+        $article->forceDelete();
+
+        $batchUuid = app(LogBatch::class)->getUuid();
+
+        app(LogBatch::class)->endBatch();
+
+        $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $batchUuid));
+    }
+
+    /** @test */
+    public function it_assigns_new_uuid_for_multiple_change_logs_in_different_batches()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+            use SoftDeletes;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                      ->logOnly(['name', 'text']);
+            }
+        };
+
+        app(LogBatch::class)->startBatch();
+
+        $uuidForCreatedEvent = app(LogBatch::class)->getUuid();
+        $user = User::create([
+                  'name' => 'user name',
+              ]);
+
+        $article = $articleClass::create([
+                  'name' => 'original name',
+                  'text' => 'original text',
+                  'user_id' => $user->id,
+              ]);
+
+        app(LogBatch::class)->endBatch();
+
+        $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $uuidForCreatedEvent));
+
+        app(LogBatch::class)->startBatch();
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+        $uuidForUpdatedEvents = app(LogBatch::class)->getUuid();
+
+        app(LogBatch::class)->endBatch();
+
+        $this->assertCount(1, Activity::where('description', 'updated')->get());
+
+        $this->assertEquals($uuidForUpdatedEvents, Activity::where('description', 'updated')->first()->batch_uuid);
+
+        app(LogBatch::class)->startBatch();
+        $article->delete();
+        $article->forceDelete();
+
+        $uuidForDeletedEvents = app(LogBatch::class)->getUuid();
+
+        app(LogBatch::class)->endBatch();
+
+        $this->assertCount(2, Activity::where('batch_uuid', $uuidForDeletedEvents)->get());
+
+        $this->assertNotSame($uuidForCreatedEvent, $uuidForDeletedEvents);
+    }
+
+    /** @test */
+    public function it_can_removes_key_event_if_it_was_loggable()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'user.name']);
+            }
+        };
+
+        $user = User::create([
+            'name' => 'user name',
+        ]);
+
+        $articleClass::addLogChange(new class() implements LoggablePipe {
+            public function handle(EventLogBag $event, Closure $next): EventLogBag
+            {
+                Arr::forget($event->changes, ['attributes.name', 'old.name']);
+
+                return $next($event);
+            }
+        });
+
+        $article = $articleClass::create([
+            'name' => 'original name',
+            'text' => 'original text',
+            'user_id' => $user->id,
+        ]);
+
+        $article->name = 'updated name';
+        $article->text = 'updated text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'text' => 'updated text',
+                'user.name' => 'user name',
+            ],
+            'old' => [
+                'text' => 'original text',
+                'user.name' => 'user name',
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_store_empty_relation_when_creating_a_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'user.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'user.name']);
+            }
         };
 
         $user = User::create([
@@ -196,9 +527,13 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'user.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'user.name']);
+            }
         };
 
         $user = User::create([
@@ -237,9 +572,13 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_updating_a_snake_case_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'snakeUser.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'snakeUser.name']);
+            }
 
             public function snake_user()
             {
@@ -283,9 +622,13 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_updating_a_camel_case_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'camel_user.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'camel_user.name']);
+            }
 
             public function camelUser()
             {
@@ -329,9 +672,13 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_updating_a_custom_case_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'Custom_Case_User.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'Custom_Case_User.name']);
+            }
 
             public function Custom_Case_User()
             {
@@ -375,11 +722,14 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_dirty_changes_when_updating_a_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'user.name'];
-
-            public static $logOnlyDirty = true;
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'user.name'])
+                ->logOnlyDirty();
+            }
         };
 
         $user = User::create([
@@ -414,9 +764,14 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_saving_including_multi_level_related_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text', 'user.latest_article.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'user.latest_article.name'])
+                ->logOnlyDirty();
+            }
         };
 
         $user = User::create([
@@ -450,9 +805,13 @@ class DetectsChangesTest extends TestCase
     public function it_will_store_no_changes_when_not_logging_attributes()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = [];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly([]);
+            }
         };
 
         $article = new $articleClass();
@@ -472,7 +831,7 @@ class DetectsChangesTest extends TestCase
         $article->delete();
 
         $expectedChanges = collect([
-            'attributes' => [
+            'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
@@ -486,9 +845,14 @@ class DetectsChangesTest extends TestCase
     public function it_will_store_the_values_when_deleting_the_model_with_softdeletes()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text'];
+            use LogsActivity;
+            use SoftDeletes;
 
-            use LogsActivity, SoftDeletes;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text']);
+            }
         };
 
         $article = new $articleClass();
@@ -498,7 +862,7 @@ class DetectsChangesTest extends TestCase
         $article->delete();
 
         $expectedChanges = collect([
-            'attributes' => [
+            'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
@@ -510,7 +874,7 @@ class DetectsChangesTest extends TestCase
         $article->forceDelete();
 
         $expectedChanges = collect([
-            'attributes' => [
+            'old' => [
                 'name' => 'my name',
                 'text' => null,
             ],
@@ -527,11 +891,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_of_collection_casted_properties()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['json'];
-            public static $logOnlyDirty = true;
             protected $casts = ['json' => 'collection'];
 
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['json'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = $articleClass::create([
@@ -560,11 +929,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_of_array_casted_properties()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['json'];
-            public static $logOnlyDirty = true;
             protected $casts = ['json' => 'array'];
 
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['json'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = $articleClass::create([
@@ -593,11 +967,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_of_json_casted_properties()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['json'];
-            public static $logOnlyDirty = true;
             protected $casts = ['json' => 'json'];
 
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['json'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = $articleClass::create([
@@ -626,10 +1005,15 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_nothing_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $fillable = ['name', 'text'];
-            protected static $logFillable = false;
-
             use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->dontLogFillable();
+            }
         };
 
         $article = new $articleClass();
@@ -646,11 +1030,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_text_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['text'];
-            protected static $logFillable = false;
-
             use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['text'])
+                ->dontLogFillable();
+            }
         };
 
         $article = new $articleClass();
@@ -671,10 +1060,15 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_fillable_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $fillable = ['name', 'text'];
-            protected static $logFillable = true;
-
             use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logFillable();
+            }
         };
 
         $article = new $articleClass();
@@ -695,11 +1089,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_both_fillable_and_log_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $fillable = ['name'];
-            protected static $logAttributes = ['text'];
-            protected static $logFillable = true;
-
             use LogsActivity;
+
+            protected $fillable = ['name'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['text'])
+                ->logFillable();
+            }
         };
 
         $article = new $articleClass();
@@ -721,9 +1120,13 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_wildcard_for_loggable_attributes()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['*'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll();
+            }
         };
 
         $article = new $articleClass();
@@ -741,8 +1144,9 @@ class DetectsChangesTest extends TestCase
                 'user_id' => null,
                 'json' => null,
                 'price' => null,
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'interval' => null,
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -753,9 +1157,13 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_wildcard_with_relation()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['*', 'user.name'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['*', 'user.name']);
+            }
         };
 
         $user = User::create([
@@ -779,9 +1187,10 @@ class DetectsChangesTest extends TestCase
                 'user_id' => $user->id,
                 'json' => null,
                 'price' => null,
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'user.name' => 'user name',
+                'interval' => null,
             ],
         ];
 
@@ -792,10 +1201,14 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_wildcard_when_updating_model()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['*'];
-            public static $logOnlyDirty = true;
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll()
+                ->logOnlyDirty();
+            }
         };
 
         $user = User::create([
@@ -816,11 +1229,11 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = [
             'attributes' => [
                 'name' => 'changed name',
-                'updated_at' => $this->isLaravel6OrLower() ? '2018-01-01 12:00:00' : '2018-01-01T12:00:00.000000Z',
+                'updated_at' => '2018-01-01T12:00:00.000000Z',
             ],
             'old' => [
                 'name' => 'article name',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -831,14 +1244,18 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_when_a_boolean_field_is_changed_from_false_to_null()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['*'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
 
             protected $casts = [
                 'text' => 'boolean',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll()
+                ->logOnlyDirty();
+            }
         };
 
         $user = User::create([
@@ -859,12 +1276,12 @@ class DetectsChangesTest extends TestCase
         $expectedChanges = [
             'attributes' => [
                 'text' => null,
-                'updated_at' => $this->isLaravel6OrLower() ? '2018-01-01 12:00:00' : '2018-01-01T12:00:00.000000Z',
+                'updated_at' => '2018-01-01T12:00:00.000000Z',
 
             ],
             'old' => [
                 'text' => false,
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -875,10 +1292,14 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_ignored_attributes_while_updating()
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['*'];
-            public static $logAttributesToIgnore = ['name', 'updated_at'];
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll()
+                ->logExcept(['name', 'updated_at']);
+            }
         };
 
         $article = new $articleClass();
@@ -895,7 +1316,8 @@ class DetectsChangesTest extends TestCase
                 'user_id' => null,
                 'json' => null,
                 'price' => null,
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'interval' => null,
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
             ],
         ];
 
@@ -906,11 +1328,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_unguarded_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $guarded = ['text', 'json'];
-            protected static $logAttributesToIgnore = ['id', 'created_at', 'updated_at', 'deleted_at'];
-            protected static $logUnguarded = true;
-
             use LogsActivity;
+
+            protected $guarded = ['text', 'json'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logUnguarded()
+                ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
+            }
         };
 
         $article = new $articleClass();
@@ -923,6 +1350,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'user_id' => null,
                 'price' => null,
+                'interval' => null,
             ],
         ];
 
@@ -933,10 +1361,15 @@ class DetectsChangesTest extends TestCase
     public function it_will_store_no_changes_when_wildcard_guard_and_log_unguarded_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $guarded = ['*'];
-            protected static $logUnguarded = true;
-
             use LogsActivity;
+
+            protected $guarded = ['*'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logUnguarded();
+            }
         };
 
         $article = new $articleClass();
@@ -951,11 +1384,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_hidden_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
+            use LogsActivity;
+
             protected $hidden = ['text'];
             protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['name', 'text'];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text']);
+            }
         };
 
         $article = new $articleClass();
@@ -977,10 +1415,15 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_overloaded_as_loggable_attributes()
     {
         $articleClass = new class() extends Article {
-            protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['name', 'text', 'description'];
-
             use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'description']);
+            }
 
             public function setDescriptionAttribute($value)
             {
@@ -1014,10 +1457,15 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_mutated_as_loggable_attributes()
     {
         $userClass = new class() extends User {
-            protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['*'];
-
             use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll();
+            }
 
             public function setNameAttribute($value)
             {
@@ -1036,8 +1484,8 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1052,16 +1500,16 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
             'attributes' => [
                 'id' => $user->id,
                 'name' => 'MY NAME 2',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1073,10 +1521,15 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_accessor_as_loggable_attributes()
     {
         $userClass = new class() extends User {
-            protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['*'];
-
             use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll();
+            }
 
             public function getNameAttribute($value)
             {
@@ -1095,8 +1548,8 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1111,16 +1564,16 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->id,
                 'name' => 'MY NAME',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
             'attributes' => [
                 'id' => $user->id,
                 'name' => 'MY NAME 2',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1132,11 +1585,16 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_encrypted_as_loggable_attributes()
     {
         $userClass = new class() extends User {
+            use LogsActivity;
+
             protected $fillable = ['name', 'text'];
             protected $encryptable = ['name', 'text'];
-            protected static $logAttributes = ['name', 'text'];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text']);
+            }
 
             public function getAttributeValue($key)
             {
@@ -1195,13 +1653,18 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_casted_as_loggable_attribute()
     {
         $articleClass = new class() extends Article {
-            protected static $logAttributes = ['name', 'text', 'price'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
+
             protected $casts = [
                 'price' => 'float',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text', 'price'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = new $articleClass();
@@ -1243,15 +1706,22 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_nullable_date_as_loggable_attributes()
     {
         $userClass = new class() extends User {
+            use LogsActivity;
+            use SoftDeletes;
+
             protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['*'];
+
             protected $dates = [
                 'created_at',
                 'updated_at',
                 'deleted_at',
             ];
 
-            use LogsActivity, SoftDeletes;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll();
+            }
         };
 
         Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
@@ -1265,8 +1735,8 @@ class DetectsChangesTest extends TestCase
                 'id' => $user->getKey(),
                 'name' => 'my name',
                 'text' => 'my text',
-                'created_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'created_at' =>  '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1278,13 +1748,18 @@ class DetectsChangesTest extends TestCase
     public function it_can_use_custom_date_cast_as_loggable_attributes()
     {
         $userClass = new class() extends User {
+            use LogsActivity;
+
             protected $fillable = ['name', 'text'];
-            protected static $logAttributes = ['*'];
             protected $casts = [
                 'created_at' => 'date:d.m.Y',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll();
+            }
         };
 
         Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
@@ -1299,7 +1774,7 @@ class DetectsChangesTest extends TestCase
                 'name' => 'my name',
                 'text' => 'my text',
                 'created_at' => '01.01.2017',
-                'updated_at' => $this->isLaravel6OrLower() ? '2017-01-01 12:00:00' : '2017-01-01T12:00:00.000000Z',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
                 'deleted_at' => null,
             ],
         ];
@@ -1311,13 +1786,18 @@ class DetectsChangesTest extends TestCase
     public function it_can_store_the_changes_of_json_attributes()
     {
         $articleClass = new class() extends Article {
-            protected static $logAttributes = ['name', 'json->data'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
+
             protected $casts = [
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'json->data'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = new $articleClass();
@@ -1343,13 +1823,18 @@ class DetectsChangesTest extends TestCase
     public function it_will_not_store_changes_to_untracked_json()
     {
         $articleClass = new class() extends Article {
-            protected static $logAttributes = ['name', 'json->data'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
+
             protected $casts = [
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'json->data'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = new $articleClass();
@@ -1379,13 +1864,18 @@ class DetectsChangesTest extends TestCase
     public function it_will_return_null_for_missing_json_attribute()
     {
         $articleClass = new class() extends Article {
-            protected static $logAttributes = ['name', 'json->data->missing'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
+
             protected $casts = [
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'json->data->missing'])
+                ->logOnlyDirty();
+            }
         };
 
         $jsonToStore = [];
@@ -1426,13 +1916,18 @@ class DetectsChangesTest extends TestCase
     public function it_will_return_an_array_for_sub_key_in_json_attribute()
     {
         $articleClass = new class() extends Article {
-            protected static $logAttributes = ['name', 'json->data'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
+
             protected $casts = [
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'json->data'])
+                ->logOnlyDirty();
+            }
         };
 
         $jsonToStore = [
@@ -1489,13 +1984,18 @@ class DetectsChangesTest extends TestCase
     public function it_will_access_further_than_level_one_json_attribute()
     {
         $articleClass = new class() extends Article {
-            protected static $logAttributes = ['name', 'json->data->can->go->how->far'];
-            public static $logOnlyDirty = true;
+            use LogsActivity;
+
             protected $casts = [
                 'json' => 'collection',
             ];
 
-            use LogsActivity;
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'json->data->can->go->how->far'])
+                ->logOnlyDirty();
+            }
         };
 
         $jsonToStore = [];
@@ -1557,11 +2057,14 @@ class DetectsChangesTest extends TestCase
     protected function createDirtyArticle(): Article
     {
         $articleClass = new class() extends Article {
-            public static $logAttributes = ['name', 'text'];
-
-            public static $logOnlyDirty = true;
-
             use LogsActivity;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logOnly(['name', 'text'])
+                ->logOnlyDirty();
+            }
         };
 
         $article = new $articleClass();
