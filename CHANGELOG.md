@@ -2,9 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
-## 4.0 - 2021-04-09
+## 4.0.0 - 2021-05-04
 
-Reference - [#866](https://github.com/spatie/laravel-activitylog/pull/866) and [#787](https://github.com/spatie/laravel-activitylog/pull/787)
+PR: [#787](https://github.com/spatie/laravel-activitylog/pull/787)  
+Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 
 - Drop Laravel 6 and 7 support.
 - Drop PHP 7.x support.
