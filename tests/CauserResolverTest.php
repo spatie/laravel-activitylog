@@ -21,7 +21,6 @@ class CauserResolverTest extends TestCase
         $this->assertEquals($user->id, $causer->id);
     }
 
-
     /** @test */
     public function it_will_throw_an_exception_if_it_cannot_resolve_user_by_id()
     {
@@ -29,9 +28,6 @@ class CauserResolverTest extends TestCase
 
         CauserResolver::resolve(9999);
     }
-
-
-
 
     /** @test */
     public function it_can_resloved_user_from_passed_id()
@@ -41,7 +37,6 @@ class CauserResolverTest extends TestCase
         $this->assertInstanceOf(User::class, $causer);
         $this->assertEquals(1, $causer->id);
     }
-
 
     /** @test */
     public function it_will_resolve_the_provided_override_callback()
@@ -53,7 +48,6 @@ class CauserResolverTest extends TestCase
         $this->assertInstanceOf(Article::class, $causer);
         $this->assertEquals(1, $causer->id);
     }
-
 
     /** @test */
     public function it_will_resolve_any_model()

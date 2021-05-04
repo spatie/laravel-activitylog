@@ -117,16 +117,13 @@ class ActivityLoggerTest extends TestCase
         $this->assertInstanceOf(Article::class, $firstActivity->causer);
     }
 
-
     /** @test */
     public function it_can_log_an_activity_with_a_causer_that_has_been_set_from_other_context()
     {
         $causer = Article::first();
         CauserResolver::setCauser($causer);
 
-
         $article = Article::first();
-
 
         activity()
                ->log($this->activityDescription);
@@ -136,7 +133,6 @@ class ActivityLoggerTest extends TestCase
         $this->assertEquals($article->id, $firstActivity->causer->id);
         $this->assertInstanceOf(Article::class, $firstActivity->causer);
     }
-
 
     /** @test */
     public function it_can_log_an_activity_with_a_causer_when_there_is_no_web_guard()
@@ -301,7 +297,7 @@ class ActivityLoggerTest extends TestCase
     /** @test */
     public function it_returns_an_instance_of_the_activity_log_after_logging_when_using_a_custom_model()
     {
-        $activityClass = new class extends Activity {
+        $activityClass = new class() extends Activity {
         };
 
         $activityClassName = get_class($activityClass);

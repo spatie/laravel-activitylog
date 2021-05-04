@@ -1,4 +1,5 @@
 <?php
+
 namespace Spatie\Activitylog\Facades;
 
 use Illuminate\Support\Facades\Facade;
@@ -11,7 +12,7 @@ use Spatie\Activitylog\LogBatch as ActivityLogBatch;
  * @method static bool isOpen()
  * @method static void endBatch()
  *
- * @see ActivityLogBatch
+ * @see \Spatie\Activitylog\LogBatch
  */
 class LogBatch extends Facade
 {

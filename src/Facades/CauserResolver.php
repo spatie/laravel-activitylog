@@ -1,14 +1,14 @@
 <?php
+
 namespace Spatie\Activitylog\Facades;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
 use Spatie\Activitylog\CauserResolver as ActivitylogCauserResolver;
 
 /**
- * @method static null|Model resolve(Model|int|string|null $subject = null)
- * @method static ActivitylogCauserResolver resolveUsing(Closure $callback)
- * @method static ActivitylogCauserResolver setCauser(?Model $causer)
+ * @method static \Illuminate\Database\Eloquent\Model|null resolve(\Illuminate\Database\Eloquent\Model|int|string|null $subject = null)
+ * @method static \Spatie\Activitylog\CauserResolver resolveUsing(\Closure $callback)
+ * @method static \Spatie\Activitylog\CauserResolver setCauser(\Illuminate\Database\Eloquent\Model|null $causer)
  *
  * @see \Spatie\Activitylog\CauserResolver
  */

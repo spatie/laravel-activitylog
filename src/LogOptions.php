@@ -29,7 +29,7 @@ class LogOptions
      */
     public static function defaults(): self
     {
-        return new static;
+        return new static();
     }
 
     /**
@@ -109,7 +109,6 @@ class LogOptions
 
         return $this;
     }
-
 
     /**
      * Dont store empty logs. Storing empty logs can happen when you only

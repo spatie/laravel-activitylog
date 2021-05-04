@@ -13,7 +13,7 @@ class Issue733 extends Article
         'retrieved',
     ];
 
-    public function getActivitylogOptions() : LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->dontSubmitEmptyLogs()
