@@ -18,7 +18,7 @@ After you've configured everything you should clear the application config cache
 You can publish the migration with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
 ```
 
 After the migration has been published you can create the `activity_log` table by running the migrations:
@@ -30,7 +30,7 @@ php artisan migrate
 You can optionally publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-config"
 ```
 
 This is the contents of the published config file:
