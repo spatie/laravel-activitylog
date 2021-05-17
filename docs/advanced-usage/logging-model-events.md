@@ -24,7 +24,7 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['name', 'text']);
@@ -33,7 +33,7 @@ class NewsItem extends Model
 }
 ```
 
-Note that we start from sensible defaults, but any of them can be overridden as needed by cianing fluent methods. Review the `Spatie\Activitylog\LogOptions` class for full list of supported options.
+Note that we start from sensible defaults, but any of them can be overridden as needed by chaining fluent methods. Review the `Spatie\Activitylog\LogOptions` class for full list of supported options.
 
 ## Basics of Logging Configuration
 
