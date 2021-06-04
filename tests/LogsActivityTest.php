@@ -503,6 +503,19 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('retrieved', $activity->description);
     }
 
+    /** @test */
+    public function it_will_log_created_event_for_replicated_model()
+    {
+        $article = $this->createArticle();
+
+        $replicatedArticle = $article->replicate();
+        $replicatedArticle->save();
+        
+        $this->assertNotEmpty($replicatedArticle->activities);
+        $this->assertCount(1, $replicatedArticle->activities);
+        $this->assertEquals('created', $replicatedArticle->activities[0]->description);
+    }
+
     public function loginWithFakeUser()
     {
         $user = new $this->user();
