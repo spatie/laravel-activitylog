@@ -17,7 +17,7 @@ class RemoveKeyFromLogChangesPipe implements LoggablePipe
 
     public function handle(EventLogBag $event, Closure $next): EventLogBag
     {
-        Arr::forget($event->changes, ["attributes.{$this->felid}", "old.{$this->felid}"]);
+        Arr::forget($event->changes, ["attributes.{$this->field}", "old.{$this->field}"]);
 
         return $next($event);
     }
