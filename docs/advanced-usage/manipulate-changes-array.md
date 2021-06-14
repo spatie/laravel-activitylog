@@ -49,7 +49,7 @@ By adding i.e. `RemoveKeyFromLogChangesPipe` pipe every time log NewsItem is cha
 
 ## Add pipes
 
-Every pipe should implement `Spatie\Activitylog\Contracts\LoggablePipe` that enforces `handle()` method that will receive `Spatie\Activitylog\EventLogBag` and the next pipe. Your pipe must return the next pipe passing the event applying your changes `retrun $next($event)`.
+Every pipe should implement `Spatie\Activitylog\Contracts\LoggablePipe` that enforces `handle()` method that will receive `Spatie\Activitylog\EventLogBag` and the next pipe. Your pipe must return the next pipe passing the event applying your changes `return $next($event)`.
 
 ```php
 
