@@ -1,5 +1,16 @@
 ## From v3 to v4
 
+``` bash
+composer require spatie/laravel-activitylog "^4.0.0"
+```
+
+### Publish migrations & migrate new tables
+
+``` bash
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+php artisan migrate
+```
+
 ### Model event Logging
 
 - All models now need to define a `getActivitylogOptions()` method to configure and return the models options as a `LogOptions` instance.
