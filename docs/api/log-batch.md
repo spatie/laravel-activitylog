@@ -46,7 +46,7 @@ public function isOpen(): bool;
  * Set uuid for the current open batch, it can be used to keep the batch
  * open throughout multiple requests or in a batch queue job.
  */
-public function setBatch(string $uuid): bool;
+public function setBatch(string $uuid): void;
 ```
 
 ## endBatch
