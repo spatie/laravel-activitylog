@@ -138,7 +138,7 @@ If you discover any security related issues, please email freek@spatie.be instea
 - [Tom Witkowski](https://github.com/Gummibeer)
 - [All Contributors](../../contributors)
 
-And a special thanks to [Caneco](https://twitter.com/caneco) for the logo and [Ahmed Nagi](https://github.com/nagi1) for all the work hee put in `v4`.
+And a special thanks to [Caneco](https://twitter.com/caneco) for the logo and [Ahmed Nagi](https://github.com/nagi1) for all the work he put in `v4`.
 
 ## License
 
