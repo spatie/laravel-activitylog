@@ -81,33 +81,33 @@ class LogBatchTest extends TestCase
     }
 
     /** @test */
-    public function it_can_have_same_uuid_throughout_multiple_batches()
+    public function it_can_set_uuid_and_start_a_batch()
     {
-        // UUID for all the jobs bellow
         $uuid = Str::uuid();
 
-        // Job A
-        LogBatch::startBatch();
         LogBatch::setBatch($uuid);
-        // work, work, work :dancer::dancer:
-        $jobAUuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+        $this->assertTrue(LogBatch::isOpen());
+        $this->assertEquals($uuid, LogBatch::getUuid());
 
-        // Job B
+        LogBatch::endBatch();
+        $this->assertFalse(LogBatch::isOpen());
+    }
+
+    /** @test */
+    public function it_can_set_uuid_for_already_started_batch()
+    {
+        $uuid = Str::uuid();
+
         LogBatch::startBatch();
-        LogBatch::setBatch($uuid);
-        // work, work, work :dancer::dancer:
-        $jobBUuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+        $this->assertTrue(LogBatch::isOpen());
+        $this->assertNotEquals($uuid, LogBatch::getUuid());
 
-        // Job C
-        LogBatch::startBatch();
         LogBatch::setBatch($uuid);
-        // work, work, work :dancer::dancer:
-        $jobCUuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+        $this->assertTrue(LogBatch::isOpen());
+        $this->assertEquals($uuid, LogBatch::getUuid());
 
-        $this->assertContainsEquals($uuid, [$jobAUuid, $jobBUuid, $jobCUuid]);
+        LogBatch::endBatch();
+        $this->assertFalse(LogBatch::isOpen());
     }
 
     /** @test */
