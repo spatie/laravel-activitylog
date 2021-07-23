@@ -79,7 +79,7 @@ To verify if a batch is open or closed you can do the following:
 
 ```php
 // in middleware
-LogBatch::openBatch();
+LogBatch::startBatch();
 
 //... Other middlewares
 
@@ -129,7 +129,7 @@ class SomeJob
 {
     public function handle(string $value, string $batchUuid = null)
     {
-        LogBatch::openBatch();
+        LogBatch::startBatch();
         if($batchUuid) LogBatch::setBatch($batchUuid);
 
         // other code ..
