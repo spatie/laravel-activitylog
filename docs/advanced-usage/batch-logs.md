@@ -89,6 +89,55 @@ if(LogBatch::isOpen()) {
 
 ```
 
+## Keep LogBatch openend during multiple job/requests
+
+In some cases when you have multiple jobs that goes through queue batch, and you want to log all the activities during these diffrent jobs using the same `LogBatch`, or you want to log multiple activities throughout multiple requests.
+
+You may utilize `LogBatch::setBatch($uuid)` passing `$uuid` or any unique value that identify the batch to keep it open.
+
+Here's an example:
+
+```php
+use Spatie\Activitylog\LogBatch;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Str;
+
+$uuid =  Str::uuid();
+
+Bus::batch([
+    // First job will open a batch
+    new SomeJob('some value', $uuid), // pass uuid as a payload to the job
+    new AnotherJob($uuid), // pass uuid as a payload to the job
+    new WorkJob('work work work', $uuid), // pass uuid as a payload to the job
+])->then(function (Batch $batch) {
+    // All jobs completed successfully...
+})->catch(function (Batch $batch, Throwable $e) {
+    // First batch job failure detected...
+})->finally(function (Batch $batch) use ($uuid) {
+    // The batch has finished executing...
+    LogBatch::getUuid() === $uuid // true
+    LogBatch::endBatch();
+})->dispatch();
+
+// Later on..
+Activity::forBatch($uuid)->get(); // all the activity that happend in the batch
+
+```
+
+```php
+class SomeJob
+{
+    public function handle(string $value, string $batchUuid = null)
+    {
+        LogBatch::openBatch();
+        if($batchUuid) LogBatch::setBatch($batchUuid);
+
+        // other code ..
+    }
+}
+
+```
+
 ## Batch activities using callback
 
 You can also batch activities using closure passed to `LogBatch::withinBatch()`. Every activity executed will happen inside that closure will be included in the same batch.

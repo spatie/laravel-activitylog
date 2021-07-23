@@ -39,6 +39,16 @@ public function startBatch(): void;
 public function isOpen(): bool;
 ```
 
+## setBatch
+
+```php
+/**
+ * Set uuid for the current open batch, it can be used to keep the batch
+ * open throughout multiple requests or in a batch queue job.
+ */
+public function setBatch(string $uuid): void;
+```
+
 ## endBatch
 
 ```php

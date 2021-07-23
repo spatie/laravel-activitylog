@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Facades\LogBatch;
+use Illuminate\Support\Str;
 
 class LogBatchTest extends TestCase
 {
@@ -77,6 +78,36 @@ class LogBatchTest extends TestCase
         LogBatch::startBatch();
 
         $this->assertNull($uuid);
+    }
+
+    /** @test */
+    public function it_can_have_same_uuid_throughout_multiple_batches()
+    {
+        // UUID for all the jobs bellow
+        $uuid = Str::uuid();
+
+        // Job A
+        LogBatch::startBatch();
+        LogBatch::setBatch($uuid);
+        // work, work, work :dancer::dancer:
+        $jobAUuid = LogBatch::getUuid();
+        LogBatch::endBatch();
+
+        // Job B
+        LogBatch::startBatch();
+        LogBatch::setBatch($uuid);
+        // work, work, work :dancer::dancer:
+        $jobBUuid = LogBatch::getUuid();
+        LogBatch::endBatch();
+
+        // Job C
+        LogBatch::startBatch();
+        LogBatch::setBatch($uuid);
+        // work, work, work :dancer::dancer:
+        $jobCUuid = LogBatch::getUuid();
+        LogBatch::endBatch();
+
+        $this->assertContainsEquals($uuid, [$jobAUuid, $jobBUuid, $jobCUuid]);
     }
 
     /** @test */

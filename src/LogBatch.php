@@ -21,6 +21,12 @@ class LogBatch
         return $this->uuid;
     }
 
+    public function setBatch(string $uuid): void
+    {
+        $this->uuid = $uuid;
+        $this->transactions = 1;
+    }
+
     public function withinBatch(Closure $callback): mixed
     {
         $this->startBatch();
