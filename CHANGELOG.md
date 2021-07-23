@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.1.0 - 2021-07-23
+
+- Add `\Spatie\Activitylog\LogBatch::setBatch(string $uuid)` method to keep batches across requests or multiple jobs - [#918](https://github.com/spatie/laravel-activitylog/issues/918)
+
 ## 4.0.0 - 2021-05-04
 
 PR: [#787](https://github.com/spatie/laravel-activitylog/pull/787)  
