@@ -111,7 +111,7 @@ php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProv
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for more information about recent changes.
 
 ## Upgrading
 
