@@ -125,7 +125,7 @@ composer test
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [https://github.com/spatie/laravel-activitylog/blob/master/.github/CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Security
 
