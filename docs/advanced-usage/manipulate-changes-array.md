@@ -27,7 +27,7 @@ class RemoveKeyFromLogChangesPipe implements LoggablePipe
 ```php
 // ... in your controller/job/middleware
 
-NewsItem::addLogPipe(new RemoveKeyFromLogChangesPipe('name'));
+NewsItem::addLogChange(new RemoveKeyFromLogChangesPipe('name'));
 
 $article = NewsItem::create(['name' => 'new article', 'text' => 'new article text']);
 $article->update(['name' => 'update article', 'text' => 'update article text']);
@@ -66,7 +66,7 @@ class YourPipe implements LoggablePipe
 ```
 
 ```php
-YourModel::addLogPipe(new YourPipe);
+YourModel::addLogChange(new YourPipe);
 ```
 
 ## Useful use cases
