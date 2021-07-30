@@ -8,7 +8,7 @@ In many cases you may want to set causer globally maybe inside jobs where there'
 ```php
 // in a queue job or controller
 
-use Spatie\Activitylog\Facade\CauserResolver;
+use Spatie\Activitylog\Facades\CauserResolver;
 
 // ... other code
 
