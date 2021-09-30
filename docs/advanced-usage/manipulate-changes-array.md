@@ -68,9 +68,3 @@ class YourPipe implements LoggablePipe
 ```php
 YourModel::addLogChange(new YourPipe);
 ```
-
-## Useful use cases
-
-### Deep diff JSON sub-keys and respect for only-dirty and no-empty
-
-Refere to `it_deep_diff_check_json_field` test.
