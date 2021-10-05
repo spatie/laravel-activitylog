@@ -1783,6 +1783,44 @@ class DetectsChangesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_use_custom_immutable_date_cast_as_loggable_attributes()
+    {
+        $userClass = new class() extends User {
+            use LogsActivity;
+
+            protected $fillable = ['name', 'text'];
+            protected $casts = [
+                'created_at' => 'immutable_date:d.m.Y',
+            ];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()
+                ->logAll();
+            }
+        };
+
+        Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+        $user = new $userClass();
+        $user->name = 'my name';
+        $user->text = 'my text';
+        $user->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'id' => $user->getKey(),
+                'name' => 'my name',
+                'text' => 'my text',
+                'created_at' => '01.01.2017',
+                'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+                'deleted_at' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    }
+
+    /** @test */
     public function it_can_store_the_changes_of_json_attributes()
     {
         $articleClass = new class() extends Article {
