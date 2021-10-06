@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.2.0 - 2021-10-06
+
+- Add `immutable_date` cast support - [#969](https://github.com/spatie/laravel-activitylog/issues/969)
+
 ## 4.1.1 - 2021-07-23
 
 - Fix migration stub names - [#914](https://github.com/spatie/laravel-activitylog/issues/914)
