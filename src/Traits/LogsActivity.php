@@ -350,7 +350,7 @@ trait LogsActivity
             if ($model->hasCast($attribute)) {
                 $cast = $model->getCasts()[$attribute];
 
-                if ($model->isCustomDateTimeCast($cast)) {
+                if ($model->isCustomDateTimeCast($cast) || $model->isImmutableCustomDateTimeCast($cast)) {
                     $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
                 }
             }
