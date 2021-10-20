@@ -336,6 +336,9 @@ trait LogsActivity
             }
 
             $changes[$attribute] = $model->getAttribute($attribute);
+            if(in_array($attribute, $model->activitylogOptions->skipCasting)) {
+                $changes[$attribute] = $model->getAttributes()[$attribute];
+            }
 
             if (is_null($changes[$attribute])) {
                 continue;

@@ -22,6 +22,8 @@ class LogOptions
 
     public array $dontLogIfAttributesChangedOnly = [];
 
+    public array $skipCasting = [];
+
     public ?Closure $descriptionForEvent = null;
 
     /**
@@ -148,6 +150,16 @@ class LogOptions
     public function setDescriptionForEvent(Closure $callback): self
     {
         $this->descriptionForEvent = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Exclude these attributes from being casted.
+     */
+    public function skipCasting(array $attributes): self
+    {
+        $this->skipCasting = $attributes;
 
         return $this;
     }
