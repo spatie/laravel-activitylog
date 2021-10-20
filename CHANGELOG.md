@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.3.1 - 2021-10-20
+
+- Fix hardcoded `deleted_at` column usage - [#965](https://github.com/spatie/laravel-activitylog/issues/965)
+
 ## 4.3.0 - 2021-10-20
 
 - Add `\Spatie\Activitylog\LogOptions::useAttributeRawValues()` to log uncasted attributes - [#972](https://github.com/spatie/laravel-activitylog/issues/972)
