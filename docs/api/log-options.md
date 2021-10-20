@@ -42,6 +42,8 @@ public array $logExceptAttributes = [];
 
 public array $dontLogIfAttributesChangedOnly = [];
 
+public array $attributeRawValues = [];
+
 public ?Closure $descriptionForEvent = null;
 ```
 
@@ -163,6 +165,15 @@ public function submitEmptyLogs(): LogOption;
  * Customize log name
  */
 public function useLogName(string $logName): LogOption;
+```
+
+### useAttributeRawValues
+
+```php
+/**
+ * Skip using mutators for these attributes when logged
+ */
+public function useAttributeRawValues(array $attributes): LogOption;
 ```
 
 ### setDescriptionForEvent
