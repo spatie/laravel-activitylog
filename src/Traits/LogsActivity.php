@@ -171,8 +171,10 @@ trait LogsActivity
             return true;
         }
 
-        if (Arr::has($this->getDirty(), 'deleted_at')) {
-            if ($this->getDirty()['deleted_at'] === null) {
+        $deletedAtColumn = method_exists($this, 'getDeletedAtColumn') ? $this->getDeletedAtColumn() : 'deleted_at';
+
+        if (Arr::has($this->getDirty(), $deletedAtColumn)) {
+            if ($this->getDirty()[$deletedAtColumn] === null) {
                 return false;
             }
         }
