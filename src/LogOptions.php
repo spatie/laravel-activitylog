@@ -22,7 +22,7 @@ class LogOptions
 
     public array $dontLogIfAttributesChangedOnly = [];
 
-    public array $skipCasting = [];
+    public array $attributeRawValues = [];
 
     public ?Closure $descriptionForEvent = null;
 
@@ -157,9 +157,9 @@ class LogOptions
     /**
      * Exclude these attributes from being casted.
      */
-    public function skipCasting(array $attributes): self
+    public function useAttributeRawValues(array $attributes): self
     {
-        $this->skipCasting = $attributes;
+        $this->attributeRawValues = $attributes;
 
         return $this;
     }

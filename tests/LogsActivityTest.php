@@ -503,6 +503,33 @@ class LogsActivityTest extends TestCase
         $this->assertEquals('retrieved', $activity->description);
     }
 
+    /** @test */
+    public function it_will_not_log_casted_attribute_of_the_model_if_attribute_raw_values_is_used()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity;
+
+            protected $casts = [
+                'name' => 'encrypted',
+            ];
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults()->logOnly(['name'])->useAttributeRawValues(["name"]);
+            }
+        };
+
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->save();
+
+        $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+        $this->assertNotEquals($article->name, $this->getLastActivity()->properties["attributes"]["name"]);
+        $this->assertEquals('created', $this->getLastActivity()->description);
+        $this->assertEquals('created', $this->getLastActivity()->event);
+    }
+
     public function loginWithFakeUser()
     {
         $user = new $this->user();
