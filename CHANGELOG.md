@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.3.0 - 2021-10-20
+
+- Add `\Spatie\Activitylog\LogOptions::useAttributeRawValues()` to log uncasted attributes - [#972](https://github.com/spatie/laravel-activitylog/issues/972)
+
 ## 4.2.0 - 2021-10-06
 
 - Add `immutable_date` cast support - [#969](https://github.com/spatie/laravel-activitylog/issues/969)
