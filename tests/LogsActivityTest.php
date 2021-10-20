@@ -515,7 +515,7 @@ class LogsActivityTest extends TestCase
 
             public function getActivitylogOptions(): LogOptions
             {
-                return LogOptions::defaults()->logOnly(['name'])->useAttributeRawValues(["name"]);
+                return LogOptions::defaults()->logOnly(['name'])->useAttributeRawValues(['name']);
             }
         };
 
@@ -525,7 +525,7 @@ class LogsActivityTest extends TestCase
 
         $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
         $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-        $this->assertNotEquals($article->name, $this->getLastActivity()->properties["attributes"]["name"]);
+        $this->assertNotEquals($article->name, $this->getLastActivity()->properties['attributes']['name']);
         $this->assertEquals('created', $this->getLastActivity()->description);
         $this->assertEquals('created', $this->getLastActivity()->event);
     }
