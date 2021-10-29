@@ -12,6 +12,7 @@ class ArticleWithLogDescriptionClosure extends Article
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->setDescriptionForEvent(function () {});
+            ->setDescriptionForEvent(function () {
+            });
     }
 }
