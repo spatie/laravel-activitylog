@@ -12,6 +12,5 @@ class LogsActivitySerializationTest extends TestCase
         $model = ArticleWithLogDescriptionClosure::create(['name' => 'foo']);
         
         $this->assertNotNull(serialize($model));
-        
     }
 }
