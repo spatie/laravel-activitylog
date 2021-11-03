@@ -167,6 +167,11 @@ trait LogsActivity
             return false;
         }
 
+        return $this->shouldLogSoftDeleteChanges($eventName);
+    }
+
+    public function shouldLogSoftDeleteChanges(string $eventName):bool
+    {
         if (! in_array($eventName, ['created', 'updated'])) {
             return true;
         }

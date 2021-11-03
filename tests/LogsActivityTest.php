@@ -190,6 +190,50 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
+    public function it_allows_to_change_the_should_log_delete_changes()
+    {
+        $articleClass = new class() extends Article {
+            use LogsActivity, SoftDeletes;
+
+            public function getActivitylogOptions(): LogOptions
+            {
+                return LogOptions::defaults();
+            }
+
+            public bool $shouldLogSoftDelete = false;
+            public function shouldLogSoftDeleteChanges(string $eventName): bool
+            {
+                return $this->shouldLogSoftDelete;
+            }
+        };
+
+        $article = new $articleClass();
+        $article->save();
+
+        $article->delete();
+
+        $article->restore();
+
+        $this->assertCount(0, Activity::all());
+
+        $article = new $articleClass();
+        $article->shouldLogSoftDelete = true;
+
+        $article->save();
+
+        $article->delete();
+
+        $article->restore();
+
+        $this->assertCount(4, Activity::all());
+
+        $this->assertEquals(get_class($articleClass), $this->getLastActivity()->subject_type);
+        $this->assertEquals($article->id, $this->getLastActivity()->subject_id);
+        $this->assertEquals('restored', $this->getLastActivity()->description);
+        $this->assertEquals('restored', $this->getLastActivity()->event);
+    }
+
+    /** @test */
     public function it_can_fetch_all_activity_for_a_model()
     {
         $article = $this->createArticle();
