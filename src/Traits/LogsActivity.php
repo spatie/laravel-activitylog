@@ -171,18 +171,25 @@ trait LogsActivity
             return true;
         }
 
-        $deletedAtColumn = method_exists($this, 'getDeletedAtColumn')
-            ? $this->getDeletedAtColumn()
-            : 'deleted_at';
-
-        if (Arr::has($this->getDirty(), $deletedAtColumn)) {
-            if ($this->getDirty()[$deletedAtColumn] === null) {
-                return false;
-            }
+        // Do not log update event if the model is restoring
+        if ($this->isRestoring()) {
+            return false;
         }
 
         // Do not log update event if only ignored attributes are changed.
         return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedOnly));
+    }
+
+    /**
+     * Determines if the model is restoring
+     **/
+    protected function isRestoring(): bool
+    {
+        $deletedAtColumn = method_exists($this, 'getDeletedAtColumn')
+            ? $this->getDeletedAtColumn()
+            : 'deleted_at';
+
+        return $this->isDirty($deletedAtColumn) && count($this->getDirty()) === 1;
     }
 
     /**

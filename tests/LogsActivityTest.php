@@ -173,6 +173,26 @@ class LogsActivityTest extends TestCase
     }
 
     /** @test */
+    public function it_will_log_the_replication_of_a_model_with_softdeletes()
+    {
+        $article = $this->createArticle();
+
+        $replicatedArticle = $this->article::find($article->id)->replicate();
+        $replicatedArticle->save();
+
+        $activityItems = Activity::all();
+
+        $this->assertCount(2, $activityItems);
+
+        $this->assertTrue($activityItems->every(fn (Activity $item) =>
+            $item->event === 'created' &&
+            $item->description === 'created' &&
+            get_class($this->article) === $item->subject_type));
+
+        $this->assertEquals($replicatedArticle->id, $this->getLastActivity()->subject_id);
+    }
+
+    /** @test */
     public function it_will_log_the_restoring_of_a_model_with_softdeletes()
     {
         $article = $this->createArticle();
