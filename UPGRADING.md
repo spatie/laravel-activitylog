@@ -7,7 +7,7 @@ composer require spatie/laravel-activitylog "^4.0.0"
 ### Publish migrations & migrate new tables
 
 ``` bash
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
 php artisan migrate
 ```
 
