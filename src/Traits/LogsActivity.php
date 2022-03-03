@@ -35,7 +35,7 @@ trait LogsActivity
         // Hook into eloquent events that only specified in $eventToBeRecorded array,
         // checking for "updated" event hook explicitly to temporary hold original
         // attributes on the model as we'll need them later to compare against.
-        
+
         static::eventsToBeRecorded()->each(function ($eventName) {
             if ($eventName === 'updated') {
                 static::updating(function (Model $model) {
@@ -49,6 +49,7 @@ trait LogsActivity
 
                 if (! $model->shouldLogEvent($eventName)) {
                     $model->activitylogOptions = null;
+
                     return;
                 }
 
@@ -61,11 +62,13 @@ trait LogsActivity
                 // Submitting empty description will cause place holder replacer to fail.
                 if ($description == '') {
                     $model->activitylogOptions = null;
+
                     return;
                 }
 
                 if ($model->isLogEmpty($changes) && ! $model->activitylogOptions->submitEmptyLogs) {
                     $model->activitylogOptions = null;
+
                     return;
                 }
 
