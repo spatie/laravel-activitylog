@@ -2,21 +2,21 @@
 
 namespace Spatie\Activitylog\Traits;
 
-use Carbon\CarbonInterval;
 use DateInterval;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Pipeline\Pipeline;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\ActivitylogServiceProvider;
-use Spatie\Activitylog\ActivityLogStatus;
-use Spatie\Activitylog\Contracts\LoggablePipe;
-use Spatie\Activitylog\EventLogBag;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\EventLogBag;
+use Spatie\Activitylog\ActivityLogger;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\ActivityLogStatus;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Contracts\LoggablePipe;
+use Spatie\Activitylog\ActivitylogServiceProvider;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait LogsActivity
 {
@@ -35,7 +35,7 @@ trait LogsActivity
         // Hook into eloquent events that only specified in $eventToBeRecorded array,
         // checking for "updated" event hook explicitly to temporary hold original
         // attributes on the model as we'll need them later to compare against.
-
+        
         static::eventsToBeRecorded()->each(function ($eventName) {
             if ($eventName === 'updated') {
                 static::updating(function (Model $model) {
@@ -48,6 +48,7 @@ trait LogsActivity
                 $model->activitylogOptions = $model->getActivitylogOptions();
 
                 if (! $model->shouldLogEvent($eventName)) {
+                    $model->activitylogOptions = null;
                     return;
                 }
 
@@ -59,10 +60,12 @@ trait LogsActivity
 
                 // Submitting empty description will cause place holder replacer to fail.
                 if ($description == '') {
+                    $model->activitylogOptions = null;
                     return;
                 }
 
                 if ($model->isLogEmpty($changes) && ! $model->activitylogOptions->submitEmptyLogs) {
+                    $model->activitylogOptions = null;
                     return;
                 }
 
