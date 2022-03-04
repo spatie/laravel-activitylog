@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 /**
- * Spatie\Activitylog\Models\Activity
+ * Spatie\Activitylog\Models\Activity.
  *
  * @property int $id
  * @property string|null $log_name
@@ -25,6 +25,7 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @property-read Illuminate\Database\Eloquent\Model|\Eloquent $causer
  * @property-read Illuminate\Support\Collection $changes
  * @property-read Illuminate\Database\Eloquent\Model|\Eloquent $subject
+ *
  * @method static Illuminate\Database\Eloquent\Builder|Spatie\Activitylog\Models\Activity causedBy(\Illuminate\Database\Eloquent\Model $causer)
  * @method static Illuminate\Database\Eloquent\Builder|Spatie\Activitylog\Models\Activity forBatch(string $batchUuid)
  * @method static Illuminate\Database\Eloquent\Builder|Spatie\Activitylog\Models\Activity forEvent(string $event)
