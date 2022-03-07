@@ -1,38 +1,29 @@
 <?php
 
-namespace Spatie\Activitylog\Test;
-
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\CustomTableNameOnActivityModel;
 
-class CustomTableNameModelTest extends TestCase
-{
-    /** @test */
-    public function it_uses_the_table_name_from_the_configuration()
-    {
-        $model = new Activity();
+uses(TestCase::class);
 
-        $this->assertEquals($model->getTable(), config('activitylog.table_name'));
-    }
+it('uses the table name from the configuration', function () {
+    $model = new Activity();
 
-    /** @test */
-    public function it_uses_a_custom_table_name()
-    {
-        $model = new Activity();
-        $newTableName = 'my_personal_activities';
+    $this->assertEquals($model->getTable(), config('activitylog.table_name'));
+});
 
-        $model->setTable($newTableName);
+it('uses a custom table name', function () {
+    $model = new Activity();
+    $newTableName = 'my_personal_activities';
 
-        $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
-        $this->assertEquals($model->getTable(), $newTableName);
-    }
+    $model->setTable($newTableName);
 
-    /** @test */
-    public function it_uses_the_table_name_from_the_model()
-    {
-        $model = new CustomTableNameOnActivityModel();
+    $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
+    $this->assertEquals($model->getTable(), $newTableName);
+});
 
-        $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
-        $this->assertEquals($model->getTable(), 'custom_table_name');
-    }
-}
+it('uses the table name from the model', function () {
+    $model = new CustomTableNameOnActivityModel();
+
+    $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
+    $this->assertEquals($model->getTable(), 'custom_table_name');
+});
