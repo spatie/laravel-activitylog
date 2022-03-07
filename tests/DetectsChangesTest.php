@@ -541,7 +541,8 @@ it('can store the changes when updating a snake case related model', function ()
             ->logOnly(['name', 'text', 'snakeUser.name']);
         }
 
-        public function snake_user() {
+        public function snake_user()
+        {
             return $this->belongsTo(User::class, 'user_id');
         }
     };
@@ -588,7 +589,8 @@ it('can store the changes when updating a camel case related model', function ()
             ->logOnly(['name', 'text', 'camel_user.name']);
         }
 
-        public function camelUser() {
+        public function camelUser()
+        {
             return $this->belongsTo(User::class, 'user_id');
         }
     };
@@ -635,7 +637,8 @@ it('can store the changes when updating a custom case related model', function (
             ->logOnly(['name', 'text', 'Custom_Case_User.name']);
         }
 
-        public function Custom_Case_User() {
+        public function Custom_Case_User()
+        {
             return $this->belongsTo(User::class, 'user_id');
         }
     };
@@ -833,9 +836,8 @@ it('will store the values when deleting the model with softdeletes', function ()
 
 it('can store the changes of collection casted properties', function () {
     $articleClass = new class() extends Article {
-        protected $casts = ['json' => 'collection'];
-
         use LogsActivity;
+        protected $casts = ['json' => 'collection'];
 
         public function getActivitylogOptions(): LogOptions
         {
@@ -869,9 +871,8 @@ it('can store the changes of collection casted properties', function () {
 
 it('can store the changes of array casted properties', function () {
     $articleClass = new class() extends Article {
-        protected $casts = ['json' => 'array'];
-
         use LogsActivity;
+        protected $casts = ['json' => 'array'];
 
         public function getActivitylogOptions(): LogOptions
         {
@@ -905,9 +906,8 @@ it('can store the changes of array casted properties', function () {
 
 it('can store the changes of json casted properties', function () {
     $articleClass = new class() extends Article {
-        protected $casts = ['json' => 'json'];
-
         use LogsActivity;
+        protected $casts = ['json' => 'json'];
 
         public function getActivitylogOptions(): LogOptions
         {
@@ -1337,11 +1337,13 @@ it('can use overloaded as loggable attributes', function () {
             ->logOnly(['name', 'text', 'description']);
         }
 
-        public function setDescriptionAttribute($value) {
+        public function setDescriptionAttribute($value)
+        {
             $this->attributes['json'] = json_encode(['description' => $value]);
         }
 
-        public function getDescriptionAttribute() {
+        public function getDescriptionAttribute()
+        {
             return Arr::get(json_decode($this->attributes['json'], true), 'description');
         }
     };
@@ -1375,7 +1377,8 @@ it('can use mutated as loggable attributes', function () {
             ->logAll();
         }
 
-        public function setNameAttribute($value) {
+        public function setNameAttribute($value)
+        {
             $this->attributes['name'] = strtoupper($value);
         }
     };
@@ -1436,7 +1439,8 @@ it('can use accessor as loggable attributes', function () {
             ->logAll();
         }
 
-        public function getNameAttribute($value) {
+        public function getNameAttribute($value)
+        {
             return strtoupper($value);
         }
     };
@@ -1498,7 +1502,8 @@ it('can use encrypted as loggable attributes', function () {
             ->logOnly(['name', 'text']);
         }
 
-        public function getAttributeValue($key) {
+        public function getAttributeValue($key)
+        {
             $value = parent::getAttributeValue($key);
 
             if (in_array($key, $this->encryptable)) {
@@ -1508,7 +1513,8 @@ it('can use encrypted as loggable attributes', function () {
             return $value;
         }
 
-        public function setAttribute($key, $value) {
+        public function setAttribute($key, $value)
+        {
             if (in_array($key, $this->encryptable)) {
                 $value = encrypt($value);
             }
@@ -1964,7 +1970,6 @@ it('will access further than level one json attribute', function () {
 
     $this->assertSame($expectedChanges, $changes);
 });
-
 
 function createDirtyArticle(): Article
 {
