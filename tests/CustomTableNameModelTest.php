@@ -8,7 +8,7 @@ uses(TestCase::class);
 it('uses the table name from the configuration', function () {
     $model = new Activity();
 
-    $this->assertEquals($model->getTable(), config('activitylog.table_name'));
+    expect(config('activitylog.table_name'))->toEqual($model->getTable());
 });
 
 it('uses a custom table name', function () {
@@ -18,12 +18,12 @@ it('uses a custom table name', function () {
     $model->setTable($newTableName);
 
     $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
-    $this->assertEquals($model->getTable(), $newTableName);
+    expect($newTableName)->toEqual($model->getTable());
 });
 
 it('uses the table name from the model', function () {
     $model = new CustomTableNameOnActivityModel();
 
     $this->assertNotEquals($model->getTable(), config('activitylog.table_name'));
-    $this->assertEquals($model->getTable(), 'custom_table_name');
+    expect('custom_table_name')->toEqual($model->getTable());
 });

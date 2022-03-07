@@ -10,9 +10,9 @@ it('generates uuid after start and end batch properely', function () {
     $uuid = LogBatch::getUuid();
     LogBatch::endBatch();
 
-    $this->assertFalse(LogBatch::isopen());
+    expect(LogBatch::isopen())->toBeFalse();
 
-    $this->assertIsString($uuid);
+    expect($uuid)->toBeString();
 });
 
 it('returns null uuid after end batch properely', function () {
@@ -20,9 +20,9 @@ it('returns null uuid after end batch properely', function () {
     $uuid = LogBatch::getUuid();
     LogBatch::endBatch();
 
-    $this->assertFalse(LogBatch::isopen());
+    expect(LogBatch::isopen())->toBeFalse();
     $this->assertNotNull($uuid);
-    $this->assertNull(LogBatch::getUuid());
+    expect(LogBatch::getUuid())->toBeNull();
 });
 
 it('generates a new uuid after starting new batch properly', function () {
@@ -36,7 +36,7 @@ it('generates a new uuid after starting new batch properly', function () {
     $secondBatchUuid = LogBatch::getUuid();
     LogBatch::endBatch();
 
-    $this->assertTrue(LogBatch::isopen());
+    expect(LogBatch::isopen())->toBeTrue();
     $this->assertNotNull($firstBatchUuid);
     $this->assertNotNull($secondBatchUuid);
 
@@ -54,9 +54,9 @@ it('will not generate new uuid if start already started batch', function () {
 
     LogBatch::endBatch();
 
-    $this->assertTrue(LogBatch::isopen());
+    expect(LogBatch::isopen())->toBeTrue();
 
-    $this->assertEquals($firstUuid, $secondUuid);
+    expect($secondUuid)->toEqual($firstUuid);
 });
 
 it('will not generate uuid if end batch before starting', function () {
@@ -65,33 +65,33 @@ it('will not generate uuid if end batch before starting', function () {
 
     LogBatch::startBatch();
 
-    $this->assertNull($uuid);
+    expect($uuid)->toBeNull();
 });
 
 it('can set uuid and start a batch', function () {
     $uuid = Str::uuid();
 
     LogBatch::setBatch($uuid);
-    $this->assertTrue(LogBatch::isOpen());
-    $this->assertEquals($uuid, LogBatch::getUuid());
+    expect(LogBatch::isOpen())->toBeTrue();
+    expect(LogBatch::getUuid())->toEqual($uuid);
 
     LogBatch::endBatch();
-    $this->assertFalse(LogBatch::isOpen());
+    expect(LogBatch::isOpen())->toBeFalse();
 });
 
 it('can set uuid for already started batch', function () {
     $uuid = Str::uuid();
 
     LogBatch::startBatch();
-    $this->assertTrue(LogBatch::isOpen());
+    expect(LogBatch::isOpen())->toBeTrue();
     $this->assertNotEquals($uuid, LogBatch::getUuid());
 
     LogBatch::setBatch($uuid);
-    $this->assertTrue(LogBatch::isOpen());
-    $this->assertEquals($uuid, LogBatch::getUuid());
+    expect(LogBatch::isOpen())->toBeTrue();
+    expect(LogBatch::getUuid())->toEqual($uuid);
 
     LogBatch::endBatch();
-    $this->assertFalse(LogBatch::isOpen());
+    expect(LogBatch::isOpen())->toBeFalse();
 });
 
 it('will not return null uuid if end batch that started twice', function () {
@@ -107,7 +107,7 @@ it('will not return null uuid if end batch that started twice', function () {
     $this->assertNotNull($firstUuid);
     $this->assertNotNull($notNullUuid);
 
-    $this->assertSame($firstUuid, $notNullUuid);
+    expect($notNullUuid)->toBe($firstUuid);
 });
 
 it('will return null uuid if end batch that started twice properly', function () {
@@ -122,7 +122,7 @@ it('will return null uuid if end batch that started twice properly', function ()
     $nullUuid = LogBatch::getUuid();
 
     $this->assertNotNull($firstUuid);
-    $this->assertNull($nullUuid);
+    expect($nullUuid)->toBeNull();
 
     $this->assertNotSame($firstUuid, $nullUuid);
 });

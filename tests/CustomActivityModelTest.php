@@ -20,9 +20,9 @@ it('can log activity using a custom model', function () {
 
     $activity = activity()->log($this->activityDescription);
 
-    $this->assertEquals($this->activityDescription, $activity->description);
+    expect($activity->description)->toEqual($this->activityDescription);
 
-    $this->assertInstanceOf(Activity::class, $activity);
+    expect($activity)->toBeInstanceOf(Activity::class);
 });
 
 it('does not throw an exception when model config is null', function () {
@@ -61,6 +61,6 @@ it('doesnt conlict with laravel change tracking', function () {
 
     $activity = activity()->withProperties($properties)->log($this->activityDescription);
 
-    $this->assertEquals($properties, $activity->changes()->toArray());
-    $this->assertEquals($properties, $activity->custom_property->toArray());
+    expect($activity->changes()->toArray())->toEqual($properties);
+    expect($activity->custom_property->toArray())->toEqual($properties);
 });

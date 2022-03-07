@@ -19,15 +19,15 @@ it('can clean the activity log', function () {
         ]);
     });
 
-    $this->assertCount(60, Activity::all());
+    expect(Activity::all())->toHaveCount(60);
 
     Artisan::call('activitylog:clean');
 
-    $this->assertCount(31, Activity::all());
+    expect(Activity::all())->toHaveCount(31);
 
     $cutOffDate = Carbon::now()->subDays(31)->format('Y-m-d H:i:s');
 
-    $this->assertCount(0, Activity::where('created_at', '<', $cutOffDate)->get());
+    expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
 });
 
 it('can accept days as option to override config setting', function () {
@@ -38,13 +38,13 @@ it('can accept days as option to override config setting', function () {
         ]);
     });
 
-    $this->assertCount(60, Activity::all());
+    expect(Activity::all())->toHaveCount(60);
 
     Artisan::call('activitylog:clean', ['--days' => 7]);
 
-    $this->assertCount(7, Activity::all());
+    expect(Activity::all())->toHaveCount(7);
 
     $cutOffDate = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
 
-    $this->assertCount(0, Activity::where('created_at', '<', $cutOffDate)->get());
+    expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
 });

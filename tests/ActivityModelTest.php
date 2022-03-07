@@ -17,27 +17,27 @@ beforeEach(function () {
 it('provides a scope to get activities from a specific log', function () {
     $activityInLog3 = Activity::inLog('log3')->get();
 
-    $this->assertCount(1, $activityInLog3);
+    expect($activityInLog3)->toHaveCount(1);
 
-    $this->assertEquals('log3', $activityInLog3->first()->log_name);
+    expect($activityInLog3->first()->log_name)->toEqual('log3');
 });
 
 it('provides a scope to get log items from multiple logs', function () {
     $activity = Activity::inLog('log2', 'log4')->get();
 
-    $this->assertCount(2, $activity);
+    expect($activity)->toHaveCount(2);
 
-    $this->assertEquals('log2', $activity->first()->log_name);
-    $this->assertEquals('log4', $activity->last()->log_name);
+    expect($activity->first()->log_name)->toEqual('log2');
+    expect($activity->last()->log_name)->toEqual('log4');
 });
 
 it('provides a scope to get log items from multiple logs using an array', function () {
     $activity = Activity::inLog(['log1', 'log2'])->get();
 
-    $this->assertCount(2, $activity);
+    expect($activity)->toHaveCount(2);
 
-    $this->assertEquals('log1', $activity->first()->log_name);
-    $this->assertEquals('log2', $activity->last()->log_name);
+    expect($activity->first()->log_name)->toEqual('log1');
+    expect($activity->last()->log_name)->toEqual('log2');
 });
 
 it('provides a scope to get log items for a specific causer', function () {
@@ -51,10 +51,10 @@ it('provides a scope to get log items for a specific causer', function () {
 
     $activities = Activity::causedBy($causer)->get();
 
-    $this->assertCount(1, $activities);
-    $this->assertEquals($causer->getKey(), $activities->first()->causer_id);
-    $this->assertEquals(get_class($causer), $activities->first()->causer_type);
-    $this->assertEquals('Foo', $activities->first()->description);
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->causer_id)->toEqual($causer->getKey());
+    expect($activities->first()->causer_type)->toEqual(get_class($causer));
+    expect($activities->first()->description)->toEqual('Foo');
 });
 
 it('provides a scope to get log items for a specific event', function () {
@@ -64,8 +64,8 @@ it('provides a scope to get log items for a specific event', function () {
         ->event('create')
         ->log('Foo');
     $activities = Activity::forEvent('create')->get();
-    $this->assertCount(1, $activities);
-    $this->assertEquals('create', $activities->first()->event);
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->event)->toEqual('create');
 });
 
 it('provides a scope to get log items for a specific subject', function () {
@@ -79,10 +79,10 @@ it('provides a scope to get log items for a specific subject', function () {
 
     $activities = Activity::forSubject($subject)->get();
 
-    $this->assertCount(1, $activities);
-    $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
-    $this->assertEquals(get_class($subject), $activities->first()->subject_type);
-    $this->assertEquals('Foo', $activities->first()->description);
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->subject_id)->toEqual($subject->getKey());
+    expect($activities->first()->subject_type)->toEqual(get_class($subject));
+    expect($activities->first()->description)->toEqual('Foo');
 });
 
 it('provides a scope to get log items for a specific morphmapped causer', function () {
@@ -101,10 +101,10 @@ it('provides a scope to get log items for a specific morphmapped causer', functi
 
     $activities = Activity::causedBy($causer)->get();
 
-    $this->assertCount(1, $activities);
-    $this->assertEquals($causer->getKey(), $activities->first()->causer_id);
-    $this->assertEquals('users', $activities->first()->causer_type);
-    $this->assertEquals('Foo', $activities->first()->description);
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->causer_id)->toEqual($causer->getKey());
+    expect($activities->first()->causer_type)->toEqual('users');
+    expect($activities->first()->description)->toEqual('Foo');
 
     Relation::morphMap([], false);
 });
@@ -125,10 +125,10 @@ it('provides a scope to get log items for a specific morphmapped subject', funct
 
     $activities = Activity::forSubject($subject)->get();
 
-    $this->assertCount(1, $activities);
-    $this->assertEquals($subject->getKey(), $activities->first()->subject_id);
-    $this->assertEquals('articles', $activities->first()->subject_type);
-    $this->assertEquals('Foo', $activities->first()->description);
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->subject_id)->toEqual($subject->getKey());
+    expect($activities->first()->subject_type)->toEqual('articles');
+    expect($activities->first()->description)->toEqual('Foo');
 
     Relation::morphMap([], false);
 });

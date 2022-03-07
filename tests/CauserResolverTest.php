@@ -13,8 +13,8 @@ it('can resolve current logged in user', function () {
 
     $causer = CauserResolver::resolve();
 
-    $this->assertInstanceOf(User::class, $causer);
-    $this->assertEquals($user->id, $causer->id);
+    expect($causer)->toBeInstanceOf(User::class);
+    expect($causer->id)->toEqual($user->id);
 });
 
 it('will throw an exception if it cannot resolve user by id', function () {
@@ -26,8 +26,8 @@ it('will throw an exception if it cannot resolve user by id', function () {
 it('can resloved user from passed id', function () {
     $causer = CauserResolver::resolve(1);
 
-    $this->assertInstanceOf(User::class, $causer);
-    $this->assertEquals(1, $causer->id);
+    expect($causer)->toBeInstanceOf(User::class);
+    expect($causer->id)->toEqual(1);
 });
 
 it('will resolve the provided override callback', function () {
@@ -35,13 +35,13 @@ it('will resolve the provided override callback', function () {
 
     $causer = CauserResolver::resolve();
 
-    $this->assertInstanceOf(Article::class, $causer);
-    $this->assertEquals(1, $causer->id);
+    expect($causer)->toBeInstanceOf(Article::class);
+    expect($causer->id)->toEqual(1);
 });
 
 it('will resolve any model', function () {
     $causer = CauserResolver::resolve($article = Article::first());
 
-    $this->assertInstanceOf(Article::class, $causer);
-    $this->assertEquals($article->id, $causer->id);
+    expect($causer)->toBeInstanceOf(Article::class);
+    expect($causer->id)->toEqual($article->id);
 });
