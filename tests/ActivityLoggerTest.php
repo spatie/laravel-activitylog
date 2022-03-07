@@ -17,7 +17,7 @@ beforeEach(function () {
 it('can log an activity', function () {
     activity()->log($this->activityDescription);
 
-    $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
 });
 
 it('will not log an activity when the log is not enabled', function () {
@@ -25,7 +25,7 @@ it('will not log an activity when the log is not enabled', function () {
 
     activity()->log($this->activityDescription);
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 });
 
 it('will log an activity when enabled option is null', function () {
@@ -33,23 +33,23 @@ it('will log an activity when enabled option is null', function () {
 
     activity()->log($this->activityDescription);
 
-    $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
 });
 
 it('will log to the default log by default', function () {
     activity()->log($this->activityDescription);
 
-    $this->assertEquals(config('activitylog.default_log_name'), $this->getLastActivity()->log_name);
+    expect($this->getLastActivity()->log_name)->toEqual(config('activitylog.default_log_name'));
 });
 
 it('can log an activity to a specific log', function () {
     $customLogName = 'secondLog';
 
     activity($customLogName)->log($this->activityDescription);
-    $this->assertEquals($customLogName, $this->getLastActivity()->log_name);
+    expect($this->getLastActivity()->log_name)->toEqual($customLogName);
 
     activity()->useLog($customLogName)->log($this->activityDescription);
-    $this->assertEquals($customLogName, $this->getLastActivity()->log_name);
+    expect($this->getLastActivity()->log_name)->toEqual($customLogName);
 });
 
 it('can log an activity with a subject', function () {
@@ -61,8 +61,8 @@ it('can log an activity with a subject', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertEquals($subject->id, $firstActivity->subject->id);
-    $this->assertInstanceOf(Article::class, $firstActivity->subject);
+    expect($firstActivity->subject->id)->toEqual($subject->id);
+    expect($firstActivity->subject)->toBeInstanceOf(Article::class);
 });
 
 it('can log an activity with a causer', function () {
@@ -74,8 +74,8 @@ it('can log an activity with a causer', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertEquals($user->id, $firstActivity->causer->id);
-    $this->assertInstanceOf(User::class, $firstActivity->causer);
+    expect($firstActivity->causer->id)->toEqual($user->id);
+    expect($firstActivity->causer)->toBeInstanceOf(User::class);
 });
 
 it('can log an activity with a causer other than user model', function () {
@@ -87,8 +87,8 @@ it('can log an activity with a causer other than user model', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertEquals($article->id, $firstActivity->causer->id);
-    $this->assertInstanceOf(Article::class, $firstActivity->causer);
+    expect($firstActivity->causer->id)->toEqual($article->id);
+    expect($firstActivity->causer)->toBeInstanceOf(Article::class);
 });
 
 it('can log an activity with a causer that has been set from other context', function () {
@@ -102,8 +102,8 @@ it('can log an activity with a causer that has been set from other context', fun
 
     $firstActivity = Activity::first();
 
-    $this->assertEquals($article->id, $firstActivity->causer->id);
-    $this->assertInstanceOf(Article::class, $firstActivity->causer);
+    expect($firstActivity->causer->id)->toEqual($article->id);
+    expect($firstActivity->causer)->toBeInstanceOf(Article::class);
 });
 
 it('can log an activity with a causer when there is no web guard', function () {
@@ -119,8 +119,8 @@ it('can log an activity with a causer when there is no web guard', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertEquals($user->id, $firstActivity->causer->id);
-    $this->assertInstanceOf(User::class, $firstActivity->causer);
+    expect($firstActivity->causer->id)->toEqual($user->id);
+    expect($firstActivity->causer)->toBeInstanceOf(User::class);
 });
 
 it('can log activity with properties', function () {
@@ -136,8 +136,8 @@ it('can log activity with properties', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertInstanceOf(Collection::class, $firstActivity->properties);
-    $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
+    expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
+    expect($firstActivity->getExtraProperty('property.subProperty'))->toEqual('value');
 });
 
 it('can log activity with a single properties', function () {
@@ -147,8 +147,8 @@ it('can log activity with a single properties', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertInstanceOf(Collection::class, $firstActivity->properties);
-    $this->assertEquals('value', $firstActivity->getExtraProperty('key'));
+    expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
+    expect($firstActivity->getExtraProperty('key'))->toEqual('value');
 });
 
 it('can translate a given causer id to an object', function () {
@@ -160,8 +160,8 @@ it('can translate a given causer id to an object', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertInstanceOf(User::class, $firstActivity->causer);
-    $this->assertEquals($userId, $firstActivity->causer->id);
+    expect($firstActivity->causer)->toBeInstanceOf(User::class);
+    expect($firstActivity->causer->id)->toEqual($userId);
 });
 
 it('will throw an exception if it cannot translate a causer id', function () {
@@ -177,8 +177,8 @@ it('will use the logged in user as the causer by default', function () {
 
     activity()->log('hello poetsvrouwman');
 
-    $this->assertInstanceOf(User::class, $this->getLastActivity()->causer);
-    $this->assertEquals($userId, $this->getLastActivity()->causer->id);
+    expect($this->getLastActivity()->causer)->toBeInstanceOf(User::class);
+    expect($this->getLastActivity()->causer->id)->toEqual($userId);
 });
 
 it('can log activity using an anonymous causer', function () {
@@ -186,8 +186,8 @@ it('can log activity using an anonymous causer', function () {
         ->causedByAnonymous()
         ->log('hello poetsvrouwman');
 
-    $this->assertNull($this->getLastActivity()->causer_id);
-    $this->assertNull($this->getLastActivity()->causer_type);
+    expect($this->getLastActivity()->causer_id)->toBeNull();
+    expect($this->getLastActivity()->causer_type)->toBeNull();
 });
 
 it('will override the logged in user as the causer when an anonymous causer is specified', function () {
@@ -199,8 +199,8 @@ it('will override the logged in user as the causer when an anonymous causer is s
         ->byAnonymous()
         ->log('hello poetsvrouwman');
 
-    $this->assertNull($this->getLastActivity()->causer_id);
-    $this->assertNull($this->getLastActivity()->causer_type);
+    expect($this->getLastActivity()->causer_id)->toBeNull();
+    expect($this->getLastActivity()->causer_type)->toBeNull();
 });
 
 it('can replace the placeholders', function () {
@@ -216,7 +216,7 @@ it('can replace the placeholders', function () {
 
     $expectedDescription = 'Subject name is article name, causer name is user name and property key is value and sub key subvalue';
 
-    $this->assertEquals($expectedDescription, $this->getLastActivity()->description);
+    expect($this->getLastActivity()->description)->toEqual($expectedDescription);
 });
 
 it('can log an activity with event', function () {
@@ -226,7 +226,7 @@ it('can log an activity with event', function () {
         ->event('create')
         ->log('test event');
 
-    $this->assertEquals('create', $this->getLastActivity()->event);
+    expect($this->getLastActivity()->event)->toEqual('create');
 });
 
 it('will not replace non placeholders', function () {
@@ -234,7 +234,7 @@ it('will not replace non placeholders', function () {
 
     activity()->log($description);
 
-    $this->assertEquals($description, $this->getLastActivity()->description);
+    expect($this->getLastActivity()->description)->toEqual($description);
 });
 
 it('returns an instance of the activity log after logging when using a custom model', function () {
@@ -247,7 +247,7 @@ it('returns an instance of the activity log after logging when using a custom mo
 
     $activityModel = activity()->log('test');
 
-    $this->assertInstanceOf($activityClassName, $activityModel);
+    expect($activityModel)->toBeInstanceOf($activityClassName);
 });
 
 it('will not log an activity when the log is manually disabled', function () {
@@ -255,7 +255,7 @@ it('will not log an activity when the log is manually disabled', function () {
 
     activity()->log($this->activityDescription);
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 });
 
 it('will log an activity when the log is manually enabled', function () {
@@ -265,7 +265,7 @@ it('will log an activity when the log is manually enabled', function () {
 
     activity()->log($this->activityDescription);
 
-    $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
 });
 
 it('accepts null parameter for caused by', function () {
@@ -290,9 +290,9 @@ it('can log activity when attributes are changed with tap', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertInstanceOf(Collection::class, $firstActivity->properties);
-    $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
-    $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
+    expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
+    expect($firstActivity->getExtraProperty('property.subProperty'))->toEqual('value');
+    expect($firstActivity->created_at->format('Y-m-d H:i:s'))->toEqual(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'));
 });
 
 it('will log a custom created at date time', function () {
@@ -304,7 +304,7 @@ it('will log a custom created at date time', function () {
 
     $firstActivity = Activity::first();
 
-    $this->assertEquals($activityDateTime->toAtomString(), $firstActivity->created_at->toAtomString());
+    expect($firstActivity->created_at->toAtomString())->toEqual($activityDateTime->toAtomString());
 });
 
 it('will disable logs for a callback', function () {
@@ -314,8 +314,8 @@ it('will disable logs for a callback', function () {
         return 'hello';
     });
 
-    $this->assertNull($this->getLastActivity());
-    $this->assertEquals('hello', $result);
+    expect($this->getLastActivity())->toBeNull();
+    expect($result)->toEqual('hello');
 });
 
 it('will disable logs for a callback without affecting previous state', function () {
@@ -323,11 +323,11 @@ it('will disable logs for a callback without affecting previous state', function
         activity()->log('created');
     });
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 
     activity()->log('outer');
 
-    $this->assertEquals('outer', $this->getLastActivity()->description);
+    expect($this->getLastActivity()->description)->toEqual('outer');
 });
 
 it('will disable logs for a callback without affecting previous state even when already disabled', function () {
@@ -337,11 +337,11 @@ it('will disable logs for a callback without affecting previous state even when 
         activity()->log('created');
     });
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 
     activity()->log('outer');
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 });
 
 it('will disable logs for a callback without affecting previous state even with exception', function () {
@@ -357,11 +357,11 @@ it('will disable logs for a callback without affecting previous state even with 
         //
     }
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 
     activity()->log('outer');
 
-    $this->assertNull($this->getLastActivity());
+    expect($this->getLastActivity())->toBeNull();
 });
 
 // Helpers
@@ -369,5 +369,5 @@ function it_returns_an_instance_of_the_activity_after_logging()
 {
     $activityModel = activity()->log('test');
 
-    test()->assertInstanceOf(Activity::class, $activityModel);
+    expect($activityModel)->toBeInstanceOf(Activity::class);
 }

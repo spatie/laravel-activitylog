@@ -8,7 +8,7 @@ uses(TestCase::class);
 it('uses the database connection from the configuration', function () {
     $model = new Activity();
 
-    $this->assertEquals($model->getConnectionName(), config('activitylog.database_connection'));
+    expect(config('activitylog.database_connection'))->toEqual($model->getConnectionName());
 });
 
 it('uses a custom database connection', function () {
@@ -17,7 +17,7 @@ it('uses a custom database connection', function () {
     $model->setConnection('custom_sqlite');
 
     $this->assertNotEquals($model->getConnectionName(), config('activitylog.database_connection'));
-    $this->assertEquals($model->getConnectionName(), 'custom_sqlite');
+    expect('custom_sqlite')->toEqual($model->getConnectionName());
 });
 
 it('uses the default database connection when the one from configuration is null', function () {
@@ -25,12 +25,12 @@ it('uses the default database connection when the one from configuration is null
 
     $model = new Activity();
 
-    $this->assertInstanceOf('Illuminate\Database\SQLiteConnection', $model->getConnection());
+    expect($model->getConnection())->toBeInstanceOf('Illuminate\Database\SQLiteConnection');
 });
 
 it('uses the database connection from model', function () {
     $model = new CustomDatabaseConnectionOnActivityModel();
 
     $this->assertNotEquals($model->getConnectionName(), config('activitylog.database_connection'));
-    $this->assertEquals($model->getConnectionName(), 'custom_connection_name');
+    expect('custom_connection_name')->toEqual($model->getConnectionName());
 });
