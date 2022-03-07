@@ -1,149 +1,128 @@
 <?php
 
-namespace Spatie\Activitylog\Test;
-
 use Spatie\Activitylog\Facades\LogBatch;
 use Illuminate\Support\Str;
 
-class LogBatchTest extends TestCase
-{
-    /** @test */
-    public function it_generates_uuid_after_start_and_end_batch_properely()
-    {
-        LogBatch::startBatch();
-        $uuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+uses(TestCase::class);
 
-        $this->assertFalse(LogBatch::isopen());
+it('generates uuid after start and end batch properely', function () {
+    LogBatch::startBatch();
+    $uuid = LogBatch::getUuid();
+    LogBatch::endBatch();
 
-        $this->assertIsString($uuid);
-    }
+    $this->assertFalse(LogBatch::isopen());
 
-    /** @test */
-    public function it_returns_null_uuid_after_end_batch_properely()
-    {
-        LogBatch::startBatch();
-        $uuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+    $this->assertIsString($uuid);
+});
 
-        $this->assertFalse(LogBatch::isopen());
-        $this->assertNotNull($uuid);
-        $this->assertNull(LogBatch::getUuid());
-    }
+it('returns null uuid after end batch properely', function () {
+    LogBatch::startBatch();
+    $uuid = LogBatch::getUuid();
+    LogBatch::endBatch();
 
-    /** @test */
-    public function it_generates_a_new_uuid_after_starting_new_batch_properly()
-    {
-        LogBatch::startBatch();
-        $firstBatchUuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+    $this->assertFalse(LogBatch::isopen());
+    $this->assertNotNull($uuid);
+    $this->assertNull(LogBatch::getUuid());
+});
 
-        LogBatch::startBatch();
+it('generates a new uuid after starting new batch properly', function () {
+    LogBatch::startBatch();
+    $firstBatchUuid = LogBatch::getUuid();
+    LogBatch::endBatch();
 
-        LogBatch::startBatch();
-        $secondBatchUuid = LogBatch::getUuid();
-        LogBatch::endBatch();
+    LogBatch::startBatch();
 
-        $this->assertTrue(LogBatch::isopen());
-        $this->assertNotNull($firstBatchUuid);
-        $this->assertNotNull($secondBatchUuid);
+    LogBatch::startBatch();
+    $secondBatchUuid = LogBatch::getUuid();
+    LogBatch::endBatch();
 
-        $this->assertNotEquals($firstBatchUuid, $secondBatchUuid);
-    }
+    $this->assertTrue(LogBatch::isopen());
+    $this->assertNotNull($firstBatchUuid);
+    $this->assertNotNull($secondBatchUuid);
 
-    /** @test */
-    public function it_will_not_generate_new_uuid_if_start_already_started_batch()
-    {
-        LogBatch::startBatch();
+    $this->assertNotEquals($firstBatchUuid, $secondBatchUuid);
+});
 
-        $firstUuid = LogBatch::getUuid();
+it('will not generate new uuid if start already started batch', function () {
+    LogBatch::startBatch();
 
-        LogBatch::startBatch();
+    $firstUuid = LogBatch::getUuid();
 
-        $secondUuid = LogBatch::getUuid();
+    LogBatch::startBatch();
 
-        LogBatch::endBatch();
+    $secondUuid = LogBatch::getUuid();
 
-        $this->assertTrue(LogBatch::isopen());
+    LogBatch::endBatch();
 
-        $this->assertEquals($firstUuid, $secondUuid);
-    }
+    $this->assertTrue(LogBatch::isopen());
 
-    /** @test */
-    public function it_will_not_generate_uuid_if_end_batch_before_starting()
-    {
-        LogBatch::endBatch();
-        $uuid = LogBatch::getUuid();
+    $this->assertEquals($firstUuid, $secondUuid);
+});
 
-        LogBatch::startBatch();
+it('will not generate uuid if end batch before starting', function () {
+    LogBatch::endBatch();
+    $uuid = LogBatch::getUuid();
 
-        $this->assertNull($uuid);
-    }
+    LogBatch::startBatch();
 
-    /** @test */
-    public function it_can_set_uuid_and_start_a_batch()
-    {
-        $uuid = Str::uuid();
+    $this->assertNull($uuid);
+});
 
-        LogBatch::setBatch($uuid);
-        $this->assertTrue(LogBatch::isOpen());
-        $this->assertEquals($uuid, LogBatch::getUuid());
+it('can set uuid and start a batch', function () {
+    $uuid = Str::uuid();
 
-        LogBatch::endBatch();
-        $this->assertFalse(LogBatch::isOpen());
-    }
+    LogBatch::setBatch($uuid);
+    $this->assertTrue(LogBatch::isOpen());
+    $this->assertEquals($uuid, LogBatch::getUuid());
 
-    /** @test */
-    public function it_can_set_uuid_for_already_started_batch()
-    {
-        $uuid = Str::uuid();
+    LogBatch::endBatch();
+    $this->assertFalse(LogBatch::isOpen());
+});
 
-        LogBatch::startBatch();
-        $this->assertTrue(LogBatch::isOpen());
-        $this->assertNotEquals($uuid, LogBatch::getUuid());
+it('can set uuid for already started batch', function () {
+    $uuid = Str::uuid();
 
-        LogBatch::setBatch($uuid);
-        $this->assertTrue(LogBatch::isOpen());
-        $this->assertEquals($uuid, LogBatch::getUuid());
+    LogBatch::startBatch();
+    $this->assertTrue(LogBatch::isOpen());
+    $this->assertNotEquals($uuid, LogBatch::getUuid());
 
-        LogBatch::endBatch();
-        $this->assertFalse(LogBatch::isOpen());
-    }
+    LogBatch::setBatch($uuid);
+    $this->assertTrue(LogBatch::isOpen());
+    $this->assertEquals($uuid, LogBatch::getUuid());
 
-    /** @test */
-    public function it_will_not_return_null_uuid_if_end_batch_that_started_twice()
-    {
-        LogBatch::startBatch();
-        $firstUuid = LogBatch::getUuid();
+    LogBatch::endBatch();
+    $this->assertFalse(LogBatch::isOpen());
+});
 
-        LogBatch::startBatch();
+it('will not return null uuid if end batch that started twice', function () {
+    LogBatch::startBatch();
+    $firstUuid = LogBatch::getUuid();
 
-        LogBatch::endBatch();
+    LogBatch::startBatch();
 
-        $notNullUuid = LogBatch::getUuid();
+    LogBatch::endBatch();
 
-        $this->assertNotNull($firstUuid);
-        $this->assertNotNull($notNullUuid);
+    $notNullUuid = LogBatch::getUuid();
 
-        $this->assertSame($firstUuid, $notNullUuid);
-    }
+    $this->assertNotNull($firstUuid);
+    $this->assertNotNull($notNullUuid);
 
-    /** @test */
-    public function it_will_return_null_uuid_if_end_batch_that_started_twice_properly()
-    {
-        LogBatch::startBatch();
-        $firstUuid = LogBatch::getUuid();
+    $this->assertSame($firstUuid, $notNullUuid);
+});
 
-        LogBatch::startBatch();
+it('will return null uuid if end batch that started twice properly', function () {
+    LogBatch::startBatch();
+    $firstUuid = LogBatch::getUuid();
 
-        LogBatch::endBatch();
-        LogBatch::endBatch();
+    LogBatch::startBatch();
 
-        $nullUuid = LogBatch::getUuid();
+    LogBatch::endBatch();
+    LogBatch::endBatch();
 
-        $this->assertNotNull($firstUuid);
-        $this->assertNull($nullUuid);
+    $nullUuid = LogBatch::getUuid();
 
-        $this->assertNotSame($firstUuid, $nullUuid);
-    }
-}
+    $this->assertNotNull($firstUuid);
+    $this->assertNull($nullUuid);
+
+    $this->assertNotSame($firstUuid, $nullUuid);
+});

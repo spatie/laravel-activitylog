@@ -1,60 +1,47 @@
 <?php
 
-namespace Spatie\Activitylog\Test;
-
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
-class CauserResolverTest extends TestCase
-{
-    /** @test */
-    public function it_can_resolve_current_logged_in_user()
-    {
-        Auth::login($user = User::first());
+uses(TestCase::class);
 
-        $causer = CauserResolver::resolve();
+it('can resolve current logged in user', function () {
+    Auth::login($user = User::first());
 
-        $this->assertInstanceOf(User::class, $causer);
-        $this->assertEquals($user->id, $causer->id);
-    }
+    $causer = CauserResolver::resolve();
 
-    /** @test */
-    public function it_will_throw_an_exception_if_it_cannot_resolve_user_by_id()
-    {
-        $this->expectException(CouldNotLogActivity::class);
+    $this->assertInstanceOf(User::class, $causer);
+    $this->assertEquals($user->id, $causer->id);
+});
 
-        CauserResolver::resolve(9999);
-    }
+it('will throw an exception if it cannot resolve user by id', function () {
+    $this->expectException(CouldNotLogActivity::class);
 
-    /** @test */
-    public function it_can_resloved_user_from_passed_id()
-    {
-        $causer = CauserResolver::resolve(1);
+    CauserResolver::resolve(9999);
+});
 
-        $this->assertInstanceOf(User::class, $causer);
-        $this->assertEquals(1, $causer->id);
-    }
+it('can resloved user from passed id', function () {
+    $causer = CauserResolver::resolve(1);
 
-    /** @test */
-    public function it_will_resolve_the_provided_override_callback()
-    {
-        CauserResolver::resolveUsing(fn () => Article::first());
+    $this->assertInstanceOf(User::class, $causer);
+    $this->assertEquals(1, $causer->id);
+});
 
-        $causer = CauserResolver::resolve();
+it('will resolve the provided override callback', function () {
+    CauserResolver::resolveUsing(fn () => Article::first());
 
-        $this->assertInstanceOf(Article::class, $causer);
-        $this->assertEquals(1, $causer->id);
-    }
+    $causer = CauserResolver::resolve();
 
-    /** @test */
-    public function it_will_resolve_any_model()
-    {
-        $causer = CauserResolver::resolve($article = Article::first());
+    $this->assertInstanceOf(Article::class, $causer);
+    $this->assertEquals(1, $causer->id);
+});
 
-        $this->assertInstanceOf(Article::class, $causer);
-        $this->assertEquals($article->id, $causer->id);
-    }
-}
+it('will resolve any model', function () {
+    $causer = CauserResolver::resolve($article = Article::first());
+
+    $this->assertInstanceOf(Article::class, $causer);
+    $this->assertEquals($article->id, $causer->id);
+});
