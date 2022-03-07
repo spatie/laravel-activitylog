@@ -14,8 +14,6 @@ use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-uses(::class);
-
 beforeEach(function () {
     $this->article = new class() extends Article {
         use LogsActivity;
@@ -31,7 +29,7 @@ beforeEach(function () {
 });
 
 it('can store the values when creating a model', function () {
-    createArticle();
+    $this->createArticle();
 
     $expectedChanges = [
         'attributes' => [
@@ -425,7 +423,7 @@ it('can store empty relation when creating a model', function () {
 });
 
 it('can store the changes when updating a model', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->name = 'updated name';
     $article->text = 'updated text';
@@ -774,7 +772,7 @@ it('will store no changes when not logging attributes', function () {
 });
 
 it('will store the values when deleting the model', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->delete();
 
@@ -1967,15 +1965,6 @@ it('will access further than level one json attribute', function () {
     $this->assertSame($expectedChanges, $changes);
 });
 
-// Helpers
-function createArticle(): Article
-{
-    $article = new test()->article();
-    $article->name = 'my name';
-    $article->save();
-
-    return $article;
-}
 
 function createDirtyArticle(): Article
 {

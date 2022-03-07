@@ -5,8 +5,6 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
-uses(TestCase::class);
-
 beforeEach(function () {
     collect(range(1, 5))->each(function (int $index) {
         $logName = "log{$index}";

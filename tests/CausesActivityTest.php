@@ -2,8 +2,6 @@
 
 use Spatie\Activitylog\Test\Models\User;
 
-uses(TestCase::class);
-
 it('can get all activity for the causer', function () {
     $causer = User::first();
 

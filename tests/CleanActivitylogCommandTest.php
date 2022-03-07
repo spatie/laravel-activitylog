@@ -3,8 +3,6 @@
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 
-uses(TestCase::class);
-
 beforeEach(function () {
     Carbon::setTestNow(Carbon::create(2016, 1, 1, 00, 00, 00));
 
