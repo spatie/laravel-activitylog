@@ -293,7 +293,8 @@ it('can log activity when attributes are changed with tap', function () {
             ],
         ];
 
-        public function tapActivity(Activity $activity, string $eventName) {
+        public function tapActivity(Activity $activity, string $eventName)
+        {
             $properties = $this->properties;
             $properties['event'] = $eventName;
             $activity->properties = collect($properties);
@@ -322,7 +323,8 @@ it('can log activity when description is changed with tap', function () {
             return LogOptions::defaults();
         }
 
-        public function tapActivity(Activity $activity, string $eventName) {
+        public function tapActivity(Activity $activity, string $eventName)
+        {
             $activity->description = 'my custom description';
         }
     };
@@ -344,7 +346,8 @@ it('can log activity when event is changed with tap', function () {
             return LogOptions::defaults();
         }
 
-        public function tapActivity(Activity $activity, string $eventName) {
+        public function tapActivity(Activity $activity, string $eventName)
+        {
             $activity->event = 'my custom event';
         }
     };
