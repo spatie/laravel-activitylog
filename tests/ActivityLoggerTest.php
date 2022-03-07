@@ -1,8 +1,6 @@
 <?php
 
-use Auth;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\CauserResolver;

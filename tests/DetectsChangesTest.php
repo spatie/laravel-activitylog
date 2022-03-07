@@ -2,7 +2,6 @@
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Closure;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Contracts\LoggablePipe;

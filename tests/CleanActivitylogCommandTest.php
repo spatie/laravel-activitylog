@@ -1,6 +1,5 @@
 <?php
 
-use Artisan;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 
