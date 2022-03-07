@@ -40,7 +40,7 @@
     "require-dev": {
         "ext-json": "*",
         "orchestra/testbench": "^6.23 || ^7.0",
-        "phpunit/phpunit": "^9.5"
+        "pestphp/pest": "^1.20"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
