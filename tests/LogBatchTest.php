@@ -3,8 +3,6 @@
 use Spatie\Activitylog\Facades\LogBatch;
 use Illuminate\Support\Str;
 
-uses(TestCase::class);
-
 it('generates uuid after start and end batch properely', function () {
     LogBatch::startBatch();
     $uuid = LogBatch::getUuid();

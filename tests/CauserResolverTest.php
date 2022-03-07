@@ -6,8 +6,6 @@ use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
-uses(TestCase::class);
-
 it('can resolve current logged in user', function () {
     Auth::login($user = User::first());
 

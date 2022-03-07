@@ -5,8 +5,6 @@ use Spatie\Activitylog\Test\Models\Activity;
 use Spatie\Activitylog\Test\Models\AnotherInvalidActivity;
 use Spatie\Activitylog\Test\Models\InvalidActivity;
 
-uses(TestCase::class);
-
 beforeEach(function () {
     $this->activityDescription = 'My activity';
     collect(range(1, 5))->each(function (int $index) {

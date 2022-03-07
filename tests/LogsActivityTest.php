@@ -10,8 +10,6 @@ use Spatie\Activitylog\Test\Models\Issue733;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-uses(TestCase::class);
-
 beforeEach(function () {
     $this->article = new class() extends Article {
         use LogsActivity;
@@ -37,7 +35,7 @@ beforeEach(function () {
 });
 
 it('will log the creation of the model', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
     $this->assertCount(1, Activity::all());
 
     $this->assertInstanceOf(get_class($this->article), $this->getLastActivity()->subject);
@@ -84,7 +82,7 @@ it('can skip logging if asked to for update method', function () {
 });
 
 it('will log an update of the model', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->name = 'changed name';
     $article->save();
@@ -128,7 +126,7 @@ it('will log the deletion of a model without softdeletes', function () {
 });
 
 it('will log the deletion of a model with softdeletes', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->delete();
 
@@ -149,7 +147,7 @@ it('will log the deletion of a model with softdeletes', function () {
 });
 
 it('will log the restoring of a model with softdeletes', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->delete();
 
@@ -164,7 +162,7 @@ it('will log the restoring of a model with softdeletes', function () {
 });
 
 it('can fetch all activity for a model', function () {
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->name = 'changed name';
     $article->save();
@@ -177,7 +175,7 @@ it('can fetch all activity for a model', function () {
 it('can fetch soft deleted models', function () {
     app()['config']->set('activitylog.subject_returns_soft_deleted_models', true);
 
-    $article = createArticle();
+    $article = $this->createArticle();
 
     $article->name = 'changed name';
     $article->save();
@@ -266,7 +264,7 @@ it('will not fail if asked to replace from empty attribute', function () {
 });
 
 it('can log activity on subject by same causer', function () {
-    $user = loginWithFakeUser();
+    $user = $this->loginWithFakeUser();
 
     $user->name = 'LogsActivity Name';
     $user->save();
@@ -474,24 +472,3 @@ it('will not log casted attribute of the model if attribute raw values is used',
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
-
-// Helpers
-function loginWithFakeUser()
-{
-    $user = new test()->user();
-
-    $user::find(1);
-
-    test()->be($user);
-
-    return $user;
-}
-
-function createArticle(): Article
-{
-    $article = new test()->article();
-    $article->name = 'my name';
-    $article->save();
-
-    return $article;
-}

@@ -3,8 +3,6 @@
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\CustomDatabaseConnectionOnActivityModel;
 
-uses(TestCase::class);
-
 it('uses the database connection from the configuration', function () {
     $model = new Activity();
 

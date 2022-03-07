@@ -3,8 +3,6 @@
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\CustomTableNameOnActivityModel;
 
-uses(TestCase::class);
-
 it('uses the table name from the configuration', function () {
     $model = new Activity();
 
