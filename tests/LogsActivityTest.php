@@ -487,7 +487,7 @@ it('will only log activity for the environments that has been set', function () 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-                ->environments(['staging']);
+                ->environment('staging');
         }
     };
 

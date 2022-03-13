@@ -25,7 +25,7 @@ class LogOptions
 
     public array $attributeRawValues = [];
 
-    public array $environments = [];
+    public array $environment = [];
 
     public ?Closure $descriptionForEvent = null;
 
@@ -167,9 +167,9 @@ class LogOptions
         return $this;
     }
 
-    public function environments(...$envs): self
+    public function environment(...$envs): self
     {
-        $this->environments = Arr::flatten($envs);
+        $this->environment = Arr::flatten($envs);
 
         return $this;
     }
