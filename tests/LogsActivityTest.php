@@ -475,3 +475,35 @@ it('will not log casted attribute of the model if attribute raw values is used',
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
+
+it('will only log activity for the environments that has been set', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected $casts = [
+            'name' => 'encrypted',
+        ];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+                ->environments(['staging']);
+        }
+    };
+
+    config()->set('app.env', 'staging');
+
+    $article = new $articleClass();
+    $article->name = 'my name';
+    $article->save();
+
+    $this->assertCount(1, Activity::all());
+
+    config()->set('app.env', 'production');
+
+    $article = new $articleClass();
+    $article->name = 'another article name';
+    $article->save();
+
+    $this->assertCount(1, Activity::all());
+});

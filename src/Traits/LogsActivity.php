@@ -163,7 +163,11 @@ trait LogsActivity
     {
         $logStatus = app(ActivityLogStatus::class);
 
-        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
+        if (
+            ! $this->enableLoggingModelsEvents
+            || $logStatus->disabled()
+            || (! empty($this->activitylogOptions->environments) && ! in_array(config('app.env'), $this->activitylogOptions->environments))
+        ) {
             return false;
         }
 

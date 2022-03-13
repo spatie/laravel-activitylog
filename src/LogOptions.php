@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog;
 
 use Closure;
+use Illuminate\Support\Arr;
 
 class LogOptions
 {
@@ -23,6 +24,8 @@ class LogOptions
     public array $dontLogIfAttributesChangedOnly = [];
 
     public array $attributeRawValues = [];
+
+    public array $environments = [];
 
     public ?Closure $descriptionForEvent = null;
 
@@ -160,6 +163,13 @@ class LogOptions
     public function useAttributeRawValues(array $attributes): self
     {
         $this->attributeRawValues = $attributes;
+
+        return $this;
+    }
+
+    public function environments(...$envs): self
+    {
+        $this->environments = Arr::flatten($envs);
 
         return $this;
     }
