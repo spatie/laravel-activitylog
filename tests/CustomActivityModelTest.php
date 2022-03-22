@@ -3,6 +3,7 @@
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Test\Models\Activity;
 use Spatie\Activitylog\Test\Models\AnotherInvalidActivity;
+use Spatie\Activitylog\Test\Models\CustomActivity;
 use Spatie\Activitylog\Test\Models\InvalidActivity;
 
 beforeEach(function () {
@@ -21,6 +22,14 @@ it('can log activity using a custom model', function () {
     expect($activity->description)->toEqual($this->activityDescription);
 
     expect($activity)->toBeInstanceOf(Activity::class);
+});
+
+it('can log activity when setting a custom model', function () {
+    $activity = activity()->setActivity(new CustomActivity())->log($this->activityDescription);
+
+    expect($activity->description)->toEqual($this->activityDescription);
+
+    expect($activity)->toBeInstanceOf(CustomActivity::class);
 });
 
 it('does not throw an exception when model config is null', function () {

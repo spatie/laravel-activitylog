@@ -213,16 +213,24 @@ class ActivityLogger
         }, $description);
     }
 
+    public function setActivity(ActivityContract $activity): static
+    {
+        $this->activity = $activity;
+
+        $this
+            ->useLog($this->defaultLogName)
+            ->withProperties([])
+            ->causedBy($this->causerResolver->resolve());
+
+        $this->activity->batch_uuid = $this->batch->getUuid();
+
+        return $this;
+    }
+
     protected function getActivity(): ActivityContract
     {
         if (! $this->activity instanceof ActivityContract) {
-            $this->activity = ActivitylogServiceProvider::getActivityModelInstance();
-            $this
-                ->useLog($this->defaultLogName)
-                ->withProperties([])
-                ->causedBy($this->causerResolver->resolve());
-
-            $this->activity->batch_uuid = $this->batch->getUuid();
+            $this->setActivity(ActivitylogServiceProvider::getActivityModelInstance());
         }
 
         return $this->activity;
