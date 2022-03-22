@@ -78,12 +78,10 @@ class ActivityLogger
 
     public function causedByAnonymous(): static
     {
-        $this->tap(function (Model $activity) {
+        return $this->tap(function (Model $activity) {
             $activity->causer_id = null;
             $activity->causer_type = null;
         });
-
-        return $this;
     }
 
     public function byAnonymous(): static
