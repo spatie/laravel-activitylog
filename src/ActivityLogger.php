@@ -16,6 +16,8 @@ class ActivityLogger
 {
     use Macroable;
 
+    protected ?string $logName = null;
+
     protected ?string $defaultLogName = null;
 
     protected CauserResolver $causerResolver;
@@ -76,8 +78,10 @@ class ActivityLogger
 
     public function causedByAnonymous(): static
     {
-        $this->activity->causer_id = null;
-        $this->activity->causer_type = null;
+        $this->tap(function (Model $activity) {
+            $activity->causer_id = null;
+            $activity->causer_type = null;
+        });
 
         return $this;
     }
@@ -94,7 +98,7 @@ class ActivityLogger
 
     public function setEvent(string $event): static
     {
-        $this->activity->event = $event;
+        $this->getActivity()->event = $event;
 
         return $this;
     }
@@ -122,7 +126,7 @@ class ActivityLogger
 
     public function useLog(string $logName): static
     {
-        $this->getActivity()->log_name = $logName;
+        $this->logName = $logName;
 
         return $this;
     }
@@ -159,7 +163,9 @@ class ActivityLogger
             return null;
         }
 
-        $activity = $this->activity;
+        $activity = $this->getActivity();
+
+        $activity->log_name = $this->logName ?: $this->defaultLogName;
 
         $activity->description = $this->replacePlaceholders(
             $activity->description ?? $description,
@@ -218,7 +224,6 @@ class ActivityLogger
         $this->activity = $activity;
 
         $this
-            ->useLog($this->defaultLogName)
             ->withProperties([])
             ->causedBy($this->causerResolver->resolve());
 
@@ -230,7 +235,9 @@ class ActivityLogger
     protected function getActivity(): ActivityContract
     {
         if (! $this->activity instanceof ActivityContract) {
-            $this->setActivity(ActivitylogServiceProvider::getActivityModelInstance());
+            $this->setActivity(
+                ActivitylogServiceProvider::getActivityModelInstance()
+            );
         }
 
         return $this->activity;
