@@ -160,7 +160,6 @@ class ActivityLogger
         if ($this->logStatus->disabled()) {
             return null;
         }
-        
 
         $activity = $this->getActivity();
 
