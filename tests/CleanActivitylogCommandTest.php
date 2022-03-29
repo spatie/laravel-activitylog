@@ -1,61 +1,48 @@
 <?php
 
-namespace Spatie\Activitylog\Test;
-
-use Artisan;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 
-class CleanActivitylogCommandTest extends TestCase
-{
-    public function setUp(): void
-    {
-        parent::setUp();
+beforeEach(function () {
+    Carbon::setTestNow(Carbon::create(2016, 1, 1, 00, 00, 00));
 
-        Carbon::setTestNow(Carbon::create(2016, 1, 1, 00, 00, 00));
+    app()['config']->set('activitylog.delete_records_older_than_days', 31);
+});
 
-        $this->app['config']->set('activitylog.delete_records_older_than_days', 31);
-    }
+it('can clean the activity log', function () {
+    collect(range(1, 60))->each(function (int $index) {
+        Activity::create([
+            'description' => "item {$index}",
+            'created_at' => Carbon::now()->subDays($index)->startOfDay(),
+        ]);
+    });
 
-    /** @test */
-    public function it_can_clean_the_activity_log()
-    {
-        collect(range(1, 60))->each(function (int $index) {
-            Activity::create([
-                'description' => "item {$index}",
-                'created_at' => Carbon::now()->subDays($index)->startOfDay(),
-            ]);
-        });
+    expect(Activity::all())->toHaveCount(60);
 
-        $this->assertCount(60, Activity::all());
+    Artisan::call('activitylog:clean');
 
-        Artisan::call('activitylog:clean');
+    expect(Activity::all())->toHaveCount(31);
 
-        $this->assertCount(31, Activity::all());
+    $cutOffDate = Carbon::now()->subDays(31)->format('Y-m-d H:i:s');
 
-        $cutOffDate = Carbon::now()->subDays(31)->format('Y-m-d H:i:s');
+    expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
+});
 
-        $this->assertCount(0, Activity::where('created_at', '<', $cutOffDate)->get());
-    }
+it('can accept days as option to override config setting', function () {
+    collect(range(1, 60))->each(function (int $index) {
+        Activity::create([
+            'description' => "item {$index}",
+            'created_at' => Carbon::now()->subDays($index)->startOfDay(),
+        ]);
+    });
 
-    /** @test */
-    public function it_can_accept_days_as_option_to_override_config_setting()
-    {
-        collect(range(1, 60))->each(function (int $index) {
-            Activity::create([
-                'description' => "item {$index}",
-                'created_at' => Carbon::now()->subDays($index)->startOfDay(),
-            ]);
-        });
+    expect(Activity::all())->toHaveCount(60);
 
-        $this->assertCount(60, Activity::all());
+    Artisan::call('activitylog:clean', ['--days' => 7]);
 
-        Artisan::call('activitylog:clean', ['--days' => 7]);
+    expect(Activity::all())->toHaveCount(7);
 
-        $this->assertCount(7, Activity::all());
+    $cutOffDate = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
 
-        $cutOffDate = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
-
-        $this->assertCount(0, Activity::where('created_at', '<', $cutOffDate)->get());
-    }
-}
+    expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
+});

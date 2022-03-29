@@ -1,3 +1,6 @@
+
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
+
 <p align="center"><img src="/art/socialcard.png" alt="Social Card of Laravel Activity Log"></p>
 
 # Log activity inside your Laravel app
@@ -23,6 +26,7 @@ Activity::all();
 ```
 
 Here's a more advanced example:
+
 ```php
 activity()
    ->performedOn($anEloquentModel)
@@ -38,8 +42,7 @@ $lastLoggedActivity->getExtraProperty('customProperty'); //returns 'customValue'
 $lastLoggedActivity->description; //returns 'Look, I logged something'
 ```
 
-
-Here's an example on [event logging](https://docs.spatie.be/laravel-activitylog/v4/advanced-usage/logging-model-events).
+Here's an example on [event logging](https://spatie.be/docs/laravel-activitylog/advanced-usage/logging-model-events).
 
 ```php
 $newsItem->name = 'updated name';
@@ -77,7 +80,7 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Documentation
 
-You'll find the documentation on [https://docs.spatie.be/laravel-activitylog](https://docs.spatie.be/laravel-activitylog).
+You'll find the documentation on [https://spatie.be/docs/laravel-activitylog/introduction](https://spatie.be/docs/laravel-activitylog/introduction).
 
 Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the activity log? Feel free to [create an issue on GitHub](https://github.com/spatie/laravel-activitylog/issues), we'll try to address it as soon as possible.
 
@@ -85,18 +88,19 @@ Find yourself stuck using the package? Found a bug? Do you have general question
 
 You can install the package via composer:
 
-``` bash
+```bash
 composer require spatie/laravel-activitylog
 ```
 
 The package will automatically register itself.
 
 You can publish the migration with:
+
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
 ```
 
-*Note*: The default migration assumes you are using integers for your model IDs. If you are using UUIDs, or some other format, adjust the format of the subject_id and causer_id fields in the published migration before continuing.
+_Note_: The default migration assumes you are using integers for your model IDs. If you are using UUIDs, or some other format, adjust the format of the subject_id and causer_id fields in the published migration before continuing.
 
 After publishing the migration you can create the `activity_log` table by running the migrations:
 
@@ -105,6 +109,7 @@ php artisan migrate
 ```
 
 You can optionally publish the config file with:
+
 ```bash
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-config"
 ```
@@ -119,24 +124,24 @@ Please see [UPGRADING](UPGRADING.md) for details.
 
 ## Testing
 
-``` bash
+```bash
 composer test
 ```
 
 ## Contributing
 
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+If you've found a bug regarding security please mail [security@spatie.be](mailto:security@spatie.be) instead of using the issue tracker.
 
 ## Credits
 
-- [Freek Van der Herten](https://github.com/freekmurze)
-- [Sebastian De Deyne](https://github.com/sebastiandedeyne)
-- [Tom Witkowski](https://github.com/Gummibeer)
-- [All Contributors](../../contributors)
+-   [Freek Van der Herten](https://github.com/freekmurze)
+-   [Sebastian De Deyne](https://github.com/sebastiandedeyne)
+-   [Tom Witkowski](https://github.com/Gummibeer)
+-   [All Contributors](../../contributors)
 
 And a special thanks to [Caneco](https://twitter.com/caneco) for the logo and [Ahmed Nagi](https://github.com/nagi1) for all the work he put in `v4`.
 
