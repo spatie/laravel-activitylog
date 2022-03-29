@@ -42,6 +42,17 @@ class ActivityLoggerTest extends TestCase
         $this->assertNull($this->getLastActivity());
     }
 
+ 
+    /** @test */
+    public function it_will_log_activity_with_a_null_log_name()
+    {
+        config(['activitylog.default_log_name' => null]);
+
+        activity()->log($this->activityDescription);
+
+        $this->assertEquals($this->activityDescription, $this->getLastActivity()->description);
+    }
+
     /** @test */
     public function it_will_log_an_activity_when_enabled_option_is_null()
     {
