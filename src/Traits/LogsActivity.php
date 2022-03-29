@@ -24,7 +24,7 @@ trait LogsActivity
 
     protected array $oldAttributes = [];
 
-    protected ?LogOptions $activitylogOptions;
+    protected LogOptions $activitylogOptions;
 
     public bool $enableLoggingModelsEvents = true;
 
@@ -86,9 +86,6 @@ trait LogsActivity
                 }
 
                 $logger->log($description);
-
-                // Reset log options so the model can be serialized.
-                $model->activitylogOptions = null;
             });
         });
     }
