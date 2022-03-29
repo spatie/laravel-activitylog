@@ -42,7 +42,6 @@ class ActivityLoggerTest extends TestCase
         $this->assertNull($this->getLastActivity());
     }
 
- 
     /** @test */
     public function it_will_log_activity_with_a_null_log_name()
     {
