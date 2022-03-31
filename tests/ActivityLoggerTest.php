@@ -29,9 +29,9 @@ it('will not log an activity when the log is not enabled', function () {
 it('will log activity with a null log name', function () {
     config(['activitylog.default_log_name' => null]);
 
-    activity()->log($this->activityDescription);
+    activity(null)->log($this->activityDescription);
 
-    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
+    expect($this->getLastActivity()->log_name)->toBeNull();
 });
 
 it('will log an activity when enabled option is null', function () {
