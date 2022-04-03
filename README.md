@@ -13,6 +13,21 @@
 The `spatie/laravel-activitylog` package provides easy to use functions to log the activities of the users of your app. It can also automatically log model events.
 The Package stores all activity in the `activity_log` table.
 
+## Table of contents
+- [Usage](#usage)
+- [Support us](#support-us)
+- [Documentation](#documentation)
+- [Installation](#installation)
+- [Changelog](#changelog)
+- [Upgrading](#upgrading)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Credits](#credits)
+- [License](#license)
+
+## Usage
+
 Here's a demo of how you can use it:
 
 ```php
