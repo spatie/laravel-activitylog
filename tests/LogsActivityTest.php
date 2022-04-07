@@ -105,8 +105,7 @@ it('it will log the replication of a model with softdeletes', function () {
 
     $this->assertCount(2, $activityItems);
 
-    $this->assertTrue($activityItems->every(fn (Activity $item) =>
-        $item->event === 'created' &&
+    $this->assertTrue($activityItems->every(fn (Activity $item) => $item->event === 'created' &&
         $item->description === 'created' &&
         get_class($this->article) === $item->subject_type));
 

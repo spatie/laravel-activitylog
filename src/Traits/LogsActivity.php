@@ -184,7 +184,7 @@ trait LogsActivity
     }
 
     /**
-     * Determines if the model is restoring
+     * Determines if the model is restoring.
      **/
     protected function isRestoring(): bool
     {
