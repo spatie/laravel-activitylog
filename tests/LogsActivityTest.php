@@ -95,6 +95,24 @@ it('will log an update of the model', function () {
     $this->assertEquals('updated', $this->getLastActivity()->event);
 });
 
+it('it will log the replication of a model with softdeletes', function () {
+    $article = $this->createArticle();
+
+    $replicatedArticle = $this->article::find($article->id)->replicate();
+    $replicatedArticle->save();
+
+    $activityItems = Activity::all();
+
+    $this->assertCount(2, $activityItems);
+
+    $this->assertTrue($activityItems->every(fn (Activity $item) =>
+        $item->event === 'created' &&
+        $item->description === 'created' &&
+        get_class($this->article) === $item->subject_type));
+
+    $this->assertEquals($replicatedArticle->id, $this->getLastActivity()->subject_id);
+});
+
 it('will log the deletion of a model without softdeletes', function () {
     $articleClass = new class() extends Article {
         use LogsActivity;
