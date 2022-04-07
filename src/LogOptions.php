@@ -137,7 +137,7 @@ class LogOptions
     /**
      * Customize log name.
      */
-    public function useLogName(string $logName): self
+    public function useLogName(?string $logName): self
     {
         $this->logName = $logName;
 

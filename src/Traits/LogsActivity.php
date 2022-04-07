@@ -131,7 +131,7 @@ trait LogsActivity
         return $eventName;
     }
 
-    public function getLogNameToUse(): string
+    public function getLogNameToUse(): ?string
     {
         if (! empty($this->activitylogOptions->logName)) {
             return $this->activitylogOptions->logName;

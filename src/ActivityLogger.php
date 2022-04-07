@@ -120,14 +120,14 @@ class ActivityLogger
         return $this;
     }
 
-    public function useLog(string $logName): static
+    public function useLog(?string $logName): static
     {
         $this->getActivity()->log_name = $logName;
 
         return $this;
     }
 
-    public function inLog(string $logName): static
+    public function inLog(?string $logName): static
     {
         return $this->useLog($logName);
     }
