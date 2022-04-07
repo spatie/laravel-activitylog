@@ -95,7 +95,7 @@ it('will log an update of the model', function () {
     $this->assertEquals('updated', $this->getLastActivity()->event);
 });
 
-it('will log the restoring of a model with softdeletes', function () {
+it('it will log the replication of a model with softdeletes', function () {
     $article = $this->createArticle();
 
     $replicatedArticle = $this->article::find($article->id)->replicate();
