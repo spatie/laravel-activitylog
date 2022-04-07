@@ -2,6 +2,18 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.5.0 - 2022-04-07
+
+## What's Changed
+
+- Add `Conditionable` trait to `ActivityLogger` by @usernotnull in https://github.com/spatie/laravel-activitylog/pull/997
+
+## New Contributors
+
+- @usernotnull made their first contribution in https://github.com/spatie/laravel-activitylog/pull/997
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.4.3...4.5.0
+
 ## 4.4.3 - 2022-04-07
 
 ## What's Changed
@@ -62,6 +74,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
