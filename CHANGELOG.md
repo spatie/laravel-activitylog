@@ -2,6 +2,23 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.4.3 - 2022-04-07
+
+## What's Changed
+
+- Fix model serialization when using `LogsActivity` with `setDescriptionForEvent()` by @stevebauman in https://github.com/spatie/laravel-activitylog/pull/977
+- Fix activirt logging on model restore (#895) by @kryptamine in https://github.com/spatie/laravel-activitylog/pull/1000
+- Fix nullable log names by @stevebauman in https://github.com/spatie/laravel-activitylog/pull/1029
+- Fix `tapActivity` when manually creating activity logs by @FrancisMawn in https://github.com/spatie/laravel-activitylog/pull/1031
+
+## New Contributors
+
+- @stevebauman made their first contribution in https://github.com/spatie/laravel-activitylog/pull/977
+- @kryptamine made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1000
+- @FrancisMawn made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1031
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.4.2...4.4.3
+
 ## 4.4.2 - 2022-03-07
 
 - [#1018](https://github.com/spatie/laravel-activitylog/pull/1018)
@@ -45,6 +62,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
