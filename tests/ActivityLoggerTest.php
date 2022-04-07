@@ -4,9 +4,11 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\CauserResolver;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 beforeEach(function () {
     $this->activityDescription = 'My activity';
@@ -291,6 +293,29 @@ it('can log activity when attributes are changed with tap', function () {
     expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
     expect($firstActivity->getExtraProperty('property.subProperty'))->toEqual('value');
     expect($firstActivity->created_at->format('Y-m-d H:i:s'))->toEqual(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'));
+});
+
+it('will tap a subject', function () {
+    $model = new class() extends Article {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults();
+        }
+
+        public function tapActivity(Activity $activity, string $eventName)
+        {
+            $activity->description = 'my custom description';
+        }
+    };
+
+    activity()
+        ->on($model)
+        ->log($this->activityDescription);
+
+    $firstActivity = Activity::first();
+    $this->assertEquals('my custom description', $firstActivity->description);
 });
 
 it('will log a custom created at date time', function () {

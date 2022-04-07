@@ -166,6 +166,10 @@ class ActivityLogger
             $activity
         );
 
+        if (isset($activity->subject) && method_exists($activity->subject, 'tapActivity')) {
+            $this->tap([$activity->subject, 'tapActivity'], $activity->event ?? '');
+        }
+
         $activity->save();
 
         $this->activity = null;
