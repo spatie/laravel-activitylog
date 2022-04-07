@@ -2,6 +2,12 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.5.1 - 2022-04-07
+
+- [Use scoped instances of instead of singletons (Octane support)](https://github.com/spatie/laravel-activitylog/commit/0d0075b9c56ed0c282f59037e71cdaa6a052d336)
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.5.0...4.5.1
+
 ## 4.5.0 - 2022-04-07
 
 ## What's Changed
@@ -74,6 +80,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
