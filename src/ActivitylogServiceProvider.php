@@ -29,11 +29,11 @@ class ActivitylogServiceProvider extends PackageServiceProvider
     {
         $this->app->bind(ActivityLogger::class);
 
-        $this->app->singleton(LogBatch::class);
+        $this->app->scoped(LogBatch::class);
 
-        $this->app->singleton(CauserResolver::class);
+        $this->app->scoped(CauserResolver::class);
 
-        $this->app->singleton(ActivityLogStatus::class);
+        $this->app->scoped(ActivityLogStatus::class);
     }
 
     public static function determineActivityModel(): string
