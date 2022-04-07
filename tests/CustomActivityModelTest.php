@@ -1,85 +1,64 @@
 <?php
 
-namespace Spatie\Activitylog\Test;
-
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Test\Models\Activity;
 use Spatie\Activitylog\Test\Models\AnotherInvalidActivity;
 use Spatie\Activitylog\Test\Models\InvalidActivity;
 
-class CustomActivityModelTest extends TestCase
-{
-    /** @var string */
-    protected $activityDescription;
+beforeEach(function () {
+    $this->activityDescription = 'My activity';
+    collect(range(1, 5))->each(function (int $index) {
+        $logName = "log{$index}";
+        activity($logName)->log('hello everybody');
+    });
+});
 
-    public function setUp(): void
-    {
-        $this->activityDescription = 'My activity';
-        parent::setUp();
+it('can log activity using a custom model', function () {
+    app()['config']->set('activitylog.activity_model', Activity::class);
 
-        collect(range(1, 5))->each(function (int $index) {
-            $logName = "log{$index}";
-            activity($logName)->log('hello everybody');
-        });
-    }
+    $activity = activity()->log($this->activityDescription);
 
-    /** @test */
-    public function it_can_log_activity_using_a_custom_model()
-    {
-        $this->app['config']->set('activitylog.activity_model', Activity::class);
+    expect($activity->description)->toEqual($this->activityDescription);
 
-        $activity = activity()->log($this->activityDescription);
+    expect($activity)->toBeInstanceOf(Activity::class);
+});
 
-        $this->assertEquals($this->activityDescription, $activity->description);
+it('does not throw an exception when model config is null', function () {
+    app()['config']->set('activitylog.activity_model', null);
 
-        $this->assertInstanceOf(Activity::class, $activity);
-    }
+    activity()->log($this->activityDescription);
 
-    /** @test */
-    public function it_does_not_throw_an_exception_when_model_config_is_null()
-    {
-        $this->app['config']->set('activitylog.activity_model', null);
+    $this->markTestAsPassed();
+});
 
-        activity()->log($this->activityDescription);
+it('throws an exception when model doesnt implements activity', function () {
+    app()['config']->set('activitylog.activity_model', InvalidActivity::class);
 
-        $this->markTestAsPassed();
-    }
+    $this->expectException(InvalidConfiguration::class);
 
-    /** @test */
-    public function it_throws_an_exception_when_model_doesnt_implements_activity()
-    {
-        $this->app['config']->set('activitylog.activity_model', InvalidActivity::class);
+    activity()->log($this->activityDescription);
+});
 
-        $this->expectException(InvalidConfiguration::class);
+it('throws an exception when model doesnt extend model', function () {
+    app()['config']->set('activitylog.activity_model', AnotherInvalidActivity::class);
 
-        activity()->log($this->activityDescription);
-    }
+    $this->expectException(InvalidConfiguration::class);
 
-    /** @test */
-    public function it_throws_an_exception_when_model_doesnt_extend_model()
-    {
-        $this->app['config']->set('activitylog.activity_model', AnotherInvalidActivity::class);
+    activity()->log($this->activityDescription);
+});
 
-        $this->expectException(InvalidConfiguration::class);
+it('doesnt conlict with laravel change tracking', function () {
+    app()['config']->set('activitylog.activity_model', Activity::class);
 
-        activity()->log($this->activityDescription);
-    }
+    $properties = [
+        'attributes' => [
+            'name' => 'my name',
+            'text' => null,
+        ],
+    ];
 
-    /** @test */
-    public function it_doesnt_conlict_with_laravel_change_tracking()
-    {
-        $this->app['config']->set('activitylog.activity_model', Activity::class);
+    $activity = activity()->withProperties($properties)->log($this->activityDescription);
 
-        $properties = [
-            'attributes' => [
-                'name' => 'my name',
-                'text' => null,
-            ],
-        ];
-
-        $activity = activity()->withProperties($properties)->log($this->activityDescription);
-
-        $this->assertEquals($properties, $activity->changes()->toArray());
-        $this->assertEquals($properties, $activity->custom_property->toArray());
-    }
-}
+    expect($activity->changes()->toArray())->toEqual($properties);
+    expect($activity->custom_property->toArray())->toEqual($properties);
+});

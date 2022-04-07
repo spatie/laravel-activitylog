@@ -98,7 +98,7 @@ You may utilize `LogBatch::setBatch($uuid)` passing `$uuid` or any unique value 
 Here's an example:
 
 ```php
-use Spatie\Activitylog\LogBatch;
+use Spatie\Activitylog\Facades\LogBatch;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Str;
 
@@ -145,7 +145,7 @@ You can also batch activities using closure passed to `LogBatch::withinBatch()`.
 Here's an example:
 
 ```php
-use Spatie\Activitylog\LogBatch;
+use Spatie\Activitylog\Facades\LogBatch;
 
 LogBatch::withinBatch(function(string $uuid) {
     $uuid; // 5cce9cb3-3144-4d35-9015-830cf0f20691

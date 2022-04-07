@@ -43,7 +43,7 @@ class LogOptions
     }
 
     /**
-     * log changes to all the $guarded attributes of the model.
+     * Log all attributes that are not listed in $guarded.
      */
     public function logUnguarded(): self
     {

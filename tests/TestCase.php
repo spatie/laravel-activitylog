@@ -16,7 +16,7 @@ use Spatie\Activitylog\Test\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -102,5 +102,25 @@ abstract class TestCase extends OrchestraTestCase
     public function markTestAsPassed(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function createArticle(): Article
+    {
+        $article = new $this->article();
+        $article->name = 'my name';
+        $article->save();
+
+        return $article;
+    }
+
+    public function loginWithFakeUser()
+    {
+        $user = new $this->user();
+
+        $user::find(1);
+
+        $this->be($user);
+
+        return $user;
     }
 }
