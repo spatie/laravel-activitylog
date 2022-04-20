@@ -227,6 +227,23 @@ it('can replace the placeholders', function () {
     expect($this->getLastActivity()->description)->toEqual($expectedDescription);
 });
 
+it('can replace the placeholders deeply', function () {
+    $article = Article::create(['name' => 'article name']);
+
+    $article->foo = new stdClass();
+    $article->foo->bar = new stdClass();
+    $article->foo->bar->baz = 'zal';
+
+    activity()
+        ->performedOn($article)
+        ->withProperties(['key' => 'value', 'key2' => ['subkey' => 'subvalue']])
+        ->log('Subject name is :subject.name, deeply nested property is :subject.foo.bar.baz');
+
+    $expectedDescription = 'Subject name is article name, deeply nested property is zal';
+
+    expect($this->getLastActivity()->description)->toEqual($expectedDescription);
+});
+
 it('can log an activity with event', function () {
     $article = Article::create(['name' => 'article name']);
     activity()

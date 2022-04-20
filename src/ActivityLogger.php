@@ -213,9 +213,7 @@ class ActivityLogger
                 return $match;
             }
 
-            $attributeValue = $attributeValue->toArray();
-
-            return Arr::get($attributeValue, $propertyName, $match);
+            return data_get($attributeValue, $propertyName, $match);
         }, $description);
     }
 
