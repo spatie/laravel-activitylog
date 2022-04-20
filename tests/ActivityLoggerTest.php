@@ -230,7 +230,7 @@ it('can replace the placeholders', function () {
 it('can replace the placeholders with object properties and accessors', function () {
     $article = Article::create([
         'name' => 'article name',
-        'user_id' => User::first()->id
+        'user_id' => User::first()->id,
     ]);
 
     $article->foo = new stdClass();
