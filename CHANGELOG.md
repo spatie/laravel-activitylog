@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.5.2 - 2022-04-21
+
+- Fix placeholder resolving - [#1038](https://github.com/spatie/laravel-activitylog/pull/1038)
+
 ## 4.5.1 - 2022-04-07
 
 - [Use scoped instances of instead of singletons (Octane support)](https://github.com/spatie/laravel-activitylog/commit/0d0075b9c56ed0c282f59037e71cdaa6a052d336)
