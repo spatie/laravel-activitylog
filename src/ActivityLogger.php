@@ -6,7 +6,6 @@ use Closure;
 use DateTimeInterface;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
@@ -213,9 +212,7 @@ class ActivityLogger
                 return $match;
             }
 
-            $attributeValue = $attributeValue->toArray();
-
-            return Arr::get($attributeValue, $propertyName, $match);
+            return data_get($attributeValue, $propertyName, $match);
         }, $description);
     }
 
