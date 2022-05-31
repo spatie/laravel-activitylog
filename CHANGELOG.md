@@ -2,6 +2,10 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.5.3 - 2022-05-31
+
+- Fix default auth guard for causer - [#1053](https://github.com/spatie/laravel-activitylog/pull/1053)
+
 ## 4.5.2 - 2022-04-21
 
 - Fix placeholder resolving - [#1038](https://github.com/spatie/laravel-activitylog/pull/1038)
