@@ -13,12 +13,12 @@ The package will automatically register the service provider.
 
 If you want your activities to be stored in a special database connection you can define `ACTIVITY_LOGGER_DB_CONNECTION` in your `.env` file.
 
-After you've configured everything you should clear the application config cache via `artisan config:clear`.
+After you've configured everything you should clear the application config cache via `php artisan config:clear`.
 
 You can publish the migration with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
 ```
 
 After the migration has been published you can create the `activity_log` table by running the migrations:
@@ -30,7 +30,7 @@ php artisan migrate
 You can optionally publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-config"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="config"
 ```
 
 This is the contents of the published config file:
