@@ -13,7 +13,7 @@ The package will automatically register the service provider.
 
 If you want your activities to be stored in a special database connection you can define `ACTIVITY_LOGGER_DB_CONNECTION` in your `.env` file.
 
-After you've configured everything you should clear the application config cache via `artisan config:clear`.
+After you've configured everything you should clear the application config cache via `php artisan config:clear`.
 
 You can publish the migration with:
 ```bash
