@@ -40,9 +40,9 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    public function getExtraProperty(string $propertyName): mixed
+    public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
-        return Arr::get($this->properties->toArray(), $propertyName);
+        return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
     }
 
     public function changes(): Collection
