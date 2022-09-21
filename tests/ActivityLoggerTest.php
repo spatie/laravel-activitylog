@@ -157,6 +157,7 @@ it('can log activity with a single properties', function () {
 
     expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
     expect($firstActivity->getExtraProperty('key'))->toEqual('value');
+    expect($firstActivity->getExtraProperty('non_existant', 'default value'))->toEqual('default value');
 });
 
 it('can translate a given causer id to an object', function () {
