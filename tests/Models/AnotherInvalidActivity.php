@@ -43,6 +43,7 @@ class AnotherInvalidActivity implements ActivityContract
      *
      * @param string $propertyName
      * @param mixed $defaultValue
+     *
      * @return mixed
      */
     public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
