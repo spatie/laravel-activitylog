@@ -2,6 +2,18 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## v4.6.0 - 2022-09-22
+
+### What's Changed
+
+- Add a default value to `getExtraProperty()` by @grantholle in https://github.com/spatie/laravel-activitylog/pull/1090
+
+### New Contributors
+
+- @grantholle made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1090
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.5.3...4.6.0
+
 ## 4.5.3 - 2022-05-31
 
 - Fix default auth guard for causer - [#1053](https://github.com/spatie/laravel-activitylog/pull/1053)
@@ -88,6 +100,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
