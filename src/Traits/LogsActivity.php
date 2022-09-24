@@ -70,9 +70,9 @@ trait LogsActivity
                 // each pipe receives the event carrier bag with changes and the model in
                 // question every pipe should manipulate new and old attributes.
                 $event = app(Pipeline::class)
-                ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
-                ->through(static::$changesPipes)
-                ->thenReturn();
+                    ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
+                    ->through(static::$changesPipes)
+                    ->thenReturn();
 
                 // Actual logging
                 $logger = app(ActivityLogger::class)
