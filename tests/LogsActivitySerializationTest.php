@@ -4,13 +4,8 @@ namespace Spatie\Activitylog\Test;
 
 use Spatie\Activitylog\Test\Models\ArticleWithLogDescriptionClosure;
 
-class LogsActivitySerializationTest extends TestCase
-{
-    /** @test */
-    public function it_can_be_serialized()
-    {
-        $model = ArticleWithLogDescriptionClosure::create(['name' => 'foo']);
+it('can_be_serialized', function () {
+    $model = ArticleWithLogDescriptionClosure::create(['name' => 'foo']);
 
-        $this->assertNotNull(serialize($model));
-    }
-}
+    $this->assertNotNull(serialize($model));
+});
