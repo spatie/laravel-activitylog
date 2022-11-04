@@ -17,7 +17,6 @@ use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogOptions;
-use UnitEnum;
 
 trait LogsActivity
 {
