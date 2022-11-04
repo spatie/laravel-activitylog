@@ -2,7 +2,7 @@
 
 namespace Spatie\Activitylog\Test\Enum;
 
-Enum NonBackedEnum
+enum NonBackedEnum
 {
     case Admin;
 

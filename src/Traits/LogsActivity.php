@@ -366,7 +366,7 @@ trait LogsActivity
             if ($model->hasCast($attribute)) {
                 $cast = $model->getCasts()[$attribute];
 
-                if(function_exists('enum_exists') && enum_exists($cast)) {
+                if (function_exists('enum_exists') && enum_exists($cast)) {
                     $changes[$attribute] = $model->getStorableEnumValue($changes[$attribute]);
                 }
 
