@@ -8,7 +8,7 @@ use Spatie\Activitylog\Test\Models\User;
 
 afterEach(fn() => Activity::query()->latest()->first()->delete());
 
-it('can store non backed only a property', function () {
+it('can store non-backed enum only a property', function () {
     $description = 'ROLE LOG';
 
     activity()
@@ -21,7 +21,7 @@ it('can store non backed only a property', function () {
         ->and($latestActivity->properties['role'])->toEqual('User');
 });
 
-it('can store non backed with properties', function () {
+it('can store non-backed enum with properties', function () {
     $description = 'ROLE LOG';
 
     activity()
