@@ -109,6 +109,10 @@ class ActivityLogger
 
     public function withProperty(string $key, mixed $value): static
     {
+        if (is_object($value) && function_exists('enum_exists') && enum_exists(get_class($value))) {
+            $value = $value->value ?? $value->name;
+        }
+
         $this->getActivity()->properties = $this->getActivity()->properties->put($key, $value);
 
         return $this;
