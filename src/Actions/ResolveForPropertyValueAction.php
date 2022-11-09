@@ -6,7 +6,7 @@ class ResolveForPropertyValueAction
 {
     /**
      * Action that resolve property value of log
-     * that cannot be handled by PHP or This Package
+     * that cannot be handled by PHP as default
      *
      * @param mixed $value
      * @return mixed
@@ -15,6 +15,9 @@ class ResolveForPropertyValueAction
     {
         $instance = new static;
 
+        /**
+         * Give a fallback value if value not a backed enum
+         */
         if ($instance->isValueAreEnum($value)) {
             return $value->value ?? $value->name;
         }
@@ -28,10 +31,8 @@ class ResolveForPropertyValueAction
             return false;
         }
 
-        $enumNamespace = is_object($value)
-            ? get_class($value)
-            : $value;
+        $enumNamespace = is_object($value) ? get_class($value): $value;
 
-        return enum_exists($enumNamespace);
+        return ! is_array($value) && enum_exists($enumNamespace);
     }
 }
