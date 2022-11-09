@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Test;
 
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Test\Enum\NonBackedEnum;
 use Spatie\Activitylog\Test\Models\Activity;
 use Spatie\Activitylog\Test\Models\User;
@@ -20,7 +21,7 @@ it('can store non-backed enum only a property', function () {
     expect($latestActivity->description)->toEqual($description)
         ->and($latestActivity->properties['role'])->toEqual('User');
 })
-    ->skip(! function_exists('enum_exists'), "PHP doesn't support enum");
+    ->skip(! Str::of(PHP_VERSION)->startsWith('8.1'), "PHP doesn't support enum");
 
 it('can store non-backed enum with properties', function () {
     $description = 'ROLE LOG';
@@ -34,4 +35,5 @@ it('can store non-backed enum with properties', function () {
     expect($latestActivity->description)->toEqual($description)
         ->and($latestActivity->properties['role'])->toEqual('User');
 })
-    ->skip(! function_exists('enum_exists'), "PHP doesn't support enum");
+    ->skip(! Str::of(PHP_VERSION)->startsWith('8.1'), "PHP doesn't support enum");
+
