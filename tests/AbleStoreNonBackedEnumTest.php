@@ -21,7 +21,7 @@ it('can store non-backed enum only a property', function () {
     expect($latestActivity->description)->toEqual($description)
         ->and($latestActivity->properties['role'])->toEqual('User');
 })
-    ->skip(! Str::of(PHP_VERSION)->startsWith('8.1'), "PHP doesn't support enum");
+    ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
 
 it('can store non-backed enum with properties', function () {
     $description = 'ROLE LOG';
@@ -35,5 +35,5 @@ it('can store non-backed enum with properties', function () {
     expect($latestActivity->description)->toEqual($description)
         ->and($latestActivity->properties['role'])->toEqual('User');
 })
-    ->skip(! Str::of(PHP_VERSION)->startsWith('8.1'), "PHP doesn't support enum");
+    ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
 
