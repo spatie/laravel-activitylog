@@ -150,7 +150,7 @@ it('can log activity with properties', function () {
 
 it('can log activity with null properties', function () {
     $properties = [
-        'property' => null
+        'property' => null,
     ];
 
     activity()
