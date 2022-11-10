@@ -34,6 +34,6 @@ class ResolveForPropertyValueAction
 
         $enumNamespace = is_object($value) ? get_class($value) : $value;
 
-        return ! is_array($value) && enum_exists($enumNamespace);
+        return ! is_array($value) && enum_exists((string) $enumNamespace);
     }
 }
