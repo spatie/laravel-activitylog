@@ -366,6 +366,10 @@ trait LogsActivity
             if ($model->hasCast($attribute)) {
                 $cast = $model->getCasts()[$attribute];
 
+                if (function_exists('enum_exists') && enum_exists($cast)) {
+                    $changes[$attribute] = $model->getStorableEnumValue($changes[$attribute]);
+                }
+
                 if ($model->isCustomDateTimeCast($cast) || $model->isImmutableCustomDateTimeCast($cast)) {
                     $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
                 }
