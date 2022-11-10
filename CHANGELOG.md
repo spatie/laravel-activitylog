@@ -2,6 +2,20 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## v4.7.0 - 2022-11-10
+
+### What's Changed
+
+- Fix indentation by @mouadziani in https://github.com/spatie/laravel-activitylog/pull/1092
+- Support non backed enum  & php 8.1 by @pemudakoding in https://github.com/spatie/laravel-activitylog/pull/1110
+
+### New Contributors
+
+- @mouadziani made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1092
+- @pemudakoding made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1110
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.6.0...4.7.0
+
 ## v4.6.0 - 2022-09-22
 
 ### What's Changed
@@ -100,6 +114,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
