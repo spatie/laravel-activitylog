@@ -18,14 +18,14 @@ class ResolveForPropertyValueAction
         /**
          * Give a fallback value if value not a backed enum
          */
-        if ($instance->isValueAreEnum($value)) {
+        if ($instance->isValueAnEnum($value)) {
             return $value->value ?? $value->name;
         }
 
         return $value;
     }
 
-    protected function isValueAreEnum($value): bool
+    protected function isValueAnEnum($value): bool
     {
         if (! function_exists('enum_exists')){
             return false;
