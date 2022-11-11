@@ -2,6 +2,14 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## v4.7.1 - 2022-11-11
+
+### What's Changed
+
+- Fix nullable custom properties in PHP 8.0 by @stevebauman in https://github.com/spatie/laravel-activitylog/pull/1115
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.7.0...4.7.1
+
 ## v4.7.0 - 2022-11-10
 
 ### What's Changed
@@ -114,6 +122,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
