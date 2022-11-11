@@ -148,6 +148,21 @@ it('can log activity with properties', function () {
     expect($firstActivity->getExtraProperty('property.subProperty'))->toEqual('value');
 });
 
+it('can log activity with null properties', function () {
+    $properties = [
+        'property' => null,
+    ];
+
+    activity()
+        ->withProperties($properties)
+        ->log($this->activityDescription);
+
+    $firstActivity = Activity::first();
+
+    expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
+    expect($firstActivity->getExtraProperty('property'))->toBeNull();
+});
+
 it('can log activity with a single properties', function () {
     activity()
         ->withProperty('key', 'value')
