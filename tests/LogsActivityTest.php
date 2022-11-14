@@ -497,7 +497,7 @@ it('will not log casted attribute of the model if attribute raw values is used',
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
 
-it('can be serialized', function() {
+it('can be serialized', function () {
     $model = ArticleWithLogDescriptionClosure::create(['name' => 'foo']);
 
     $this->assertNotNull(serialize($model));

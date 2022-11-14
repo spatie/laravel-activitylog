@@ -10,7 +10,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
-use Spatie\Activitylog\Actions\ResolveForPropertyValueAction;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class ActivityLogger
