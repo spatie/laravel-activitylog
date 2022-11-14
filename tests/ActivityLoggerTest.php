@@ -1,11 +1,13 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Enums\NonBackedEnum;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -440,3 +442,11 @@ it('logs backed enums in properties', function () {
     $this->assertSame(0, $this->getLastActivity()->properties['int_backed_enum']);
     $this->assertSame('published', $this->getLastActivity()->properties['string_backed_enum']);
 })->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('does not log non backed enums in properties', function () {
+    activity()
+        ->withProperty('non_backed_enum', NonBackedEnum::Published)
+        ->log($this->activityDescription);
+})
+    ->throws(JsonEncodingException::class)
+    ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
