@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
@@ -526,7 +527,10 @@ it('logs non backed enum casted attribute', function () {
     $this->assertSame('Draft', $this->getLastActivity()->properties['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
-})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+})->skip(
+    version_compare(PHP_VERSION, '8.1', '<') || version_compare(Application::VERSION, '9.0', '<'),
+    "PHP < 8.1 doesn't support enums && Laravel < 9.0 doesn't support non-backed-enum casting"
+);
 
 it('logs int backed enum casted attribute', function () {
     $articleClass = new class() extends Article {

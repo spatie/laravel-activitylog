@@ -33,7 +33,7 @@
     "require": {
         "php": "^8.0",
         "illuminate/config": "^8.0 || ^9.0",
-        "illuminate/database": "^8.53 || ^9.0",
+        "illuminate/database": "^8.53 || ^9.27",
         "illuminate/support": "^8.0 || ^9.0",
         "spatie/laravel-package-tools": "^1.6.3"
     },
