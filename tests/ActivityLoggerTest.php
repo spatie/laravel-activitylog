@@ -431,10 +431,12 @@ it('will disable logs for a callback without affecting previous state even with 
     expect($this->getLastActivity())->toBeNull();
 });
 
-// Helpers
-function it_returns_an_instance_of_the_activity_after_logging()
-{
-    $activityModel = activity()->log('test');
+it('logs backed enums in properties', function () {
+    activity()
+        ->withProperties(['int_backed_enum' => \Spatie\Activitylog\Test\Enums\IntBackedEnum::Draft])
+        ->withProperty('string_backed_enum', \Spatie\Activitylog\Test\Enums\StringBackedEnum::Published)
+        ->log($this->activityDescription);
 
-    expect($activityModel)->toBeInstanceOf(Activity::class);
-}
+    $this->assertSame(0, $this->getLastActivity()->properties['int_backed_enum']);
+    $this->assertSame('published', $this->getLastActivity()->properties['string_backed_enum']);
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");

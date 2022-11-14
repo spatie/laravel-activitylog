@@ -80,6 +80,7 @@ abstract class TestCase extends OrchestraTestCase
                     $table->text('json')->nullable();
                     $table->string('interval')->nullable();
                     $table->decimal('price')->nullable();
+                    $table->string('status')->nullable();
                 }
             });
         });

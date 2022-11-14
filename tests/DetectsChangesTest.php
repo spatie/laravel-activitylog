@@ -1073,6 +1073,7 @@ it('can use wildcard for loggable attributes', function () {
             'json' => null,
             'price' => null,
             'interval' => null,
+            'status' => null,
             'created_at' =>  '2017-01-01T12:00:00.000000Z',
             'updated_at' =>  '2017-01-01T12:00:00.000000Z',
         ],
@@ -1117,6 +1118,7 @@ it('can use wildcard with relation', function () {
             'updated_at' =>  '2017-01-01T12:00:00.000000Z',
             'user.name' => 'user name',
             'interval' => null,
+            'status' => null,
         ],
     ];
 
@@ -1237,6 +1239,7 @@ it('can use ignored attributes while updating', function () {
             'json' => null,
             'price' => null,
             'interval' => null,
+            'status' => null,
             'created_at' =>  '2017-01-01T12:00:00.000000Z',
         ],
     ];
@@ -1269,6 +1272,7 @@ it('can use unguarded as loggable attributes', function () {
             'user_id' => null,
             'price' => null,
             'interval' => null,
+            'status' => null,
         ],
     ];
 

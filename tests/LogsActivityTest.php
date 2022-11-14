@@ -5,7 +5,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Enums\NonBackedEnum;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\ArticleWithLogDescriptionClosure;
 use Spatie\Activitylog\Test\Models\Issue733;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -494,3 +496,84 @@ it('will not log casted attribute of the model if attribute raw values is used',
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
+
+it('can be serialized', function() {
+    $model = ArticleWithLogDescriptionClosure::create(['name' => 'foo']);
+
+    $this->assertNotNull(serialize($model));
+});
+
+it('logs non backed enum casted attribute', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected $casts = [
+            'status' => NonBackedEnum::class,
+        ];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->logOnly(['status']);
+        }
+    };
+
+    $article = new $articleClass();
+    $article->status = NonBackedEnum::Draft;
+    $article->save();
+
+    $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
+    $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+    $this->assertSame('Draft', $this->getLastActivity()->properties['attributes']['status']);
+    $this->assertEquals('created', $this->getLastActivity()->description);
+    $this->assertEquals('created', $this->getLastActivity()->event);
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('logs int backed enum casted attribute', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected $casts = [
+            'status' => \Spatie\Activitylog\Test\Enums\IntBackedEnum::class,
+        ];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->logOnly(['status']);
+        }
+    };
+
+    $article = new $articleClass();
+    $article->status = \Spatie\Activitylog\Test\Enums\IntBackedEnum::Published;
+    $article->save();
+
+    $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
+    $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+    $this->assertSame(1, $this->getLastActivity()->properties['attributes']['status']);
+    $this->assertEquals('created', $this->getLastActivity()->description);
+    $this->assertEquals('created', $this->getLastActivity()->event);
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('logs string backed enum casted attribute', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected $casts = [
+            'status' => \Spatie\Activitylog\Test\Enums\StringBackedEnum::class,
+        ];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->logOnly(['status']);
+        }
+    };
+
+    $article = new $articleClass();
+    $article->status = \Spatie\Activitylog\Test\Enums\StringBackedEnum::Draft;
+    $article->save();
+
+    $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
+    $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
+    $this->assertSame('draft', $this->getLastActivity()->properties['attributes']['status']);
+    $this->assertEquals('created', $this->getLastActivity()->description);
+    $this->assertEquals('created', $this->getLastActivity()->event);
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
