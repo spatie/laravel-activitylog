@@ -10,7 +10,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
-use Spatie\Activitylog\Actions\ResolveForPropertyValueAction;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class ActivityLogger
@@ -103,15 +102,13 @@ class ActivityLogger
 
     public function withProperties(mixed $properties): static
     {
-        $this->getActivity()->properties = collect($properties)->map(fn ($value) => ResolveForPropertyValueAction::execute($value));
+        $this->getActivity()->properties = collect($properties);
 
         return $this;
     }
 
     public function withProperty(string $key, mixed $value): static
     {
-        $value = ResolveForPropertyValueAction::execute($value);
-
         $this->getActivity()->properties = $this->getActivity()->properties->put($key, $value);
 
         return $this;

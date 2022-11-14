@@ -367,7 +367,14 @@ trait LogsActivity
                 $cast = $model->getCasts()[$attribute];
 
                 if (function_exists('enum_exists') && enum_exists($cast)) {
-                    $changes[$attribute] = $model->getStorableEnumValue($changes[$attribute]);
+                    if (method_exists($model, 'getStorableEnumValue')) {
+                        $changes[$attribute] = $model->getStorableEnumValue($changes[$attribute]);
+                    } else {
+                        // ToDo: DEPRECATED - only here for Laravel 8 support
+                        $changes[$attribute] = $changes[$attribute] instanceof \BackedEnum
+                            ? $changes[$attribute]->value
+                            : $changes[$attribute]->name;
+                    }
                 }
 
                 if ($model->isCustomDateTimeCast($cast) || $model->isImmutableCustomDateTimeCast($cast)) {
