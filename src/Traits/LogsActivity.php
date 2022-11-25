@@ -219,6 +219,11 @@ trait LogsActivity
             $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
         }
 
+        // Check if ungaurded attributes will be logged and model is unguarded then get all attributes and merge it to the local attributes array.
+        if ($this->activitylogOptions->logUnguarded && $this->isUnguarded()) {
+            $attributes = array_merge($attributes, array_keys($this->getAttributes()));
+        }
+
         if (! empty($this->activitylogOptions->logAttributes)) {
 
             // Filter * from the logAttributes because will deal with it separately
