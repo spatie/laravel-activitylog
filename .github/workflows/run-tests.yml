@@ -16,12 +16,6 @@ jobs:
                 php: [8.1, 8.0, 8.2]
                 laravel: ["^9.0", "^8.0"]
                 dependency-version: [prefer-lowest, prefer-stable]
-                include:
-                    - laravel: 9.*
-                      carbon: ^2.63
-                    - laravel: 8.*
-                      carbon: ^2.63
-
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
@@ -44,7 +38,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "nesbot/carbon:${{ matrix.carbon }}" --dev --no-interaction --no-update
+                  composer require "laravel/framework:${{ matrix.laravel }}" "nesbot/carbon:^2.63" --dev --no-interaction --no-update
                   composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
 
             - name: Execute tests
