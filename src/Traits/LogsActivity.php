@@ -244,6 +244,11 @@ trait LogsActivity
         if (! $this->activitylogOptions->logUnguarded) {
             return false;
         }
+        
+        // This case means model is unguarded
+        if ($this->isUnguarded()) {
+            return true;
+        }
 
         // This case means all of the attributes are guarded
         // so we'll not have any unguarded anyway.
