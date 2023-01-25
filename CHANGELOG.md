@@ -2,6 +2,25 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.7.3 - 2023-01-25
+
+### What's Changed
+
+- Add Dependabot Automation by @patinthehat in https://github.com/spatie/laravel-activitylog/pull/1128
+- Add PHP 8.2 Support by @patinthehat in https://github.com/spatie/laravel-activitylog/pull/1129
+- Bump dependabot/fetch-metadata from 1.3.5 to 1.3.6 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1156
+- Fix tests badge by @erikn69 in https://github.com/spatie/laravel-activitylog/pull/1153
+- Laravel 10.x support by @erikn69 in https://github.com/spatie/laravel-activitylog/pull/1152
+- Fix for replacePlaceholders with ending dot by @Stefan-Dressler in https://github.com/spatie/laravel-activitylog/pull/1154
+
+### New Contributors
+
+- @patinthehat made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1128
+- @erikn69 made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1153
+- @Stefan-Dressler made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1154
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.7.2...4.7.3
+
 ## v4.7.2 - 2022-11-14
 
 ### What's Changed
@@ -140,6 +159,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+- 
 - 
 - 
 - 
