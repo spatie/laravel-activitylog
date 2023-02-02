@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\AllowsMassPruning;
 
 class CleanActivitylogCommand extends Command
 {
@@ -30,19 +31,32 @@ class CleanActivitylogCommand extends Command
 
         $maxAgeInDays = $this->option('days') ?? config('activitylog.delete_records_older_than_days');
 
-        $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
-
         $activity = ActivitylogServiceProvider::getActivityModelInstance();
 
-        $amountDeleted = $activity::query()
-            ->where('created_at', '<', $cutOffDate)
-            ->when($log !== null, function (Builder $query) use ($log) {
-                $query->inLog($log);
-            })
-            ->delete();
+        if($this->isEligibleForMassPruning($activity)) {
+            $amountDeleted = $activity
+                ->configureMassPruning($maxAgeInDays, $log)
+                ->pruneAll();
+        } else {
+            $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
+
+            $amountDeleted = $activity::query()
+                ->where('created_at', '<', $cutOffDate)
+                ->when($log !== null, function (Builder $query) use ($log) {
+                    $query->inLog($log);
+                })
+                ->delete();
+        }
 
         $this->info("Deleted {$amountDeleted} record(s) from the activity log.");
 
         $this->comment('All done!');
+
+        return static::SUCCESS;
+    }
+
+    private function isEligibleForMassPruning(Contracts\Activity $activity): bool
+    {
+        return in_array(AllowsMassPruning::class, class_uses($activity));
     }
 }
