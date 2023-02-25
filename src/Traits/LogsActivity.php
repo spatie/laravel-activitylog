@@ -81,10 +81,6 @@ trait LogsActivity
                     ->performedOn($model)
                     ->withProperties($event->changes);
 
-                if (method_exists($model, 'tapActivity')) {
-                    $logger->tap([$model, 'tapActivity'], $eventName);
-                }
-
                 $logger->log($description);
 
                 // Reset log options so the model can be serialized.

@@ -304,6 +304,8 @@ it('can log activity when attributes are changed with tap', function () {
     $model = new class() extends Article {
         use LogsActivity;
 
+        public static int $tapActivityCallCount = 0;
+
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults();
@@ -317,6 +319,8 @@ it('can log activity when attributes are changed with tap', function () {
 
         public function tapActivity(Activity $activity, string $eventName)
         {
+            self::$tapActivityCallCount++;
+
             $properties = $this->properties;
             $properties['event'] = $eventName;
             $activity->properties = collect($properties);
@@ -326,6 +330,8 @@ it('can log activity when attributes are changed with tap', function () {
 
     $entity = new $model();
     $entity->save();
+
+    $this->assertSame(1, $model::$tapActivityCallCount);
 
     $firstActivity = $entity->activities()->first();
 
