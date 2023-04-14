@@ -43,3 +43,16 @@ it('will resolve any model', function () {
     expect($causer)->toBeInstanceOf(Article::class);
     expect($causer->id)->toEqual($article->id);
 });
+
+it('will throw an exception it there is no auth manager to resolve', function () {
+    // simulates application not having AuthServiceProvider loaded
+    app()->singleton('auth', fn () => null);
+
+    $causer = CauserResolver::resolve();
+    expect($causer)->toBeNull();
+
+    $this->expectExceptionObject(CouldNotLogActivity::couldNotDetermineUserWithoutAuthManager($subject = 9999));
+
+    $causer = CauserResolver::resolve($subject);
+    expect($causer)->toBeNull();
+});

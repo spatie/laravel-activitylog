@@ -10,7 +10,7 @@ use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 
 class CauserResolver
 {
-    protected AuthManager $authManager;
+    protected AuthManager | null $authManager;
 
     protected string | null $authDriver;
 
@@ -18,7 +18,7 @@ class CauserResolver
 
     protected Model | null $causerOverride = null;
 
-    public function __construct(Repository $config, AuthManager $authManager)
+    public function __construct(Repository $config, AuthManager | null $authManager)
     {
         $this->authManager = $authManager;
 
@@ -46,6 +46,10 @@ class CauserResolver
 
     protected function resolveUsingId(int | string $subject): Model
     {
+        if ($this->authManager === null) {
+            throw CouldNotLogActivity::couldNotDetermineUserWithoutAuthManager($subject);
+        }
+
         $guard = $this->authManager->guard($this->authDriver);
 
         $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
@@ -96,6 +100,10 @@ class CauserResolver
 
     protected function getDefaultCauser(): ?Model
     {
+        if ($this->authManager === null) {
+            return null;
+        }
+
         return $this->authManager->guard($this->authDriver)->user();
     }
 }

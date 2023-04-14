@@ -450,3 +450,14 @@ it('does not log non backed enums in properties', function () {
 })
     ->throws(JsonEncodingException::class)
     ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+
+it('logs without having auth manager implementation in the container', function () {
+    // simulates application not having AuthServiceProvider loaded
+    app()->singleton('auth', fn () => null);
+
+    activity()->log($message = 'I can log without the app giving an auth manager to the causer resolver');
+
+    expect($activity = $this->getLastActivity())->toBeInstanceOf(Activity::class);
+    $this->assertSame($message, $activity->description);
+});

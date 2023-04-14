@@ -10,4 +10,9 @@ class CouldNotLogActivity extends Exception
     {
         return new static("Could not determine a user with identifier `{$id}`.");
     }
+
+    public static function couldNotDetermineUserWithoutAuthManager($id): self
+    {
+        return new static("Could not determine a user with identifier `{$id}` - there is no AuthManager.");
+    }
 }
