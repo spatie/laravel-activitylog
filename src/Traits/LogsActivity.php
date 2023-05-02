@@ -247,7 +247,7 @@ trait LogsActivity
 
         // This case means all of the attributes are guarded
         // so we'll not have any unguarded anyway.
-        if (in_array('*', $this->getGuarded())) {
+        if (in_array('*', $this->getGuarded()) && ! static::isUnguarded()) {
             return false;
         }
 
