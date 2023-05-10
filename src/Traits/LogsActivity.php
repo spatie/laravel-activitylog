@@ -71,7 +71,7 @@ trait LogsActivity
                 // question every pipe should manipulate new and old attributes.
                 $event = app(Pipeline::class)
                     ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
-                    ->through(static::$changesPipes)
+                    ->through(static::$changesPipes + config('activitylog.changes_pipes', []))
                     ->thenReturn();
 
                 // Actual logging
