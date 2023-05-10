@@ -163,8 +163,8 @@ it('will log the deletion of a model with softdeletes', function () {
 
     $this->assertCount(3, Activity::all());
 
-    $this->assertEquals('deleted', $this->getLastActivity()->description);
-    $this->assertEquals('deleted', $this->getLastActivity()->event);
+    $this->assertEquals('forceDeleted', $this->getLastActivity()->description);
+    $this->assertEquals('forceDeleted', $this->getLastActivity()->event);
     $this->assertNull($article->fresh());
 });
 

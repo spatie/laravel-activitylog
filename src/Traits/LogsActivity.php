@@ -39,12 +39,20 @@ trait LogsActivity
         static::eventsToBeRecorded()->each(function ($eventName) {
             if ($eventName === 'updated') {
                 static::updating(function (Model $model) {
+                    /** @var self $model */
+
                     $oldValues = (new static())->setRawAttributes($model->getRawOriginal());
                     $model->oldAttributes = static::logChanges($oldValues);
                 });
             }
 
             static::$eventName(function (Model $model) use ($eventName) {
+                /** @var self $model */
+
+                if (self::isHandleSoftDelete() && $eventName === 'deleted' && $model->forceDeleting) {
+                    return;
+                }
+
                 $model->activitylogOptions = $model->getActivitylogOptions();
 
                 if (! $model->shouldLogEvent($eventName)) {
@@ -155,11 +163,16 @@ trait LogsActivity
             'deleted',
         ]);
 
-        if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
-            $events->push('restored');
+        if (self::isHandleSoftDelete()) {
+            $events->push('restored', 'forceDeleted');
         }
 
         return $events;
+    }
+
+    protected static function isHandleSoftDelete(): bool
+    {
+        return collect(class_uses_recursive(static::class))->contains(SoftDeletes::class);
     }
 
     protected function shouldLogEvent(string $eventName): bool
@@ -319,7 +332,12 @@ trait LogsActivity
                 ->all();
         }
 
-        if (static::eventsToBeRecorded()->contains('deleted') && $processingEvent == 'deleted') {
+        $deletes = ['deleted', 'forceDeleted'];
+
+        if (
+            static::eventsToBeRecorded()->contains(fn (string $eventName) => in_array($eventName, $deletes)) &&
+            in_array($processingEvent, $deletes)
+        ) {
             $properties['old'] = $properties['attributes'];
             unset($properties['attributes']);
         }

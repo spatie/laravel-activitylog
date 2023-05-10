@@ -830,7 +830,7 @@ it('will store the values when deleting the model with softdeletes', function ()
     $activities = $article->activities;
 
     $this->assertCount(3, $activities);
-    $this->assertEquals('deleted', $this->getLastActivity()->description);
+    $this->assertEquals('forceDeleted', $this->getLastActivity()->description);
     $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
 });
 
