@@ -49,7 +49,7 @@ trait LogsActivity
             static::$eventName(function (Model $model) use ($eventName) {
                 /** @var self $model */
 
-                if (self::isHandleSoftDelete() && $eventName === 'deleted' && $model->forceDeleting) {
+                if (self::isHandleSoftDelete() && $eventName === 'deleted' && $model->isForceDeleting()) {
                     return;
                 }
 
