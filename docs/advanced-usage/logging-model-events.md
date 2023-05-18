@@ -135,7 +135,7 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}");
@@ -171,7 +171,7 @@ class NewsItem extends Model
 {
     use LogsActivity;
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->useLogName('system');
@@ -194,7 +194,7 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['name', 'text'])
@@ -222,7 +222,7 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['name', 'text'])
@@ -248,7 +248,7 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text', 'user_id'];
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['name', 'text', 'user.name']);
@@ -279,7 +279,7 @@ class NewsItem extends Model
         'preferences' => 'collection' // casting the JSON database column
     ];
 
-    public function getActivitylogOptions()
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['preferences->notifications->status', 'preferences->hero_url']);
@@ -358,7 +358,7 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-   public function getActivitylogOptions()
+   public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['text'])
@@ -382,7 +382,7 @@ class NewsItem extends Model
 {
     use LogsActivity;
 
-   public function getActivitylogOptions()
+   public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logAll()
