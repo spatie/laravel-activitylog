@@ -1975,6 +1975,45 @@ it('will access further than level one json attribute', function () {
     $this->assertSame($expectedChanges, $changes);
 });
 
+it('will forcing name attributes to store the same original value when logging only dirty', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+            ->logOnly(['name','text', 'user_id'])
+            ->logOnlyDirty()
+            ->forceLogEvenIfNotDirty(["name"]);
+        }
+    };
+
+    $user = User::create([
+        'name' => 'user name',
+    ]);
+    $article = $articleClass::create([
+        'name' => 'original name',
+        'text' => 'original text',
+        'user_id' => $user->id,
+    ]);
+
+    $article->text = 'updated text';
+    $article->save();
+
+    $expectedChanges = [
+        'attributes' => [
+            'name' => 'original name',
+            'text' => 'updated text',
+        ],
+        'old' => [
+            'name' => 'original name',
+            'text' => 'original text',
+        ],
+    ];
+
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+});
+
 function createDirtyArticle(): Article
 {
     $articleClass = new class() extends Article {

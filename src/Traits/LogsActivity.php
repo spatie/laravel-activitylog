@@ -293,29 +293,33 @@ trait LogsActivity
         if ($this->activitylogOptions->logOnlyDirty && isset($properties['old'])) {
 
             // Get difference between the old and new attributes.
-            $properties['attributes'] = array_udiff_assoc(
-                $properties['attributes'],
-                $properties['old'],
-                function ($new, $old) {
-                    // Strict check for php's weird behaviors
-                    if ($old === null || $new === null) {
-                        return $new === $old ? 0 : 1;
-                    }
+            // merge forceLogEvenIfNotDirty() attributes
+            $properties['attributes'] = array_merge(
+                array_udiff_assoc(
+                    $properties['attributes'],
+                    $properties['old'],
+                    function ($new, $old) {
+                        // Strict check for php's weird behaviors
+                        if ($old === null || $new === null) {
+                            return $new === $old ? 0 : 1;
+                        }
 
-                    // Handles Date interval comparisons since php cannot use spaceship
-                    // Operator to compare them and will throw ErrorException.
-                    if ($old instanceof DateInterval) {
-                        return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
-                    } elseif ($new instanceof DateInterval) {
-                        return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
-                    }
+                        // Handles Date interval comparisons since php cannot use spaceship
+                        // Operator to compare them and will throw ErrorException.
+                        if ($old instanceof DateInterval) {
+                            return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
+                        } elseif ($new instanceof DateInterval) {
+                            return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
+                        }
 
-                    return $new <=> $old;
-                }
+                        return $new <=> $old;
+                    }
+                ),
+                array_intersect_key($properties['attributes'], array_flip($this->activitylogOptions->forceLogEvenIfNotDirty))
             );
 
             $properties['old'] = collect($properties['old'])
-                ->only(array_keys($properties['attributes']))
+                ->only(array_keys(array_merge($properties['attributes'], array_intersect_key($properties['old'], array_flip($this->activitylogOptions->forceLogEvenIfNotDirty)))))
                 ->all();
         }
 

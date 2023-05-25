@@ -22,6 +22,8 @@ class LogOptions
 
     public array $dontLogIfAttributesChangedOnly = [];
 
+    public array $forceLogEvenIfNotDirty = [];
+
     public array $attributeRawValues = [];
 
     public ?Closure $descriptionForEvent = null;
@@ -108,6 +110,16 @@ class LogOptions
     public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
         $this->dontLogIfAttributesChangedOnly = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * Force log attributes when running logOnlyDirty()
+     */
+    public function forceLogEvenIfNotDirty(array $attributes): self
+    {
+        $this->forceLogEvenIfNotDirty = $attributes;
 
         return $this;
     }
