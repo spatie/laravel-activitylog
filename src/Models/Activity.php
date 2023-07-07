@@ -61,16 +61,20 @@ class Activity extends Model implements ActivityContract
 
     public function subject(): MorphTo
     {
-        if (config('activitylog.subject_returns_soft_deleted_models')) {
-            return $this->morphTo()->withTrashed();
-        }
-
-        return $this->morphTo();
+        return $this->morphTo()
+            ->when(
+                config('activitylog.subject_returns_soft_deleted_models') && in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses_recursive($this->morphTo()->getRelated())),
+                fn(Builder $builder) => $builder->withTrashed()
+            );
     }
 
     public function causer(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo()
+            ->when(
+                config('activitylog.causer_returns_soft_deleted_models') && in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses_recursive($this->morphTo()->getRelated())),
+                fn(Builder $builder) => $builder->withTrashed()
+            );
     }
 
     public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
