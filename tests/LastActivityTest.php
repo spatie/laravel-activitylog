@@ -16,7 +16,7 @@ it('gets the last activity for the model', function () {
         ->subject_type->toBe(ArticleWithLastActivity::class);
 
     expect($updatedArticle->lastActivity->changes->toArray())
-        ->toEqual( 
+        ->toEqual(
             [
                 'attributes' => [
                     'name' => 'Title change',

@@ -17,13 +17,13 @@ trait LastActivity
     public function scopeWithLastActivity(Builder $query, ?string $event = null)
     {
         $query->addSelect(['last_activity_id' => Activity::select('id')
-            ->where('subject_type', '=', Self::class)
-            ->whereColumn('subject_id', Self::getTable().'.id')
+            ->where('subject_type', '=', self::class)
+            ->whereColumn('subject_id', self::getTable().'.id')
             ->when($event, function (Builder $query) use ($event) {
                 $query->where('event', '=', $event);
             })
             ->latest()
-            ->take(1)
+            ->take(1),
         ])->with('lastActivity.causer');
     }
 }
