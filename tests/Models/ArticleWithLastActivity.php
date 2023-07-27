@@ -10,8 +10,6 @@ class ArticleWithLastActivity extends Article
 {
     use LogsActivity;
 
-    use LastActivity;
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

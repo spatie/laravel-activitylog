@@ -488,31 +488,18 @@ After these changes you can log activities on your pivot models as expected.
 
 ## Getting the last activity on the model
 
-To get the model with the last activity as a relation add the LastActivity trait to the model.
+You can get the last activity for the model as a relation by using `with(['lastActivity'])` to eager load the activity.
 
 ```php
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\Traits\LastActivity;
-
-class NewsItem extends Model
-{
-    use LogsActivity;
-    use LastActivity;
-}
-```
-
-Then use the scope `withLastActivity()` when fetching the model and the last activity will be added as a relation to your model.
-
-```php
-$newsItem = NewsItem::withLastActivity()->first();
+$newsItem = NewsItem::with(['lastActivity'])->first();
 
 $newsItem->lastActivity // Activity model
 ```
 
-You can also specify the last activity event to return, such as 'updated' or 'created'.
+You can also retrieve the causer with the last activity.
 
 ```php
-$newsItem = NewsItem::withLastActivity('updated')->first();
-echo $newsItem->lastActivity->description; // updated
+$newsItem = NewsItem::with(['lastActivity.causer'])->first();
+
+$newsItem->lastActivity->causer // Causer model
 ```
