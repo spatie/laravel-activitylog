@@ -62,7 +62,7 @@ class Activity extends Model implements ActivityContract
     public function subject(): MorphTo
     {
         if (config('activitylog.subject_returns_soft_deleted_models')) {
-            return $this->morphTo() ->constrain([function ($query) {
+            return $this->morphTo()->constrain([function ($query) {
                 return $query->when($query->hasMacro('withTrashed'), function ($query) {
                     $query->withTrashed();
                 });
