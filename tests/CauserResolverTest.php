@@ -15,13 +15,21 @@ it('can resolve current logged in user', function () {
     expect($causer->id)->toEqual($user->id);
 });
 
+it('will not fail when user is not an instance of Model', function () {
+    Auth::login($user = new \Illuminate\Auth\GenericUser(['id' => 1]));
+
+    $causer = CauserResolver::resolve();
+
+    expect($causer)->toBeNull();
+});
+
 it('will throw an exception if it cannot resolve user by id', function () {
     $this->expectException(CouldNotLogActivity::class);
 
     CauserResolver::resolve(9999);
 });
 
-it('can resloved user from passed id', function () {
+it('can resolved user from passed id', function () {
     $causer = CauserResolver::resolve(1);
 
     expect($causer)->toBeInstanceOf(User::class);

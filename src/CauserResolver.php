@@ -96,6 +96,12 @@ class CauserResolver
 
     protected function getDefaultCauser(): ?Model
     {
-        return $this->authManager->guard($this->authDriver)->user();
+        $user = $this->authManager->guard($this->authDriver)->user();
+
+        if ($user instanceof Model) {
+            return $user;
+        }
+
+        return null;
     }
 }
