@@ -38,6 +38,11 @@ class ActivityLogger
         $this->logStatus = $logStatus;
     }
 
+    public function fake()
+    {
+        app()->instance(self::class, resolve(ActivityLogFaker::class));
+    }
+
     public function setLogStatus(ActivityLogStatus $logStatus): static
     {
         $this->logStatus = $logStatus;
@@ -171,11 +176,16 @@ class ActivityLogger
             $this->tap([$activity->subject, 'tapActivity'], $activity->event ?? '');
         }
 
-        $activity->save();
+        $this->recordActivity($activity);
 
         $this->activity = null;
 
         return $activity;
+    }
+
+    public function recordActivity($activity)
+    {
+        $activity->save();
     }
 
     public function withoutLogs(Closure $callback): mixed
