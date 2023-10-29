@@ -24,7 +24,7 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @property \Illuminate\Support\Collection|null $properties
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $causer
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $causer
  * @property-read \Illuminate\Support\Collection $changes
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
  *
