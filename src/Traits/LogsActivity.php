@@ -159,6 +159,12 @@ trait LogsActivity
             $events->push('restored');
         }
 
+        if (isset(static::$exceptRecordEvents)) {
+            $events = $events->filter(function (string $event) {
+                return !in_array($event, static::$exceptRecordEvents);
+            });
+        }
+
         return $events;
     }
 

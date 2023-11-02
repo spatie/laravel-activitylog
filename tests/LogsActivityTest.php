@@ -58,6 +58,27 @@ it('can skip logging model events if asked to', function () {
     $this->assertNull($this->getLastActivity());
 });
 
+it('except created log event', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected $exceptRecordEvents = [
+            'created',
+        ];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->logOnly(['name']);
+        }
+    };
+    $article = new $articleClass();
+    $article->name = 'my name';
+    $article->save();
+
+    $this->assertCount(0, Activity::all());
+    $this->assertNull($this->getLastActivity());
+});
+
 it('can switch on activity logging after disabling it', function () {
     $article = new $this->article();
 
