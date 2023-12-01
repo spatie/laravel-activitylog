@@ -113,7 +113,7 @@ class LogOptions
     }
 
     /**
-     * Dont store empty logs. Storing empty logs can happen when you only
+     * Don't store empty logs. Storing empty logs can happen when you only
      * want to log a certain attribute but only another changes.
      */
     public function dontSubmitEmptyLogs(): self
