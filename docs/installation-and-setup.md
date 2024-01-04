@@ -13,7 +13,7 @@ The package will automatically register the service provider.
 
 You can publish the migration with:
 ```bash
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
 ```
 
 After the migration has been published you can create the `activity_log` table by running the migrations:
