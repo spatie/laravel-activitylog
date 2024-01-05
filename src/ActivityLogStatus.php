@@ -6,7 +6,7 @@ use Illuminate\Contracts\Config\Repository;
 
 class ActivityLogStatus
 {
-    protected $enabled = true;
+    protected bool $enabled = true;
 
     public function __construct(Repository $config)
     {
