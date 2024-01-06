@@ -46,7 +46,7 @@ return [
     /*
      * This is the database connection that will be used by the migration and
      * the Activity model shipped with this package. In case it's not set
-     * Laravel's database.default will be used instead.
+     * Laravel database.default will be used instead.
      */
     'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION'),
 ];

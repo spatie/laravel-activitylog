@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 
 class CleanActivitylogCommand extends Command
 {
@@ -18,6 +19,9 @@ class CleanActivitylogCommand extends Command
 
     protected $description = 'Clean up old records from the activity log.';
 
+    /**
+     * @throws InvalidConfiguration
+     */
     public function handle()
     {
         if (! $this->confirmToProceed()) {

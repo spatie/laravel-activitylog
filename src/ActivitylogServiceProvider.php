@@ -25,7 +25,7 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         ->hasCommand(CleanActivitylogCommand::class);
     }
 
-    public function registeringPackage()
+    public function registeringPackage(): void
     {
         $this->app->bind(ActivityLogger::class);
 
@@ -36,6 +36,9 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         $this->app->scoped(ActivityLogStatus::class);
     }
 
+    /**
+     * @throws InvalidConfiguration
+     */
     public static function determineActivityModel(): string
     {
         $activityModel = config('activitylog.activity_model') ?? ActivityModel::class;
@@ -48,6 +51,9 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         return $activityModel;
     }
 
+    /**
+     * @throws InvalidConfiguration
+     */
     public static function getActivityModelInstance(): ActivityContract
     {
         $activityModelClassName = self::determineActivityModel();
