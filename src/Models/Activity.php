@@ -59,6 +59,31 @@ class Activity extends Model implements ActivityContract
         parent::__construct($attributes);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($new) {
+            $last = self::latest()->first();
+            $same_properties = false;
+            $excepts = ['id'];
+
+            if (isset($new->properties) and isset($last->properties)) {
+                $excepts[] = 'properties';
+                $same_properties = $new->properties->toArray() == $last->properties->toArray();
+            }
+
+            $new_array = Arr::except($new->getAttributes() ?? [], $excepts);
+            $last_array = Arr::except($last?->getAttributes() ?? [], $excepts);
+
+            $same_activity = (bool) empty(array_diff_assoc($new_array, $last_array));
+
+            if ($same_properties and $same_activity) {
+                return false;
+            }
+        });
+    }
+
     public function subject(): MorphTo
     {
         if (config('activitylog.subject_returns_soft_deleted_models')) {
