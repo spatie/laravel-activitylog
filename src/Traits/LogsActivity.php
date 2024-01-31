@@ -402,7 +402,9 @@ trait LogsActivity
 
         $attributeName[] = $relatedAttribute;
 
-        return [implode('.', $attributeName) => $relatedModel->$relatedAttribute ?? null];
+        $attributeValue = $relatedModel instanceof Collection ? $relatedModel->pluck($relatedAttribute) : ($relatedModel->$relatedAttribute ?? null);
+
+        return [implode('.', $attributeName) => $attributeValue];
     }
 
     protected static function getRelatedModelRelationName(Model $model, string $relation): string
