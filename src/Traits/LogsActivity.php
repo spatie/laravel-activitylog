@@ -366,14 +366,13 @@ trait LogsActivity
             if ($model->hasCast($attribute)) {
                 $cast = $model->getCasts()[$attribute];
 
-                if (function_exists('enum_exists') && enum_exists($cast)) {
-                    if (method_exists($model, 'getStorableEnumValue')) {
+                if ($model->isEnumCastable($attribute)) {
+                    try {
                         $changes[$attribute] = $model->getStorableEnumValue($changes[$attribute]);
-                    } else {
-                        // ToDo: DEPRECATED - only here for Laravel 8 support
-                        $changes[$attribute] = $changes[$attribute] instanceof \BackedEnum
-                            ? $changes[$attribute]->value
-                            : $changes[$attribute]->name;
+                    } catch (\ArgumentCountError $e) {
+                        // In Laravel 11, this method has an extra argument
+                        // https://github.com/laravel/framework/pull/47465
+                        $changes[$attribute] = $model->getStorableEnumValue($cast, $changes[$attribute]);
                     }
                 }
 
