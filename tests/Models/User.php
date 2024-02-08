@@ -28,6 +28,11 @@ class User extends Model implements Authenticatable
         return $this->attributes[$name];
     }
 
+    public function getAuthPasswordName()
+    {
+        return 'password';
+    }
+
     public function getAuthPassword()
     {
         return $this->attributes['password'];
