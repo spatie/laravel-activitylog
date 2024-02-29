@@ -69,12 +69,12 @@ Then you can apply this when calling your model with:
 YourModel::addLogChange(new YourPipe);
 ```
 
-However, you may wish to ensure it's always called within the model and as such you could apply it on the model boot with the following:
+However, you may wish to ensure it's always called within the model and as such you could apply it during model boot with the following:
 
 ```php
-protected static function boot()
+protected static function booted(): void
 {
-    static::addLogChange( new YourPipe );
+    static::addLogChange(new YourPipe);
 }
 ```
 
