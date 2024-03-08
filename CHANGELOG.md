@@ -2,6 +2,28 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.8.0 - 2024-03-08
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 1.3.6 to 1.4.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1183
+* Bump dependabot/fetch-metadata from 1.4.0 to 1.5.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1195
+* Bump dependabot/fetch-metadata from 1.5.0 to 1.5.1 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1196
+* Bump dependabot/fetch-metadata from 1.5.1 to 1.6.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1205
+* Add a missing apostrophe by @dwightwatson in https://github.com/spatie/laravel-activitylog/pull/1249
+* Bump actions/stale from 6.0.1 to 9.0.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1250
+* Bump actions/cache from 3 to 4 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1263
+* Add more detail to manipulating changes by @tonypartridge in https://github.com/spatie/laravel-activitylog/pull/1268
+* feat!: add laravel 11 support by @StevePorter92 in https://github.com/spatie/laravel-activitylog/pull/1276
+
+### New Contributors
+
+* @dwightwatson made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1249
+* @tonypartridge made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1268
+* @StevePorter92 made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1276
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.7.3...4.8.0
+
 ## 4.7.3 - 2023-01-25
 
 ### What's Changed
@@ -159,6 +181,7 @@ Special thanks to [Ahmed Nagi](https://github.com/nagi1).
 - Add ability to batch activity logs [#560](https://github.com/spatie/laravel-activitylog/issues/560)
 - Add Pipeline to customize logged changes data.
 - - Deep diff array/JSON sub-keys and respect for only-dirty, no-empty ... [#692](https://github.com/spatie/laravel-activitylog/issues/692) using new pipeline. See implementation in the tests.
+  
 - 
 - 
 - 
