@@ -108,11 +108,23 @@ class Activity extends Model implements ActivityContract
             ->where('causer_id', $causer->getKey());
     }
 
+    public function scopeCausedByType(Builder $query, string|Model $type): Builder
+    {
+        $type = is_string($type) ? $type : $type->getMorphClass();
+        return $query->where('causer_type', $type);
+    }
+
     public function scopeForSubject(Builder $query, Model $subject): Builder
     {
         return $query
             ->where('subject_type', $subject->getMorphClass())
             ->where('subject_id', $subject->getKey());
+    }
+
+    public function scopeForSubjectType(Builder $query, string|Model $type): Builder
+    {
+        $type = is_string($type) ? $type : $type->getMorphClass();
+        return $query->where('subject_type', $type);
     }
 
     public function scopeForEvent(Builder $query, string $event): Builder

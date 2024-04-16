@@ -2,7 +2,9 @@
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\Admin;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Post;
 use Spatie\Activitylog\Test\Models\User;
 
 beforeEach(function () {
@@ -55,6 +57,40 @@ it('provides a scope to get log items for a specific causer', function () {
     expect($activities->first()->description)->toEqual('Foo');
 });
 
+it('provides a scope to get log items for a specific causer class of given model', function () {
+    $subject = Article::first();
+    $causer = User::first();
+
+    activity()->on($subject)->by($causer)->log('Foo');
+    activity()->on($subject)->by(Admin::create([
+        'name' => 'An Admin User',
+    ]))->log('Bar');
+
+    $activities = Activity::causedByType($causer)->get();
+
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->causer_id)->toEqual($causer->getKey());
+    expect($activities->first()->causer_type)->toEqual(get_class($causer));
+    expect($activities->first()->description)->toEqual('Foo');
+});
+
+it('provides a scope to get log items for a specific causer class of given class name', function () {
+    $subject = Article::first();
+    $causer = User::first();
+
+    activity()->on($subject)->by($causer)->log('Foo');
+    activity()->on($subject)->by(Admin::create([
+        'name' => 'An Admin User',
+    ]))->log('Bar');
+
+    $activities = Activity::causedByType(User::class)->get();
+
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->causer_id)->toEqual($causer->getKey());
+    expect($activities->first()->causer_type)->toEqual(get_class($causer));
+    expect($activities->first()->description)->toEqual('Foo');
+});
+
 it('provides a scope to get log items for a specific event', function () {
     $subject = Article::first();
     activity()
@@ -76,6 +112,40 @@ it('provides a scope to get log items for a specific subject', function () {
     ]))->by($causer)->log('Bar');
 
     $activities = Activity::forSubject($subject)->get();
+
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->subject_id)->toEqual($subject->getKey());
+    expect($activities->first()->subject_type)->toEqual(get_class($subject));
+    expect($activities->first()->description)->toEqual('Foo');
+});
+
+it('provides a scope to get log items for a specific subject class of given model', function () {
+    $subject = Article::first();
+    $causer = User::first();
+
+    activity()->on($subject)->by($causer)->log('Foo');
+    activity()->on(Post::create([
+        'name' => 'A Post',
+    ]))->by($causer)->log('Bar');
+
+    $activities = Activity::forSubjectType($subject)->get();
+
+    expect($activities)->toHaveCount(1);
+    expect($activities->first()->subject_id)->toEqual($subject->getKey());
+    expect($activities->first()->subject_type)->toEqual(get_class($subject));
+    expect($activities->first()->description)->toEqual('Foo');
+});
+
+it('provides a scope to get log items for a specific subject class of given class name', function () {
+    $subject = Article::first();
+    $causer = User::first();
+
+    activity()->on($subject)->by($causer)->log('Foo');
+    activity()->on(Post::create([
+        'name' => 'A Post',
+    ]))->by($causer)->log('Bar');
+
+    $activities = Activity::forSubjectType(Article::class)->get();
 
     expect($activities)->toHaveCount(1);
     expect($activities->first()->subject_id)->toEqual($subject->getKey());

@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Models\Admin;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\Post;
 use Spatie\Activitylog\Test\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
@@ -49,7 +51,7 @@ abstract class TestCase extends OrchestraTestCase
     {
         $this->migrateActivityLogTable();
 
-        $this->createTables('articles', 'users');
+        $this->createTables('articles', 'posts', 'users', 'admins');
         $this->seedModels(Article::class, User::class);
     }
 
@@ -81,6 +83,10 @@ abstract class TestCase extends OrchestraTestCase
                     $table->string('interval')->nullable();
                     $table->decimal('price')->nullable();
                     $table->string('status')->nullable();
+                }
+                if ($tableName === 'posts') {
+                    $table->integer('user_id')->unsigned()->nullable();
+                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 }
             });
         });
