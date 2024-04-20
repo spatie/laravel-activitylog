@@ -44,6 +44,8 @@ public array $dontLogIfAttributesChangedOnly = [];
 
 public array $attributeRawValues = [];
 
+public bool $shouldRetrieveFresh = true;
+
 public ?Closure $descriptionForEvent = null;
 ```
 
@@ -183,4 +185,12 @@ public function useAttributeRawValues(array $attributes): LogOption;
  * Customize log description using callback
  */
 public function setDescriptionForEvent(Closure $callback): LogOption;
+```
+
+### shouldRetrieveFresh
+```php
+/**
+ * Do or do not retrieve model fresh from database (for events besides 'retrieved')
+ */
+public function shouldRetrieveFresh(bool $state = true): LogOption;
 ```

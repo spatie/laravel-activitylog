@@ -26,6 +26,8 @@ class LogOptions
 
     public ?Closure $descriptionForEvent = null;
 
+    public bool $shouldRetrieveFresh = true;
+
     /**
      * Start configuring model with the default options.
      */
@@ -160,6 +162,16 @@ class LogOptions
     public function useAttributeRawValues(array $attributes): self
     {
         $this->attributeRawValues = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * Do or do not retrieve model fresh from database (for events besides 'retrieved')
+     */
+    public function shouldRetrieveFresh(bool $state = true): self
+    {
+        $this->shouldRetrieveFresh = $state;
 
         return $this;
     }
