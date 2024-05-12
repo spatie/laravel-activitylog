@@ -34,7 +34,7 @@ $lastLoggedActivity->getExtraProperty('customProperty'); //returns 'customValue'
 $lastLoggedActivity->description; //returns 'Look mum, I logged something'
 ```
 
-Here's an example on [event logging](/laravel-activitylog/v4/advanced-usage/logging-model-events).
+Here's an example on [event logging](/docs/laravel-activitylog/v4/advanced-usage/logging-model-events).
 
 ```php
 $newsItem->name = 'updated name';
