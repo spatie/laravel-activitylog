@@ -89,6 +89,9 @@ trait LogsActivity
 
                 // Reset log options so the model can be serialized.
                 $model->activitylogOptions = null;
+
+                // Clear pipelines for each event to avoid interact other model events;
+                static::$changesPipes = [];
             });
         });
     }
