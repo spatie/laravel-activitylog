@@ -372,7 +372,6 @@ trait LogsActivity
 
             if ($model->hasCast($attribute)) {
                 $cast = $model->getCasts()[$attribute];
-                ray($cast);
 
                 if ($model->isEnumCastable($attribute)) {
                     try {
