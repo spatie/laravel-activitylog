@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
+use Spatie\Activitylog\Contracts\Compareable;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogOptions;
@@ -310,6 +311,12 @@ trait LogsActivity
                         return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
                     }
 
+                    if ($old instanceof Compareable){
+                        return $old->compareTo($new);
+                    } elseif ($new instanceof Compareable){
+                        return $new->compareTo($old);
+                    }
+
                     return $new <=> $old;
                 }
             );
@@ -365,6 +372,7 @@ trait LogsActivity
 
             if ($model->hasCast($attribute)) {
                 $cast = $model->getCasts()[$attribute];
+                ray($cast);
 
                 if ($model->isEnumCastable($attribute)) {
                     try {

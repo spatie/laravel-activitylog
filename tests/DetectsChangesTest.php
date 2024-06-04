@@ -11,6 +11,11 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Casts\IntervalCasts;
 use Spatie\Activitylog\Test\Models\Article;
+use Spatie\Activitylog\Test\Models\States\Pending;
+use Spatie\Activitylog\Test\Models\States\PendingCompareable;
+use Spatie\Activitylog\Test\Models\States\Ready;
+use Spatie\Activitylog\Test\Models\States\ReadyCompareable;
+use Spatie\Activitylog\Test\Models\States\State;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -1971,6 +1976,93 @@ it('will access further than level one json attribute', function () {
     ];
 
     $changes = $this->getLastActivity()->changes()->toArray();
+
+    $this->assertSame($expectedChanges, $changes);
+});
+
+it('can detect changes in classes override', function(){
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected function casts(): array
+        {
+            return [
+                'status' => State::class,
+            ];
+        }
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+                ->logAll()
+                ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at'])
+                ->logOnlyDirty()
+                ->dontSubmitEmptyLogs();
+        }
+    };
+
+    $article = $articleClass::create([
+        'name' => 'testy',
+        'status' => new PendingCompareable()
+    ]);
+
+    $article->update([
+        'name' => 'testy',
+        'status' => new ReadyCompareable()
+    ]);
+
+    $activity = $this->getLastActivity();
+
+    $this->assertSame($activity->event, "created");
+});
+
+it('can detect changes in classes', function(){
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected function casts(): array
+        {
+            return [
+                'status' => State::class,
+            ];
+        }
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+                ->logAll()
+                ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at'])
+                ->logOnlyDirty()
+                ->dontSubmitEmptyLogs();
+        }
+    };
+
+    $article = $articleClass::create([
+        'name' => 'testy',
+        'status' => new Pending()
+    ]);
+
+    $article->update([
+        'name' => 'testy',
+        'status' => new Ready()
+    ]);
+
+    $changes = $this->getLastActivity()->changes()->toArray();
+
+    $expectedChanges = [
+        'attributes' => [
+            'status' => [
+                'status_name' => 'ready',
+                'other_field' => 'other value'
+            ],
+        ],
+        'old' => [
+            'status' => [
+                'status_name' => 'pending',
+                'other_field' => 'other value'
+            ],
+        ],
+    ];
 
     $this->assertSame($expectedChanges, $changes);
 });
