@@ -26,7 +26,7 @@ activity()
    ->withProperties(['customProperty' => 'customValue'])
    ->log('Look mum, I logged something');
 
-$lastLoggedActivity = Activity::all()->last();
+$lastLoggedActivity = Activity::latest()->first();
 
 $lastLoggedActivity->subject; //returns an instance of an eloquent model
 $lastLoggedActivity->causer; //returns an instance of your user model
@@ -41,7 +41,7 @@ $newsItem->name = 'updated name';
 $newsItem->save();
 
 //updating the newsItem will cause an activity being logged
-$activity = Activity::all()->last();
+$activity = Activity::latest()->first();
 
 $activity->description; //returns 'updated'
 $activity->subject; //returns the instance of NewsItem that was created

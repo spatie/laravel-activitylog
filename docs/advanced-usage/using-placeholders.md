@@ -14,6 +14,6 @@ activity()
     ->withProperties(['laravel' => 'awesome'])
     ->log('The subject name is :subject.name, the causer name is :causer.name and Laravel is :properties.laravel');
 
-$lastActivity = Activity::all()->last();
+$lastActivity = Activity::latest()->first();
 $lastActivity->description; //returns 'The subject name is article name, the causer name is user name and Laravel is awesome';
 ```

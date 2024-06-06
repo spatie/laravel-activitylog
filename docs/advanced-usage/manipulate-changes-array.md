@@ -32,7 +32,7 @@ NewsItem::addLogChange(new RemoveKeyFromLogChangesPipe('name'));
 $article = NewsItem::create(['name' => 'new article', 'text' => 'new article text']);
 $article->update(['name' => 'update article', 'text' => 'update article text']);
 
-Activity::all()->last()->changes();
+Activity::latest()->first()->changes();
 /*
     'attributes' => [
         'text' => 'updated text',

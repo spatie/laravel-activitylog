@@ -97,7 +97,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function getLastActivity(): ?Activity
     {
-        return Activity::all()->last();
+        return Activity::latest()->first();
     }
 
     public function markTestAsPassed(): void

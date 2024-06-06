@@ -14,7 +14,7 @@ activity()->log('Look mum, I logged something');
 You can retrieve the activity using the `Spatie\Activitylog\Models\Activity` model.
 
 ```php
-$lastActivity = Activity::all()->last(); //returns the last logged activity
+$lastActivity = Activity::latest()->first(); //returns the last logged activity
 
 $lastActivity->description; //returns 'Look mum, I logged something';
 ```
@@ -28,7 +28,7 @@ activity()
    ->performedOn($someContentModel)
    ->log('edited');
 
-$lastActivity = Activity::all()->last(); //returns the last logged activity
+$lastActivity = Activity::latest()->first(); //returns the last logged activity
 
 $lastActivity->subject; //returns the model that was passed to `performedOn`;
 ```
@@ -45,7 +45,7 @@ activity()
    ->performedOn($someContentModel)
    ->log('edited');
 
-$lastActivity = Activity::all()->last(); //returns the last logged activity
+$lastActivity = Activity::latest()->first(); //returns the last logged activity
 
 $lastActivity->causer; //returns the model that was passed to `causedBy`;
 ```
@@ -67,7 +67,7 @@ activity()
    ->withProperties(['key' => 'value'])
    ->log('edited');
 
-$lastActivity = Activity::all()->last(); //returns the last logged activity
+$lastActivity = Activity::latest()->first(); //returns the last logged activity
 
 $lastActivity->getExtraProperty('key'); //returns 'value'
 
@@ -113,7 +113,7 @@ activity()
    })
    ->log('edited');
 
-$lastActivity = Activity::all()->last();
+$lastActivity = Activity::latest()->first();
 
 $lastActivity->my_custom_field; // returns 'my special value'
 ```

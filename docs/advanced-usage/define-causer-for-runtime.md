@@ -19,8 +19,8 @@ CauserResolver::setCauser($causer);
 
 $product->update(['name' => 'New name']);
 
-Activity::all()->last()->causer; // Product Model
-Activity::all()->last()->causer->id; // Product#1 Owner
+Activity::latest()->first()->causer; // Product Model
+Activity::latest()->first()->causer->id; // Product#1 Owner
 
 ```
 
