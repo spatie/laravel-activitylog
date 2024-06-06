@@ -54,7 +54,7 @@ $newsItem = NewsItem::create([
 ]);
 
 //creating the newsItem will cause an activity being logged
-$activity = Activity::all()->last();
+$activity = Activity::latest()->first();
 
 $activity->description; //returns 'created'
 $activity->subject; //returns the instance of NewsItem that was created
@@ -68,7 +68,7 @@ $newsItem->name = 'updated name';
 $newsItem->save();
 
 //updating the newsItem will cause an activity being logged
-$activity = Activity::all()->last();
+$activity = Activity::latest()->first();
 
 $activity->description; //returns 'updated'
 $activity->subject; //returns the instance of NewsItem that was created
@@ -97,7 +97,7 @@ Now, what happens when you call delete?
 $newsItem->delete();
 
 //deleting the newsItem will cause an activity being logged
-$activity = Activity::all()->last();
+$activity = Activity::latest()->first();
 
 $activity->description; //returns 'deleted'
 $activity->changes; //returns ['attributes' => ['name' => 'updated name', 'text' => 'Lorum']];
@@ -153,7 +153,7 @@ $newsItem = NewsItem::create([
 ]);
 
 //creating the newsItem will cause an activity being logged
-$activity = Activity::all()->last();
+$activity = Activity::latest()->first();
 
 $activity->description; //returns 'This model has been created'
 ```
