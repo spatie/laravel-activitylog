@@ -46,6 +46,38 @@ it('will log an activity when enabled option is null', function () {
     expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
 });
 
+it('will not log an activity when enabled option is zero', function () {
+    config(['activitylog.enabled' => 0]);
+
+    activity()->log($this->activityDescription);
+
+    expect($this->getLastActivity())->toBeNull();
+});
+
+it('will not log an activity when enabled option is zero in string', function () {
+    config(['activitylog.enabled' => '0']);
+
+    activity()->log($this->activityDescription);
+
+    expect($this->getLastActivity())->toBeNull();
+});
+
+it('will log an activity when enabled option is one', function () {
+    config(['activitylog.enabled' => 1]);
+
+    activity()->log($this->activityDescription);
+
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
+});
+
+it('will log an activity when enabled option is one in string', function () {
+    config(['activitylog.enabled' => '1']);
+
+    activity()->log($this->activityDescription);
+
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
+});
+
 it('will log to the default log by default', function () {
     activity()->log($this->activityDescription);
 
