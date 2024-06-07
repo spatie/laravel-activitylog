@@ -10,7 +10,9 @@ class ActivityLogStatus
 
     public function __construct(Repository $config)
     {
-        $this->enabled = $config['activitylog.enabled'];
+        $this->enabled = $config['activitylog.enabled'] !== null ?
+            (bool) $config['activitylog.enabled'] :
+            null;
     }
 
     public function enable(): bool
