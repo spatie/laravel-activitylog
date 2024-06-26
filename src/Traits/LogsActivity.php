@@ -265,17 +265,13 @@ trait LogsActivity
         }
 
         $properties['attributes'] = static::logChanges(
-
-            // if the current event is retrieved, get the model itself
-            // else get the fresh default properties from database
-            // as wouldn't be part of the saved model instance.
-            $processingEvent == 'retrieved'
-                ? $this
-                : (
+            $this->shouldRetrieveFreshForLog($processingEvent)
+                ? (
                     $this->exists
                         ? $this->fresh() ?? $this
                         : $this
-                )
+                    )
+                : $this
         );
 
         if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
@@ -325,6 +321,17 @@ trait LogsActivity
         }
 
         return $properties;
+    }
+
+    /**
+     * Whether to retrieve the model fresh from database for logging
+     */
+    public function shouldRetrieveFreshForLog(string $processingEvent): bool
+    {
+        // if the current event is retrieved, get the model itself
+        // else get the fresh default properties from database
+        // as wouldn't be part of the saved model instance.
+        return $processingEvent != 'retrieved';
     }
 
     public static function logChanges(Model $model): array
