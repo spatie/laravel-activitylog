@@ -32,6 +32,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function getEnvironmentSetUp($app)
     {
+        config()->set('activitylog.table_name', 'activity_log');
         config()->set('activitylog.database_connection', 'sqlite');
         config()->set('database.default', 'sqlite');
         config()->set('database.connections.sqlite', [
@@ -45,7 +46,7 @@ abstract class TestCase extends OrchestraTestCase
         ));
     }
 
-    protected function setUpDatabase()
+    protected function setUpDatabase(): void
     {
         $this->migrateActivityLogTable();
 
@@ -53,7 +54,7 @@ abstract class TestCase extends OrchestraTestCase
         $this->seedModels(Article::class, User::class);
     }
 
-    protected function migrateActivityLogTable()
+    protected function migrateActivityLogTable(): void
     {
         require_once __DIR__.'/../database/migrations/create_activity_log_table.php.stub';
         require_once __DIR__.'/../database/migrations/add_event_column_to_activity_log_table.php.stub';
@@ -64,7 +65,7 @@ abstract class TestCase extends OrchestraTestCase
         (new AddBatchUuidColumnToActivityLogTable())->up();
     }
 
-    protected function createTables(...$tableNames)
+    protected function createTables(...$tableNames): void
     {
         collect($tableNames)->each(function (string $tableName) {
             Schema::create($tableName, function (Blueprint $table) use ($tableName) {
@@ -86,7 +87,7 @@ abstract class TestCase extends OrchestraTestCase
         });
     }
 
-    protected function seedModels(...$modelClasses)
+    protected function seedModels(...$modelClasses): void
     {
         collect($modelClasses)->each(function (string $modelClass) {
             foreach (range(1, 0) as $index) {
