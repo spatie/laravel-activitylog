@@ -29,10 +29,14 @@ Activity::all()->last()->log_name; //returns 'other-log';
 
 ## Specifying a log for each model
 
-By default, the `LogsActivity` trait uses `default_log_name` from the config file to write the logs. You can set a different log for each model by setting the `$logName` property on the model.
+By default, the `LogsActivity` trait uses `default_log_name` from the config file to write the logs. To customize the log's name for each model, call the useLogName() method when configuring the LogOptions.
 
 ```
-protected static $logName = 'custom_log_name_for_this_model';
+public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName('custom_log_name_for_this_model');
+}
 ```
 
 ## Retrieving activity
