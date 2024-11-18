@@ -2,6 +2,20 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.9.1 - 2024-11-18
+
+### What's Changed
+
+* Update using-multiple-logs.md by @tobischulz in https://github.com/spatie/laravel-activitylog/pull/1345
+* fix: php 8.4 deprecation warnings by @ashleyshenton in https://github.com/spatie/laravel-activitylog/pull/1351
+
+### New Contributors
+
+* @tobischulz made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1345
+* @ashleyshenton made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1351
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.9.0...4.9.1
+
 ## 4.9.0 - 2024-10-18
 
 ### What's Changed
