@@ -127,7 +127,7 @@ Activity::forBatch($uuid)->get(); // all the activity that happend in the batch
 ```php
 class SomeJob
 {
-    public function handle(string $value, string $batchUuid = null)
+    public function handle(string $value, ?string $batchUuid = null)
     {
         LogBatch::startBatch();
         if($batchUuid) LogBatch::setBatch($batchUuid);
