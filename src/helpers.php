@@ -4,7 +4,7 @@ use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivityLogStatus;
 
 if (! function_exists('activity')) {
-    function activity(string $logName = null): ActivityLogger
+    function activity(?string $logName = null): ActivityLogger
     {
         $defaultLogName = config('activitylog.default_log_name');
 

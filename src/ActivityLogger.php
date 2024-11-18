@@ -133,7 +133,7 @@ class ActivityLogger
         return $this->useLog($logName);
     }
 
-    public function tap(callable $callback, string $eventName = null): static
+    public function tap(callable $callback, ?string $eventName = null): static
     {
         call_user_func($callback, $this->getActivity(), $eventName);
 
