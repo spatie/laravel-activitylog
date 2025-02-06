@@ -24,7 +24,7 @@ class PendingActivityLog
     {
         return $this->logger;
     }
-    
+
     public function __call(string $method, array $parameters): mixed
     {
         return $this->forwardCallTo($this->logger, $method, $parameters);
