@@ -1,17 +1,18 @@
 <?php
 
 use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\ActivityLogStatus;
+use Spatie\Activitylog\PendingActivityLog;
 
 if (! function_exists('activity')) {
     function activity(?string $logName = null): ActivityLogger
     {
-        $defaultLogName = config('activitylog.default_log_name');
+        /** @var PendingActivityLog $log */
+        $log = app(PendingActivityLog::class);
 
-        $logStatus = app(ActivityLogStatus::class);
+        if ($logName) {
+            $log->useLog($logName);
+        }
 
-        return app(ActivityLogger::class)
-            ->useLog($logName ?? $defaultLogName)
-            ->setLogStatus($logStatus);
+        return $log->logger();
     }
 }
