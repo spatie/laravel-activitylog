@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
@@ -18,6 +19,12 @@ beforeEach(function () {
 
 it('can log an activity', function () {
     activity()->log($this->activityDescription);
+
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
+});
+
+it('can log an activity with facade', function () {
+    ActivityFacade::log($this->activityDescription);
 
     expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
 });
