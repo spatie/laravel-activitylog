@@ -2,6 +2,17 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.10.0 - 2025-02-10
+
+### What's Changed
+
+* Bump stefanzweifel/git-auto-commit-action from 5.0.1 to 5.1.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1365
+* Bump actions/stale from 9.0.0 to 9.1.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1367
+* Bump dependabot/fetch-metadata from 2.2.0 to 2.3.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1368
+* Activity Facade by @stevebauman in https://github.com/spatie/laravel-activitylog/pull/1372
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.9.1...4.10.0
+
 ## 4.9.1 - 2024-11-18
 
 ### What's Changed
