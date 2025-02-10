@@ -2,6 +2,14 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.10.1 - 2025-02-10
+
+### What's Changed
+
+* Laravel 12.x Support by @erikn69 in https://github.com/spatie/laravel-activitylog/pull/1370
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.10.0...4.10.1
+
 ## 4.10.0 - 2025-02-10
 
 ### What's Changed
