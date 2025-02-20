@@ -12,6 +12,7 @@ use Spatie\Activitylog\Test\Models\ArticleWithLogDescriptionClosure;
 use Spatie\Activitylog\Test\Models\Issue733;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
 
 beforeEach(function () {
     $this->article = new class() extends Article {
@@ -108,7 +109,7 @@ it('it will log the replication of a model with softdeletes', function () {
 
     $this->assertCount(2, $activityItems);
 
-    $this->assertTrue($activityItems->every(fn (Activity $item): bool => $item->event === 'created' &&
+    $this->assertTrue($activityItems->every(fn(Activity $item): bool => $item->event === 'created' &&
         $item->description === 'created' &&
         get_class($this->article) === $item->subject_type &&
         in_array($item->subject_id, [$article->id, $replicatedArticle->id])));
@@ -222,7 +223,7 @@ it('can log activity to log named in the model', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->useLogName('custom_log');
+                ->useLogName('custom_log');
         }
     };
 
@@ -240,7 +241,7 @@ it('will not log an update of the model if only ignored attributes are changed',
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->dontLogIfAttributesChangedOnly(['text']);
+                ->dontLogIfAttributesChangedOnly(['text']);
         }
     };
 
@@ -267,7 +268,7 @@ it('will not fail if asked to replace from empty attribute', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->setDescriptionForEvent(fn (string $eventName): string => ":causer.name $eventName");
+                ->setDescriptionForEvent(fn(string $eventName): string => ":causer.name $eventName");
         }
     };
 
@@ -389,9 +390,9 @@ it('will not submit log when there is no changes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['text'])
-            ->dontSubmitEmptyLogs()
-            ->logOnlyDirty();
+                ->logOnly(['text'])
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty();
         }
     };
 
@@ -417,9 +418,9 @@ it('will submit a log with json changes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['text', 'json->data'])
-            ->dontSubmitEmptyLogs()
-            ->logOnlyDirty();
+                ->logOnly(['text', 'json->data'])
+                ->dontSubmitEmptyLogs()
+                ->logOnlyDirty();
         }
     };
 
@@ -581,3 +582,69 @@ it('logs string backed enum casted attribute', function () {
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 })->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+
+it('does not log unguarded attributes if logUnguarded is not enabled', function () {
+    Model::unguard();
+
+    $article = new class() extends Article {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults();
+        }
+    };
+
+    $entity = new $article();
+    $entity->name = 'Article Name';
+    $entity->text = 'Should not be logged';
+    $entity->save();
+
+    $activity = Activity::latest()->first();
+
+    expect($activity->changes())->toBeEmpty();
+    Model::reguard();
+});
+
+it('does not log anything if all attributes are guarded', function () {
+    $article = new class() extends Article {
+        use LogsActivity;
+
+        protected $guarded = ['*'];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->logUnguarded();
+        }
+    };
+
+    $entity = new $article();
+    $entity->name = 'Test Article';
+    $entity->save();
+
+    $activity = Activity::latest()->first();
+    expect($activity->changes())->toBeEmpty();
+});
+
+it('logs all attributes when creating an unguarded model with logUnguarded enabled', function () {
+    Model::unguard();
+
+    $article = new class() extends Article {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->logUnguarded();
+        }
+    };
+
+    $entity = new $article();
+    $entity->name = 'Test Article';
+    $entity->save();
+
+    $activity = Activity::latest()->first();
+    expect($activity->changes())->toHaveKey('attributes')
+        ->and($activity->changes()['attributes'])->toHaveKey('name', 'Test Article');
+    Model::reguard();
+});
