@@ -239,15 +239,19 @@ trait LogsActivity
         return $attributes;
     }
 
+    protected function isAllGuarded(): bool
+    {
+        return in_array('*', $this->getGuarded());
+    }
+
     public function shouldLogUnguarded(): bool
     {
-        if (! $this->activitylogOptions->logUnguarded) {
+        if (!$this->activitylogOptions->logUnguarded) {
             return false;
         }
 
-        // This case means all of the attributes are guarded
-        // so we'll not have any unguarded anyway.
-        if (in_array('*', $this->getGuarded())) {
+        // Skip logging if all attributes are guarded and the model is not unguarded.
+        if ($this->isAllGuarded() && !static::isUnguarded()) {
             return false;
         }
 
