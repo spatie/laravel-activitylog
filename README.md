@@ -1,11 +1,19 @@
-<p align="center"><img src="/art/socialcard.png" alt="Social Card of Laravel Activity Log"></p>
+<div align="left">
+    <a href="https://spatie.be/open-source?utm_source=github&utm_medium=banner&utm_campaign=laravel-activitylog">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://spatie.be/packages/header/laravel-activitylog/html/dark.webp">
+        <img alt="Logo for laravel-activitylog" src=" https://spatie.be/packages/header/laravel-activitylog/html/light.webp" height="190">
+      </picture>
+    </a>
 
-# Log activity inside your Laravel app
+<h1>Log activity inside your Laravel app</h1>
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/spatie/laravel-activitylog/run-tests.yml?branch=main&label=Tests)](https://github.com/spatie/laravel-activitylog/actions/workflows/run-tests.yml)
 [![Check & fix styling](https://github.com/spatie/laravel-activitylog/workflows/Check%20&%20fix%20styling/badge.svg)](https://github.com/spatie/laravel-activitylog/actions/workflows/php-cs-fixer.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
+    
+</div>
 
 The `spatie/laravel-activitylog` package provides easy to use functions to log the activities of the users of your app. It can also automatically log model events.
 The Package stores all activity in the `activity_log` table.
@@ -140,7 +148,7 @@ If you've found a bug regarding security please mail [security@spatie.be](mailto
 -   [Tom Witkowski](https://github.com/Gummibeer)
 -   [All Contributors](../../contributors)
 
-And a special thanks to [Caneco](https://twitter.com/caneco) for the logo and [Ahmed Nagi](https://github.com/nagi1) for all the work he put in `v4`.
+Special thanks to [Ahmed Nagi](https://github.com/nagi1) for all the work he put in `v4` and to [Caneco](https://twitter.com/caneco) for the original logo.
 
 ## License
 
