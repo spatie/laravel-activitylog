@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog;
 
+use BackedEnum;
 use Closure;
 use DateTimeInterface;
 use Illuminate\Contracts\Config\Repository;
@@ -154,10 +155,14 @@ class ActivityLogger
         return $this;
     }
 
-    public function log(string $description): ?ActivityContract
+    public function log(BackedEnum | string $description): ?ActivityContract
     {
         if ($this->logStatus->disabled()) {
             return null;
+        }
+
+        if ($description instanceof BackedEnum) {
+            $description = $description->value;
         }
 
         $activity = $this->activity;
