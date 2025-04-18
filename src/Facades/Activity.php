@@ -23,7 +23,7 @@ use Spatie\Activitylog\PendingActivityLog;
  * @method static \Spatie\Activitylog\ActivityLogger tap(callable $callback, string|null $eventName = null)
  * @method static \Spatie\Activitylog\ActivityLogger enableLogging()
  * @method static \Spatie\Activitylog\ActivityLogger disableLogging()
- * @method static \Spatie\Activitylog\Contracts\Activity|null log(string $description)
+ * @method static \Spatie\Activitylog\Contracts\Activity|null log(\BackedEnum | string $description)
  * @method static mixed withoutLogs(\Closure $callback)
  * @method static \Spatie\Activitylog\ActivityLogger|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
  * @method static \Spatie\Activitylog\ActivityLogger|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
