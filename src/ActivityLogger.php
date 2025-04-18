@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
+use TypeError;
 
 class ActivityLogger
 {
@@ -162,6 +163,10 @@ class ActivityLogger
         }
 
         if ($description instanceof BackedEnum) {
+            if (!is_string($description->value)) {
+                throw new TypeError('Description must be of type string or StringBackedEnum');
+            }
+
             $description = $description->value;
         }
 
