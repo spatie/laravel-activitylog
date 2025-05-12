@@ -450,6 +450,20 @@ it('logs backed enums in properties', function () {
     $this->assertSame('published', $this->getLastActivity()->properties['string_backed_enum']);
 })->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
 
+it('logs backed enums in log description', function () {
+    activity()
+        ->log(\Spatie\Activitylog\Test\Enums\StringBackedEnum::Published);
+
+    $this->assertSame('published', $this->getLastActivity()->description);
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('throws a type error when int backed enum is supplied to log', function () {
+    activity()
+        ->log(\Spatie\Activitylog\Test\Enums\IntBackedEnum::Published);
+})
+    ->throws(TypeError::class)
+    ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
 it('does not log non backed enums in properties', function () {
     activity()
         ->withProperty('non_backed_enum', NonBackedEnum::Published)
