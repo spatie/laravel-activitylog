@@ -8,7 +8,9 @@ use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Test\Enums\IntBackedEnum;
 use Spatie\Activitylog\Test\Enums\NonBackedEnum;
+use Spatie\Activitylog\Test\Enums\StringBackedEnum;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -282,6 +284,27 @@ it('can log an activity with event', function () {
     expect($this->getLastActivity()->event)->toEqual('create');
 });
 
+it('allows string backed enums to be used as events', function() {
+    activity()->event(StringBackedEnum::Published)
+        ->log($this->activityDescription);
+
+    expect($this->getLastActivity()->event)->toEqual(StringBackedEnum::Published->value);
+})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('prevents non-string backed enums to be used as events', function() {
+    activity()->event(IntBackedEnum::Published)
+        ->log($this->activityDescription);
+})
+    ->throws(\InvalidArgumentException::class)
+    ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('allows non-backed enums to be used as events', function() {
+    activity()->event(NonBackedEnum::Published)
+        ->log($this->activityDescription);
+
+    expect($this->getLastActivity()->event)->toEqual(NonBackedEnum::Published->name);
+});
+
 it('will not replace non placeholders', function () {
     $description = 'hello: :hello';
 
@@ -442,8 +465,8 @@ it('will disable logs for a callback without affecting previous state even with 
 
 it('logs backed enums in properties', function () {
     activity()
-        ->withProperties(['int_backed_enum' => \Spatie\Activitylog\Test\Enums\IntBackedEnum::Draft])
-        ->withProperty('string_backed_enum', \Spatie\Activitylog\Test\Enums\StringBackedEnum::Published)
+        ->withProperties(['int_backed_enum' => IntBackedEnum::Draft])
+        ->withProperty('string_backed_enum', StringBackedEnum::Published)
         ->log($this->activityDescription);
 
     $this->assertSame(0, $this->getLastActivity()->properties['int_backed_enum']);

@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog;
 
+use BackedEnum;
 use Closure;
 use DateTimeInterface;
 use Illuminate\Contracts\Config\Repository;
@@ -11,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
+use UnitEnum;
 
 class ActivityLogger
 {
@@ -88,14 +90,22 @@ class ActivityLogger
         return $this->causedByAnonymous();
     }
 
-    public function event(string $event): static
+    public function event(string|BackedEnum|UnitEnum $event): static
     {
         return $this->setEvent($event);
     }
 
-    public function setEvent(string $event): static
+    public function setEvent(string|BackedEnum|UnitEnum $event): static
     {
-        $this->activity->event = $event;
+        if ($event instanceof BackedEnum && !is_string($event->value)) {
+            throw new \InvalidArgumentException('Backed enum value must be of type string');
+        }
+
+        $this->activity->event = match(true) {
+            $event instanceof BackedEnum => $event->value,
+            $event instanceof UnitEnum => $event->name,
+            default => $event,
+        };
 
         return $this;
     }
