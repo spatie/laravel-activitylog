@@ -11,8 +11,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
-use TypeError;
 
 class ActivityLogger
 {
@@ -59,7 +59,7 @@ class ActivityLogger
         return $this->performedOn($model);
     }
 
-    public function causedBy(Model | int | string | null $modelOrId): static
+    public function causedBy(Model|int|string|null $modelOrId): static
     {
         if ($modelOrId === null) {
             return $this;
@@ -72,7 +72,7 @@ class ActivityLogger
         return $this;
     }
 
-    public function by(Model | int | string | null $modelOrId): static
+    public function by(Model|int|string|null $modelOrId): static
     {
         return $this->causedBy($modelOrId);
     }
@@ -156,7 +156,7 @@ class ActivityLogger
         return $this;
     }
 
-    public function log(BackedEnum | string $description): ?ActivityContract
+    public function log(BackedEnum|string $description): ?ActivityContract
     {
         if ($this->logStatus->disabled()) {
             return null;
@@ -164,7 +164,7 @@ class ActivityLogger
 
         if ($description instanceof BackedEnum) {
             if (!is_string($description->value)) {
-                throw new TypeError('Description must be of type string or StringBackedEnum');
+                throw new InvalidArgumentException('Description must be of type string or StringBackedEnum');
             }
 
             $description = $description->value;
@@ -210,7 +210,7 @@ class ActivityLogger
 
             $attribute = Str::before(Str::after($match, ':'), '.');
 
-            if (! in_array($attribute, ['subject', 'causer', 'properties'])) {
+            if (!in_array($attribute, ['subject', 'causer', 'properties'])) {
                 return $match;
             }
 
@@ -228,7 +228,7 @@ class ActivityLogger
 
     protected function getActivity(): ActivityContract
     {
-        if (! $this->activity instanceof ActivityContract) {
+        if (!$this->activity instanceof ActivityContract) {
             $this->activity = ActivitylogServiceProvider::getActivityModelInstance();
             $this
                 ->useLog($this->defaultLogName)

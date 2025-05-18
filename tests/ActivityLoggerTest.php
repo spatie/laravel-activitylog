@@ -115,7 +115,7 @@ it('can log an activity with a causer that has been set from other context', fun
     $article = Article::first();
 
     activity()
-           ->log($this->activityDescription);
+        ->log($this->activityDescription);
 
     $firstActivity = Activity::first();
 
@@ -291,8 +291,7 @@ it('will not replace non placeholders', function () {
 });
 
 it('returns an instance of the activity log after logging when using a custom model', function () {
-    $activityClass = new class() extends Activity {
-    };
+    $activityClass = new class() extends Activity {};
 
     $activityClassName = get_class($activityClass);
 
@@ -461,7 +460,7 @@ it('throws a type error when int backed enum is supplied to log', function () {
     activity()
         ->log(\Spatie\Activitylog\Test\Enums\IntBackedEnum::Published);
 })
-    ->throws(TypeError::class)
+    ->throws(InvalidArgumentException::class)
     ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
 
 it('does not log non backed enums in properties', function () {
