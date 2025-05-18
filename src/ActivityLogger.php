@@ -97,15 +97,17 @@ class ActivityLogger
 
     public function setEvent(string|BackedEnum|UnitEnum $event): static
     {
-        if ($event instanceof BackedEnum && !is_string($event->value)) {
-            throw new \InvalidArgumentException('Backed enum value must be of type string');
-        }
-
-        $this->activity->event = match(true) {
+        $event = match(true) {
             $event instanceof BackedEnum => $event->value,
             $event instanceof UnitEnum => $event->name,
             default => $event,
         };
+
+        if (! is_string($event)) {
+            throw new \InvalidArgumentException('Backed enum value must be of type string');
+        }
+
+        $this->activity->event = $event;
 
         return $this;
     }
