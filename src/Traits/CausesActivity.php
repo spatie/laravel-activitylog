@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 
-
 trait CausesActivity
 {
     /** @return MorphMany<Activity, $this> */
