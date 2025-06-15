@@ -59,6 +59,9 @@ class Activity extends Model implements ActivityContract
         parent::__construct($attributes);
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function subject(): MorphTo
     {
         if (config('activitylog.subject_returns_soft_deleted_models')) {
@@ -68,6 +71,9 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function causer(): MorphTo
     {
         return $this->morphTo();
