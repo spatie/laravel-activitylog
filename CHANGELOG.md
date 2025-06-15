@@ -2,6 +2,20 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.10.2 - 2025-06-15
+
+### What's Changed
+
+* Update README.md by @alisalehi1380 in https://github.com/spatie/laravel-activitylog/pull/1380
+* Bump stefanzweifel/git-auto-commit-action from 5.1.0 to 5.2.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1385
+* Bump dependabot/fetch-metadata from 2.3.0 to 2.4.0 by @dependabot in https://github.com/spatie/laravel-activitylog/pull/1392
+
+### New Contributors
+
+* @alisalehi1380 made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1380
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.10.1...4.10.2
+
 ## 4.10.1 - 2025-02-10
 
 ### What's Changed
