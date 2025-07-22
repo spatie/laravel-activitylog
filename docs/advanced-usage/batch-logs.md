@@ -89,7 +89,7 @@ if(LogBatch::isOpen()) {
 
 ```
 
-## Keep LogBatch openend during multiple job/requests
+## Keep LogBatch opened during multiple job/requests
 
 In some cases when you have multiple jobs that goes through queue batch, and you want to log all the activities during these different jobs using the same `LogBatch`, or you want to log multiple activities throughout multiple requests.
 
