@@ -53,4 +53,4 @@ OR
 ANALYZE TABLE activity_log;
 ```
 
-*this SQL operation will lock write/read of database, use ONLY when server under maintanance mode.
+*this SQL operation will lock write/read of database, use ONLY when server under maintenance mode.
