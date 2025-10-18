@@ -6,11 +6,11 @@ use Illuminate\Contracts\Config\Repository;
 
 class ActivityLogStatus
 {
-    protected $enabled = true;
+    protected bool $enabled;
 
     public function __construct(Repository $config)
     {
-        $this->enabled = $config['activitylog.enabled'];
+        $this->enabled = (bool) ($config['activitylog.enabled'] ?? true);
     }
 
     public function enable(): bool
