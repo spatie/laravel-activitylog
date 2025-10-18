@@ -70,7 +70,7 @@ class CauserResolver
     }
 
     /**
-     * Override the resover using callback.
+     * Override the resolver using callback.
      */
     public function resolveUsing(Closure $callback): static
     {
