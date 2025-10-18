@@ -7,7 +7,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class IntervalCasts implements CastsAttributes
 {
-    public function get($model, string $key, $value, array $attributes)
+    public function get($model, string $key, mixed $value, array $attributes): ?string
     {
         if (empty($value)) {
             return null;
@@ -16,7 +16,7 @@ class IntervalCasts implements CastsAttributes
         return (string) CarbonInterval::create($value);
     }
 
-    public function set($model, string $key, $value, array $attributes)
+    public function set($model, string $key, mixed $value, array $attributes): ?string
     {
         if (empty($value)) {
             return null;
