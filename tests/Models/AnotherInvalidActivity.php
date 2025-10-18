@@ -48,7 +48,7 @@ class AnotherInvalidActivity implements ActivityContract
      */
     public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
-        return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
+        return $this->properties->get($propertyName, $defaultValue);
     }
 
     public function changes(): Collection
