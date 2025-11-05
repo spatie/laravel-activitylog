@@ -65,6 +65,11 @@ return [
      * If set to true, the subject returns soft deleted models.
      */
     'subject_returns_soft_deleted_models' => false,
+    
+    /*
+     * If set to true, the causer returns soft deleted models.
+     */
+    'causer_returns_soft_deleted_models' => false,
 
     /*
      * This model will be used to log activity.
