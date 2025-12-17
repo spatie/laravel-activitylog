@@ -24,6 +24,25 @@ protected function schedule(Schedule $schedule)
 
 If you want to automatically cleanup your `production` system you should append the `--force` option as the command will otherwise ask you to confirm the action. This is to prevent accidental data loss.
 
+
+```php
+// routes/console.php (laravel 12)
+
+use Spatie\Activitylog\CleanActivitylogCommand;
+
+Schedule::command(CleanActivitylogCommand::class, ['--force'])->daily();
+
+// app/Console/Kernel.php (for Laravel 12 and below)
+
+use Spatie\Activitylog\CleanActivitylogCommand;
+
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command(CleanActivitylogCommand::class, ['--force'])->daily();
+}
+
+```
+
 ## Define the log to clean
 
 If you want to clean just one log you can define it as command argument. It will filter the `log_name` attribute of the `Activity` model.
