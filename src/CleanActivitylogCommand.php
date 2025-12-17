@@ -20,8 +20,10 @@ class CleanActivitylogCommand extends Command
 
     public function handle()
     {
+        // If the environment is set to production and the --force option is not provided,
+        // the cleanup operation will not proceed.
         if (! $this->confirmToProceed()) {
-            return 1;
+            return Command::FAILURE;
         }
 
         $this->comment('Cleaning activity log...');
@@ -44,5 +46,7 @@ class CleanActivitylogCommand extends Command
         $this->info("Deleted {$amountDeleted} record(s) from the activity log.");
 
         $this->comment('All done!');
+
+        return Command::SUCCESS;
     }
 }
