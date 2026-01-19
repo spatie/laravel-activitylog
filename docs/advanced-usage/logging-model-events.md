@@ -120,6 +120,20 @@ class NewsItem extends Model
 }
 ```
 
+Alternatively, you can use `$doNotRecordEvents` to exclude specific events while keeping all others.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class NewsItem extends Model
+{
+    use LogsActivity;
+
+    //the `created` event will not logged
+    protected static $doNotRecordEvents = ['created'];
+}
+
 ## Customizing the description
 
 By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by providing callback to the `->setDescriptionForEvent()` method on `LogOptions` class.
