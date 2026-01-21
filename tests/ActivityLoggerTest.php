@@ -36,6 +36,19 @@ it('will return a new instance of PendingActivityLog through the facade', functi
     expect($instance1)->not->toBe($instance2);
 });
 
+it('can log multiple consecutive activities', function () {
+    ActivityFacade::log($this->activityDescription);
+
+    ActivityFacade::causedByAnonymous()
+        ->event('created')
+        ->log($this->activityDescription);
+
+    expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
+    expect($this->getLastActivity()->event)->toEqual('created');
+    expect($this->getLastActivity()->causer_id)->toBeNull();
+    expect($this->getLastActivity()->causer_type)->toBeNull();
+});
+
 it('will not log an activity when the log is not enabled', function () {
     config(['activitylog.enabled' => false]);
 
