@@ -29,6 +29,13 @@ it('can log an activity with facade', function () {
     expect($this->getLastActivity()->description)->toEqual($this->activityDescription);
 });
 
+it('will return a new instance of PendingActivityLog through the facade', function () {
+    $instance1 = ActivityFacade::log($this->activityDescription);
+    $instance2 = ActivityFacade::log($this->activityDescription);
+
+    expect($instance1)->not->toBe($instance2);
+});
+
 it('will not log an activity when the log is not enabled', function () {
     config(['activitylog.enabled' => false]);
 
