@@ -77,8 +77,10 @@ class ActivityLogger
 
     public function causedByAnonymous(): static
     {
-        $this->activity->causer_id = null;
-        $this->activity->causer_type = null;
+        $activity = $this->getActivity();
+
+        $activity->causer_id = null;
+        $activity->causer_type = null;
 
         return $this;
     }
@@ -95,7 +97,7 @@ class ActivityLogger
 
     public function setEvent(string $event): static
     {
-        $this->activity->event = $event;
+        $this->getActivity()->event = $event;
 
         return $this;
     }
@@ -160,7 +162,7 @@ class ActivityLogger
             return null;
         }
 
-        $activity = $this->activity;
+        $activity = $this->getActivity();
 
         $activity->description = $this->replacePlaceholders(
             $activity->description ?? $description,
