@@ -383,6 +383,45 @@ it('can removes key event if it was loggable', function () {
     $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
 });
 
+it('will not log when pipe removes all changes and dontSubmitEmptyLogs is set', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+            ->logOnly(['name'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+        }
+    };
+
+    // Add a pipe that removes all changes only for update events
+    $articleClass::addLogChange(new class() implements LoggablePipe {
+        public function handle(EventLogBag $event, Closure $next): EventLogBag
+        {
+            if ($event->event === 'updated') {
+                $event->changes = [];
+            }
+
+            return $next($event);
+        }
+    });
+
+    $article = $articleClass::create([
+        'name' => 'original name',
+    ]);
+
+    // Created event should be logged
+    $this->assertCount(1, Activity::all());
+
+    $article->name = 'updated name';
+    $article->save();
+
+    // Updated event should NOT be logged because pipe removed all changes
+    $this->assertCount(1, Activity::all());
+});
+
 it('can store empty relation when creating a model', function () {
     $articleClass = new class() extends Article {
         use LogsActivity;
