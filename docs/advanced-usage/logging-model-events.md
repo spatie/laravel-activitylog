@@ -133,6 +133,7 @@ class NewsItem extends Model
     //the `created` event will not logged
     protected static $doNotRecordEvents = ['created'];
 }
+```
 
 ## Customizing the description
 

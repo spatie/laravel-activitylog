@@ -84,6 +84,33 @@ it('can skip logging if asked to for update method', function () {
     $this->assertNull($this->getLastActivity());
 });
 
+it('can exclude specific events from being logged using doNotRecordEvents', function () {
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        protected static $doNotRecordEvents = ['created'];
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults();
+        }
+    };
+
+    $article = new $articleClass();
+    $article->name = 'my name';
+    $article->save();
+
+    // 'created' event should not be logged
+    $this->assertCount(0, Activity::all());
+
+    $article->name = 'updated name';
+    $article->save();
+
+    // 'updated' event should be logged
+    $this->assertCount(1, Activity::all());
+    $this->assertEquals('updated', $this->getLastActivity()->event);
+});
+
 it('will log an update of the model', function () {
     $article = $this->createArticle();
 
