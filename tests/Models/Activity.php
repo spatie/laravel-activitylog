@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Test\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
@@ -29,7 +30,7 @@ class Activity extends Model implements ActivityContract
     public function subject(): MorphTo
     {
         if (config('activitylog.subject_returns_soft_deleted_models')) {
-            return $this->morphTo()->withTrashed();
+            return $this->morphTo()->withoutGlobalScope(SoftDeletingScope::class);
         }
 
         return $this->morphTo();
