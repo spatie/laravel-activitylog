@@ -437,6 +437,32 @@ it('can log activity when event is changed with tap', function () {
     $this->assertEquals('my custom event', $firstActivity->event);
 });
 
+it('will only call tapActivity once', function () {
+    $callCount = 0;
+
+    $model = new class() extends Article {
+        use LogsActivity;
+
+        public static $tapCallCount = 0;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults();
+        }
+
+        public function tapActivity(Activity $activity, string $eventName)
+        {
+            static::$tapCallCount++;
+        }
+    };
+
+    $model::$tapCallCount = 0;
+    $entity = new $model();
+    $entity->save();
+
+    $this->assertEquals(1, $model::$tapCallCount);
+});
+
 it('will not submit log when there is no changes', function () {
     $model = new class() extends Article {
         use LogsActivity;
