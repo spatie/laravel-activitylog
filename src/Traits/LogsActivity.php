@@ -75,17 +75,12 @@ trait LogsActivity
                     ->thenReturn();
 
                 // Actual logging
-                $logger = app(ActivityLogger::class)
+                app(ActivityLogger::class)
                     ->useLog($logName)
                     ->event($eventName)
                     ->performedOn($model)
-                    ->withProperties($event->changes);
-
-                if (method_exists($model, 'tapActivity')) {
-                    $logger->tap([$model, 'tapActivity'], $eventName);
-                }
-
-                $logger->log($description);
+                    ->withProperties($event->changes)
+                    ->log($description);
 
                 // Reset log options so the model can be serialized.
                 $model->activitylogOptions = null;
