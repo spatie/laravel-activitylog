@@ -143,7 +143,7 @@ trait LogsActivity
         $reject = collect(static::$doNotRecordEvents ?? []);
 
         if (isset(static::$recordEvents)) {
-            return collect(static::$recordEvents)->reject(fn(string $eventName) => $reject->contains($eventName));
+            return collect(static::$recordEvents)->reject(fn (string $eventName) => $reject->contains($eventName));
         }
 
         $events = collect([
@@ -156,7 +156,7 @@ trait LogsActivity
             $events->push('restored');
         }
 
-        return $events->reject(fn(string $eventName) => $reject->contains($eventName));
+        return $events->reject(fn (string $eventName) => $reject->contains($eventName));
     }
 
     protected function shouldLogEvent(string $eventName): bool
