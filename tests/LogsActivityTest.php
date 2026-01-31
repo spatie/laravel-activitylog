@@ -242,6 +242,34 @@ it('can fetch soft deleted models', function () {
     $this->assertEquals('changed name', $this->getLastActivity()->subject->name);
 });
 
+it('can fetch subject when model does not use soft deletes and config is enabled', function () {
+    app()['config']->set('activitylog.subject_returns_soft_deleted_models', true);
+
+    // Create a model class without SoftDeletes
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        // Note: No SoftDeletes trait
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults();
+        }
+    };
+
+    $article = new $articleClass();
+    $article->name = 'test article';
+    $article->save();
+
+    $activity = Activity::first();
+
+    // This should not throw an exception even though the model doesn't use SoftDeletes
+    $subject = $activity->subject;
+
+    $this->assertNotNull($subject);
+    $this->assertEquals('test article', $subject->name);
+});
+
 it('can log activity to log named in the model', function () {
     $articleClass = new class() extends Article {
         use LogsActivity;
