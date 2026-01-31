@@ -39,7 +39,7 @@
     },
     "require-dev": {
         "ext-json": "*",
-        "orchestra/testbench": "^6.23 || ^7.0 || ^8.0 || ^9.0 || ^10.0",
+        "orchestra/testbench": "^6.23 || ^7.0 || ^8.0 || ^9.6 || ^10.0",
         "pestphp/pest": "^1.20 || ^2.0 || ^3.0"
     },
     "minimum-stability": "dev",
