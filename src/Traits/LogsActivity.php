@@ -213,12 +213,15 @@ trait LogsActivity
 
         // Determine if unguarded attributes will be logged.
         if ($this->shouldLogUnguarded()) {
-
-            // Get only attribute names, not intrested in the values here then guarded
-            // attributes. get only keys than not present in guarded array, because
-            // we are logging the unguarded attributes and we cant have both!
-
-            $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
+            // If globally unguarded, log all attributes
+            if (static::isUnguarded()) {
+                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
+            } else {
+                // Get only attribute names, not interested in the values here then guarded
+                // attributes. get only keys than not present in guarded array, because
+                // we are logging the unguarded attributes and we can't have both!
+                $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
+            }
         }
 
         if (! empty($this->activitylogOptions->logAttributes)) {
@@ -245,6 +248,12 @@ trait LogsActivity
     {
         if (! $this->activitylogOptions->logUnguarded) {
             return false;
+        }
+
+        // If the model is globally unguarded via Model::unguard(),
+        // all attributes should be considered unguarded.
+        if (static::isUnguarded()) {
+            return true;
         }
 
         // This case means all of the attributes are guarded

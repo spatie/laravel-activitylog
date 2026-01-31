@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Contracts\LoggablePipe;
@@ -1298,6 +1299,47 @@ it('will store no changes when wildcard guard and log unguarded attributes', fun
     $article->save();
 
     $this->assertEquals([], $this->getLastActivity()->changes()->toArray());
+});
+
+it('can log unguarded attributes when Model::unguard() is called globally', function () {
+    // Model without explicit $fillable or $guarded
+    $articleClass = new class() extends Article {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+            ->logUnguarded()
+            ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
+        }
+    };
+
+    // Globally unguard all models
+    Model::unguard();
+
+    try {
+        $article = new $articleClass();
+        $article->name = 'my name';
+        $article->text = 'my text';
+        $article->save();
+
+        $expectedChanges = [
+            'attributes' => [
+                'name' => 'my name',
+                'text' => 'my text',
+                'user_id' => null,
+                'json' => null,
+                'price' => null,
+                'interval' => null,
+                'status' => null,
+            ],
+        ];
+
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    } finally {
+        // Re-guard models
+        Model::reguard();
+    }
 });
 
 it('can use hidden as loggable attributes', function () {
