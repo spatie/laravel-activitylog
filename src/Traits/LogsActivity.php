@@ -62,10 +62,6 @@ trait LogsActivity
                     return;
                 }
 
-                if ($model->isLogEmpty($changes) && ! $model->activitylogOptions->submitEmptyLogs) {
-                    return;
-                }
-
                 // User can define a custom pipelines to mutate, add or remove from changes
                 // each pipe receives the event carrier bag with changes and the model in
                 // question every pipe should manipulate new and old attributes.
@@ -73,6 +69,11 @@ trait LogsActivity
                     ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
                     ->through(static::$changesPipes)
                     ->thenReturn();
+
+                // Check for empty logs after pipeline has run
+                if ($model->isLogEmpty($event->changes) && ! $model->activitylogOptions->submitEmptyLogs) {
+                    return;
+                }
 
                 // Actual logging
                 $logger = app(ActivityLogger::class)
