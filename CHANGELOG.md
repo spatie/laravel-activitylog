@@ -2,6 +2,24 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.11.0 - 2026-01-31
+
+### What's Changed
+
+* Update issue template by @AlexVanderbist in https://github.com/spatie/laravel-activitylog/pull/1410
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/spatie/laravel-activitylog/pull/1437
+* Fix issue where activity is `null` by @rojtjo in https://github.com/spatie/laravel-activitylog/pull/1439
+* fix logUnguarded() to respect Model::unguard() by @freekmurze in https://github.com/spatie/laravel-activitylog/pull/1444
+* check for empty logs after pipeline runs by @freekmurze in https://github.com/spatie/laravel-activitylog/pull/1443
+* fix subject() throwing exception for non-SoftDeletes models by @freekmurze in https://github.com/spatie/laravel-activitylog/pull/1442
+* fix tapActivity being called twice by @freekmurze in https://github.com/spatie/laravel-activitylog/pull/1441
+
+### New Contributors
+
+* @rojtjo made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1439
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.10.2...4.11.0
+
 ## 4.10.2 - 2025-06-15
 
 ### What's Changed
