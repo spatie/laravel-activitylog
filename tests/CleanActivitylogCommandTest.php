@@ -46,3 +46,47 @@ it('can accept days as option to override config setting', function () {
 
     expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
 });
+
+it('does not clean the activity log when days config value is invalid', function (mixed $days) {
+    app()['config']->set('activitylog.delete_records_older_than_days', $days);
+
+    collect(range(1, 60))->each(function (int $index) {
+        Activity::create([
+            'description' => "item {$index}",
+            'created_at' => Carbon::now()->subDays($index)->startOfDay(),
+        ]);
+    });
+
+    expect(Activity::all())->toHaveCount(60);
+
+    $exitCode = Artisan::call('activitylog:clean');
+
+    expect($exitCode)->toBe(1);
+    expect(Activity::all())->toHaveCount(60);
+})->with([
+    false,
+    'abc',
+    '7.5',
+    '',
+]);
+
+it('does not clean the activity log when days option value is invalid', function (mixed $days) {
+    collect(range(1, 60))->each(function (int $index) {
+        Activity::create([
+            'description' => "item {$index}",
+            'created_at' => Carbon::now()->subDays($index)->startOfDay(),
+        ]);
+    });
+
+    expect(Activity::all())->toHaveCount(60);
+
+    $exitCode = Artisan::call('activitylog:clean', ['--days' => $days]);
+
+    expect($exitCode)->toBe(1);
+    expect(Activity::all())->toHaveCount(60);
+})->with([
+    false,
+    'abc',
+    '7.5',
+    '',
+]);

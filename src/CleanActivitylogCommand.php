@@ -29,6 +29,13 @@ class CleanActivitylogCommand extends Command
         $log = $this->argument('log');
 
         $maxAgeInDays = $this->option('days') ?? config('activitylog.delete_records_older_than_days');
+        if (filter_var($maxAgeInDays, FILTER_VALIDATE_INT) === false) {
+            $this->error('The days option must be an integer.');
+
+            return 1;
+        }
+
+        $maxAgeInDays = (int) $maxAgeInDays;
 
         $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
 
