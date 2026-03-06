@@ -124,3 +124,18 @@ it('will return null uuid if end batch that started twice properly', function ()
 
     $this->assertNotSame($firstUuid, $nullUuid);
 });
+
+it('closes the batch when the callback throws an exception', function () {
+    expect(LogBatch::isOpen())->toBeFalse();
+
+    try {
+        LogBatch::withinBatch(function () {
+            throw new \RuntimeException('something went wrong');
+        });
+    } catch (\RuntimeException) {
+        // swallow
+    }
+
+    expect(LogBatch::isOpen())->toBeFalse();
+    expect(LogBatch::getUuid())->toBeNull();
+});
