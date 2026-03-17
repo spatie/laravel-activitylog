@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog;
 
 use Closure;
+use Laravel\SerializableClosure\SerializableClosure;
 
 class LogOptions
 {
@@ -162,5 +163,39 @@ class LogOptions
         $this->attributeRawValues = $attributes;
 
         return $this;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'logName' => $this->logName,
+            'submitEmptyLogs' => $this->submitEmptyLogs,
+            'logFillable' => $this->logFillable,
+            'logOnlyDirty' => $this->logOnlyDirty,
+            'logUnguarded' => $this->logUnguarded,
+            'logAttributes' => $this->logAttributes,
+            'logExceptAttributes' => $this->logExceptAttributes,
+            'dontLogIfAttributesChangedOnly' => $this->dontLogIfAttributesChangedOnly,
+            'attributeRawValues' => $this->attributeRawValues,
+            'descriptionForEvent' => $this->descriptionForEvent
+                ? new SerializableClosure($this->descriptionForEvent)
+                : null,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->logName = $data['logName'];
+        $this->submitEmptyLogs = $data['submitEmptyLogs'];
+        $this->logFillable = $data['logFillable'];
+        $this->logOnlyDirty = $data['logOnlyDirty'];
+        $this->logUnguarded = $data['logUnguarded'];
+        $this->logAttributes = $data['logAttributes'];
+        $this->logExceptAttributes = $data['logExceptAttributes'];
+        $this->dontLogIfAttributesChangedOnly = $data['dontLogIfAttributesChangedOnly'];
+        $this->attributeRawValues = $data['attributeRawValues'];
+        $this->descriptionForEvent = $data['descriptionForEvent']
+            ? $data['descriptionForEvent']->getClosure()
+            : null;
     }
 }
