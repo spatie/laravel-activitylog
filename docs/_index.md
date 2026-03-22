@@ -1,5 +1,5 @@
 ---
-title: v4
+title: v5
 slogan: Log the activities of your users
 githubUrl: https://github.com/spatie/laravel-activitylog
 branch: main

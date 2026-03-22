@@ -11,12 +11,12 @@ activity()->disableLogging();
 
 If you want to enable logging again call `activity()->enableLogging()`.
 
-## without Logs
+## Without logging
 
-If you want to run a given code snippet without logs you can use the `withoutLogs()` method.
+If you want to run a given code snippet without logs you can use the `withoutLogging()` method.
 
 ```php
-activity()->withoutLogs(function () {
+activity()->withoutLogging(function () {
     // ...
 });
 ```

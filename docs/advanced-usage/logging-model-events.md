@@ -3,15 +3,23 @@ title: Logging model events
 weight: 1
 ---
 
-The package can automatically log events such as when a model is created, updated and deleted. To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity`-trait.
+The package can automatically log events such as when a model is created, updated and deleted. To make this work all you need to do is let your model use the `Spatie\Activitylog\Traits\LogsActivity` trait.
 
-As a bonus the package will also log the changed attributes for all these events when you define our own options method.
+The simplest usage requires no configuration at all:
 
-The trait contains an abstract method `getActivitylogOptions()` that you can use to customize options. It needs to return a `LogOptions` instance built from `LogOptions::defaults()` using fluent methods.
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class NewsItem extends Model
+{
+    use LogsActivity;
+}
+```
+
+This will log `created`, `updated`, and `deleted` events, but won't track attribute changes. To also track attribute changes, override the `getActivitylogOptions()` method. It should return a `LogOptions` instance built from `LogOptions::defaults()` using fluent methods.
 
 The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
-
-Here's an example:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +36,6 @@ class NewsItem extends Model
     {
         return LogOptions::defaults()
         ->logOnly(['name', 'text']);
-        // Chain fluent methods for configuration options
     }
 }
 ```
@@ -358,9 +365,9 @@ $lastActivity->properties->toArray();
 
 The result in the log entry key for the attribute will be what is in the `->logOnly()`.
 
-## Prevent save logs items that have no changed attribute
+## Prevent saving logs that have no changed attribute
 
-Calling `->dontSubmitEmptyLogs()` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
+Calling `->dontLogEmptyChanges()` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -378,7 +385,7 @@ class NewsItem extends Model
         return LogOptions::defaults()
         ->logOnly(['text'])
         ->logOnlyDirty()
-        ->dontSubmitEmptyLogs();
+        ->dontLogEmptyChanges();
     }
 
 }
@@ -412,15 +419,62 @@ Even if there are changes to `text` attribute, they will not be logged.
 
 ## Using the CausesActivity trait
 
-The package ships with a `CausesActivity` trait which can be added to any model that you use as a causer. It provides an `actions` relationship which returns all activities that are caused by the model.
+The package ships with a `CausesActivity` trait which can be added to any model that you use as a causer. It provides an `activitiesAsCauser()` relationship which returns all activities that are caused by the model.
 
-If you include it in the `User` model you can simply retrieve all the current users activities like this:
+If you include it in the `User` model you can simply retrieve all the current user's activities like this:
 
 ```php
-
-\Auth::user()->actions;
-
+Auth::user()->activitiesAsCauser;
 ```
+
+## Using the HasActivity trait
+
+If your model both causes and logs activities (common for User models), use the `HasActivity` trait which combines `LogsActivity` and `CausesActivity`:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\HasActivity;
+use Spatie\Activitylog\LogOptions;
+
+class User extends Model
+{
+    use HasActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logFillable();
+    }
+}
+```
+
+This provides three relationships:
+- `activities()` returns activities where this model is the subject (alias for `activitiesAsSubject()`)
+- `activitiesAsSubject()` returns activities where this model is the subject
+- `activitiesAsCauser()` returns activities where this model is the causer
+
+## Using the ActivityEvent enum
+
+The package provides an `ActivityEvent` enum for the built-in event types:
+
+```php
+use Spatie\Activitylog\ActivityEvent;
+
+ActivityEvent::Created;  // 'created'
+ActivityEvent::Updated;  // 'updated'
+ActivityEvent::Deleted;  // 'deleted'
+ActivityEvent::Restored; // 'restored'
+```
+
+You can use this enum when querying activities or when manually logging:
+
+```php
+Activity::forEvent(ActivityEvent::Created)->get();
+
+activity()->event(ActivityEvent::Updated)->log('...');
+```
+
+All methods that accept an event also accept a plain string, so custom event names still work.
 
 ## Disabling logging on demand
 

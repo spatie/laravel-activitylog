@@ -6,16 +6,16 @@ weight: 4
 This class will carry changes over the user defined pipes via `handle` method and will have these properties:
 
 ```php
-// Event Name
-public string $event,
+// Event name (string or ActivityEvent enum)
+public string|ActivityEvent $event,
 
 // Model in question
 public Model $model,
 
-// changes array
+// Changes array
 public array $changes,
 
-// current applied options
+// Current applied options
 public ?LogOptions $options = null
 ```
 
