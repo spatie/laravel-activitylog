@@ -90,12 +90,12 @@ class ActivityLogger
         return $this->causedByAnonymous();
     }
 
-    public function event(string|ActivityEvent $event): static
+    public function event(string | ActivityEvent $event): static
     {
         return $this->setEvent($event);
     }
 
-    public function setEvent(string|ActivityEvent $event): static
+    public function setEvent(string | ActivityEvent $event): static
     {
         $this->getActivity()->event = $event instanceof ActivityEvent ? $event->value : $event;
 

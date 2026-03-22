@@ -50,6 +50,6 @@ class ActivitylogServiceProvider extends PackageServiceProvider
     {
         $activityModelClassName = self::determineActivityModel();
 
-        return new $activityModelClassName;
+        return new $activityModelClassName();
     }
 }

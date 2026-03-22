@@ -92,7 +92,7 @@ class Activity extends Model implements ActivityContract
     public function changes(): Collection
     {
         if (! $this->properties instanceof Collection) {
-            return new Collection;
+            return new Collection();
         }
 
         return $this->properties->only(['attributes', 'old']);
@@ -126,7 +126,7 @@ class Activity extends Model implements ActivityContract
             ->where('subject_id', $subject->getKey());
     }
 
-    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder
+    public function scopeForEvent(Builder $query, string | ActivityEvent $event): Builder
     {
         return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
     }

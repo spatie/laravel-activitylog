@@ -107,7 +107,7 @@ class AnotherInvalidActivity implements ActivityContract
         return $this->changes();
     }
 
-    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder
+    public function scopeForEvent(Builder $query, string | ActivityEvent $event): Builder
     {
         return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
     }

@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 trait HasActivity
 {
     use LogsActivity;

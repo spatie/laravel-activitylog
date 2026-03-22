@@ -4,7 +4,7 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Contracts\Config\Repository;
 
-class ActivitylogStatus
+class ActivityLogStatus
 {
     protected bool $enabled = true;
 
