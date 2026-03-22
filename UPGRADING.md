@@ -1,3 +1,81 @@
+## From v4 to v5
+
+```bash
+composer require spatie/laravel-activitylog "^5.0.0"
+```
+
+### Requirements
+
+v5 requires **PHP 8.4+** and **Laravel 11+**. If you're on older versions, stay on v4.
+
+### Migration
+
+v5 ships a single consolidated migration. If you're upgrading from v4, you don't need to re-migrate. Your existing table already has all the columns. Only new installs use the new migration.
+
+### Renamed methods
+
+| v4 | v5 |
+|---|---|
+| `$model->activities` (LogsActivity) | `$model->activitiesAsSubject` |
+| `$model->actions` (CausesActivity) | `$model->activitiesAsCauser` |
+| `dontSubmitEmptyLogs()` | `dontLogEmptyChanges()` |
+| `submitEmptyLogs()` | `logEmptyChanges()` |
+| `withoutLogs()` | `withoutLogging()` |
+| `CauserResolver::setCauser($model)` | `Activity::defaultCauser($model)` |
+| `CauserResolver::withCauser($model, fn)` | `Activity::defaultCauser($model, fn)` |
+| `LogBatch::withinBatch(fn)` | `Activity::batch(fn)` |
+
+### Renamed class
+
+`ActivityLogStatus` has been renamed to `ActivitylogStatus` (lowercase `l`) to match the namespace casing. If you reference this class directly, update the import.
+
+### HasActivity trait
+
+v5 reintroduces the `HasActivity` trait. It combines `LogsActivity` and `CausesActivity` and provides an `activities()` convenience method. Use it on models (like User) that both cause and log activities.
+
+### getActivitylogOptions() is now optional
+
+You no longer need to implement `getActivitylogOptions()` on every model. The default logs events (created, updated, deleted) without tracking attribute changes. Override the method only when you need to customize attribute logging.
+
+### CauserResolver facade removed
+
+The `CauserResolver` facade has been removed. Use `Activity::defaultCauser()` instead:
+
+```php
+// v4
+CauserResolver::setCauser($admin);
+CauserResolver::withCauser($admin, fn() => ...);
+
+// v5
+Activity::defaultCauser($admin);
+Activity::defaultCauser($admin, fn() => ...);
+```
+
+The `CauserResolver` class still exists and can be resolved from the container for advanced use cases (custom resolution callbacks).
+
+### ActivityEvent enum
+
+v5 introduces an `ActivityEvent` enum. All methods that accept event names also accept the enum:
+
+```php
+use Spatie\Activitylog\ActivityEvent;
+
+Activity::forEvent(ActivityEvent::Created)->get();
+activity()->event(ActivityEvent::Updated)->log('...');
+```
+
+Plain strings still work for custom event names.
+
+### New config option
+
+A `default_except_attributes` option has been added to the config. Publish the new config or add it manually:
+
+```php
+'default_except_attributes' => [],
+```
+
+---
+
 ## From v3 to v4
 
 ``` bash

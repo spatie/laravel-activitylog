@@ -40,6 +40,11 @@ class PendingActivityLog
         return $this;
     }
 
+    public function batch(Closure $callback): mixed
+    {
+        return app(LogBatch::class)->withinBatch($callback);
+    }
+
     public function __call(string $method, array $parameters): mixed
     {
         return $this->forwardCallTo($this->logger, $method, $parameters);

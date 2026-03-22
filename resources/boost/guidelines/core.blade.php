@@ -83,24 +83,29 @@ Activity::forBatch($batchUuid)->get();
 Group related activities with a shared UUID:
 
 ```php
-use Spatie\Activitylog\Facades\LogBatch;
+use Spatie\Activitylog\Facades\Activity;
 
-LogBatch::withinBatch(function () {
+Activity::batch(function () {
     $article->update(['title' => 'New']);
     $article->tags()->sync([1, 2, 3]);
 });
 ```
 
-## CauserResolver
+For advanced batch control (manual start/end, cross-request batches), use the `LogBatch` facade.
+
+## Setting the causer
 
 Override the causer for a block of code:
 
 ```php
-use Spatie\Activitylog\Facades\CauserResolver;
+use Spatie\Activitylog\Facades\Activity;
 
-CauserResolver::withCauser($admin, function () {
+Activity::defaultCauser($admin, function () {
     // all activities here are caused by $admin
 });
+
+// or set globally for the rest of the request
+Activity::defaultCauser($admin);
 ```
 
 ## Disabling Logging

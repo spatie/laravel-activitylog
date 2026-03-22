@@ -7,13 +7,25 @@ In some situations you may want to process multiple activities back to a single 
 
 For example when a `User` deletes an `Author`, then that cascades soft deletes to the `Book`s that were owned by the `Author`. This way all modifications caused by that initial action are still associated with the same causer and batch UUID.
 
-To start a new batch call `LogBatch::startBatch()` before any activity is done. Then all following actions will link back by UUID to that batch. After finishing activities you should end the batch by calling `LogBatch::endBatch()`.
+The simplest way to batch activities is using `Activity::batch()`:
 
-Here's an example:
+```php
+use Spatie\Activitylog\Facades\Activity;
+
+Activity::batch(function () {
+    $author = Author::create(['name' => 'Philip K. Dick']);
+    $book = Book::create(['name' => 'A Scanner Darkly', 'author_id' => $author->id]);
+    $author->delete();
+    // all activities share the same batch_uuid
+});
+```
+
+## Manual batch control
+
+For more control, you can use the `LogBatch` facade directly. Call `LogBatch::startBatch()` before any activity is done, then all following actions will link back by UUID to that batch. After finishing activities you should end the batch by calling `LogBatch::endBatch()`.
 
 ```php
 use Spatie\Activitylog\Facades\LogBatch;
-use Spatie\Activitylog\Models\Activity;
 
 LogBatch::startBatch();
 $author = Author::create(['name' => 'Philip K. Dick']);
@@ -23,7 +35,7 @@ $author->delete();
 LogBatch::endBatch();
 ```
 
-Doing this would allow all the activities within this batch to log together as described. This helps ensure those non-explicit actions like the cascade delete of the book get captured too.
+This helps ensure those non-explicit actions like the cascade delete of the book get captured too.
 
 ## Retrieve Activities by batch
 

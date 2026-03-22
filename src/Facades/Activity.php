@@ -26,6 +26,7 @@ use Spatie\Activitylog\PendingActivityLog;
  * @method static \Spatie\Activitylog\Contracts\Activity|null log(string $description)
  * @method static mixed withoutLogging(\Closure $callback)
  * @method static mixed defaultCauser(\Illuminate\Database\Eloquent\Model|null $causer, \Closure|null $callback = null)
+ * @method static mixed batch(\Closure $callback)
  * @method static \Spatie\Activitylog\ActivityLogger|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
  * @method static \Spatie\Activitylog\ActivityLogger|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
  * @method static void macro(string $name, object|callable $macro)

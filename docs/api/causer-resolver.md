@@ -3,58 +3,59 @@ title: Causer Resolver
 weight: 3
 ---
 
-This class is registered as scoped (per request) and will allow you to set the causer for activity globally or on a per action basis.
+The `CauserResolver` class handles resolving who caused an activity. It is registered as a scoped binding (per request) in the container.
 
-**Note that** overriding causer using `setCauser` method takes priority over overriding the resolver using `resolveUsing` method.
-
-```php
-CauserResolver::setCauser(User::find(1));
-
-$log = activity()->log('log look mom, I did something...');
-$log->causer; // User Model with id of 1
-```
-
-## withCauser
-
-The recommended way to override the causer for a block of code is to use `withCauser()`. This scopes the causer to the callback and automatically restores the previous causer afterwards. This is useful in jobs, CLI commands, seeders, and multi-guard setups.
+For most use cases, you should use the `Activity` facade instead of interacting with `CauserResolver` directly:
 
 ```php
-use Spatie\Activitylog\Facades\CauserResolver;
+use Spatie\Activitylog\Facades\Activity;
 
-CauserResolver::withCauser($admin, function () {
-    // all activities logged here will have $admin as the causer
-
-    $article->update(['title' => 'New title']);
-    $article->tags()->sync([1, 2, 3]);
+// Scoped causer (recommended)
+Activity::defaultCauser($admin, function () {
+    // all activities here will have $admin as causer
 });
 
-// the previous causer (or null) is restored here
+// Global causer
+Activity::defaultCauser($admin);
 ```
 
-## resolve
+## Advanced usage
+
+If you need lower-level control, resolve the `CauserResolver` from the container:
 
 ```php
-/**
- * Resolve causer based different arguments. First checks for override causer,
- * then override closure, then falls back to the authenticated user.
- */
+use Spatie\Activitylog\CauserResolver;
+
+// Custom resolution callback
+app(CauserResolver::class)->resolveUsing(function ($subject) {
+    return User::find(1);
+});
+```
+
+**Note:** `setCauser()` takes priority over `resolveUsing()`.
+
+## Methods
+
+### resolve
+
+```php
 public function resolve(Model | int | string | null $subject = null): ?Model;
 ```
 
-## resolveUsing
+### resolveUsing
 
 ```php
-/**
- * Override the resolver using callback.
- */
 public function resolveUsing(Closure $callback): static;
 ```
 
-## setCauser
+### setCauser
 
 ```php
-/**
- * Override default causer.
- */
 public function setCauser(?Model $causer): static;
+```
+
+### withCauser
+
+```php
+public function withCauser(?Model $causer, Closure $callback): mixed;
 ```

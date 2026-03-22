@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
-use Spatie\Activitylog\Facades\CauserResolver;
+use Spatie\Activitylog\CauserResolver;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Enums\NonBackedEnum;
@@ -130,7 +130,7 @@ it('can log an activity with a causer other than user model', function () {
 
 it('can log an activity with a causer that has been set from other context', function () {
     $causer = Article::first();
-    CauserResolver::setCauser($causer);
+    app(CauserResolver::class)->setCauser($causer);
 
     $article = Article::first();
 
