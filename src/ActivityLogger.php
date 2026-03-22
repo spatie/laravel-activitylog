@@ -21,13 +21,13 @@ class ActivityLogger
 
     protected CauserResolver $causerResolver;
 
-    protected ActivityLogStatus $logStatus;
+    protected ActivitylogStatus $logStatus;
 
     protected ?ActivityContract $activity = null;
 
     protected LogBatch $batch;
 
-    public function __construct(Repository $config, ActivityLogStatus $logStatus, LogBatch $batch, CauserResolver $causerResolver)
+    public function __construct(Repository $config, ActivitylogStatus $logStatus, LogBatch $batch, CauserResolver $causerResolver)
     {
         $this->causerResolver = $causerResolver;
 
@@ -38,7 +38,7 @@ class ActivityLogger
         $this->logStatus = $logStatus;
     }
 
-    public function setLogStatus(ActivityLogStatus $logStatus): static
+    public function setLogStatus(ActivitylogStatus $logStatus): static
     {
         $this->logStatus = $logStatus;
 
@@ -90,14 +90,14 @@ class ActivityLogger
         return $this->causedByAnonymous();
     }
 
-    public function event(string $event): static
+    public function event(string|ActivityEvent $event): static
     {
         return $this->setEvent($event);
     }
 
-    public function setEvent(string $event): static
+    public function setEvent(string|ActivityEvent $event): static
     {
-        $this->getActivity()->event = $event;
+        $this->getActivity()->event = $event instanceof ActivityEvent ? $event->value : $event;
 
         return $this;
     }
@@ -180,7 +180,7 @@ class ActivityLogger
         return $activity;
     }
 
-    public function withoutLogs(Closure $callback): mixed
+    public function withoutLogging(Closure $callback): mixed
     {
         if ($this->logStatus->disabled()) {
             return $callback();

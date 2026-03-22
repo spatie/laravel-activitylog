@@ -2,9 +2,6 @@
 
 namespace Spatie\Activitylog\Test;
 
-use AddBatchUuidColumnToActivityLogTable;
-use AddEventColumnToActivityLogTable;
-use CreateActivityLogTable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
@@ -56,13 +53,8 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function migrateActivityLogTable(): void
     {
-        require_once __DIR__.'/../database/migrations/create_activity_log_table.php.stub';
-        require_once __DIR__.'/../database/migrations/add_event_column_to_activity_log_table.php.stub';
-        require_once __DIR__.'/../database/migrations/add_batch_uuid_column_to_activity_log_table.php.stub';
-
-        (new CreateActivityLogTable())->up();
-        (new AddEventColumnToActivityLogTable())->up();
-        (new AddBatchUuidColumnToActivityLogTable())->up();
+        $migration = require __DIR__.'/../database/migrations/create_activity_log_table.php.stub';
+        $migration->up();
     }
 
     protected function createTables(...$tableNames): void

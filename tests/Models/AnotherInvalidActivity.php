@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class AnotherInvalidActivity implements ActivityContract
@@ -106,8 +107,8 @@ class AnotherInvalidActivity implements ActivityContract
         return $this->changes();
     }
 
-    public function scopeForEvent(Builder $query, string $event): Builder
+    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder
     {
-        return $query->where('event', $event);
+        return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
     }
 }

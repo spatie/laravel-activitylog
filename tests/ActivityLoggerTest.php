@@ -404,7 +404,7 @@ it('will log a custom created at date time', function () {
 });
 
 it('will disable logs for a callback', function () {
-    $result = activity()->withoutLogs(function () {
+    $result = activity()->withoutLogging(function () {
         activity()->log('created');
 
         return 'hello';
@@ -415,7 +415,7 @@ it('will disable logs for a callback', function () {
 });
 
 it('will disable logs for a callback without affecting previous state', function () {
-    activity()->withoutLogs(function () {
+    activity()->withoutLogging(function () {
         activity()->log('created');
     });
 
@@ -429,7 +429,7 @@ it('will disable logs for a callback without affecting previous state', function
 it('will disable logs for a callback without affecting previous state even when already disabled', function () {
     activity()->disableLogging();
 
-    activity()->withoutLogs(function () {
+    activity()->withoutLogging(function () {
         activity()->log('created');
     });
 
@@ -444,7 +444,7 @@ it('will disable logs for a callback without affecting previous state even with 
     activity()->disableLogging();
 
     try {
-        activity()->withoutLogs(function () {
+        activity()->withoutLogging(function () {
             activity()->log('created');
 
             throw new Exception('OH NO');
@@ -468,7 +468,7 @@ it('logs backed enums in properties', function () {
 
     $this->assertSame(0, $this->getLastActivity()->properties['int_backed_enum']);
     $this->assertSame('published', $this->getLastActivity()->properties['string_backed_enum']);
-})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+});
 
 it('does not log non backed enums in properties', function () {
     activity()

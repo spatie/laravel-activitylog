@@ -49,4 +49,10 @@ return [
      * Laravel's database.default will be used instead.
      */
     'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION'),
+
+    /*
+     * These attributes will be excluded from logging for all models.
+     * You can override this per model using the logExcept() method on LogOptions.
+     */
+    'default_except_attributes' => [],
 ];

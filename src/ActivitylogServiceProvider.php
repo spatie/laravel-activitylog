@@ -19,13 +19,11 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         ->hasConfigFile('activitylog')
         ->hasMigrations([
             'create_activity_log_table',
-            'add_event_column_to_activity_log_table',
-            'add_batch_uuid_column_to_activity_log_table',
         ])
         ->hasCommand(CleanActivitylogCommand::class);
     }
 
-    public function registeringPackage()
+    public function registeringPackage(): void
     {
         $this->app->bind(ActivityLogger::class);
 
@@ -33,7 +31,7 @@ class ActivitylogServiceProvider extends PackageServiceProvider
 
         $this->app->scoped(CauserResolver::class);
 
-        $this->app->scoped(ActivityLogStatus::class);
+        $this->app->scoped(ActivitylogStatus::class);
     }
 
     public static function determineActivityModel(): string
@@ -52,6 +50,6 @@ class ActivitylogServiceProvider extends PackageServiceProvider
     {
         $activityModelClassName = self::determineActivityModel();
 
-        return new $activityModelClassName();
+        return new $activityModelClassName;
     }
 }

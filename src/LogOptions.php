@@ -8,7 +8,7 @@ class LogOptions
 {
     public ?string $logName = null;
 
-    public bool $submitEmptyLogs = true;
+    public bool $logEmptyChanges = true;
 
     public bool $logFillable = false;
 
@@ -31,7 +31,7 @@ class LogOptions
      */
     public static function defaults(): self
     {
-        return new static();
+        return new static;
     }
 
     /**
@@ -116,9 +116,9 @@ class LogOptions
      * Don't store empty logs. Storing empty logs can happen when you only
      * want to log a certain attribute but only another changes.
      */
-    public function dontSubmitEmptyLogs(): self
+    public function dontLogEmptyChanges(): self
     {
-        $this->submitEmptyLogs = false;
+        $this->logEmptyChanges = false;
 
         return $this;
     }
@@ -127,9 +127,9 @@ class LogOptions
      * Allow storing empty logs. Storing empty logs can happen when you only
      * want to log a certain attribute but only another changes.
      */
-    public function submitEmptyLogs(): self
+    public function logEmptyChanges(): self
     {
-        $this->submitEmptyLogs = true;
+        $this->logEmptyChanges = true;
 
         return $this;
     }
@@ -162,5 +162,21 @@ class LogOptions
         $this->attributeRawValues = $attributes;
 
         return $this;
+    }
+
+    public function __serialize(): array
+    {
+        $data = get_object_vars($this);
+        unset($data['descriptionForEvent']);
+
+        return $data;
+    }
+
+    public function __unserialize(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+        $this->descriptionForEvent = null;
     }
 }

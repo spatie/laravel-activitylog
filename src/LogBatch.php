@@ -3,7 +3,7 @@
 namespace Spatie\Activitylog;
 
 use Closure;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Str;
 
 class LogBatch
 {
@@ -13,7 +13,7 @@ class LogBatch
 
     protected function generateUuid(): string
     {
-        return Uuid::uuid4()->toString();
+        return Str::uuid()->toString();
     }
 
     public function getUuid(): ?string

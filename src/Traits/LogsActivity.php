@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
-use Spatie\Activitylog\ActivityLogStatus;
+use Spatie\Activitylog\ActivitylogStatus;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogOptions;
@@ -28,7 +28,10 @@ trait LogsActivity
 
     public bool $enableLoggingModelsEvents = true;
 
-    abstract public function getActivitylogOptions(): LogOptions;
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+    }
 
     protected static function bootLogsActivity(): void
     {
@@ -36,10 +39,10 @@ trait LogsActivity
         // checking for "updated" event hook explicitly to temporary hold original
         // attributes on the model as we'll need them later to compare against.
 
-        static::eventsToBeRecorded()->each(function ($eventName) {
-            if ($eventName === 'updated') {
+        static::eventsToBeRecorded()->each(function (string $eventName) {
+            if ($eventName === ActivityEvent::Updated->value) {
                 static::updating(function (Model $model) {
-                    $oldValues = (new static())->setRawAttributes($model->getRawOriginal());
+                    $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
                     $model->oldAttributes = static::logChanges($oldValues);
                 });
             }
@@ -58,7 +61,7 @@ trait LogsActivity
                 $logName = $model->getLogNameToUse();
 
                 // Submitting empty description will cause place holder replacer to fail.
-                if ($description == '') {
+                if ($description === '') {
                     return;
                 }
 
@@ -71,7 +74,7 @@ trait LogsActivity
                     ->thenReturn();
 
                 // Check for empty logs after pipeline has run
-                if ($model->isLogEmpty($event->changes) && ! $model->activitylogOptions->submitEmptyLogs) {
+                if ($model->isLogEmpty($event->changes) && ! $model->activitylogOptions->logEmptyChanges) {
                     return;
                 }
 
@@ -113,7 +116,7 @@ trait LogsActivity
         return $this;
     }
 
-    public function activities(): MorphMany
+    public function activitiesAsSubject(): MorphMany
     {
         return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
     }
@@ -148,13 +151,13 @@ trait LogsActivity
         }
 
         $events = collect([
-            'created',
-            'updated',
-            'deleted',
+            ActivityEvent::Created->value,
+            ActivityEvent::Updated->value,
+            ActivityEvent::Deleted->value,
         ]);
 
         if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
-            $events->push('restored');
+            $events->push(ActivityEvent::Restored->value);
         }
 
         return $events->reject(fn (string $eventName) => $reject->contains($eventName));
@@ -162,13 +165,13 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-        $logStatus = app(ActivityLogStatus::class);
+        $logStatus = app(ActivitylogStatus::class);
 
         if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
             return false;
         }
 
-        if (! in_array($eventName, ['created', 'updated'])) {
+        if (! in_array($eventName, [ActivityEvent::Created->value, ActivityEvent::Updated->value])) {
             return true;
         }
 
@@ -178,7 +181,7 @@ trait LogsActivity
         }
 
         // Do not log update event if only ignored attributes are changed.
-        return (bool) count(Arr::except($this->getDirty(), $this->activitylogOptions->dontLogIfAttributesChangedOnly));
+        return (bool) count(array_diff_key($this->getDirty(), array_flip($this->activitylogOptions->dontLogIfAttributesChangedOnly)));
     }
 
     /**
@@ -237,6 +240,12 @@ trait LogsActivity
             $attributes = array_diff($attributes, $this->activitylogOptions->logExceptAttributes);
         }
 
+        // Merge global exclusions from config
+        $globalExcept = config('activitylog.default_except_attributes', []);
+        if (! empty($globalExcept)) {
+            $attributes = array_diff($attributes, $globalExcept);
+        }
+
         return $attributes;
     }
 
@@ -276,7 +285,7 @@ trait LogsActivity
             // if the current event is retrieved, get the model itself
             // else get the fresh default properties from database
             // as wouldn't be part of the saved model instance.
-            $processingEvent == 'retrieved'
+            $processingEvent === 'retrieved'
                 ? $this
                 : (
                     $this->exists
@@ -285,7 +294,7 @@ trait LogsActivity
                 )
         );
 
-        if (static::eventsToBeRecorded()->contains('updated') && $processingEvent == 'updated') {
+        if (static::eventsToBeRecorded()->contains(ActivityEvent::Updated->value) && $processingEvent === ActivityEvent::Updated->value) {
 
             // Fill the attributes with null values.
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
@@ -313,7 +322,9 @@ trait LogsActivity
                     // Operator to compare them and will throw ErrorException.
                     if ($old instanceof DateInterval) {
                         return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
-                    } elseif ($new instanceof DateInterval) {
+                    }
+
+                    if ($new instanceof DateInterval) {
                         return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
                     }
 
@@ -326,7 +337,7 @@ trait LogsActivity
                 ->all();
         }
 
-        if (static::eventsToBeRecorded()->contains('deleted') && $processingEvent == 'deleted') {
+        if (static::eventsToBeRecorded()->contains(ActivityEvent::Deleted->value) && $processingEvent === ActivityEvent::Deleted->value) {
             $properties['old'] = $properties['attributes'];
             unset($properties['attributes']);
         }
@@ -347,7 +358,7 @@ trait LogsActivity
             }
 
             if (Str::contains($attribute, '->')) {
-                Arr::set(
+                data_set(
                     $changes,
                     str_replace('->', '.', $attribute),
                     static::getModelAttributeJsonValue($model, $attribute)
@@ -374,13 +385,7 @@ trait LogsActivity
                 $cast = $model->getCasts()[$attribute];
 
                 if ($model->isEnumCastable($attribute)) {
-                    try {
-                        $changes[$attribute] = $model->getStorableEnumValue($changes[$attribute]);
-                    } catch (\ArgumentCountError $e) {
-                        // In Laravel 11, this method has an extra argument
-                        // https://github.com/laravel/framework/pull/47465
-                        $changes[$attribute] = $model->getStorableEnumValue($cast, $changes[$attribute]);
-                    }
+                    $changes[$attribute] = $model->getStorableEnumValue($cast, $changes[$attribute]);
                 }
 
                 if ($model->isCustomDateTimeCast($cast) || $model->isImmutableCustomDateTimeCast($cast)) {
@@ -413,13 +418,12 @@ trait LogsActivity
 
     protected static function getRelatedModelRelationName(Model $model, string $relation): string
     {
-        return Arr::first([
-            $relation,
-            Str::snake($relation),
-            Str::camel($relation),
-        ], function (string $method) use ($model): bool {
-            return method_exists($model, $method);
-        }, $relation);
+        $candidates = [$relation, Str::snake($relation), Str::camel($relation)];
+
+        return array_find(
+            $candidates,
+            fn (string $method): bool => method_exists($model, $method)
+        ) ?? $relation;
     }
 
     protected static function getModelAttributeJsonValue(Model $model, string $attribute): mixed

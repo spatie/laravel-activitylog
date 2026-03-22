@@ -4,13 +4,13 @@ namespace Spatie\Activitylog;
 
 use Illuminate\Contracts\Config\Repository;
 
-class ActivityLogStatus
+class ActivitylogStatus
 {
-    protected $enabled = true;
+    protected bool $enabled = true;
 
     public function __construct(Repository $config)
     {
-        $this->enabled = $config['activitylog.enabled'];
+        $this->enabled = $config['activitylog.enabled'] ?? true;
     }
 
     public function enable(): bool

@@ -12,11 +12,11 @@ class CauserResolver
 {
     protected AuthManager $authManager;
 
-    protected string | null $authDriver;
+    protected ?string $authDriver;
 
-    protected Closure | null $resolverOverride = null;
+    protected ?Closure $resolverOverride = null;
 
-    protected Model | null $causerOverride = null;
+    protected ?Model $causerOverride = null;
 
     public function __construct(Repository $config, AuthManager $authManager)
     {
@@ -70,7 +70,7 @@ class CauserResolver
     }
 
     /**
-     * Override the resover using callback.
+     * Override the resolver using callback.
      */
     public function resolveUsing(Closure $callback): static
     {
@@ -87,6 +87,21 @@ class CauserResolver
         $this->causerOverride = $causer;
 
         return $this;
+    }
+
+    /**
+     * Execute a callback with a specific causer, then restore the previous causer.
+     */
+    public function withCauser(?Model $causer, Closure $callback): mixed
+    {
+        $previousCauser = $this->causerOverride;
+        $this->causerOverride = $causer;
+
+        try {
+            return $callback();
+        } finally {
+            $this->causerOverride = $previousCauser;
+        }
     }
 
     protected function isResolvable(mixed $model): bool

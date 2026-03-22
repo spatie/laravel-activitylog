@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 /**
@@ -31,7 +32,7 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity causedBy(\Illuminate\Database\Eloquent\Model $causer)
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forBatch(string $batchUuid)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forEvent(string $event)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forEvent(string|\Spatie\Activitylog\ActivityEvent $event)
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forSubject(\Illuminate\Database\Eloquent\Model $subject)
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity hasBatch()
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity inLog($logNames)
@@ -43,9 +44,12 @@ class Activity extends Model implements ActivityContract
 {
     public $guarded = [];
 
-    protected $casts = [
-        'properties' => 'collection',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'properties' => 'collection',
+        ];
+    }
 
     public function __construct(array $attributes = [])
     {
@@ -88,7 +92,7 @@ class Activity extends Model implements ActivityContract
     public function changes(): Collection
     {
         if (! $this->properties instanceof Collection) {
-            return new Collection();
+            return new Collection;
         }
 
         return $this->properties->only(['attributes', 'old']);
@@ -122,9 +126,9 @@ class Activity extends Model implements ActivityContract
             ->where('subject_id', $subject->getKey());
     }
 
-    public function scopeForEvent(Builder $query, string $event): Builder
+    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder
     {
-        return $query->where('event', $event);
+        return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
     }
 
     public function scopeHasBatch(Builder $query): Builder

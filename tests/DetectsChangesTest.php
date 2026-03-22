@@ -53,7 +53,7 @@ it('deep diff check json field', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->logOnlyDirty()
             ->logOnly(['json->phone', 'json->details', 'json->address']);
         }
@@ -392,7 +392,7 @@ it('will not log when pipe removes all changes and dontSubmitEmptyLogs is set', 
             return LogOptions::defaults()
             ->logOnly(['name'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontLogEmptyChanges();
         }
     };
 
@@ -867,7 +867,7 @@ it('will store the values when deleting the model with softdeletes', function ()
         ],
     ]);
 
-    $activities = $article->activities;
+    $activities = $article->activitiesAsSubject;
 
     $this->assertCount(3, $activities);
     $this->assertEquals('deleted', $this->getLastActivity()->description);

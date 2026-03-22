@@ -2,7 +2,6 @@
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
@@ -216,7 +215,7 @@ it('can fetch all activity for a model', function () {
     $article->name = 'changed name';
     $article->save();
 
-    $activities = $article->activities;
+    $activities = $article->activitiesAsSubject;
 
     $this->assertCount(2, $activities);
 });
@@ -231,7 +230,7 @@ it('can fetch soft deleted models', function () {
 
     $article->delete();
 
-    $activities = $article->activities;
+    $activities = $article->activitiesAsSubject;
 
     $this->assertCount(3, $activities);
 
@@ -331,7 +330,7 @@ it('will not fail if asked to replace from empty attribute', function () {
     $entity->name = 'my name';
     $entity->save();
 
-    $activities = $entity->activities;
+    $activities = $entity->activitiesAsSubject;
 
     $this->assertCount(2, $activities);
     $this->assertEquals($entity->id, $activities[0]->subject->id);
@@ -351,8 +350,8 @@ it('can log activity on subject by same causer', function () {
     $this->assertInstanceOf(get_class($this->user), $this->getLastActivity()->subject);
     $this->assertEquals($user->id, $this->getLastActivity()->subject->id);
     $this->assertEquals($user->id, $this->getLastActivity()->causer->id);
-    $this->assertCount(1, $user->activities);
-    $this->assertCount(1, $user->actions);
+    $this->assertCount(1, $user->activitiesAsSubject);
+    $this->assertCount(1, $user->activitiesAsCauser);
 });
 
 it('can log activity when attributes are changed with tap', function () {
@@ -382,7 +381,7 @@ it('can log activity when attributes are changed with tap', function () {
     $entity = new $model();
     $entity->save();
 
-    $firstActivity = $entity->activities()->first();
+    $firstActivity = $entity->activitiesAsSubject()->first();
 
     $this->assertInstanceOf(Collection::class, $firstActivity->properties);
     $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
@@ -409,7 +408,7 @@ it('can log activity when description is changed with tap', function () {
     $entity = new $model();
     $entity->save();
 
-    $firstActivity = $entity->activities()->first();
+    $firstActivity = $entity->activitiesAsSubject()->first();
 
     $this->assertEquals('my custom description', $firstActivity->description);
 });
@@ -432,7 +431,7 @@ it('can log activity when event is changed with tap', function () {
     $entity = new $model();
     $entity->save();
 
-    $firstActivity = $entity->activities()->first();
+    $firstActivity = $entity->activitiesAsSubject()->first();
 
     $this->assertEquals('my custom event', $firstActivity->event);
 });
@@ -471,7 +470,7 @@ it('will not submit log when there is no changes', function () {
         {
             return LogOptions::defaults()
             ->logOnly(['text'])
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->logOnlyDirty();
         }
     };
@@ -499,7 +498,7 @@ it('will submit a log with json changes', function () {
         {
             return LogOptions::defaults()
             ->logOnly(['text', 'json->data'])
-            ->dontSubmitEmptyLogs()
+            ->dontLogEmptyChanges()
             ->logOnlyDirty();
         }
     };
@@ -608,10 +607,7 @@ it('logs non backed enum casted attribute', function () {
     $this->assertSame('Draft', $this->getLastActivity()->properties['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
-})->skip(
-    version_compare(PHP_VERSION, '8.1', '<') || version_compare(Application::VERSION, '9.0', '<'),
-    "PHP < 8.1 doesn't support enums && Laravel < 9.0 doesn't support non-backed-enum casting"
-);
+});
 
 it('logs int backed enum casted attribute', function () {
     $articleClass = new class() extends Article {
@@ -636,7 +632,7 @@ it('logs int backed enum casted attribute', function () {
     $this->assertSame(1, $this->getLastActivity()->properties['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
-})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+});
 
 it('logs string backed enum casted attribute', function () {
     $articleClass = new class() extends Article {
@@ -661,4 +657,4 @@ it('logs string backed enum casted attribute', function () {
     $this->assertSame('draft', $this->getLastActivity()->properties['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
-})->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+});

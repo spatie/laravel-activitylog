@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\ActivityEvent;
 
 interface Activity
 {
@@ -21,7 +22,7 @@ interface Activity
 
     public function scopeCausedBy(Builder $query, Model $causer): Builder;
 
-    public function scopeForEvent(Builder $query, string $event): Builder;
+    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder;
 
     public function scopeForSubject(Builder $query, Model $subject): Builder;
 }
