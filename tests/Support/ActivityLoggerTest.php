@@ -135,7 +135,7 @@ it('can log an activity with a causer that has been set from other context', fun
     $article = Article::first();
 
     activity()
-           ->log($this->activityDescription);
+        ->log($this->activityDescription);
 
     $firstActivity = Activity::first();
 
@@ -278,8 +278,8 @@ it('can replace the placeholders with object properties and accessors', function
         'user_id' => User::first()->id,
     ]);
 
-    $article->foo = new stdClass();
-    $article->foo->bar = new stdClass();
+    $article->foo = new stdClass;
+    $article->foo->bar = new stdClass;
     $article->foo->bar->baz = 'zal';
 
     activity()
@@ -311,8 +311,7 @@ it('will not replace non placeholders', function () {
 });
 
 it('returns an instance of the activity log after logging when using a custom model', function () {
-    $activityClass = new class() extends Activity {
-    };
+    $activityClass = new class extends Activity {};
 
     $activityClassName = get_class($activityClass);
 
@@ -369,7 +368,8 @@ it('can log activity when attributes are changed with tap', function () {
 });
 
 it('will tap a subject', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions

@@ -30,7 +30,7 @@ class Config
     {
         $activityModelClassName = static::activityModel();
 
-        return new $activityModelClassName();
+        return new $activityModelClassName;
     }
 
     public static function logActivityAction(): LogActivityAction

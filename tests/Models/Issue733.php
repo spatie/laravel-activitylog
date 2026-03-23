@@ -16,7 +16,7 @@ class Issue733 extends Article
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->dontLogEmptyChanges()
-        ->logOnly(['name']);
+            ->dontLogEmptyChanges()
+            ->logOnly(['name']);
     }
 }

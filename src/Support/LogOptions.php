@@ -31,7 +31,7 @@ class LogOptions
      */
     public static function defaults(): self
     {
-        return new self();
+        return new self;
     }
 
     /**

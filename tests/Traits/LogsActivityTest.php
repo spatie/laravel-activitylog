@@ -13,7 +13,8 @@ use Spatie\Activitylog\Test\Models\Issue733;
 use Spatie\Activitylog\Test\Models\User;
 
 beforeEach(function () {
-    $this->article = new class() extends Article {
+    $this->article = new class extends Article
+    {
         use LogsActivity;
         use SoftDeletes;
 
@@ -23,7 +24,8 @@ beforeEach(function () {
         }
     };
 
-    $this->user = new class() extends User {
+    $this->user = new class extends User
+    {
         use LogsActivity;
         use SoftDeletes;
 
@@ -47,7 +49,7 @@ it('will log the creation of the model', function () {
 });
 
 it('can skip logging model events if asked to', function () {
-    $article = new $this->article();
+    $article = new $this->article;
     $article->disableLogging();
     $article->name = 'my name';
 
@@ -58,7 +60,7 @@ it('can skip logging model events if asked to', function () {
 });
 
 it('can switch on activity logging after disabling it', function () {
-    $article = new $this->article();
+    $article = new $this->article;
 
     $article->disableLogging();
     $article->name = 'my name';
@@ -76,7 +78,7 @@ it('can switch on activity logging after disabling it', function () {
 });
 
 it('can skip logging if asked to for update method', function () {
-    $article = new $this->article();
+    $article = new $this->article;
     $article->disableLogging()->update(['name' => 'How to log events']);
 
     $this->assertCount(0, Activity::all());
@@ -84,7 +86,8 @@ it('can skip logging if asked to for update method', function () {
 });
 
 it('can exclude specific events from being logged using doNotRecordEvents', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected static $doNotRecordEvents = ['created'];
@@ -95,7 +98,7 @@ it('can exclude specific events from being logged using doNotRecordEvents', func
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -144,7 +147,8 @@ it('it will log the replication of a model with softdeletes', function () {
 });
 
 it('will log the deletion of a model without softdeletes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
@@ -153,7 +157,7 @@ it('will log the deletion of a model without softdeletes', function () {
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -245,7 +249,8 @@ it('can fetch subject when model does not use soft deletes and config is enabled
     app()['config']->set('activitylog.include_soft_deleted_subjects', true);
 
     // Create a model class without SoftDeletes
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         // Note: No SoftDeletes trait
@@ -256,7 +261,7 @@ it('can fetch subject when model does not use soft deletes and config is enabled
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'test article';
     $article->save();
 
@@ -270,17 +275,18 @@ it('can fetch subject when model does not use soft deletes and config is enabled
 });
 
 it('can log activity to log named in the model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->useLogName('custom_log');
+                ->useLogName('custom_log');
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -288,17 +294,18 @@ it('can log activity to log named in the model', function () {
 });
 
 it('will not log an update of the model if only ignored attributes are changed', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->dontLogIfAttributesChangedOnly(['text']);
+                ->dontLogIfAttributesChangedOnly(['text']);
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -314,18 +321,19 @@ it('will not log an update of the model if only ignored attributes are changed',
 });
 
 it('will not fail if asked to replace from empty attribute', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
         use SoftDeletes;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->setDescriptionForEvent(fn (string $eventName): string => ":causer.name $eventName");
+                ->setDescriptionForEvent(fn (string $eventName): string => ":causer.name $eventName");
         }
     };
 
-    $entity = new $model();
+    $entity = new $model;
     $entity->save();
     $entity->name = 'my name';
     $entity->save();
@@ -355,7 +363,8 @@ it('can log activity on subject by same causer', function () {
 });
 
 it('can log activity when attributes are changed with tap', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
@@ -378,7 +387,7 @@ it('can log activity when attributes are changed with tap', function () {
         }
     };
 
-    $entity = new $model();
+    $entity = new $model;
     $entity->save();
 
     $firstActivity = $entity->activitiesAsSubject()->first();
@@ -391,7 +400,8 @@ it('can log activity when attributes are changed with tap', function () {
 });
 
 it('can log activity when description is changed with tap', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
@@ -405,7 +415,7 @@ it('can log activity when description is changed with tap', function () {
         }
     };
 
-    $entity = new $model();
+    $entity = new $model;
     $entity->save();
 
     $firstActivity = $entity->activitiesAsSubject()->first();
@@ -414,7 +424,8 @@ it('can log activity when description is changed with tap', function () {
 });
 
 it('can log activity when event is changed with tap', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
@@ -428,7 +439,7 @@ it('can log activity when event is changed with tap', function () {
         }
     };
 
-    $entity = new $model();
+    $entity = new $model;
     $entity->save();
 
     $firstActivity = $entity->activitiesAsSubject()->first();
@@ -439,7 +450,8 @@ it('can log activity when event is changed with tap', function () {
 it('will only call beforeActivityLogged once', function () {
     $callCount = 0;
 
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         public static $tapCallCount = 0;
@@ -451,27 +463,28 @@ it('will only call beforeActivityLogged once', function () {
 
         public function beforeActivityLogged(Activity $activity, string $eventName)
         {
-            static::$tapCallCount++;
+            self::$tapCallCount++;
         }
     };
 
     $model::$tapCallCount = 0;
-    $entity = new $model();
+    $entity = new $model;
     $entity->save();
 
     $this->assertEquals(1, $model::$tapCallCount);
 });
 
 it('will not submit log when there is no changes', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['text'])
-            ->dontLogEmptyChanges()
-            ->logOnlyDirty();
+                ->logOnly(['text'])
+                ->dontLogEmptyChanges()
+                ->logOnlyDirty();
         }
     };
 
@@ -487,7 +500,8 @@ it('will not submit log when there is no changes', function () {
 });
 
 it('will submit a log with json changes', function () {
-    $model = new class() extends Article {
+    $model = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -497,9 +511,9 @@ it('will submit a log with json changes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['text', 'json->data'])
-            ->dontLogEmptyChanges()
-            ->logOnlyDirty();
+                ->logOnly(['text', 'json->data'])
+                ->dontLogEmptyChanges()
+                ->logOnlyDirty();
         }
     };
 
@@ -554,7 +568,8 @@ it('will log the retrieval of the model', function () {
 });
 
 it('will not log casted attribute of the model if attribute raw values is used', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -567,7 +582,7 @@ it('will not log casted attribute of the model if attribute raw values is used',
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -585,7 +600,8 @@ it('can be serialized', function () {
 });
 
 it('logs non backed enum casted attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -598,7 +614,7 @@ it('logs non backed enum casted attribute', function () {
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->status = NonBackedEnum::Draft;
     $article->save();
 
@@ -610,7 +626,8 @@ it('logs non backed enum casted attribute', function () {
 });
 
 it('logs int backed enum casted attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -623,7 +640,7 @@ it('logs int backed enum casted attribute', function () {
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->status = \Spatie\Activitylog\Test\Enums\IntBackedEnum::Published;
     $article->save();
 
@@ -635,7 +652,8 @@ it('logs int backed enum casted attribute', function () {
 });
 
 it('logs string backed enum casted attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -648,7 +666,7 @@ it('logs string backed enum casted attribute', function () {
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->status = \Spatie\Activitylog\Test\Enums\StringBackedEnum::Draft;
     $article->save();
 

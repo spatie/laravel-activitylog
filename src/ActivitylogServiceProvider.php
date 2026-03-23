@@ -13,12 +13,12 @@ class ActivitylogServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-        ->name('laravel-activitylog')
-        ->hasConfigFile('activitylog')
-        ->hasMigrations([
-            'create_activity_log_table',
-        ])
-        ->hasCommand(Commands\CleanActivitylogCommand::class);
+            ->name('laravel-activitylog')
+            ->hasConfigFile('activitylog')
+            ->hasMigrations([
+                'create_activity_log_table',
+            ])
+            ->hasCommand(Commands\CleanActivitylogCommand::class);
     }
 
     public function registeringPackage(): void

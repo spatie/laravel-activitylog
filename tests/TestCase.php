@@ -98,7 +98,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function createArticle(): Article
     {
-        $article = new $this->article();
+        $article = new $this->article;
         $article->name = 'my name';
         $article->save();
 
@@ -107,7 +107,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function loginWithFakeUser()
     {
-        $user = new $this->user();
+        $user = new $this->user;
 
         $user::find(1);
 

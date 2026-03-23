@@ -37,6 +37,24 @@ parameters:
 			path: src/Actions/LogActivityAction.php
 
 		-
+			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\CausesActivity is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Models/Concerns/CausesActivity.php
+
+		-
+			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\HasActivity is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Models/Concerns/HasActivity.php
+
+		-
+			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\LogsActivity is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Models/Concerns/LogsActivity.php
+
+		-
 			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$attribute_changes\.$#'
 			identifier: property.notFound
 			count: 1
@@ -89,27 +107,3 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Support/ActivityLogger.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getActivitylogOptions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Support/EventLogBag.php
-
-		-
-			message: '#^Trait Spatie\\Activitylog\\Traits\\CausesActivity is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Traits/CausesActivity.php
-
-		-
-			message: '#^Trait Spatie\\Activitylog\\Traits\\HasActivity is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Traits/HasActivity.php
-
-		-
-			message: '#^Trait Spatie\\Activitylog\\Traits\\LogsActivity is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Traits/LogsActivity.php

@@ -32,7 +32,7 @@ trait LogsActivity
         static::eventsToBeRecorded()->each(function (string $eventName) {
             if ($eventName === ActivityEvent::Updated->value) {
                 static::updating(function (Model $model) {
-                    $oldValues = (new static())->setRawAttributes($model->getRawOriginal());
+                    $oldValues = (new static)->setRawAttributes($model->getRawOriginal());
                     $model->oldAttributes = static::extractChanges($oldValues);
                 });
             }

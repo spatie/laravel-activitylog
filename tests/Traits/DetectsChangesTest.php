@@ -12,13 +12,14 @@ use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
 beforeEach(function () {
-    $this->article = new class() extends Article {
+    $this->article = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text']);
+                ->logOnly(['name', 'text']);
         }
     };
 
@@ -39,7 +40,8 @@ it('can store the values when creating a model', function () {
 });
 
 it('detect changes for date inteval attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -49,15 +51,15 @@ it('detect changes for date inteval attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'interval'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'interval'])
+                ->logOnlyDirty();
         }
     };
 
     $article = $articleClass::create([
         'name' => 'Hamburg',
         'interval' => CarbonInterval::minute(),
-      ]);
+    ]);
 
     $article->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
 
@@ -77,12 +79,13 @@ it('detect changes for date inteval attributes', function () {
 });
 
 it('detect changes for null date inteval attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
-                'interval' => IntervalCasts::class,
-            ];
+            'interval' => IntervalCasts::class,
+        ];
 
         public function getActivitylogOptions(): LogOptions
         {
@@ -94,52 +97,53 @@ it('detect changes for null date inteval attributes', function () {
     };
 
     $nullIntevalArticle = $articleClass::create([
-            'name' => 'Hamburg',
-          ]);
+        'name' => 'Hamburg',
+    ]);
 
     $nullIntevalArticle->update(['name' => 'New name', 'interval' => CarbonInterval::month()]);
 
     $expectedChangesForNullInterval = [
-            'attributes' => [
-                'name' => 'New name',
-                'interval' => '1 month',
-            ],
-            'old' => [
-                'name' => 'Hamburg',
-                'interval' => null,
-            ],
-        ];
+        'attributes' => [
+            'name' => 'New name',
+            'interval' => '1 month',
+        ],
+        'old' => [
+            'name' => 'Hamburg',
+            'interval' => null,
+        ],
+    ];
     $this->assertEquals($expectedChangesForNullInterval, $this->getLastActivity()->attribute_changes->toArray());
 
     $intervalArticle = $articleClass::create([
         'name' => 'Hamburg',
         'interval' => CarbonInterval::month(),
-      ]);
+    ]);
 
     $intervalArticle->update(['name' => 'New name', 'interval' => null]);
 
     $expectedChangesForInterval = [
-            'attributes' => [
-                'name' => 'New name',
-                'interval' => null,
-            ],
-            'old' => [
-                'name' => 'Hamburg',
-                'interval' => '1 month',
-            ],
-        ];
+        'attributes' => [
+            'name' => 'New name',
+            'interval' => null,
+        ],
+        'old' => [
+            'name' => 'Hamburg',
+            'interval' => '1 month',
+        ],
+    ];
 
     $this->assertEquals($expectedChangesForInterval, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the relation values when creating a model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'user.name']);
+                ->logOnly(['name', 'text', 'user.name']);
         }
     };
 
@@ -174,13 +178,14 @@ it('can store the relation values when creating a model', function () {
 });
 
 it('can store empty relation when creating a model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'user.name']);
+                ->logOnly(['name', 'text', 'user.name']);
         }
     };
 
@@ -280,13 +285,14 @@ it('can store dirty changes for swapping values', function () {
 });
 
 it('can store the changes when updating a related model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'user.name']);
+                ->logOnly(['name', 'text', 'user.name']);
         }
     };
 
@@ -323,13 +329,14 @@ it('can store the changes when updating a related model', function () {
 });
 
 it('can store the changes when updating a snake case related model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'snakeUser.name']);
+                ->logOnly(['name', 'text', 'snakeUser.name']);
         }
 
         public function snake_user()
@@ -371,13 +378,14 @@ it('can store the changes when updating a snake case related model', function ()
 });
 
 it('can store the changes when updating a camel case related model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'camel_user.name']);
+                ->logOnly(['name', 'text', 'camel_user.name']);
         }
 
         public function camelUser()
@@ -419,13 +427,14 @@ it('can store the changes when updating a camel case related model', function ()
 });
 
 it('can store the changes when updating a custom case related model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'Custom_Case_User.name']);
+                ->logOnly(['name', 'text', 'Custom_Case_User.name']);
         }
 
         public function Custom_Case_User()
@@ -467,14 +476,15 @@ it('can store the changes when updating a custom case related model', function (
 });
 
 it('can store the dirty changes when updating a related model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'user.name'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'text', 'user.name'])
+                ->logOnlyDirty();
         }
     };
 
@@ -507,14 +517,15 @@ it('can store the dirty changes when updating a related model', function () {
 });
 
 it('can store the changes when saving including multi level related model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'user.latest_article.name'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'text', 'user.latest_article.name'])
+                ->logOnlyDirty();
         }
     };
 
@@ -546,17 +557,18 @@ it('can store the changes when saving including multi level related model', func
 });
 
 it('will store no changes when not logging attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly([]);
+                ->logOnly([]);
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
 
     $article->name = 'updated name';
 
@@ -582,18 +594,19 @@ it('will store the values when deleting the model', function () {
 });
 
 it('will store the values when deleting the model with softdeletes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
         use SoftDeletes;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text']);
+                ->logOnly(['name', 'text']);
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -626,15 +639,17 @@ it('will store the values when deleting the model with softdeletes', function ()
 });
 
 it('can store the changes of collection casted properties', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
+
         protected $casts = ['json' => 'collection'];
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['json'])
-            ->logOnlyDirty();
+                ->logOnly(['json'])
+                ->logOnlyDirty();
         }
     };
 
@@ -661,15 +676,17 @@ it('can store the changes of collection casted properties', function () {
 });
 
 it('can store the changes of array casted properties', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
+
         protected $casts = ['json' => 'array'];
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['json'])
-            ->logOnlyDirty();
+                ->logOnly(['json'])
+                ->logOnlyDirty();
         }
     };
 
@@ -696,15 +713,17 @@ it('can store the changes of array casted properties', function () {
 });
 
 it('can store the changes of json casted properties', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
+
         protected $casts = ['json' => 'json'];
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['json'])
-            ->logOnlyDirty();
+                ->logOnly(['json'])
+                ->logOnlyDirty();
         }
     };
 
@@ -731,7 +750,8 @@ it('can store the changes of json casted properties', function () {
 });
 
 it('can use nothing as loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
@@ -739,11 +759,11 @@ it('can use nothing as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->dontLogFillable();
+                ->dontLogFillable();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my text';
     $article->save();
@@ -754,7 +774,8 @@ it('can use nothing as loggable attributes', function () {
 });
 
 it('can use text as loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
@@ -762,12 +783,12 @@ it('can use text as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['text'])
-            ->dontLogFillable();
+                ->logOnly(['text'])
+                ->dontLogFillable();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my text';
     $article->save();
@@ -782,7 +803,8 @@ it('can use text as loggable attributes', function () {
 });
 
 it('can use fillable as loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
@@ -790,11 +812,11 @@ it('can use fillable as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logFillable();
+                ->logFillable();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 
@@ -809,7 +831,8 @@ it('can use fillable as loggable attributes', function () {
 });
 
 it('can use both fillable and log attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $fillable = ['name'];
@@ -817,12 +840,12 @@ it('can use both fillable and log attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['text'])
-            ->logFillable();
+                ->logOnly(['text'])
+                ->logFillable();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my text';
     $article->save();
@@ -838,17 +861,18 @@ it('can use both fillable and log attributes', function () {
 });
 
 it('can use wildcard for loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll();
+                ->logAll();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
@@ -865,8 +889,8 @@ it('can use wildcard for loggable attributes', function () {
             'price' => null,
             'interval' => null,
             'status' => null,
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
         ],
     ];
 
@@ -874,13 +898,14 @@ it('can use wildcard for loggable attributes', function () {
 });
 
 it('can use wildcard with relation', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['*', 'user.name']);
+                ->logOnly(['*', 'user.name']);
         }
     };
 
@@ -905,8 +930,8 @@ it('can use wildcard with relation', function () {
             'user_id' => $user->id,
             'json' => null,
             'price' => null,
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'user.name' => 'user name',
             'interval' => null,
             'status' => null,
@@ -917,14 +942,15 @@ it('can use wildcard with relation', function () {
 });
 
 it('can use wildcard when updating model', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll()
-            ->logOnlyDirty();
+                ->logAll()
+                ->logOnlyDirty();
         }
     };
 
@@ -950,7 +976,7 @@ it('can use wildcard when updating model', function () {
         ],
         'old' => [
             'name' => 'article name',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
         ],
     ];
 
@@ -958,7 +984,8 @@ it('can use wildcard when updating model', function () {
 });
 
 it('can store the changes when a boolean field is changed from false to null', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -968,8 +995,8 @@ it('can store the changes when a boolean field is changed from false to null', f
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll()
-            ->logOnlyDirty();
+                ->logAll()
+                ->logOnlyDirty();
         }
     };
 
@@ -996,7 +1023,7 @@ it('can store the changes when a boolean field is changed from false to null', f
         ],
         'old' => [
             'text' => false,
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
         ],
     ];
 
@@ -1004,18 +1031,19 @@ it('can store the changes when a boolean field is changed from false to null', f
 });
 
 it('can use ignored attributes while updating', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll()
-            ->logExcept(['name', 'updated_at']);
+                ->logAll()
+                ->logExcept(['name', 'updated_at']);
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
@@ -1031,7 +1059,7 @@ it('can use ignored attributes while updating', function () {
             'price' => null,
             'interval' => null,
             'status' => null,
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
         ],
     ];
 
@@ -1039,7 +1067,8 @@ it('can use ignored attributes while updating', function () {
 });
 
 it('can use unguarded as loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $guarded = ['text', 'json'];
@@ -1047,12 +1076,12 @@ it('can use unguarded as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logUnguarded()
-            ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
+                ->logUnguarded()
+                ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my new text';
     $article->save();
@@ -1071,7 +1100,8 @@ it('can use unguarded as loggable attributes', function () {
 });
 
 it('will store no changes when wildcard guard and log unguarded attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $guarded = ['*'];
@@ -1079,11 +1109,11 @@ it('will store no changes when wildcard guard and log unguarded attributes', fun
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logUnguarded();
+                ->logUnguarded();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my new text';
     $article->save();
@@ -1093,14 +1123,15 @@ it('will store no changes when wildcard guard and log unguarded attributes', fun
 
 it('can log unguarded attributes when Model::unguard() is called globally', function () {
     // Model without explicit $fillable or $guarded
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logUnguarded()
-            ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
+                ->logUnguarded()
+                ->logExcept(['id', 'created_at', 'updated_at', 'deleted_at']);
         }
     };
 
@@ -1108,7 +1139,7 @@ it('can log unguarded attributes when Model::unguard() is called globally', func
     Model::unguard();
 
     try {
-        $article = new $articleClass();
+        $article = new $articleClass;
         $article->name = 'my name';
         $article->text = 'my text';
         $article->save();
@@ -1133,20 +1164,22 @@ it('can log unguarded attributes when Model::unguard() is called globally', func
 });
 
 it('can use hidden as loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $hidden = ['text'];
+
         protected $fillable = ['name', 'text'];
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text']);
+                ->logOnly(['name', 'text']);
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my text';
     $article->save();
@@ -1162,7 +1195,8 @@ it('can use hidden as loggable attributes', function () {
 });
 
 it('can use overloaded as loggable attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
@@ -1170,7 +1204,7 @@ it('can use overloaded as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'description']);
+                ->logOnly(['name', 'text', 'description']);
         }
 
         public function setDescriptionAttribute($value)
@@ -1184,7 +1218,7 @@ it('can use overloaded as loggable attributes', function () {
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my text';
     $article->description = 'my description';
@@ -1202,7 +1236,8 @@ it('can use overloaded as loggable attributes', function () {
 });
 
 it('can use mutated as loggable attributes', function () {
-    $userClass = new class() extends User {
+    $userClass = new class extends User
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
@@ -1210,7 +1245,7 @@ it('can use mutated as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll();
+                ->logAll();
         }
 
         public function setNameAttribute($value)
@@ -1220,7 +1255,7 @@ it('can use mutated as loggable attributes', function () {
     };
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
-    $user = new $userClass();
+    $user = new $userClass;
     $user->name = 'my name';
     $user->text = 'my text';
     $user->save();
@@ -1230,8 +1265,8 @@ it('can use mutated as loggable attributes', function () {
             'id' => $user->id,
             'name' => 'MY NAME',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1246,16 +1281,16 @@ it('can use mutated as loggable attributes', function () {
             'id' => $user->id,
             'name' => 'MY NAME',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
         'attributes' => [
             'id' => $user->id,
             'name' => 'MY NAME 2',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1264,7 +1299,8 @@ it('can use mutated as loggable attributes', function () {
 });
 
 it('can use accessor as loggable attributes', function () {
-    $userClass = new class() extends User {
+    $userClass = new class extends User
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
@@ -1272,7 +1308,7 @@ it('can use accessor as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll();
+                ->logAll();
         }
 
         public function getNameAttribute($value)
@@ -1282,7 +1318,7 @@ it('can use accessor as loggable attributes', function () {
     };
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
-    $user = new $userClass();
+    $user = new $userClass;
     $user->name = 'my name';
     $user->text = 'my text';
     $user->save();
@@ -1292,8 +1328,8 @@ it('can use accessor as loggable attributes', function () {
             'id' => $user->id,
             'name' => 'MY NAME',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1308,16 +1344,16 @@ it('can use accessor as loggable attributes', function () {
             'id' => $user->id,
             'name' => 'MY NAME',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
         'attributes' => [
             'id' => $user->id,
             'name' => 'MY NAME 2',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1326,16 +1362,18 @@ it('can use accessor as loggable attributes', function () {
 });
 
 it('can use encrypted as loggable attributes', function () {
-    $userClass = new class() extends User {
+    $userClass = new class extends User
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
+
         protected $encryptable = ['name', 'text'];
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text']);
+                ->logOnly(['name', 'text']);
         }
 
         public function getAttributeValue($key)
@@ -1360,7 +1398,7 @@ it('can use encrypted as loggable attributes', function () {
     };
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
-    $user = new $userClass();
+    $user = new $userClass;
     $user->name = 'my name';
     $user->text = 'my text';
     $user->save();
@@ -1392,7 +1430,8 @@ it('can use encrypted as loggable attributes', function () {
 });
 
 it('can use casted as loggable attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -1402,12 +1441,12 @@ it('can use casted as loggable attribute', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'price'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'text', 'price'])
+                ->logOnlyDirty();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->text = 'my text';
     $article->price = '9.99';
@@ -1443,7 +1482,8 @@ it('can use casted as loggable attribute', function () {
 });
 
 it('can use nullable date as loggable attributes', function () {
-    $userClass = new class() extends User {
+    $userClass = new class extends User
+    {
         use LogsActivity;
         use SoftDeletes;
 
@@ -1458,12 +1498,12 @@ it('can use nullable date as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll();
+                ->logAll();
         }
     };
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
-    $user = new $userClass();
+    $user = new $userClass;
     $user->name = 'my name';
     $user->text = 'my text';
     $user->save();
@@ -1473,8 +1513,8 @@ it('can use nullable date as loggable attributes', function () {
             'id' => $user->getKey(),
             'name' => 'my name',
             'text' => 'my text',
-            'created_at' =>  '2017-01-01T12:00:00.000000Z',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'created_at' => '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1483,10 +1523,12 @@ it('can use nullable date as loggable attributes', function () {
 });
 
 it('can use custom date cast as loggable attributes', function () {
-    $userClass = new class() extends User {
+    $userClass = new class extends User
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
+
         protected $casts = [
             'created_at' => 'date:d.m.Y',
         ];
@@ -1494,12 +1536,12 @@ it('can use custom date cast as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll();
+                ->logAll();
         }
     };
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
-    $user = new $userClass();
+    $user = new $userClass;
     $user->name = 'my name';
     $user->text = 'my text';
     $user->save();
@@ -1510,7 +1552,7 @@ it('can use custom date cast as loggable attributes', function () {
             'name' => 'my name',
             'text' => 'my text',
             'created_at' => '01.01.2017',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1519,10 +1561,12 @@ it('can use custom date cast as loggable attributes', function () {
 });
 
 it('can use custom immutable date cast as loggable attributes', function () {
-    $userClass = new class() extends User {
+    $userClass = new class extends User
+    {
         use LogsActivity;
 
         protected $fillable = ['name', 'text'];
+
         protected $casts = [
             'created_at' => 'immutable_date:d.m.Y',
         ];
@@ -1530,12 +1574,12 @@ it('can use custom immutable date cast as loggable attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logAll();
+                ->logAll();
         }
     };
 
     Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
-    $user = new $userClass();
+    $user = new $userClass;
     $user->name = 'my name';
     $user->text = 'my text';
     $user->save();
@@ -1546,7 +1590,7 @@ it('can use custom immutable date cast as loggable attributes', function () {
             'name' => 'my name',
             'text' => 'my text',
             'created_at' => '01.01.2017',
-            'updated_at' =>  '2017-01-01T12:00:00.000000Z',
+            'updated_at' => '2017-01-01T12:00:00.000000Z',
             'deleted_at' => null,
         ],
     ];
@@ -1555,7 +1599,8 @@ it('can use custom immutable date cast as loggable attributes', function () {
 });
 
 it('can store the changes of json attributes', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -1565,12 +1610,12 @@ it('can store the changes of json attributes', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'json->data'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'json->data'])
+                ->logOnlyDirty();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->json = ['data' => 'test'];
     $article->name = 'I am JSON';
     $article->save();
@@ -1590,7 +1635,8 @@ it('can store the changes of json attributes', function () {
 });
 
 it('will not store changes to untracked json', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -1600,12 +1646,12 @@ it('will not store changes to untracked json', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'json->data'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'json->data'])
+                ->logOnlyDirty();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->json = ['unTracked' => 'test'];
     $article->name = 'a name';
     $article->save();
@@ -1629,7 +1675,8 @@ it('will not store changes to untracked json', function () {
 });
 
 it('will return null for missing json attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -1639,14 +1686,14 @@ it('will return null for missing json attribute', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'json->data->missing'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'json->data->missing'])
+                ->logOnlyDirty();
         }
     };
 
     $jsonToStore = [];
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->json = $jsonToStore;
     $article->name = 'I am JSON';
     $article->save();
@@ -1679,7 +1726,8 @@ it('will return null for missing json attribute', function () {
 });
 
 it('will return an array for sub key in json attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -1689,8 +1737,8 @@ it('will return an array for sub key in json attribute', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'json->data'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'json->data'])
+                ->logOnlyDirty();
         }
     };
 
@@ -1704,7 +1752,7 @@ it('will return an array for sub key in json attribute', function () {
         ],
     ];
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->json = $jsonToStore;
     $article->name = 'I am JSON';
     $article->save();
@@ -1745,7 +1793,8 @@ it('will return an array for sub key in json attribute', function () {
 });
 
 it('will access further than level one json attribute', function () {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         protected $casts = [
@@ -1755,15 +1804,15 @@ it('will access further than level one json attribute', function () {
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'json->data->can->go->how->far'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'json->data->can->go->how->far'])
+                ->logOnlyDirty();
         }
     };
 
     $jsonToStore = [];
     // data_set($jsonToStore, 'data.can.go.how.far', 'Data');
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->json = $jsonToStore;
     $article->name = 'I am JSON';
     $article->save();
@@ -1809,18 +1858,19 @@ it('will access further than level one json attribute', function () {
 
 function createDirtyArticle(): Article
 {
-    $articleClass = new class() extends Article {
+    $articleClass = new class extends Article
+    {
         use LogsActivity;
 
         public function getActivitylogOptions(): LogOptions
         {
             return LogOptions::defaults()
-            ->logOnly(['name', 'text'])
-            ->logOnlyDirty();
+                ->logOnly(['name', 'text'])
+                ->logOnlyDirty();
         }
     };
 
-    $article = new $articleClass();
+    $article = new $articleClass;
     $article->name = 'my name';
     $article->save();
 

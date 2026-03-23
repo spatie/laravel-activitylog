@@ -25,7 +25,7 @@ class CauserResolver
         $this->authDriver = $config->get('activitylog.default_auth_driver');
     }
 
-    public function resolve(Model | int | string | null $subject = null): ?Model
+    public function resolve(Model|int|string|null $subject = null): ?Model
     {
         if ($this->causerOverride !== null) {
             return $this->causerOverride;
@@ -44,7 +44,7 @@ class CauserResolver
         return $this->getCauser($subject);
     }
 
-    protected function resolveUsingId(int | string $subject): Model
+    protected function resolveUsingId(int|string $subject): Model
     {
         $guard = $this->authManager->guard($this->authDriver);
 
@@ -56,7 +56,7 @@ class CauserResolver
         return $model;
     }
 
-    protected function getCauser(Model | int | string | null $subject = null): ?Model
+    protected function getCauser(Model|int|string|null $subject = null): ?Model
     {
         if ($subject instanceof Model) {
             return $subject;
