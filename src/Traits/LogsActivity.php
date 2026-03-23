@@ -121,6 +121,7 @@ trait LogsActivity
         return $this;
     }
 
+    /** @return MorphMany<\Spatie\Activitylog\Models\Activity, $this> */
     public function activitiesAsSubject(): MorphMany
     {
         return $this->morphMany(Config::activityModel(), 'subject');

@@ -84,6 +84,8 @@ class LogOptions
 
     /**
      * Log changes only if these attributes changed.
+     *
+     * @param  string[]  $attributes
      */
     public function logOnly(array $attributes): self
     {
@@ -94,6 +96,8 @@ class LogOptions
 
     /**
      * Exclude these attributes from being logged.
+     *
+     * @param  string[]  $attributes
      */
     public function logExcept(array $attributes): self
     {
@@ -104,6 +108,8 @@ class LogOptions
 
     /**
      * Don't trigger an activity if these attributes changed logged.
+     *
+     * @param  string[]  $attributes
      */
     public function dontLogIfAttributesChangedOnly(array $attributes): self
     {
@@ -156,6 +162,8 @@ class LogOptions
 
     /**
      * Exclude these attributes from being casted.
+     *
+     * @param  string[]  $attributes
      */
     public function useAttributeRawValues(array $attributes): self
     {
