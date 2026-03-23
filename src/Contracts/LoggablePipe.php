@@ -3,7 +3,7 @@
 namespace Spatie\Activitylog\Contracts;
 
 use Closure;
-use Spatie\Activitylog\EventLogBag;
+use Spatie\Activitylog\Support\EventLogBag;
 
 interface LoggablePipe
 {

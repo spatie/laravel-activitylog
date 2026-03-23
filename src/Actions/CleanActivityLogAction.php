@@ -4,7 +4,7 @@ namespace Spatie\Activitylog\Actions;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Spatie\Activitylog\ActivitylogConfig;
+use Spatie\Activitylog\Support\Config;
 
 class CleanActivityLogAction
 {
@@ -22,7 +22,7 @@ class CleanActivityLogAction
 
     protected function deleteOldActivities(string $cutOffDate, ?string $logName): int
     {
-        $activity = ActivitylogConfig::activityModelInstance();
+        $activity = Config::activityModelInstance();
 
         return $activity::query()
             ->where('created_at', '<', $cutOffDate)

@@ -69,6 +69,21 @@ Activity::where('properties->group', $groupId)->get();
 | `CauserResolver::withCauser($model, fn)` | `Activity::defaultCauser($model, fn)` |
 | `tapActivity($activity, $event)` on models | `beforeActivityLogged($activity, $event)` |
 
+### Namespace changes
+
+Several classes moved to sub-namespaces:
+
+| v4 | v5 |
+|---|---|
+| `Spatie\Activitylog\LogOptions` | `Spatie\Activitylog\Support\LogOptions` |
+| `Spatie\Activitylog\CauserResolver` | `Spatie\Activitylog\Support\CauserResolver` |
+| `Spatie\Activitylog\ActivityLogStatus` | `Spatie\Activitylog\Support\ActivityLogStatus` |
+| `Spatie\Activitylog\EventLogBag` | `Spatie\Activitylog\Support\EventLogBag` |
+| `Spatie\Activitylog\ActivityLogger` | `Spatie\Activitylog\Support\ActivityLogger` |
+| `Spatie\Activitylog\PendingActivityLog` | `Spatie\Activitylog\Support\PendingActivityLog` |
+| `Spatie\Activitylog\ActivityEvent` | `Spatie\Activitylog\Enums\ActivityEvent` |
+| `Spatie\Activitylog\CleanActivitylogCommand` | `Spatie\Activitylog\Commands\CleanActivitylogCommand` |
+
 ### HasActivity trait
 
 v5 reintroduces the `HasActivity` trait. It combines `LogsActivity` and `CausesActivity` and provides an `activities()` convenience method. Use it on models (like User) that both cause and log activities.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog;
+namespace Spatie\Activitylog\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Enums\ActivityEvent;

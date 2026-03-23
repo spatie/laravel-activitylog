@@ -20,9 +20,7 @@ class YourModel extends Model
 To customize what gets logged, override `getActivitylogOptions()`:
 
 ```php
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Support\LogOptions;use Spatie\Activitylog\Traits\LogsActivity;
 
 class YourModel extends Model
 {

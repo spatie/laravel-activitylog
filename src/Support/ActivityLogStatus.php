@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog;
+namespace Spatie\Activitylog\Support;
 
 use Illuminate\Contracts\Config\Repository;
 

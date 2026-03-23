@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog;
+namespace Spatie\Activitylog\Support;
 
 use Closure;
 use DateTimeInterface;
@@ -165,7 +165,7 @@ class ActivityLogger
             return null;
         }
 
-        $activity = ActivitylogConfig::logActivityAction()->execute(
+        $activity = Config::logActivityAction()->execute(
             $this->getActivity(),
             $description,
         );
@@ -193,7 +193,7 @@ class ActivityLogger
     protected function getActivity(): ActivityContract
     {
         if (! $this->activity instanceof ActivityContract) {
-            $this->activity = ActivitylogConfig::activityModelInstance();
+            $this->activity = Config::activityModelInstance();
             $this
                 ->useLog($this->defaultLogName)
                 ->withChanges([])

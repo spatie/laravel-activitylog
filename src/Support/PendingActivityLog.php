@@ -1,13 +1,13 @@
 <?php
 
-namespace Spatie\Activitylog;
+namespace Spatie\Activitylog\Support;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\ForwardsCalls;
 
 /**
- * @mixin \Spatie\Activitylog\ActivityLogger
+ * @mixin \Spatie\Activitylog\Support\ActivityLogger
  */
 class PendingActivityLog
 {

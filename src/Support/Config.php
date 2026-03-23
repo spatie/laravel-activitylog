@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog;
+namespace Spatie\Activitylog\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Actions\CleanActivityLogAction;
@@ -9,7 +9,7 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Spatie\Activitylog\Exceptions\InvalidConfiguration;
 use Spatie\Activitylog\Models\Activity as ActivityModel;
 
-class ActivitylogConfig
+class Config
 {
     public static function activityModel(): string
     {

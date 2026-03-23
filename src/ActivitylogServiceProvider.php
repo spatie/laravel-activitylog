@@ -2,6 +2,9 @@
 
 namespace Spatie\Activitylog;
 
+use Spatie\Activitylog\Support\ActivityLogger;
+use Spatie\Activitylog\Support\ActivityLogStatus;
+use Spatie\Activitylog\Support\CauserResolver;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

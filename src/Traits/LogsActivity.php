@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\ActivitylogConfig;
-use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\Enums\ActivityEvent;
-use Spatie\Activitylog\EventLogBag;
-use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Support\ActivityLogger;
+use Spatie\Activitylog\Support\ActivityLogStatus;
+use Spatie\Activitylog\Support\Config;
+use Spatie\Activitylog\Support\EventLogBag;
+use Spatie\Activitylog\Support\LogOptions;
 
 trait LogsActivity
 {
@@ -124,7 +124,7 @@ trait LogsActivity
 
     public function activitiesAsSubject(): MorphMany
     {
-        return $this->morphMany(ActivitylogConfig::activityModel(), 'subject');
+        return $this->morphMany(Config::activityModel(), 'subject');
     }
 
     public function getDescriptionForEvent(string $eventName): string

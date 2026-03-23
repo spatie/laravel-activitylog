@@ -4,7 +4,7 @@ namespace Spatie\Activitylog\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Spatie\Activitylog\ActivitylogConfig;
+use Spatie\Activitylog\Support\Config;
 
 class CleanActivitylogCommand extends Command
 {
@@ -33,7 +33,7 @@ class CleanActivitylogCommand extends Command
             return 1;
         }
 
-        $amountDeleted = ActivitylogConfig::cleanActivityLogAction()->execute(
+        $amountDeleted = Config::cleanActivityLogAction()->execute(
             (int) $maxAgeInDays,
             $this->argument('log'),
         );

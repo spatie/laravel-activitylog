@@ -19,7 +19,7 @@ Add to models to automatically log create/update/delete events. Optionally imple
 
 ```php
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Article extends Model
 {

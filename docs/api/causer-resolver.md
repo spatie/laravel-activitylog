@@ -24,7 +24,7 @@ Activity::defaultCauser($admin);
 If you need lower-level control, resolve the `CauserResolver` from the container:
 
 ```php
-use Spatie\Activitylog\CauserResolver;
+use Spatie\Activitylog\Support\CauserResolver;
 
 // Custom resolution callback
 app(CauserResolver::class)->resolveUsing(function ($subject) {

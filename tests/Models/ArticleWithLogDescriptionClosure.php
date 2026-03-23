@@ -2,7 +2,7 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class ArticleWithLogDescriptionClosure extends Article
