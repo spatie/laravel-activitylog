@@ -10,5 +10,5 @@ interface Activity
 
     public function causer(): MorphTo;
 
-    public function getProperty(string $propertyName, mixed $defaultValue): mixed;
+    public function getProperty(string $propertyName, mixed $defaultValue = null): mixed;
 }

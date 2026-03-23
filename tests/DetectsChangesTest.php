@@ -1982,9 +1982,3 @@ function createDirtyArticle(): Article
     return $article;
 }
 
-function getActivitylogOptions(): LogOptions
-{
-    return LogOptions::defaults()
-    ->logOnly(['name', 'text'])
-    ->logOnlyDirty();
-}

@@ -96,7 +96,7 @@ Calling `$activity->attribute_changes` will return this array:
 ];
 ```
 
-Pretty Zonda, right?
+Pretty cool, right?
 
 Now, what happens when you call delete?
 
