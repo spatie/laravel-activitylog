@@ -6,7 +6,7 @@ composer require spatie/laravel-activitylog "^5.0.0"
 
 ### Requirements
 
-v5 requires **PHP 8.4+** and **Laravel 11+**. If you're on older versions, stay on v4.
+v5 requires **PHP 8.4+** and **Laravel 12+**. If you're on older versions, stay on v4.
 
 ### Migration
 
