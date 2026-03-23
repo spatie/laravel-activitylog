@@ -1981,4 +1981,3 @@ function createDirtyArticle(): Article
 
     return $article;
 }
-
