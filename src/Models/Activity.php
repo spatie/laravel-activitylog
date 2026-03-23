@@ -12,8 +12,6 @@ use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 /**
- * Spatie\Activitylog\Models\Activity.
- *
  * @property int $id
  * @property string|null $log_name
  * @property string $description
@@ -22,23 +20,17 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @property string|null $causer_type
  * @property int|null $causer_id
  * @property string|null $event
- * @property string|null $batch_uuid
- * @property \Illuminate\Support\Collection|null $properties
+ * @property Collection|null $attribute_changes
+ * @property Collection|null $properties
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $causer
- * @property-read \Illuminate\Support\Collection $changes
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $subject
+ * @property-read Model|null $causer
+ * @property-read Model|null $subject
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity causedBy(\Illuminate\Database\Eloquent\Model $causer)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forBatch(string $batchUuid)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forEvent(string|\Spatie\Activitylog\ActivityEvent $event)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forSubject(\Illuminate\Database\Eloquent\Model $subject)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity hasBatch()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity inLog($logNames)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity query()
+ * @method static Builder causedBy(Model $causer)
+ * @method static Builder forEvent(string|ActivityEvent $event)
+ * @method static Builder forSubject(Model $subject)
+ * @method static Builder inLog($logNames)
  */
 class Activity extends Model implements ActivityContract
 {
@@ -47,6 +39,7 @@ class Activity extends Model implements ActivityContract
     protected function casts(): array
     {
         return [
+            'attribute_changes' => 'collection',
             'properties' => 'collection',
         ];
     }
@@ -84,23 +77,9 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
+    public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
         return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
-    }
-
-    public function changes(): Collection
-    {
-        if (! $this->properties instanceof Collection) {
-            return new Collection();
-        }
-
-        return $this->properties->only(['attributes', 'old']);
-    }
-
-    public function getChangesAttribute(): Collection
-    {
-        return $this->changes();
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
@@ -129,15 +108,5 @@ class Activity extends Model implements ActivityContract
     public function scopeForEvent(Builder $query, string | ActivityEvent $event): Builder
     {
         return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
-    }
-
-    public function scopeHasBatch(Builder $query): Builder
-    {
-        return $query->whereNotNull('batch_uuid');
-    }
-
-    public function scopeForBatch(Builder $query, string $batchUuid): Builder
-    {
-        return $query->where('batch_uuid', $batchUuid);
     }
 }

@@ -165,9 +165,9 @@ it('will log the deletion of a model without softdeletes', function () {
     $activity = $this->getLastActivity();
 
     $this->assertEquals('deleted', $activity->description);
-    $this->assertArrayHasKey('old', $activity->changes());
-    $this->assertEquals('my name', $activity->changes()['old']['name']);
-    $this->assertArrayNotHasKey('attributes', $activity->changes());
+    $this->assertArrayHasKey('old', $activity->attribute_changes);
+    $this->assertEquals('my name', $activity->attribute_changes['old']['name']);
+    $this->assertArrayNotHasKey('attributes', $activity->attribute_changes);
 
     $this->assertEquals('deleted', $activity->description);
     $this->assertEquals('deleted', $activity->event);
@@ -384,7 +384,7 @@ it('can log activity when attributes are changed with tap', function () {
     $firstActivity = $entity->activitiesAsSubject()->first();
 
     $this->assertInstanceOf(Collection::class, $firstActivity->properties);
-    $this->assertEquals('value', $firstActivity->getExtraProperty('property.subProperty'));
+    $this->assertEquals('value', $firstActivity->getProperty('property.subProperty'));
     $this->assertEquals('created', $firstActivity->description);
     $this->assertEquals('created', $firstActivity->event);
     $this->assertEquals(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'), $firstActivity->created_at->format('Y-m-d H:i:s'));
@@ -534,7 +534,7 @@ it('will submit a log with json changes', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
 
     $this->assertCount(2, Activity::all());
     $this->assertSame($expectedChanges, $changes);
@@ -573,7 +573,7 @@ it('will not log casted attribute of the model if attribute raw values is used',
 
     $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
     $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-    $this->assertNotEquals($article->name, $this->getLastActivity()->properties['attributes']['name']);
+    $this->assertNotEquals($article->name, $this->getLastActivity()->attribute_changes['attributes']['name']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
@@ -604,7 +604,7 @@ it('logs non backed enum casted attribute', function () {
 
     $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
     $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-    $this->assertSame('Draft', $this->getLastActivity()->properties['attributes']['status']);
+    $this->assertSame('Draft', $this->getLastActivity()->attribute_changes['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
@@ -629,7 +629,7 @@ it('logs int backed enum casted attribute', function () {
 
     $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
     $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-    $this->assertSame(1, $this->getLastActivity()->properties['attributes']['status']);
+    $this->assertSame(1, $this->getLastActivity()->attribute_changes['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });
@@ -654,7 +654,7 @@ it('logs string backed enum casted attribute', function () {
 
     $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
     $this->assertEquals($article->id, $this->getLastActivity()->subject->id);
-    $this->assertSame('draft', $this->getLastActivity()->properties['attributes']['status']);
+    $this->assertSame('draft', $this->getLastActivity()->attribute_changes['attributes']['status']);
     $this->assertEquals('created', $this->getLastActivity()->description);
     $this->assertEquals('created', $this->getLastActivity()->event);
 });

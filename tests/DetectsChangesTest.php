@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
-use Spatie\Activitylog\LogBatch;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Test\Casts\IntervalCasts;
@@ -39,7 +38,7 @@ it('can store the values when creating a model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('deep diff check json field', function () {
@@ -104,7 +103,7 @@ it('deep diff check json field', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('detect changes for date inteval attributes', function () {
@@ -142,7 +141,7 @@ it('detect changes for date inteval attributes', function () {
     ];
 
     // test case when intervals changing from interval to another
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('detect changes for null date inteval attributes', function () {
@@ -178,7 +177,7 @@ it('detect changes for null date inteval attributes', function () {
                 'interval' => null,
             ],
         ];
-    $this->assertEquals($expectedChangesForNullInterval, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChangesForNullInterval, $this->getLastActivity()->attribute_changes->toArray());
 
     $intervalArticle = $articleClass::create([
         'name' => 'Hamburg',
@@ -198,7 +197,7 @@ it('detect changes for null date inteval attributes', function () {
             ],
         ];
 
-    $this->assertEquals($expectedChangesForInterval, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChangesForInterval, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the relation values when creating a model', function () {
@@ -239,100 +238,7 @@ it('can store the relation values when creating a model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
-});
-
-it('retruns same uuid for all log changes under one batch', function () {
-    $articleClass = new class() extends Article {
-        use LogsActivity;
-        use SoftDeletes;
-
-        public function getActivitylogOptions(): LogOptions
-        {
-            return LogOptions::defaults()
-                ->logOnly(['name', 'text']);
-        }
-    };
-
-    app(LogBatch::class)->startBatch();
-
-    $user = User::create([
-            'name' => 'user name',
-        ]);
-
-    $article = $articleClass::create([
-            'name' => 'original name',
-            'text' => 'original text',
-            'user_id' => $user->id,
-        ]);
-
-    $article->name = 'updated name';
-    $article->text = 'updated text';
-    $article->save();
-
-    $article->delete();
-    $article->forceDelete();
-
-    $batchUuid = app(LogBatch::class)->getUuid();
-
-    app(LogBatch::class)->endBatch();
-
-    $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $batchUuid));
-});
-
-it('assigns new uuid for multiple change logs in different batches', function () {
-    $articleClass = new class() extends Article {
-        use LogsActivity;
-        use SoftDeletes;
-
-        public function getActivitylogOptions(): LogOptions
-        {
-            return LogOptions::defaults()
-                  ->logOnly(['name', 'text']);
-        }
-    };
-
-    app(LogBatch::class)->startBatch();
-
-    $uuidForCreatedEvent = app(LogBatch::class)->getUuid();
-    $user = User::create([
-              'name' => 'user name',
-          ]);
-
-    $article = $articleClass::create([
-              'name' => 'original name',
-              'text' => 'original text',
-              'user_id' => $user->id,
-          ]);
-
-    app(LogBatch::class)->endBatch();
-
-    $this->assertTrue(Activity::pluck('batch_uuid')->every(fn ($uuid) => $uuid === $uuidForCreatedEvent));
-
-    app(LogBatch::class)->startBatch();
-
-    $article->name = 'updated name';
-    $article->text = 'updated text';
-    $article->save();
-    $uuidForUpdatedEvents = app(LogBatch::class)->getUuid();
-
-    app(LogBatch::class)->endBatch();
-
-    $this->assertCount(1, Activity::where('description', 'updated')->get());
-
-    $this->assertEquals($uuidForUpdatedEvents, Activity::where('description', 'updated')->first()->batch_uuid);
-
-    app(LogBatch::class)->startBatch();
-    $article->delete();
-    $article->forceDelete();
-
-    $uuidForDeletedEvents = app(LogBatch::class)->getUuid();
-
-    app(LogBatch::class)->endBatch();
-
-    $this->assertCount(2, Activity::where('batch_uuid', $uuidForDeletedEvents)->get());
-
-    $this->assertNotSame($uuidForCreatedEvent, $uuidForDeletedEvents);
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can removes key event if it was loggable', function () {
@@ -380,7 +286,7 @@ it('can removes key event if it was loggable', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('will not log when pipe removes all changes and dontSubmitEmptyLogs is set', function () {
@@ -459,7 +365,7 @@ it('can store empty relation when creating a model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when updating a model', function () {
@@ -481,7 +387,7 @@ it('can store the changes when updating a model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store dirty changes only', function () {
@@ -500,7 +406,7 @@ it('can store dirty changes only', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store dirty changes for swapping values', function () {
@@ -525,7 +431,7 @@ it('can store dirty changes for swapping values', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when updating a related model', function () {
@@ -568,7 +474,7 @@ it('can store the changes when updating a related model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when updating a snake case related model', function () {
@@ -616,7 +522,7 @@ it('can store the changes when updating a snake case related model', function ()
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when updating a camel case related model', function () {
@@ -664,7 +570,7 @@ it('can store the changes when updating a camel case related model', function ()
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when updating a custom case related model', function () {
@@ -712,7 +618,7 @@ it('can store the changes when updating a custom case related model', function (
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the dirty changes when updating a related model', function () {
@@ -752,7 +658,7 @@ it('can store the dirty changes when updating a related model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when saving including multi level related model', function () {
@@ -791,7 +697,7 @@ it('can store the changes when saving including multi level related model', func
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('will store no changes when not logging attributes', function () {
@@ -811,7 +717,7 @@ it('will store no changes when not logging attributes', function () {
 
     $article->save();
 
-    $this->assertEquals(collect(), $this->getLastActivity()->changes());
+    $this->assertEquals(collect(), $this->getLastActivity()->attribute_changes);
 });
 
 it('will store the values when deleting the model', function () {
@@ -827,7 +733,7 @@ it('will store the values when deleting the model', function () {
     ]);
 
     $this->assertEquals('deleted', $this->getLastActivity()->description);
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes);
 });
 
 it('will store the values when deleting the model with softdeletes', function () {
@@ -856,7 +762,7 @@ it('will store the values when deleting the model with softdeletes', function ()
     ]);
 
     $this->assertEquals('deleted', $this->getLastActivity()->description);
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes);
 
     $article->forceDelete();
 
@@ -871,7 +777,7 @@ it('will store the values when deleting the model with softdeletes', function ()
 
     $this->assertCount(3, $activities);
     $this->assertEquals('deleted', $this->getLastActivity()->description);
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes);
 });
 
 it('can store the changes of collection casted properties', function () {
@@ -906,7 +812,7 @@ it('can store the changes of collection casted properties', function () {
             ],
         ],
     ];
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes of array casted properties', function () {
@@ -941,7 +847,7 @@ it('can store the changes of array casted properties', function () {
             ],
         ],
     ];
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes of json casted properties', function () {
@@ -976,7 +882,7 @@ it('can store the changes of json casted properties', function () {
             ],
         ],
     ];
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use nothing as loggable attributes', function () {
@@ -999,7 +905,7 @@ it('can use nothing as loggable attributes', function () {
 
     $expectedChanges = [];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use text as loggable attributes', function () {
@@ -1027,7 +933,7 @@ it('can use text as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use fillable as loggable attributes', function () {
@@ -1054,7 +960,7 @@ it('can use fillable as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use both fillable and log attributes', function () {
@@ -1083,7 +989,7 @@ it('can use both fillable and log attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use wildcard for loggable attributes', function () {
@@ -1119,7 +1025,7 @@ it('can use wildcard for loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use wildcard with relation', function () {
@@ -1162,7 +1068,7 @@ it('can use wildcard with relation', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use wildcard when updating model', function () {
@@ -1203,7 +1109,7 @@ it('can use wildcard when updating model', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes when a boolean field is changed from false to null', function () {
@@ -1249,7 +1155,7 @@ it('can store the changes when a boolean field is changed from false to null', f
         ],
     ];
 
-    $this->assertSame($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertSame($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use ignored attributes while updating', function () {
@@ -1284,7 +1190,7 @@ it('can use ignored attributes while updating', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use unguarded as loggable attributes', function () {
@@ -1316,7 +1222,7 @@ it('can use unguarded as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('will store no changes when wildcard guard and log unguarded attributes', function () {
@@ -1337,7 +1243,7 @@ it('will store no changes when wildcard guard and log unguarded attributes', fun
     $article->text = 'my new text';
     $article->save();
 
-    $this->assertEquals([], $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals([], $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can log unguarded attributes when Model::unguard() is called globally', function () {
@@ -1374,7 +1280,7 @@ it('can log unguarded attributes when Model::unguard() is called globally', func
             ],
         ];
 
-        $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+        $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
     } finally {
         // Re-guard models
         Model::reguard();
@@ -1407,7 +1313,7 @@ it('can use hidden as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use overloaded as loggable attributes', function () {
@@ -1447,7 +1353,7 @@ it('can use overloaded as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use mutated as loggable attributes', function () {
@@ -1485,7 +1391,7 @@ it('can use mutated as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 
     $user->name = 'my name 2';
     $user->save();
@@ -1509,7 +1415,7 @@ it('can use mutated as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use accessor as loggable attributes', function () {
@@ -1547,7 +1453,7 @@ it('can use accessor as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 
     $user->name = 'my name 2';
     $user->save();
@@ -1571,7 +1477,7 @@ it('can use accessor as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use encrypted as loggable attributes', function () {
@@ -1621,7 +1527,7 @@ it('can use encrypted as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 
     $user->name = 'my name 2';
     $user->save();
@@ -1637,7 +1543,7 @@ it('can use encrypted as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use casted as loggable attribute', function () {
@@ -1670,7 +1576,7 @@ it('can use casted as loggable attribute', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
     $this->assertSame($expectedChanges, $changes);
     $this->assertIsFloat($changes['attributes']['price']);
 
@@ -1686,7 +1592,7 @@ it('can use casted as loggable attribute', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
     $this->assertSame($expectedChanges, $changes);
     $this->assertIsFloat($changes['attributes']['price']);
 });
@@ -1728,7 +1634,7 @@ it('can use nullable date as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use custom date cast as loggable attributes', function () {
@@ -1764,7 +1670,7 @@ it('can use custom date cast as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can use custom immutable date cast as loggable attributes', function () {
@@ -1800,7 +1706,7 @@ it('can use custom immutable date cast as loggable attributes', function () {
         ],
     ];
 
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->changes()->toArray());
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
 });
 
 it('can store the changes of json attributes', function () {
@@ -1833,7 +1739,7 @@ it('can store the changes of json attributes', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
 
     $this->assertSame($expectedChanges, $changes);
 });
@@ -1872,7 +1778,7 @@ it('will not store changes to untracked json', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
 
     $this->assertSame($expectedChanges, $changes);
 });
@@ -1922,7 +1828,7 @@ it('will return null for missing json attribute', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
 
     $this->assertSame($expectedChanges, $changes);
 });
@@ -1988,7 +1894,7 @@ it('will return an array for sub key in json attribute', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
 
     $this->assertSame($expectedChanges, $changes);
 });
@@ -2051,7 +1957,7 @@ it('will access further than level one json attribute', function () {
         ],
     ];
 
-    $changes = $this->getLastActivity()->changes()->toArray();
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
 
     $this->assertSame($expectedChanges, $changes);
 });

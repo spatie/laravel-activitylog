@@ -83,7 +83,7 @@ trait LogsActivity
                     ->useLog($logName)
                     ->event($eventName)
                     ->performedOn($model)
-                    ->withProperties($event->changes)
+                    ->withChanges($event->changes)
                     ->log($description);
 
                 // Reset log options so the model can be serialized.

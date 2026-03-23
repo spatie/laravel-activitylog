@@ -27,8 +27,6 @@ class ActivitylogServiceProvider extends PackageServiceProvider
     {
         $this->app->bind(ActivityLogger::class);
 
-        $this->app->scoped(LogBatch::class);
-
         $this->app->scoped(CauserResolver::class);
 
         $this->app->scoped(ActivitylogStatus::class);

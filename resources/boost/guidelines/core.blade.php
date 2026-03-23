@@ -4,11 +4,13 @@ Activity logging package for Laravel. Logs model events and manual activities to
 
 ## Key Concepts
 
-- **Activity**: An Eloquent model (`Spatie\Activitylog\Models\Activity`) storing log entries with subject, causer, event, properties, and batch UUID.
+- **Activity**: An Eloquent model (`Spatie\Activitylog\Models\Activity`) storing log entries with subject, causer, event, attribute_changes, and properties.
 - **Subject**: The model being acted upon (polymorphic `subject_type`/`subject_id`).
 - **Causer**: The model that caused the action, typically the authenticated user (polymorphic `causer_type`/`causer_id`).
 - **LogOptions**: Fluent configuration object returned by `getActivitylogOptions()` on models using the `LogsActivity` trait.
 - **ActivityEvent**: Enum with cases `Created`, `Updated`, `Deleted`, `Restored`.
+- **`attribute_changes`** column: stores `{"attributes": {...}, "old": {...}}` for tracked model changes.
+- **`properties`** column: stores custom user data set via `withProperties()`.
 
 ## Traits
 
@@ -75,23 +77,7 @@ Activity::forEvent(ActivityEvent::Created)->get();
 Activity::causedBy($user)->get();
 Activity::forSubject($article)->get();
 Activity::inLog('orders')->get();
-Activity::forBatch($batchUuid)->get();
 ```
-
-## Batching
-
-Group related activities with a shared UUID:
-
-```php
-use Spatie\Activitylog\Facades\Activity;
-
-Activity::batch(function () {
-    $article->update(['title' => 'New']);
-    $article->tags()->sync([1, 2, 3]);
-});
-```
-
-For advanced batch control (manual start/end, cross-request batches), use the `LogBatch` facade.
 
 ## Setting the causer
 
@@ -114,6 +100,19 @@ Activity::defaultCauser($admin);
 activity()->withoutLogging(function () {
     // no activities logged here
 });
+```
+
+## Accessing Changes and Properties
+
+```php
+$activity = Activity::latest()->first();
+
+// Tracked model changes (set automatically by LogsActivity)
+$activity->attribute_changes; // Collection: {"attributes": {...}, "old": {...}}
+
+// Custom user data (set via withProperties)
+$activity->properties; // Collection
+$activity->getProperty('key'); // single value
 ```
 
 ## Custom Activity Model

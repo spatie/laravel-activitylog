@@ -69,7 +69,7 @@ activity()
 
 $lastActivity = Activity::all()->last(); //returns the last logged activity
 
-$lastActivity->getExtraProperty('key'); //returns 'value'
+$lastActivity->getProperty('key'); //returns 'value'
 
 $lastActivity->where('properties->key', 'value')->get(); // get all activity where the `key` custom property is 'value'
 ```

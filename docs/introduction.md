@@ -30,7 +30,7 @@ $lastLoggedActivity = Activity::all()->last();
 
 $lastLoggedActivity->subject; //returns an instance of an eloquent model
 $lastLoggedActivity->causer; //returns an instance of your user model
-$lastLoggedActivity->getExtraProperty('customProperty'); //returns 'customValue'
+$lastLoggedActivity->getProperty('customProperty'); //returns 'customValue'
 $lastLoggedActivity->description; //returns 'Look mum, I logged something'
 ```
 
@@ -47,7 +47,7 @@ $activity->description; //returns 'updated'
 $activity->subject; //returns the instance of NewsItem that was created
 ```
 
-Calling `$activity->changes` will return this array:
+Calling `$activity->attribute_changes` will return this array:
 
 ```php
 [

@@ -47,18 +47,24 @@ it('throws an exception when model doesnt extend model', function () {
     activity()->log($this->activityDescription);
 });
 
-it('doesnt conlict with laravel change tracking', function () {
+it('stores changes and properties separately', function () {
     app()['config']->set('activitylog.activity_model', Activity::class);
 
-    $properties = [
+    $changes = [
         'attributes' => [
             'name' => 'my name',
             'text' => null,
         ],
     ];
 
-    $activity = activity()->withProperties($properties)->log($this->activityDescription);
+    $properties = ['key' => 'value'];
 
-    expect($activity->changes()->toArray())->toEqual($properties);
-    expect($activity->custom_property->toArray())->toEqual($properties);
+    $activity = activity()
+        ->withChanges($changes)
+        ->withProperties($properties)
+        ->log($this->activityDescription);
+
+    expect($activity->attribute_changes->toArray())->toEqual($changes);
+    expect($activity->properties->toArray())->toEqual($properties);
+    expect($activity->custom_property->toArray())->toEqual($changes);
 });

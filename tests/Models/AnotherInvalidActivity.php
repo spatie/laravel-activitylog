@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
@@ -47,20 +46,9 @@ class AnotherInvalidActivity implements ActivityContract
      *
      * @return mixed
      */
-    public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
+    public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
         return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
-    }
-
-    public function changes(): Collection
-    {
-        if (! $this->properties instanceof Collection) {
-            return new Collection();
-        }
-
-        return collect(array_filter($this->properties->toArray(), function ($key) {
-            return in_array($key, ['attributes', 'old']);
-        }, ARRAY_FILTER_USE_KEY));
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
@@ -104,7 +92,7 @@ class AnotherInvalidActivity implements ActivityContract
 
     public function getCustomPropertyAttribute()
     {
-        return $this->changes();
+        return $this->attribute_changes;
     }
 
     public function scopeForEvent(Builder $query, string | ActivityEvent $event): Builder

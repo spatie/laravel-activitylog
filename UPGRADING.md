@@ -10,7 +10,49 @@ v5 requires **PHP 8.4+** and **Laravel 11+**. If you're on older versions, stay 
 
 ### Migration
 
-v5 ships a single consolidated migration. If you're upgrading from v4, you don't need to re-migrate. Your existing table already has all the columns. Only new installs use the new migration.
+v5 ships a single consolidated migration with a new schema. If you're upgrading from v4, you need to create a migration to:
+
+1. Add the `attribute_changes` column (new, stores tracked model changes)
+2. Drop the `batch_uuid` column (batch system removed)
+3. Migrate existing change data from `properties` to `attribute_changes`
+
+```php
+// Example upgrade migration
+Schema::table('activity_log', function (Blueprint $table) {
+    $table->json('attribute_changes')->nullable()->after('causer_id');
+    $table->dropColumn('batch_uuid');
+});
+
+// Then migrate existing data: move 'attributes' and 'old' from properties to attribute_changes
+DB::table('activity_log')->whereNotNull('properties')->eachById(function ($row) {
+    $properties = json_decode($row->properties, true);
+    $changes = array_intersect_key($properties, array_flip(['attributes', 'old']));
+    $remaining = array_diff_key($properties, array_flip(['attributes', 'old']));
+
+    DB::table('activity_log')->where('id', $row->id)->update([
+        'attribute_changes' => empty($changes) ? null : json_encode($changes),
+        'properties' => empty($remaining) ? null : json_encode($remaining),
+    ]);
+});
+```
+
+### Schema changes
+
+- **`properties`** column now stores only custom user data (set via `withProperties()`)
+- **`attribute_changes`** column (new) stores tracked model changes (`attributes`, `old`)
+- **`batch_uuid`** column removed (batch system dropped)
+- `getExtraProperty()` renamed to `getProperty()`
+- `$activity->changes` / `$activity->changes()` replaced by `$activity->attribute_changes`
+
+### Batch system removed
+
+The `LogBatch` class, `LogBatch` facade, and `Activity::batch()` have been removed. If you need to group activities, use a custom property:
+
+```php
+$groupId = Str::uuid();
+activity()->withProperty('group', $groupId)->log('first');
+Activity::where('properties->group', $groupId)->get();
+```
 
 ### Renamed methods
 
@@ -18,12 +60,13 @@ v5 ships a single consolidated migration. If you're upgrading from v4, you don't
 |---|---|
 | `$model->activities` (LogsActivity) | `$model->activitiesAsSubject` |
 | `$model->actions` (CausesActivity) | `$model->activitiesAsCauser` |
+| `$activity->changes()` | `$activity->attribute_changes` |
+| `getExtraProperty()` | `getProperty()` |
 | `dontSubmitEmptyLogs()` | `dontLogEmptyChanges()` |
 | `submitEmptyLogs()` | `logEmptyChanges()` |
 | `withoutLogs()` | `withoutLogging()` |
 | `CauserResolver::setCauser($model)` | `Activity::defaultCauser($model)` |
 | `CauserResolver::withCauser($model, fn)` | `Activity::defaultCauser($model, fn)` |
-| `LogBatch::withinBatch(fn)` | `Activity::batch(fn)` |
 
 ### Renamed class
 

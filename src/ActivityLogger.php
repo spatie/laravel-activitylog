@@ -25,13 +25,9 @@ class ActivityLogger
 
     protected ?ActivityContract $activity = null;
 
-    protected LogBatch $batch;
-
-    public function __construct(Repository $config, ActivitylogStatus $logStatus, LogBatch $batch, CauserResolver $causerResolver)
+    public function __construct(Repository $config, ActivitylogStatus $logStatus, CauserResolver $causerResolver)
     {
         $this->causerResolver = $causerResolver;
-
-        $this->batch = $batch;
 
         $this->defaultLogName = $config['activitylog']['default_log_name'];
 
@@ -98,6 +94,13 @@ class ActivityLogger
     public function setEvent(string | ActivityEvent $event): static
     {
         $this->getActivity()->event = $event instanceof ActivityEvent ? $event->value : $event;
+
+        return $this;
+    }
+
+    public function withChanges(mixed $changes): static
+    {
+        $this->getActivity()->attribute_changes = collect($changes);
 
         return $this;
     }
@@ -224,10 +227,9 @@ class ActivityLogger
             $this->activity = ActivitylogServiceProvider::getActivityModelInstance();
             $this
                 ->useLog($this->defaultLogName)
+                ->withChanges([])
                 ->withProperties([])
                 ->causedBy($this->causerResolver->resolve());
-
-            $this->activity->batch_uuid = $this->batch->getUuid();
         }
 
         return $this->activity;

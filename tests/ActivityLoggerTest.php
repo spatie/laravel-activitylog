@@ -174,7 +174,7 @@ it('can log activity with properties', function () {
     $firstActivity = Activity::first();
 
     expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
-    expect($firstActivity->getExtraProperty('property.subProperty'))->toEqual('value');
+    expect($firstActivity->getProperty('property.subProperty'))->toEqual('value');
 });
 
 it('can log activity with null properties', function () {
@@ -189,7 +189,7 @@ it('can log activity with null properties', function () {
     $firstActivity = Activity::first();
 
     expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
-    expect($firstActivity->getExtraProperty('property'))->toBeNull();
+    expect($firstActivity->getProperty('property'))->toBeNull();
 });
 
 it('can log activity with a single properties', function () {
@@ -200,8 +200,8 @@ it('can log activity with a single properties', function () {
     $firstActivity = Activity::first();
 
     expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
-    expect($firstActivity->getExtraProperty('key'))->toEqual('value');
-    expect($firstActivity->getExtraProperty('non_existant', 'default value'))->toEqual('default value');
+    expect($firstActivity->getProperty('key'))->toEqual('value');
+    expect($firstActivity->getProperty('non_existant', 'default value'))->toEqual('default value');
 });
 
 it('can translate a given causer id to an object', function () {
@@ -364,7 +364,7 @@ it('can log activity when attributes are changed with tap', function () {
     $firstActivity = Activity::first();
 
     expect($firstActivity->properties)->toBeInstanceOf(Collection::class);
-    expect($firstActivity->getExtraProperty('property.subProperty'))->toEqual('value');
+    expect($firstActivity->getProperty('property.subProperty'))->toEqual('value');
     expect($firstActivity->created_at->format('Y-m-d H:i:s'))->toEqual(Carbon::yesterday()->startOfDay()->format('Y-m-d H:i:s'));
 });
 

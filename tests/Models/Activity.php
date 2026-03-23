@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
@@ -18,6 +17,7 @@ class Activity extends Model implements ActivityContract
     public $guarded = [];
 
     protected $casts = [
+        'attribute_changes' => 'collection',
         'properties' => 'collection',
     ];
 
@@ -42,20 +42,9 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
+    public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
         return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
-    }
-
-    public function changes(): Collection
-    {
-        if (! $this->properties instanceof Collection) {
-            return new Collection();
-        }
-
-        return collect(array_filter($this->properties->toArray(), function ($key) {
-            return in_array($key, ['attributes', 'old']);
-        }, ARRAY_FILTER_USE_KEY));
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
@@ -88,6 +77,6 @@ class Activity extends Model implements ActivityContract
 
     public function getCustomPropertyAttribute()
     {
-        return $this->changes();
+        return $this->attribute_changes;
     }
 }
