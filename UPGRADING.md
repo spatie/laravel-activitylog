@@ -121,6 +121,14 @@ The config file has been simplified. Republish it or update manually.
 - `table_name` and `database_connection` have been removed. If you need a custom table name or connection, create a custom Activity model and set `$table` / `$connection` on it. Then point `activity_model` to your custom model.
 
 **New keys:**
+- `actions.log_activity`: action class for logging (default: `LogActivityAction::class`)
+- `actions.clean_log`: action class for cleaning (default: `CleanActivityLogAction::class`)
+
+### Customizable actions
+
+Core operations are now handled by action classes that can be extended and swapped via config. This lets you customize how activities are saved (e.g., queue them) or how old records are cleaned without overriding the entire logger or command. See the [customizing actions](/docs/laravel-activitylog/v5/advanced-usage/customizing-actions) documentation.
+
+**New keys:**
 - `default_except_attributes`: globally exclude attributes from logging for all models
 
 ---

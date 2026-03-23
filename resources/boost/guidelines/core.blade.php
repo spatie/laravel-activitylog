@@ -119,6 +119,20 @@ $activity->getProperty('key'); // single value
 
 Set `activity_model` in `config/activitylog.php` to a class that extends `Model` and implements `Spatie\Activitylog\Contracts\Activity`. Use a custom model for custom table names or database connections.
 
+## Customizing Actions
+
+The package uses action classes (`LogActivityAction`, `CleanActivityLogAction`) that can be extended and swapped via config:
+
+```php
+// config/activitylog.php
+'actions' => [
+    'log_activity' => \App\Actions\CustomLogActivityAction::class,
+    'clean_log' => \App\Actions\CustomCleanAction::class,
+],
+```
+
+Custom action classes must extend the originals. Override protected methods (`save()`, `tapActivity()`, `resolveDescription()`, etc.) to customize behavior.
+
 ## Configuration
 
 Key config options in `config/activitylog.php`:
@@ -129,3 +143,5 @@ Key config options in `config/activitylog.php`:
 - `include_soft_deleted_subjects`: Include soft-deleted subjects
 - `activity_model`: Custom Activity model class
 - `default_except_attributes`: Globally excluded attributes
+- `actions.log_activity`: Action class for logging activities
+- `actions.clean_log`: Action class for cleaning old activities

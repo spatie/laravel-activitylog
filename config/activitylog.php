@@ -43,4 +43,13 @@ return [
      * Model-specific exclusions via logExcept() are merged with these.
      */
     'default_except_attributes' => [],
+
+    /*
+     * These action classes can be overridden to customize how activities
+     * are logged and cleaned. Your custom classes must extend the originals.
+     */
+    'actions' => [
+        'log_activity' => \Spatie\Activitylog\Actions\LogActivityAction::class,
+        'clean_log' => \Spatie\Activitylog\Actions\CleanActivityLogAction::class,
+    ],
 ];

@@ -75,6 +75,11 @@ return [
      * Model-specific exclusions via logExcept() are merged with these.
      */
     'default_except_attributes' => [],
+
+    'actions' => [
+        'log_activity' => \Spatie\Activitylog\Actions\LogActivityAction::class,
+        'clean_log' => \Spatie\Activitylog\Actions\CleanActivityLogAction::class,
+    ],
 ];
 ```
 

@@ -2,10 +2,8 @@
 
 namespace Spatie\Activitylog;
 
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
-use Illuminate\Database\Eloquent\Builder;
 
 class CleanActivitylogCommand extends Command
 {
@@ -18,7 +16,7 @@ class CleanActivitylogCommand extends Command
 
     protected $description = 'Clean up old records from the activity log.';
 
-    public function handle()
+    public function handle(): int
     {
         if (! $this->confirmToProceed()) {
             return 1;
@@ -26,30 +24,23 @@ class CleanActivitylogCommand extends Command
 
         $this->comment('Cleaning activity log...');
 
-        $log = $this->argument('log');
-
         $maxAgeInDays = $this->option('days') ?? config('activitylog.clean_after_days');
+
         if (filter_var($maxAgeInDays, FILTER_VALIDATE_INT) === false) {
             $this->error('The days option must be an integer.');
 
             return 1;
         }
 
-        $maxAgeInDays = (int) $maxAgeInDays;
-
-        $cutOffDate = Carbon::now()->subDays($maxAgeInDays)->format('Y-m-d H:i:s');
-
-        $activity = ActivitylogServiceProvider::getActivityModelInstance();
-
-        $amountDeleted = $activity::query()
-            ->where('created_at', '<', $cutOffDate)
-            ->when($log !== null, function (Builder $query) use ($log) {
-                $query->inLog($log);
-            })
-            ->delete();
+        $amountDeleted = ActivitylogConfig::cleanActivityLogAction()->execute(
+            (int) $maxAgeInDays,
+            $this->argument('log'),
+        );
 
         $this->info("Deleted {$amountDeleted} record(s) from the activity log.");
 
         $this->comment('All done!');
+
+        return 0;
     }
 }
