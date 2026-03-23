@@ -2,10 +2,7 @@
 
 namespace Spatie\Activitylog\Contracts;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Spatie\Activitylog\ActivityEvent;
 
 interface Activity
 {
@@ -14,12 +11,4 @@ interface Activity
     public function causer(): MorphTo;
 
     public function getProperty(string $propertyName, mixed $defaultValue): mixed;
-
-    public function scopeInLog(Builder $query, ...$logNames): Builder;
-
-    public function scopeCausedBy(Builder $query, Model $causer): Builder;
-
-    public function scopeForEvent(Builder $query, string | ActivityEvent $event): Builder;
-
-    public function scopeForSubject(Builder $query, Model $subject): Builder;
 }

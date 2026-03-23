@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
@@ -20,17 +19,12 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @property string|null $causer_type
  * @property int|null $causer_id
  * @property string|null $event
- * @property Collection|null $attribute_changes
- * @property Collection|null $properties
+ * @property \Illuminate\Support\Collection|null $attribute_changes
+ * @property \Illuminate\Support\Collection|null $properties
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read Model|null $causer
  * @property-read Model|null $subject
- *
- * @method static Builder causedBy(Model $causer)
- * @method static Builder forEvent(string|ActivityEvent $event)
- * @method static Builder forSubject(Model $subject)
- * @method static Builder inLog($logNames)
  */
 class Activity extends Model implements ActivityContract
 {

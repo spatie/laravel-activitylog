@@ -32,14 +32,14 @@
     "homepage": "https://github.com/spatie/activitylog",
     "require": {
         "php": "^8.4",
-        "illuminate/config": "^11.0 || ^12.0 || ^13.0",
-        "illuminate/database": "^11.0 || ^12.0 || ^13.0",
-        "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/config": "^12.0 || ^13.0",
+        "illuminate/database": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0",
         "spatie/laravel-package-tools": "^1.6.3"
     },
     "require-dev": {
         "ext-json": "*",
-        "orchestra/testbench": "^9.6 || ^10.0 || ^11.0",
+        "orchestra/testbench": "^10.0 || ^11.0",
         "pestphp/pest": "^4.0"
     },
     "minimum-stability": "dev",
