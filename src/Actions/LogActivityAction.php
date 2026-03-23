@@ -2,12 +2,12 @@
 
 namespace Spatie\Activitylog\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class LogActivityAction
 {
-    public function execute(ActivityContract $activity, string $description): ActivityContract
+    public function execute(Model $activity, string $description): Model
     {
         $activity->description = $this->resolveDescription($activity, $description);
 
@@ -18,7 +18,7 @@ class LogActivityAction
         return $activity;
     }
 
-    protected function resolveDescription(ActivityContract $activity, string $description): string
+    protected function resolveDescription(Model $activity, string $description): string
     {
         return $this->replacePlaceholders(
             $activity->description ?? $description,
@@ -26,7 +26,7 @@ class LogActivityAction
         );
     }
 
-    protected function tapActivity(ActivityContract $activity): void
+    protected function tapActivity(Model $activity): void
     {
         if (! isset($activity->subject)) {
             return;
@@ -39,12 +39,12 @@ class LogActivityAction
         call_user_func([$activity->subject, 'tapActivity'], $activity, $activity->event ?? '');
     }
 
-    protected function save(ActivityContract $activity): void
+    protected function save(Model $activity): void
     {
         $activity->save();
     }
 
-    protected function replacePlaceholders(string $description, ActivityContract $activity): string
+    protected function replacePlaceholders(string $description, Model $activity): string
     {
         return preg_replace_callback('/:[a-z0-9._-]+(?<![.])/i', function ($match) use ($activity) {
             $match = $match[0];
