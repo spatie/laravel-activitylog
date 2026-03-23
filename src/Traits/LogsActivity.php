@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\Enums\ActivityEvent;
 use Spatie\Activitylog\Support\ActivityLogger;
 use Spatie\Activitylog\Support\ActivityLogStatus;
@@ -94,7 +93,7 @@ trait LogsActivity
         });
     }
 
-    public static function addLogChange(LoggablePipe $pipe): void
+    public static function addLogChange(object $pipe): void
     {
         static::$changesPipes[] = $pipe;
     }

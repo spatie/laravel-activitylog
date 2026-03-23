@@ -3,16 +3,14 @@ title: Manipulate changes array
 weight: 2
 ---
 
-In some cases you may want to manipulate/control changes array, v4 made this possible by introducing new pipeline approach. Changes array will go through pipes carried over by the event object. In every pipe you can add, edit or delete from `attribute` and `old` arrays. See example:
+In some cases you may want to manipulate the changes array before it's saved. The package uses a pipeline approach for this. Changes go through pipes where you can add, edit, or delete from `attributes` and `old` arrays.
 
 ```php
-// RemoveKeyFromLogChangesPipe.php
+use Spatie\Activitylog\Support\EventLogBag;
 
-use Spatie\Activitylog\Contracts\LoggablePipe;use Spatie\Activitylog\Support\EventLogBag;
-
-class RemoveKeyFromLogChangesPipe implements LoggablePipe
+class RemoveKeyFromLogChangesPipe
 {
-    public function __construct(protected string $field){}
+    public function __construct(protected string $field) {}
 
     public function handle(EventLogBag $event, Closure $next): EventLogBag
     {
@@ -24,8 +22,6 @@ class RemoveKeyFromLogChangesPipe implements LoggablePipe
 ```
 
 ```php
-// ... in your controller/job/middleware
-
 NewsItem::addLogChange(new RemoveKeyFromLogChangesPipe('name'));
 
 $article = NewsItem::create(['name' => 'new article', 'text' => 'new article text']);
@@ -42,17 +38,12 @@ Activity::all()->last()->attribute_changes;
 */
 ```
 
-By adding i.e. `RemoveKeyFromLogChangesPipe` pipe every time log NewsItem is changed the result event will run through this pipe removing the specified key from changes array.
+## Adding pipes
 
-**Note** you need to maintain changes in both `attribute` and `old` array because changing one without the other will screw changing diffs and the information will be pointless!
-
-## Add pipes
-
-Every pipe should implement `Spatie\Activitylog\Contracts\LoggablePipe` that enforces `handle()` method that will receive `Spatie\Activitylog\Support\EventLogBag` and the next pipe. Your pipe must return the next pipe passing the event applying your changes `return $next($event)`.
+A pipe is any class with a `handle(EventLogBag $event, Closure $next): EventLogBag` method. It receives the event data and must call `$next($event)` to pass it to the next pipe.
 
 ```php
-
-class YourPipe implements LoggablePipe
+class YourPipe
 {
     public function handle(EventLogBag $event, Closure $next): EventLogBag
     {
@@ -61,14 +52,15 @@ class YourPipe implements LoggablePipe
         return $next($event);
     }
 }
-
 ```
-Then you can apply this when calling your model with:
+
+Register a pipe for a model:
+
 ```php
 YourModel::addLogChange(new YourPipe);
 ```
 
-However, you may wish to ensure it's always called within the model and as such you could apply it during model boot with the following:
+To always apply a pipe, register it during model boot:
 
 ```php
 protected static function booted(): void
@@ -77,3 +69,4 @@ protected static function booted(): void
 }
 ```
 
+**Note:** maintain changes in both `attributes` and `old` arrays. Changing one without the other will produce incorrect diffs.

@@ -8,6 +8,6 @@ class CouldNotLogActivity extends Exception
 {
     public static function couldNotDetermineUser(mixed $id): self
     {
-        return new static("Could not determine a user with identifier `{$id}`.");
+        return new self("Could not determine a user with identifier `{$id}`.");
     }
 }
