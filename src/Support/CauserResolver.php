@@ -22,7 +22,7 @@ class CauserResolver
     {
         $this->authManager = $authManager;
 
-        $this->authDriver = $config['activitylog']['default_auth_driver'];
+        $this->authDriver = $config->get('activitylog.default_auth_driver');
     }
 
     public function resolve(Model | int | string | null $subject = null): ?Model
@@ -48,8 +48,8 @@ class CauserResolver
     {
         $guard = $this->authManager->guard($this->authDriver);
 
-        $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
-        $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($subject) : null;
+        $provider = $guard->getProvider();
+        $model = $provider->retrieveById($subject);
 
         throw_unless($model instanceof Model, CouldNotLogActivity::couldNotDetermineUser($subject));
 
