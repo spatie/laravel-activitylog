@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Enums\ActivityEvent;
 
 class EventLogBag
 {

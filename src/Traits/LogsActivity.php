@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\Contracts\LoggablePipe;
+use Spatie\Activitylog\Enums\ActivityEvent;
 use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogOptions;
 

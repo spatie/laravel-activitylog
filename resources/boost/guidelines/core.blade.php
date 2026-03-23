@@ -71,7 +71,7 @@ activity()
 
 ```php
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\ActivityEvent;
+use Spatie\Activitylog\Enums\ActivityEvent;
 
 Activity::forEvent(ActivityEvent::Created)->get();
 Activity::causedBy($user)->get();

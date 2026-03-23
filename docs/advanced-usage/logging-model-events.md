@@ -458,7 +458,7 @@ This provides three relationships:
 The package provides an `ActivityEvent` enum for the built-in event types:
 
 ```php
-use Spatie\Activitylog\ActivityEvent;
+use Spatie\Activitylog\Enums\ActivityEvent;
 
 ActivityEvent::Created;  // 'created'
 ActivityEvent::Updated;  // 'updated'

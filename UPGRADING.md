@@ -98,7 +98,7 @@ The `CauserResolver` class still exists and can be resolved from the container f
 v5 introduces an `ActivityEvent` enum. All methods that accept event names also accept the enum:
 
 ```php
-use Spatie\Activitylog\ActivityEvent;
+use Spatie\Activitylog\Enums\ActivityEvent;
 
 Activity::forEvent(ActivityEvent::Created)->get();
 activity()->event(ActivityEvent::Updated)->log('...');
