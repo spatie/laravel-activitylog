@@ -2,10 +2,6 @@
 
 namespace Spatie\Activitylog;
 
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Contracts\Activity as ActivityContract;
-use Spatie\Activitylog\Exceptions\InvalidConfiguration;
-use Spatie\Activitylog\Models\Activity as ActivityModel;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -29,27 +25,5 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         $this->app->scoped(CauserResolver::class);
 
         $this->app->scoped(ActivityLogStatus::class);
-    }
-
-    public static function determineActivityModel(): string
-    {
-        $activityModel = config('activitylog.activity_model') ?? ActivityModel::class;
-
-        if (! is_a($activityModel, ActivityContract::class, true)) {
-            throw InvalidConfiguration::modelIsNotValid($activityModel);
-        }
-
-        if (! is_a($activityModel, Model::class, true)) {
-            throw InvalidConfiguration::modelIsNotValid($activityModel);
-        }
-
-        return $activityModel;
-    }
-
-    public static function getActivityModelInstance(): ActivityContract
-    {
-        $activityModelClassName = self::determineActivityModel();
-
-        return new $activityModelClassName();
     }
 }

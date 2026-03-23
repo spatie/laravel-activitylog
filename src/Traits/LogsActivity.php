@@ -11,7 +11,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityLogger;
-use Spatie\Activitylog\ActivitylogServiceProvider;
+use Spatie\Activitylog\ActivitylogConfig;
 use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\Enums\ActivityEvent;
@@ -124,7 +124,7 @@ trait LogsActivity
 
     public function activitiesAsSubject(): MorphMany
     {
-        return $this->morphMany(ActivitylogServiceProvider::determineActivityModel(), 'subject');
+        return $this->morphMany(ActivitylogConfig::activityModel(), 'subject');
     }
 
     public function getDescriptionForEvent(string $eventName): string
