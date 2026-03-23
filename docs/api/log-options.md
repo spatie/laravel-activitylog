@@ -8,8 +8,7 @@ Customization of how your models will be logged is controlled by implementing `g
 The most basic example of an Activity logged model is:
 
 ```php
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 class YourModel extends Model
 {
@@ -20,7 +19,7 @@ class YourModel extends Model
 To customize what gets logged, override `getActivitylogOptions()`:
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Support\LogOptions;use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
 
 class YourModel extends Model
 {

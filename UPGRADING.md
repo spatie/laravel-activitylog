@@ -83,6 +83,9 @@ Several classes moved to sub-namespaces:
 | `Spatie\Activitylog\PendingActivityLog` | `Spatie\Activitylog\Support\PendingActivityLog` |
 | `Spatie\Activitylog\ActivityEvent` | `Spatie\Activitylog\Enums\ActivityEvent` |
 | `Spatie\Activitylog\CleanActivitylogCommand` | `Spatie\Activitylog\Commands\CleanActivitylogCommand` |
+| `Spatie\Activitylog\Traits\LogsActivity` | `Spatie\Activitylog\Models\Concerns\LogsActivity` |
+| `Spatie\Activitylog\Traits\CausesActivity` | `Spatie\Activitylog\Models\Concerns\CausesActivity` |
+| `Spatie\Activitylog\Traits\HasActivity` | `Spatie\Activitylog\Models\Concerns\HasActivity` |
 
 ### HasActivity trait
 

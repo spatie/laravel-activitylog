@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Activitylog\Traits;
+namespace Spatie\Activitylog\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 

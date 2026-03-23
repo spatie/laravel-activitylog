@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\EventLogBag;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Test\Casts\IntervalCasts;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 beforeEach(function () {
     $this->article = new class() extends Article {

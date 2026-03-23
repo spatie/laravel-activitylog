@@ -2,8 +2,8 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Issue733 extends Article
 {

@@ -6,12 +6,12 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\CauserResolver;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Test\Enums\NonBackedEnum;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 beforeEach(function () {
     $this->activityDescription = 'My activity';
