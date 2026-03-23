@@ -29,8 +29,6 @@ abstract class TestCase extends OrchestraTestCase
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('activitylog.table_name', 'activity_log');
-        config()->set('activitylog.database_connection', 'sqlite');
         config()->set('database.default', 'sqlite');
         config()->set('database.connections.sqlite', [
             'driver' => 'sqlite',

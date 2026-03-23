@@ -6,7 +6,7 @@ use Spatie\Activitylog\Models\Activity;
 beforeEach(function () {
     Carbon::setTestNow(Carbon::create(2016, 1, 1, 00, 00, 00));
 
-    app()['config']->set('activitylog.delete_records_older_than_days', 31);
+    app()['config']->set('activitylog.clean_after_days', 31);
 });
 
 it('can clean the activity log', function () {
@@ -48,7 +48,7 @@ it('can accept days as option to override config setting', function () {
 });
 
 it('does not clean the activity log when days config value is invalid', function (mixed $days) {
-    app()['config']->set('activitylog.delete_records_older_than_days', $days);
+    app()['config']->set('activitylog.clean_after_days', $days);
 
     collect(range(1, 60))->each(function (int $index) {
         Activity::create([

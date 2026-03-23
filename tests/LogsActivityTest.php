@@ -221,7 +221,7 @@ it('can fetch all activity for a model', function () {
 });
 
 it('can fetch soft deleted models', function () {
-    app()['config']->set('activitylog.subject_returns_soft_deleted_models', true);
+    app()['config']->set('activitylog.include_soft_deleted_subjects', true);
 
     $article = $this->createArticle();
 
@@ -242,7 +242,7 @@ it('can fetch soft deleted models', function () {
 });
 
 it('can fetch subject when model does not use soft deletes and config is enabled', function () {
-    app()['config']->set('activitylog.subject_returns_soft_deleted_models', true);
+    app()['config']->set('activitylog.include_soft_deleted_subjects', true);
 
     // Create a model class without SoftDeletes
     $articleClass = new class() extends Article {

@@ -105,13 +105,23 @@ activity()->event(ActivityEvent::Updated)->log('...');
 
 Plain strings still work for custom event names.
 
-### New config option
+### Config changes
 
-A `default_except_attributes` option has been added to the config. Publish the new config or add it manually:
+The config file has been simplified. Republish it or update manually.
 
-```php
-'default_except_attributes' => [],
-```
+**Renamed keys:**
+
+| v4 | v5 |
+|---|---|
+| `enabled` (env: `ACTIVITY_LOGGER_ENABLED`) | `enabled` (env: `ACTIVITYLOG_ENABLED`) |
+| `delete_records_older_than_days` | `clean_after_days` |
+| `subject_returns_soft_deleted_models` | `include_soft_deleted_subjects` |
+
+**Removed keys:**
+- `table_name` and `database_connection` have been removed. If you need a custom table name or connection, create a custom Activity model and set `$table` / `$connection` on it. Then point `activity_model` to your custom model.
+
+**New keys:**
+- `default_except_attributes`: globally exclude attributes from logging for all models
 
 ---
 

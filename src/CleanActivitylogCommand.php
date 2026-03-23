@@ -28,7 +28,7 @@ class CleanActivitylogCommand extends Command
 
         $log = $this->argument('log');
 
-        $maxAgeInDays = $this->option('days') ?? config('activitylog.delete_records_older_than_days');
+        $maxAgeInDays = $this->option('days') ?? config('activitylog.clean_after_days');
         if (filter_var($maxAgeInDays, FILTER_VALIDATE_INT) === false) {
             $this->error('The days option must be an integer.');
 

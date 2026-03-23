@@ -12,7 +12,7 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 class Activity extends Model implements ActivityContract
 {
-    protected $table;
+    protected $table = 'activity_log';
 
     public $guarded = [];
 
@@ -21,16 +21,9 @@ class Activity extends Model implements ActivityContract
         'properties' => 'collection',
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        $this->table = config('activitylog.table_name');
-
-        parent::__construct($attributes);
-    }
-
     public function subject(): MorphTo
     {
-        if (config('activitylog.subject_returns_soft_deleted_models')) {
+        if (config('activitylog.include_soft_deleted_subjects')) {
             return $this->morphTo()->withoutGlobalScope(SoftDeletingScope::class);
         }
 

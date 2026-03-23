@@ -117,17 +117,15 @@ $activity->getProperty('key'); // single value
 
 ## Custom Activity Model
 
-Set `activity_model` in `config/activitylog.php` to a class that extends `Model` and implements `Spatie\Activitylog\Contracts\Activity`.
+Set `activity_model` in `config/activitylog.php` to a class that extends `Model` and implements `Spatie\Activitylog\Contracts\Activity`. Use a custom model for custom table names or database connections.
 
 ## Configuration
 
 Key config options in `config/activitylog.php`:
-- `enabled`: Master on/off switch
+- `enabled`: Master on/off switch (env: `ACTIVITYLOG_ENABLED`)
+- `clean_after_days`: Days to keep records for `activitylog:clean` command
 - `default_log_name`: Default log name (string)
 - `default_auth_driver`: Auth driver for causer resolution
-- `subject_returns_soft_deleted_models`: Include soft-deleted subjects
+- `include_soft_deleted_subjects`: Include soft-deleted subjects
 - `activity_model`: Custom Activity model class
-- `table_name`: Database table name
-- `database_connection`: Database connection name
 - `default_except_attributes`: Globally excluded attributes
-- `delete_records_older_than_days`: For `activitylog:clean` command

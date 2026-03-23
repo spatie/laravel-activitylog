@@ -38,25 +38,14 @@ class Activity extends Model implements ActivityContract
         ];
     }
 
-    public function __construct(array $attributes = [])
-    {
-        if (! isset($this->connection)) {
-            $this->setConnection(config('activitylog.database_connection'));
-        }
-
-        if (! isset($this->table)) {
-            $this->setTable(config('activitylog.table_name'));
-        }
-
-        parent::__construct($attributes);
-    }
+    protected $table = 'activity_log';
 
     /**
      * @return MorphTo<Model, $this>
      */
     public function subject(): MorphTo
     {
-        if (config('activitylog.subject_returns_soft_deleted_models')) {
+        if (config('activitylog.include_soft_deleted_subjects')) {
             return $this->morphTo()->withoutGlobalScope(SoftDeletingScope::class);
         }
 
