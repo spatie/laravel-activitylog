@@ -21,11 +21,11 @@ class ActivityLogger
 
     protected CauserResolver $causerResolver;
 
-    protected ActivitylogStatus $logStatus;
+    protected ActivityLogStatus $logStatus;
 
     protected ?ActivityContract $activity = null;
 
-    public function __construct(Repository $config, ActivitylogStatus $logStatus, CauserResolver $causerResolver)
+    public function __construct(Repository $config, ActivityLogStatus $logStatus, CauserResolver $causerResolver)
     {
         $this->causerResolver = $causerResolver;
 
@@ -34,7 +34,7 @@ class ActivityLogger
         $this->logStatus = $logStatus;
     }
 
-    public function setLogStatus(ActivitylogStatus $logStatus): static
+    public function setLogStatus(ActivityLogStatus $logStatus): static
     {
         $this->logStatus = $logStatus;
 

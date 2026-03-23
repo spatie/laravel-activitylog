@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Facade;
 use Spatie\Activitylog\PendingActivityLog;
 
 /**
- * @method static \Spatie\Activitylog\ActivityLogger setLogStatus(\Spatie\Activitylog\ActivitylogStatus $logStatus)
+ * @method static \Spatie\Activitylog\ActivityLogger setLogStatus(\Spatie\Activitylog\ActivityLogStatus $logStatus)
  * @method static \Spatie\Activitylog\ActivityLogger performedOn(\Illuminate\Database\Eloquent\Model $model)
  * @method static \Spatie\Activitylog\ActivityLogger on(\Illuminate\Database\Eloquent\Model $model)
  * @method static \Spatie\Activitylog\ActivityLogger causedBy(\Illuminate\Database\Eloquent\Model|string|int|null $modelOrId)

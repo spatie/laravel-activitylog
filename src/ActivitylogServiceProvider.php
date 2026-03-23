@@ -29,7 +29,7 @@ class ActivitylogServiceProvider extends PackageServiceProvider
 
         $this->app->scoped(CauserResolver::class);
 
-        $this->app->scoped(ActivitylogStatus::class);
+        $this->app->scoped(ActivityLogStatus::class);
     }
 
     public static function determineActivityModel(): string

@@ -15,7 +15,7 @@ class PendingActivityLog
 
     protected ActivityLogger $logger;
 
-    public function __construct(ActivityLogger $logger, ActivitylogStatus $status)
+    public function __construct(ActivityLogger $logger, ActivityLogStatus $status)
     {
         $this->logger = $logger
             ->setLogStatus($status)

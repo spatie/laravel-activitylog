@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Spatie\Activitylog\ActivityEvent;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivitylogServiceProvider;
-use Spatie\Activitylog\ActivitylogStatus;
+use Spatie\Activitylog\ActivityLogStatus;
 use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\EventLogBag;
 use Spatie\Activitylog\LogOptions;
@@ -165,7 +165,7 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-        $logStatus = app(ActivitylogStatus::class);
+        $logStatus = app(ActivityLogStatus::class);
 
         if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
             return false;

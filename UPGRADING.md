@@ -68,10 +68,6 @@ Activity::where('properties->group', $groupId)->get();
 | `CauserResolver::setCauser($model)` | `Activity::defaultCauser($model)` |
 | `CauserResolver::withCauser($model, fn)` | `Activity::defaultCauser($model, fn)` |
 
-### Renamed class
-
-`ActivityLogStatus` has been renamed to `ActivitylogStatus` (lowercase `l`) to match the namespace casing. If you reference this class directly, update the import.
-
 ### HasActivity trait
 
 v5 reintroduces the `HasActivity` trait. It combines `LogsActivity` and `CausesActivity` and provides an `activities()` convenience method. Use it on models (like User) that both cause and log activities.
