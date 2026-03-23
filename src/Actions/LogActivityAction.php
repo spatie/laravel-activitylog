@@ -11,6 +11,8 @@ class LogActivityAction
     {
         $activity->description = $this->resolveDescription($activity, $description);
 
+        $this->transformChanges($activity);
+
         $this->beforeActivityLogged($activity);
 
         $this->save($activity);
@@ -24,6 +26,11 @@ class LogActivityAction
             $activity->description ?? $description,
             $activity
         );
+    }
+
+    protected function transformChanges(Model $activity): void
+    {
+        //
     }
 
     protected function beforeActivityLogged(Model $activity): void

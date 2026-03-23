@@ -78,7 +78,6 @@ Several classes moved to sub-namespaces:
 | `Spatie\Activitylog\LogOptions` | `Spatie\Activitylog\Support\LogOptions` |
 | `Spatie\Activitylog\CauserResolver` | `Spatie\Activitylog\Support\CauserResolver` |
 | `Spatie\Activitylog\ActivityLogStatus` | `Spatie\Activitylog\Support\ActivityLogStatus` |
-| `Spatie\Activitylog\EventLogBag` | `Spatie\Activitylog\Support\EventLogBag` |
 | `Spatie\Activitylog\ActivityLogger` | `Spatie\Activitylog\Support\ActivityLogger` |
 | `Spatie\Activitylog\PendingActivityLog` | `Spatie\Activitylog\Support\PendingActivityLog` |
 | `Spatie\Activitylog\ActivityEvent` | `Spatie\Activitylog\Enums\ActivityEvent` |
@@ -143,9 +142,13 @@ The config file has been simplified. Republish it or update manually.
 - `actions.log_activity`: action class for logging (default: `LogActivityAction::class`)
 - `actions.clean_log`: action class for cleaning (default: `CleanActivityLogAction::class`)
 
+### Pipe system removed
+
+The `addLogChange()` method, `LoggablePipe` interface, and `EventLogBag` class have been removed. To manipulate the changes array before saving, override `transformChanges()` on a custom `LogActivityAction` instead. See the [customizing actions](/docs/laravel-activitylog/v5/advanced-usage/customizing-actions) documentation.
+
 ### Customizable actions
 
-Core operations are now handled by action classes that can be extended and swapped via config. This lets you customize how activities are saved (e.g., queue them) or how old records are cleaned without overriding the entire logger or command. See the [customizing actions](/docs/laravel-activitylog/v5/advanced-usage/customizing-actions) documentation.
+Core operations are now handled by action classes that can be extended and swapped via config. This lets you customize how activities are saved (e.g., queue them) or how old records are cleaned without overriding the entire logger or command.
 
 **New keys:**
 - `default_except_attributes`: globally exclude attributes from logging for all models

@@ -5,7 +5,6 @@ namespace Spatie\Activitylog\Models\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Enums\ActivityEvent;
@@ -13,13 +12,10 @@ use Spatie\Activitylog\Support\ActivityLogger;
 use Spatie\Activitylog\Support\ActivityLogStatus;
 use Spatie\Activitylog\Support\ChangeDetector;
 use Spatie\Activitylog\Support\Config;
-use Spatie\Activitylog\Support\EventLogBag;
 use Spatie\Activitylog\Support\LogOptions;
 
 trait LogsActivity
 {
-    public static array $changesPipes = [];
-
     protected array $oldAttributes = [];
 
     protected ?LogOptions $activitylogOptions;
@@ -56,8 +52,6 @@ trait LogsActivity
 
                 $changes = $model->buildChanges($eventName);
 
-                $changes = $model->runChangesPipeline($eventName, $changes);
-
                 if ($model->shouldSkipEmptyLog($changes)) {
                     return;
                 }
@@ -72,11 +66,6 @@ trait LogsActivity
                 $model->activitylogOptions = null;
             });
         });
-    }
-
-    public static function addLogChange(object $pipe): void
-    {
-        static::$changesPipes[] = $pipe;
     }
 
     public function disableLogging(): self
@@ -285,19 +274,6 @@ trait LogsActivity
         }
 
         return $this->fresh() ?? $this;
-    }
-
-    protected function runChangesPipeline(string $eventName, array $changes): array
-    {
-        if (empty(static::$changesPipes)) {
-            return $changes;
-        }
-
-        return app(Pipeline::class)
-            ->send(new EventLogBag($eventName, $this, $changes, $this->activitylogOptions))
-            ->through(static::$changesPipes)
-            ->thenReturn()
-            ->changes;
     }
 
     protected function shouldSkipEmptyLog(array $changes): bool

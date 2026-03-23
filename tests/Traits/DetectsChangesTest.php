@@ -4,11 +4,8 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Arr;
-use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
-use Spatie\Activitylog\Support\EventLogBag;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Test\Casts\IntervalCasts;
 use Spatie\Activitylog\Test\Models\Article;
@@ -35,71 +32,6 @@ it('can store the values when creating a model', function () {
         'attributes' => [
             'name' => 'my name',
             'text' => null,
-        ],
-    ];
-
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
-});
-
-it('deep diff check json field', function () {
-    $articleClass = new class() extends Article {
-        use LogsActivity;
-
-        protected $casts = [
-            'json' => 'collection',
-        ];
-
-        public function getActivitylogOptions(): LogOptions
-        {
-            return LogOptions::defaults()
-            ->dontLogEmptyChanges()
-            ->logOnlyDirty()
-            ->logOnly(['json->phone', 'json->details', 'json->address']);
-        }
-    };
-
-    $articleClass::addLogChange(new class() implements LoggablePipe {
-        public function handle(EventLogBag $event, Closure $next): EventLogBag
-        {
-            if ($event->event === 'updated') {
-                $event->changes['attributes']['json'] = array_udiff_assoc(
-                    $event->changes['attributes']['json'],
-                    $event->changes['old']['json'],
-                    function ($new, $old) {
-                        if ($old === null || $new === null) {
-                            return 0;
-                        }
-
-                        return $new <=> $old;
-                    }
-                );
-
-                $event->changes['old']['json'] = collect($event->changes['old']['json'])
-                ->only(array_keys($event->changes['attributes']['json']))
-                ->all();
-            }
-
-            return $next($event);
-        }
-    });
-
-    $article = $articleClass::create([
-        'name' => 'Hamburg',
-        'json' => ['details' => '', 'phone' => '1231231234', 'address' => 'new address'],
-      ]);
-
-    $article->update(['json' => ['details' => 'new details']]);
-
-    $expectedChanges = [
-        'attributes' => [
-            'json' => [
-                'details' => 'new details',
-            ],
-        ],
-        'old' => [
-            'json' => [
-                'details' => '',
-            ],
         ],
     ];
 
@@ -239,93 +171,6 @@ it('can store the relation values when creating a model', function () {
     ];
 
     $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
-});
-
-it('can removes key event if it was loggable', function () {
-    $articleClass = new class() extends Article {
-        use LogsActivity;
-
-        public function getActivitylogOptions(): LogOptions
-        {
-            return LogOptions::defaults()
-            ->logOnly(['name', 'text', 'user.name']);
-        }
-    };
-
-    $user = User::create([
-        'name' => 'user name',
-    ]);
-
-    $articleClass::addLogChange(new class() implements LoggablePipe {
-        public function handle(EventLogBag $event, Closure $next): EventLogBag
-        {
-            Arr::forget($event->changes, ['attributes.name', 'old.name']);
-
-            return $next($event);
-        }
-    });
-
-    $article = $articleClass::create([
-        'name' => 'original name',
-        'text' => 'original text',
-        'user_id' => $user->id,
-    ]);
-
-    $article->name = 'updated name';
-    $article->text = 'updated text';
-    $article->save();
-
-    $expectedChanges = [
-        'attributes' => [
-            'text' => 'updated text',
-            'user.name' => 'user name',
-        ],
-        'old' => [
-            'text' => 'original text',
-            'user.name' => 'user name',
-        ],
-    ];
-
-    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
-});
-
-it('will not log when pipe removes all changes and dontSubmitEmptyLogs is set', function () {
-    $articleClass = new class() extends Article {
-        use LogsActivity;
-
-        public function getActivitylogOptions(): LogOptions
-        {
-            return LogOptions::defaults()
-            ->logOnly(['name'])
-            ->logOnlyDirty()
-            ->dontLogEmptyChanges();
-        }
-    };
-
-    // Add a pipe that removes all changes only for update events
-    $articleClass::addLogChange(new class() implements LoggablePipe {
-        public function handle(EventLogBag $event, Closure $next): EventLogBag
-        {
-            if ($event->event === 'updated') {
-                $event->changes = [];
-            }
-
-            return $next($event);
-        }
-    });
-
-    $article = $articleClass::create([
-        'name' => 'original name',
-    ]);
-
-    // Created event should be logged
-    $this->assertCount(1, Activity::all());
-
-    $article->name = 'updated name';
-    $article->save();
-
-    // Updated event should NOT be logged because pipe removed all changes
-    $this->assertCount(1, Activity::all());
 });
 
 it('can store empty relation when creating a model', function () {

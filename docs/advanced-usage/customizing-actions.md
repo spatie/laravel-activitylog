@@ -9,7 +9,7 @@ The package uses action classes for its core operations. You can extend these to
 
 ### LogActivityAction
 
-Called every time an activity is logged. Handles description placeholder replacement, calling `beforeActivityLogged()` on the subject, and saving the activity to the database.
+Called every time an activity is logged. Handles description placeholder replacement, transforming changes, calling `beforeActivityLogged()` on the subject, and saving the activity to the database.
 
 ### CleanActivityLogAction
 
@@ -20,12 +20,12 @@ Called by the `activitylog:clean` command. Handles deleting old activity records
 Create a class that extends the original action and override the protected methods you want to customize:
 
 ```php
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Actions\LogActivityAction;
-use Spatie\Activitylog\Contracts\Activity;
 
 class CustomLogActivityAction extends LogActivityAction
 {
-    protected function save(Activity $activity): void
+    protected function save(Model $activity): void
     {
         // Example: dispatch to queue instead of saving synchronously
         dispatch(fn () => $activity->save());
@@ -43,6 +43,28 @@ Then register it in the config:
 ],
 ```
 
+## Manipulating changes
+
+To modify the changes array before it's saved (e.g. removing sensitive fields), override `transformChanges()`:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Spatie\Activitylog\Actions\LogActivityAction;
+
+class RedactPasswordAction extends LogActivityAction
+{
+    protected function transformChanges(Model $activity): void
+    {
+        $changes = $activity->attribute_changes?->toArray() ?? [];
+
+        Arr::forget($changes, ['attributes.password', 'old.password']);
+
+        $activity->attribute_changes = collect($changes);
+    }
+}
+```
+
 ## Overridable methods
 
 ### LogActivityAction
@@ -50,6 +72,7 @@ Then register it in the config:
 | Method | Description |
 |--------|-------------|
 | `resolveDescription($activity, $description)` | Resolves placeholders like `:subject.name` in the description |
+| `transformChanges($activity)` | Modify the changes array before saving (default: no-op) |
 | `beforeActivityLogged($activity)` | Calls `beforeActivityLogged()` on the subject model if it exists |
 | `save($activity)` | Saves the activity to the database |
 | `replacePlaceholders($description, $activity)` | Performs the actual placeholder replacement |
