@@ -106,7 +106,11 @@ class CauserResolver
 
     protected function isResolvable(mixed $model): bool
     {
-        return $model instanceof Model || is_null($model);
+        if ($model instanceof Model) {
+            return true;
+        }
+
+        return is_null($model);
     }
 
     protected function getDefaultCauser(): ?Model

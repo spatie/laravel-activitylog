@@ -28,9 +28,15 @@ class LogActivityAction
 
     protected function beforeActivityLogged(Model $activity): void
     {
-        if (isset($activity->subject) && method_exists($activity->subject, 'beforeActivityLogged')) {
-            $activity->subject->beforeActivityLogged($activity, $activity->event ?? '');
+        if (! isset($activity->subject)) {
+            return;
         }
+
+        if (! method_exists($activity->subject, 'beforeActivityLogged')) {
+            return;
+        }
+
+        $activity->subject->beforeActivityLogged($activity, $activity->event ?? '');
     }
 
     protected function save(Model $activity): void

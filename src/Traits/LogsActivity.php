@@ -74,8 +74,10 @@ trait LogsActivity
                     ->thenReturn();
 
                 // Check for empty logs after pipeline has run
-                if ($model->isLogEmpty($event->changes) && ! $model->activitylogOptions->logEmptyChanges) {
-                    return;
+                if ($model->isLogEmpty($event->changes)) {
+                    if (! $model->activitylogOptions->logEmptyChanges) {
+                        return;
+                    }
                 }
 
                 // Actual logging
@@ -99,7 +101,11 @@ trait LogsActivity
 
     public function isLogEmpty(array $changes): bool
     {
-        return empty($changes['attributes'] ?? []) && empty($changes['old'] ?? []);
+        if (! empty($changes['attributes'] ?? [])) {
+            return false;
+        }
+
+        return empty($changes['old'] ?? []);
     }
 
     public function disableLogging(): self
@@ -167,7 +173,11 @@ trait LogsActivity
     {
         $logStatus = app(ActivityLogStatus::class);
 
-        if (! $this->enableLoggingModelsEvents || $logStatus->disabled()) {
+        if (! $this->enableLoggingModelsEvents) {
+            return false;
+        }
+
+        if ($logStatus->disabled()) {
             return false;
         }
 
@@ -193,7 +203,11 @@ trait LogsActivity
             ? $this->getDeletedAtColumn()
             : 'deleted_at';
 
-        return $this->isDirty($deletedAtColumn) && count($this->getDirty()) === 1;
+        if (! $this->isDirty($deletedAtColumn)) {
+            return false;
+        }
+
+        return count($this->getDirty()) === 1;
     }
 
     /**
@@ -275,74 +289,105 @@ trait LogsActivity
      **/
     public function attributeValuesToBeLogged(string $processingEvent): array
     {
-        // no loggable attributes, no values to be logged!
         if (! count($this->attributesToBeLogged())) {
             return [];
         }
 
         $properties['attributes'] = static::logChanges(
-
-            // if the current event is retrieved, get the model itself
-            // else get the fresh default properties from database
-            // as wouldn't be part of the saved model instance.
-            $processingEvent === 'retrieved'
-                ? $this
-                : (
-                    $this->exists
-                        ? $this->fresh() ?? $this
-                        : $this
-                )
+            $this->resolveModelForLogging($processingEvent)
         );
 
-        if (static::eventsToBeRecorded()->contains(ActivityEvent::Updated->value) && $processingEvent === ActivityEvent::Updated->value) {
-
-            // Fill the attributes with null values.
+        if ($this->isUpdatedEvent($processingEvent)) {
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
 
-            // Populate the old key with keys from database and from old attributes.
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
 
-            // Fail safe.
             $this->oldAttributes = [];
         }
 
-        if ($this->activitylogOptions->logOnlyDirty && isset($properties['old'])) {
-
-            // Get difference between the old and new attributes.
-            $properties['attributes'] = array_udiff_assoc(
-                $properties['attributes'],
-                $properties['old'],
-                function ($new, $old) {
-                    // Strict check for php's weird behaviors
-                    if ($old === null || $new === null) {
-                        return $new === $old ? 0 : 1;
-                    }
-
-                    // Handles Date interval comparisons since php cannot use spaceship
-                    // Operator to compare them and will throw ErrorException.
-                    if ($old instanceof DateInterval) {
-                        return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
-                    }
-
-                    if ($new instanceof DateInterval) {
-                        return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
-                    }
-
-                    return $new <=> $old;
-                }
-            );
-
-            $properties['old'] = collect($properties['old'])
-                ->only(array_keys($properties['attributes']))
-                ->all();
+        if ($this->shouldLogOnlyDirtyAttributes($properties)) {
+            $properties = $this->filterDirtyAttributes($properties);
         }
 
-        if (static::eventsToBeRecorded()->contains(ActivityEvent::Deleted->value) && $processingEvent === ActivityEvent::Deleted->value) {
+        if ($this->isDeletedEvent($processingEvent)) {
             $properties['old'] = $properties['attributes'];
             unset($properties['attributes']);
         }
 
         return $properties;
+    }
+
+    protected function resolveModelForLogging(string $processingEvent): static
+    {
+        if ($processingEvent === 'retrieved') {
+            return $this;
+        }
+
+        if (! $this->exists) {
+            return $this;
+        }
+
+        return $this->fresh() ?? $this;
+    }
+
+    protected function shouldLogOnlyDirtyAttributes(array $properties): bool
+    {
+        if (! $this->activitylogOptions->logOnlyDirty) {
+            return false;
+        }
+
+        return isset($properties['old']);
+    }
+
+    protected function filterDirtyAttributes(array $properties): array
+    {
+        $properties['attributes'] = array_udiff_assoc(
+            $properties['attributes'],
+            $properties['old'],
+            function ($new, $old) {
+                if ($old === null) {
+                    return $new === null ? 0 : 1;
+                }
+
+                if ($new === null) {
+                    return 1;
+                }
+
+                if ($old instanceof DateInterval) {
+                    return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
+                }
+
+                if ($new instanceof DateInterval) {
+                    return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
+                }
+
+                return $new <=> $old;
+            }
+        );
+
+        $properties['old'] = collect($properties['old'])
+            ->only(array_keys($properties['attributes']))
+            ->all();
+
+        return $properties;
+    }
+
+    protected function isUpdatedEvent(string $processingEvent): bool
+    {
+        if (! static::eventsToBeRecorded()->contains(ActivityEvent::Updated->value)) {
+            return false;
+        }
+
+        return $processingEvent === ActivityEvent::Updated->value;
+    }
+
+    protected function isDeletedEvent(string $processingEvent): bool
+    {
+        if (! static::eventsToBeRecorded()->contains(ActivityEvent::Deleted->value)) {
+            return false;
+        }
+
+        return $processingEvent === ActivityEvent::Deleted->value;
     }
 
     public static function logChanges(Model $model): array
@@ -388,7 +433,11 @@ trait LogsActivity
                     $changes[$attribute] = $model->getStorableEnumValue($cast, $changes[$attribute]);
                 }
 
-                if ($model->isCustomDateTimeCast($cast) || $model->isImmutableCustomDateTimeCast($cast)) {
+                if ($model->isCustomDateTimeCast($cast)) {
+                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
+                }
+
+                if ($model->isImmutableCustomDateTimeCast($cast)) {
                     $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
                 }
             }

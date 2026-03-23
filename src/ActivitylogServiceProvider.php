@@ -35,8 +35,11 @@ class ActivitylogServiceProvider extends PackageServiceProvider
     {
         $activityModel = config('activitylog.activity_model') ?? ActivityModel::class;
 
-        if (! is_a($activityModel, ActivityContract::class, true)
-            || ! is_a($activityModel, Model::class, true)) {
+        if (! is_a($activityModel, ActivityContract::class, true)) {
+            throw InvalidConfiguration::modelIsNotValid($activityModel);
+        }
+
+        if (! is_a($activityModel, Model::class, true)) {
             throw InvalidConfiguration::modelIsNotValid($activityModel);
         }
 
