@@ -11,7 +11,7 @@ class LogActivityAction
     {
         $activity->description = $this->resolveDescription($activity, $description);
 
-        $this->tapActivity($activity);
+        $this->beforeActivityLogged($activity);
 
         $this->save($activity);
 
@@ -26,17 +26,11 @@ class LogActivityAction
         );
     }
 
-    protected function tapActivity(Model $activity): void
+    protected function beforeActivityLogged(Model $activity): void
     {
-        if (! isset($activity->subject)) {
-            return;
+        if (isset($activity->subject) && method_exists($activity->subject, 'beforeActivityLogged')) {
+            $activity->subject->beforeActivityLogged($activity, $activity->event ?? '');
         }
-
-        if (! method_exists($activity->subject, 'tapActivity')) {
-            return;
-        }
-
-        call_user_func([$activity->subject, 'tapActivity'], $activity, $activity->event ?? '');
     }
 
     protected function save(Model $activity): void

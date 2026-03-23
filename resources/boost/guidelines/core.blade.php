@@ -131,7 +131,7 @@ The package uses action classes (`LogActivityAction`, `CleanActivityLogAction`) 
 ],
 ```
 
-Custom action classes must extend the originals. Override protected methods (`save()`, `tapActivity()`, `resolveDescription()`, etc.) to customize behavior.
+Custom action classes must extend the originals. Override protected methods (`save()`, `beforeActivityLogged()`, `resolveDescription()`, etc.) to customize behavior.
 
 ## Configuration
 

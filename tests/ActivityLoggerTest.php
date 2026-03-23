@@ -377,7 +377,7 @@ it('will tap a subject', function () {
             return LogOptions::defaults();
         }
 
-        public function tapActivity(Activity $activity, string $eventName)
+        public function beforeActivityLogged(Activity $activity, string $eventName)
         {
             $activity->description = 'my custom description';
         }

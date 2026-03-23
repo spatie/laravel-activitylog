@@ -9,7 +9,7 @@ The package uses action classes for its core operations. You can extend these to
 
 ### LogActivityAction
 
-Called every time an activity is logged. Handles description placeholder replacement, calling `tapActivity()` on the subject, and saving the activity to the database.
+Called every time an activity is logged. Handles description placeholder replacement, calling `beforeActivityLogged()` on the subject, and saving the activity to the database.
 
 ### CleanActivityLogAction
 
@@ -50,7 +50,7 @@ Then register it in the config:
 | Method | Description |
 |--------|-------------|
 | `resolveDescription($activity, $description)` | Resolves placeholders like `:subject.name` in the description |
-| `tapActivity($activity)` | Calls `tapActivity()` on the subject model if it exists |
+| `beforeActivityLogged($activity)` | Calls `beforeActivityLogged()` on the subject model if it exists |
 | `save($activity)` | Saves the activity to the database |
 | `replacePlaceholders($description, $activity)` | Performs the actual placeholder replacement |
 

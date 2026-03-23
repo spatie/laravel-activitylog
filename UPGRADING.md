@@ -67,6 +67,7 @@ Activity::where('properties->group', $groupId)->get();
 | `withoutLogs()` | `withoutLogging()` |
 | `CauserResolver::setCauser($model)` | `Activity::defaultCauser($model)` |
 | `CauserResolver::withCauser($model, fn)` | `Activity::defaultCauser($model, fn)` |
+| `tapActivity($activity, $event)` on models | `beforeActivityLogged($activity, $event)` |
 
 ### HasActivity trait
 

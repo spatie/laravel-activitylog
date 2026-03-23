@@ -369,7 +369,7 @@ it('can log activity when attributes are changed with tap', function () {
             ],
         ];
 
-        public function tapActivity(Activity $activity, string $eventName)
+        public function beforeActivityLogged(Activity $activity, string $eventName)
         {
             $properties = $this->properties;
             $properties['event'] = $eventName;
@@ -399,7 +399,7 @@ it('can log activity when description is changed with tap', function () {
             return LogOptions::defaults();
         }
 
-        public function tapActivity(Activity $activity, string $eventName)
+        public function beforeActivityLogged(Activity $activity, string $eventName)
         {
             $activity->description = 'my custom description';
         }
@@ -422,7 +422,7 @@ it('can log activity when event is changed with tap', function () {
             return LogOptions::defaults();
         }
 
-        public function tapActivity(Activity $activity, string $eventName)
+        public function beforeActivityLogged(Activity $activity, string $eventName)
         {
             $activity->event = 'my custom event';
         }
@@ -436,7 +436,7 @@ it('can log activity when event is changed with tap', function () {
     $this->assertEquals('my custom event', $firstActivity->event);
 });
 
-it('will only call tapActivity once', function () {
+it('will only call beforeActivityLogged once', function () {
     $callCount = 0;
 
     $model = new class() extends Article {
@@ -449,7 +449,7 @@ it('will only call tapActivity once', function () {
             return LogOptions::defaults();
         }
 
-        public function tapActivity(Activity $activity, string $eventName)
+        public function beforeActivityLogged(Activity $activity, string $eventName)
         {
             static::$tapCallCount++;
         }
