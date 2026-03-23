@@ -1,9 +1,10 @@
 <?php
 
-namespace Spatie\Activitylog;
+namespace Spatie\Activitylog\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
+use Spatie\Activitylog\ActivitylogConfig;
 
 class CleanActivitylogCommand extends Command
 {

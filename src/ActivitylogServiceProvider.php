@@ -15,7 +15,7 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         ->hasMigrations([
             'create_activity_log_table',
         ])
-        ->hasCommand(CleanActivitylogCommand::class);
+        ->hasCommand(Commands\CleanActivitylogCommand::class);
     }
 
     public function registeringPackage(): void
