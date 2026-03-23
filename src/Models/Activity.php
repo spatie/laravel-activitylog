@@ -73,7 +73,7 @@ class Activity extends Model implements ActivityContract
 
     public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
-        return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
+        return Arr::get($this->properties?->toArray() ?? [], $propertyName, $defaultValue);
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
