@@ -7,6 +7,7 @@ use DateTimeInterface;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
@@ -29,7 +30,7 @@ class ActivityLogger
     {
         $this->causerResolver = $causerResolver;
 
-        $this->defaultLogName = $config['activitylog']['default_log_name'];
+        $this->defaultLogName = $config->get('activitylog.default_log_name');
 
         $this->logStatus = $logStatus;
     }
@@ -98,14 +99,16 @@ class ActivityLogger
         return $this;
     }
 
-    public function withChanges(mixed $changes): static
+    /** @param  array<string, mixed>|\Illuminate\Support\Collection<string, mixed>  $changes */
+    public function withChanges(array|Collection $changes): static
     {
         $this->getActivity()->attribute_changes = collect($changes);
 
         return $this;
     }
 
-    public function withProperties(mixed $properties): static
+    /** @param  array<string, mixed>|\Illuminate\Support\Collection<string, mixed>  $properties */
+    public function withProperties(array|Collection $properties): static
     {
         $this->getActivity()->properties = collect($properties);
 

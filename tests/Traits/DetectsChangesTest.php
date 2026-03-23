@@ -5,6 +5,7 @@ use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Spatie\Activitylog\Contracts\LoggablePipe;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\EventLogBag;
 use Spatie\Activitylog\Support\LogOptions;
@@ -57,7 +58,7 @@ it('deep diff check json field', function () {
         }
     };
 
-    $articleClass::addLogChange(new class() {
+    $articleClass::addLogChange(new class() implements LoggablePipe {
         public function handle(EventLogBag $event, Closure $next): EventLogBag
         {
             if ($event->event === 'updated') {
@@ -255,7 +256,7 @@ it('can removes key event if it was loggable', function () {
         'name' => 'user name',
     ]);
 
-    $articleClass::addLogChange(new class() {
+    $articleClass::addLogChange(new class() implements LoggablePipe {
         public function handle(EventLogBag $event, Closure $next): EventLogBag
         {
             Arr::forget($event->changes, ['attributes.name', 'old.name']);
@@ -302,7 +303,7 @@ it('will not log when pipe removes all changes and dontSubmitEmptyLogs is set', 
     };
 
     // Add a pipe that removes all changes only for update events
-    $articleClass::addLogChange(new class() {
+    $articleClass::addLogChange(new class() implements LoggablePipe {
         public function handle(EventLogBag $event, Closure $next): EventLogBag
         {
             if ($event->event === 'updated') {

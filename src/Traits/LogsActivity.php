@@ -2,8 +2,6 @@
 
 namespace Spatie\Activitylog\Traits;
 
-use Carbon\CarbonInterval;
-use DateInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,6 +11,7 @@ use Illuminate\Support\Str;
 use Spatie\Activitylog\Enums\ActivityEvent;
 use Spatie\Activitylog\Support\ActivityLogger;
 use Spatie\Activitylog\Support\ActivityLogStatus;
+use Spatie\Activitylog\Support\ChangeDetector;
 use Spatie\Activitylog\Support\Config;
 use Spatie\Activitylog\Support\EventLogBag;
 use Spatie\Activitylog\Support\LogOptions;
@@ -34,15 +33,11 @@ trait LogsActivity
 
     protected static function bootLogsActivity(): void
     {
-        // Hook into eloquent events that only specified in $eventToBeRecorded array,
-        // checking for "updated" event hook explicitly to temporary hold original
-        // attributes on the model as we'll need them later to compare against.
-
         static::eventsToBeRecorded()->each(function (string $eventName) {
             if ($eventName === ActivityEvent::Updated->value) {
                 static::updating(function (Model $model) {
                     $oldValues = (new static())->setRawAttributes($model->getRawOriginal());
-                    $model->oldAttributes = static::logChanges($oldValues);
+                    $model->oldAttributes = static::extractChanges($oldValues);
                 });
             }
 
@@ -53,41 +48,27 @@ trait LogsActivity
                     return;
                 }
 
-                $changes = $model->attributeValuesToBeLogged($eventName);
-
                 $description = $model->getDescriptionForEvent($eventName);
 
-                $logName = $model->getLogNameToUse();
-
-                // Submitting empty description will cause place holder replacer to fail.
                 if ($description === '') {
                     return;
                 }
 
-                // User can define a custom pipelines to mutate, add or remove from changes
-                // each pipe receives the event carrier bag with changes and the model in
-                // question every pipe should manipulate new and old attributes.
-                $event = app(Pipeline::class)
-                    ->send(new EventLogBag($eventName, $model, $changes, $model->activitylogOptions))
-                    ->through(static::$changesPipes)
-                    ->thenReturn();
+                $changes = $model->buildChanges($eventName);
 
-                // Check for empty logs after pipeline has run
-                if ($model->isLogEmpty($event->changes)) {
-                    if (! $model->activitylogOptions->logEmptyChanges) {
-                        return;
-                    }
+                $changes = $model->runChangesPipeline($eventName, $changes);
+
+                if ($model->shouldSkipEmptyLog($changes)) {
+                    return;
                 }
 
-                // Actual logging
                 app(ActivityLogger::class)
-                    ->useLog($logName)
+                    ->useLog($model->getLogNameToUse())
                     ->event($eventName)
                     ->performedOn($model)
-                    ->withChanges($event->changes)
+                    ->withChanges($changes)
                     ->log($description);
 
-                // Reset log options so the model can be serialized.
                 $model->activitylogOptions = null;
             });
         });
@@ -96,15 +77,6 @@ trait LogsActivity
     public static function addLogChange(object $pipe): void
     {
         static::$changesPipes[] = $pipe;
-    }
-
-    public function isLogEmpty(array $changes): bool
-    {
-        if (! empty($changes['attributes'] ?? [])) {
-            return false;
-        }
-
-        return empty($changes['old'] ?? []);
     }
 
     public function disableLogging(): self
@@ -138,22 +110,17 @@ trait LogsActivity
 
     public function getLogNameToUse(): ?string
     {
-        if (! empty($this->activitylogOptions->logName)) {
-            return $this->activitylogOptions->logName;
-        }
-
-        return config('activitylog.default_log_name');
+        return $this->activitylogOptions->logName
+            ?? config('activitylog.default_log_name');
     }
 
-    /**
-     * Get the event names that should be recorded.
-     **/
     protected static function eventsToBeRecorded(): Collection
     {
         $reject = collect(static::$doNotRecordEvents ?? []);
 
         if (isset(static::$recordEvents)) {
-            return collect(static::$recordEvents)->reject(fn (string $eventName) => $reject->contains($eventName));
+            return collect(static::$recordEvents)
+                ->reject(fn (string $eventName) => $reject->contains($eventName));
         }
 
         $events = collect([
@@ -171,13 +138,11 @@ trait LogsActivity
 
     protected function shouldLogEvent(string $eventName): bool
     {
-        $logStatus = app(ActivityLogStatus::class);
-
         if (! $this->enableLoggingModelsEvents) {
             return false;
         }
 
-        if ($logStatus->disabled()) {
+        if (app(ActivityLogStatus::class)->disabled()) {
             return false;
         }
 
@@ -185,18 +150,13 @@ trait LogsActivity
             return true;
         }
 
-        // Do not log update event if the model is restoring
         if ($this->isRestoring()) {
             return false;
         }
 
-        // Do not log update event if only ignored attributes are changed.
-        return (bool) count(array_diff_key($this->getDirty(), array_flip($this->activitylogOptions->dontLogIfAttributesChangedOnly)));
+        return $this->hasChangedAttributesBeyondIgnored();
     }
 
-    /**
-     * Determines if the model is restoring.
-     **/
     protected function isRestoring(): bool
     {
         $deletedAtColumn = method_exists($this, 'getDeletedAtColumn')
@@ -210,103 +170,100 @@ trait LogsActivity
         return count($this->getDirty()) === 1;
     }
 
-    /**
-     * Determines what attributes needs to be logged based on the configuration.
-     **/
+    protected function hasChangedAttributesBeyondIgnored(): bool
+    {
+        $dirty = array_diff_key(
+            $this->getDirty(),
+            array_flip($this->activitylogOptions->dontLogIfAttributesChangedOnly)
+        );
+
+        return count($dirty) > 0;
+    }
+
     public function attributesToBeLogged(): array
     {
         $this->activitylogOptions = $this->getActivitylogOptions();
 
-        $attributes = [];
-
-        // Check if fillable attributes will be logged then merge it to the local attributes array.
-        if ($this->activitylogOptions->logFillable) {
-            $attributes = array_merge($attributes, $this->getFillable());
-        }
-
-        // Determine if unguarded attributes will be logged.
-        if ($this->shouldLogUnguarded()) {
-            // If globally unguarded, log all attributes
-            if (static::isUnguarded()) {
-                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
-            } else {
-                // Get only attribute names, not interested in the values here then guarded
-                // attributes. get only keys than not present in guarded array, because
-                // we are logging the unguarded attributes and we can't have both!
-                $attributes = array_merge($attributes, array_diff(array_keys($this->getAttributes()), $this->getGuarded()));
-            }
-        }
-
-        if (! empty($this->activitylogOptions->logAttributes)) {
-
-            // Filter * from the logAttributes because will deal with it separately
-            $attributes = array_merge($attributes, array_diff($this->activitylogOptions->logAttributes, ['*']));
-
-            // If there's * get all attributes then merge it, dont respect $guarded or $fillable.
-            if (in_array('*', $this->activitylogOptions->logAttributes)) {
-                $attributes = array_merge($attributes, array_keys($this->getAttributes()));
-            }
-        }
-
-        if ($this->activitylogOptions->logExceptAttributes) {
-
-            // Filter out the attributes defined in ignoredAttributes out of the local array
-            $attributes = array_diff($attributes, $this->activitylogOptions->logExceptAttributes);
-        }
-
-        // Merge global exclusions from config
-        $globalExcept = config('activitylog.default_except_attributes', []);
-        if (! empty($globalExcept)) {
-            $attributes = array_diff($attributes, $globalExcept);
-        }
-
-        return $attributes;
+        return collect()
+            ->merge($this->fillableAttributes())
+            ->merge($this->unguardedAttributes())
+            ->merge($this->explicitAttributes())
+            ->diff($this->excludedAttributes())
+            ->unique()
+            ->values()
+            ->all();
     }
 
-    public function shouldLogUnguarded(): bool
+    protected function fillableAttributes(): array
+    {
+        if (! $this->activitylogOptions->logFillable) {
+            return [];
+        }
+
+        return $this->getFillable();
+    }
+
+    protected function unguardedAttributes(): array
     {
         if (! $this->activitylogOptions->logUnguarded) {
-            return false;
+            return [];
         }
 
-        // If the model is globally unguarded via Model::unguard(),
-        // all attributes should be considered unguarded.
         if (static::isUnguarded()) {
-            return true;
+            return array_keys($this->getAttributes());
         }
 
-        // This case means all of the attributes are guarded
-        // so we'll not have any unguarded anyway.
         if (in_array('*', $this->getGuarded())) {
-            return false;
+            return [];
         }
 
-        return true;
+        return array_diff(array_keys($this->getAttributes()), $this->getGuarded());
     }
 
-    /**
-     * Determines values that will be logged based on the difference.
-     **/
-    public function attributeValuesToBeLogged(string $processingEvent): array
+    protected function explicitAttributes(): array
+    {
+        if (empty($this->activitylogOptions->logAttributes)) {
+            return [];
+        }
+
+        $explicit = array_diff($this->activitylogOptions->logAttributes, ['*']);
+
+        if (in_array('*', $this->activitylogOptions->logAttributes)) {
+            $explicit = array_merge($explicit, array_keys($this->getAttributes()));
+        }
+
+        return $explicit;
+    }
+
+    protected function excludedAttributes(): array
+    {
+        return array_merge(
+            $this->activitylogOptions->logExceptAttributes,
+            config('activitylog.default_except_attributes', [])
+        );
+    }
+
+    protected function buildChanges(string $processingEvent): array
     {
         if (! count($this->attributesToBeLogged())) {
             return [];
         }
 
-        $properties['attributes'] = static::logChanges(
-            $this->resolveModelForLogging($processingEvent)
-        );
+        $model = $this->resolveModelForLogging($processingEvent);
+        $properties['attributes'] = static::extractChanges($model);
 
         if ($this->isUpdatedEvent($processingEvent)) {
             $nullProperties = array_fill_keys(array_keys($properties['attributes']), null);
-
             $properties['old'] = array_merge($nullProperties, $this->oldAttributes);
-
             $this->oldAttributes = [];
         }
 
-        if ($this->shouldLogOnlyDirtyAttributes($properties)) {
-            $properties = $this->filterDirtyAttributes($properties);
+        if ($this->activitylogOptions->logOnlyDirty) {
+            if (isset($properties['old'])) {
+                $filtered = ChangeDetector::filterDirty($properties['attributes'], $properties['old']);
+                $properties['attributes'] = $filtered['attributes'];
+                $properties['old'] = $filtered['old'];
+            }
         }
 
         if ($this->isDeletedEvent($processingEvent)) {
@@ -330,46 +287,30 @@ trait LogsActivity
         return $this->fresh() ?? $this;
     }
 
-    protected function shouldLogOnlyDirtyAttributes(array $properties): bool
+    protected function runChangesPipeline(string $eventName, array $changes): array
     {
-        if (! $this->activitylogOptions->logOnlyDirty) {
+        if (empty(static::$changesPipes)) {
+            return $changes;
+        }
+
+        return app(Pipeline::class)
+            ->send(new EventLogBag($eventName, $this, $changes, $this->activitylogOptions))
+            ->through(static::$changesPipes)
+            ->thenReturn()
+            ->changes;
+    }
+
+    protected function shouldSkipEmptyLog(array $changes): bool
+    {
+        if ($this->activitylogOptions->logEmptyChanges) {
             return false;
         }
 
-        return isset($properties['old']);
-    }
+        if (! empty($changes['attributes'] ?? [])) {
+            return false;
+        }
 
-    protected function filterDirtyAttributes(array $properties): array
-    {
-        $properties['attributes'] = array_udiff_assoc(
-            $properties['attributes'],
-            $properties['old'],
-            function ($new, $old) {
-                if ($old === null) {
-                    return $new === null ? 0 : 1;
-                }
-
-                if ($new === null) {
-                    return 1;
-                }
-
-                if ($old instanceof DateInterval) {
-                    return CarbonInterval::make($old)->equalTo($new) ? 0 : 1;
-                }
-
-                if ($new instanceof DateInterval) {
-                    return CarbonInterval::make($new)->equalTo($old) ? 0 : 1;
-                }
-
-                return $new <=> $old;
-            }
-        );
-
-        $properties['old'] = collect($properties['old'])
-            ->only(array_keys($properties['attributes']))
-            ->all();
-
-        return $properties;
+        return empty($changes['old'] ?? []);
     }
 
     protected function isUpdatedEvent(string $processingEvent): bool
@@ -390,14 +331,14 @@ trait LogsActivity
         return $processingEvent === ActivityEvent::Deleted->value;
     }
 
-    public static function logChanges(Model $model): array
+    public static function extractChanges(Model $model): array
     {
+        $options = $model->activitylogOptions ?? $model->getActivitylogOptions();
         $changes = [];
-        $attributes = $model->attributesToBeLogged();
 
-        foreach ($attributes as $attribute) {
+        foreach ($model->attributesToBeLogged() as $attribute) {
             if (Str::contains($attribute, '.')) {
-                $changes += self::getRelatedModelAttributeValue($model, $attribute);
+                $changes += ChangeDetector::resolveRelatedAttribute($model, $attribute);
 
                 continue;
             }
@@ -406,81 +347,54 @@ trait LogsActivity
                 data_set(
                     $changes,
                     str_replace('->', '.', $attribute),
-                    static::getModelAttributeJsonValue($model, $attribute)
+                    ChangeDetector::resolveJsonAttribute($model, $attribute)
                 );
 
                 continue;
             }
 
-            $changes[$attribute] = in_array($attribute, $model->activitylogOptions->attributeRawValues)
-                ? $model->getAttributeFromArray($attribute)
-                : $model->getAttribute($attribute);
-
-            if (is_null($changes[$attribute])) {
-                continue;
-            }
-
-            if ($model->isDateAttribute($attribute)) {
-                $changes[$attribute] = $model->serializeDate(
-                    $model->asDateTime($changes[$attribute])
-                );
-            }
-
-            if ($model->hasCast($attribute)) {
-                $cast = $model->getCasts()[$attribute];
-
-                if ($model->isEnumCastable($attribute)) {
-                    $changes[$attribute] = $model->getStorableEnumValue($cast, $changes[$attribute]);
-                }
-
-                if ($model->isCustomDateTimeCast($cast)) {
-                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
-                }
-
-                if ($model->isImmutableCustomDateTimeCast($cast)) {
-                    $changes[$attribute] = $model->asDateTime($changes[$attribute])->format(explode(':', $cast, 2)[1]);
-                }
-            }
+            $changes += static::resolveAttributeValue($model, $attribute, $options);
         }
 
         return $changes;
     }
 
-    protected static function getRelatedModelAttributeValue(Model $model, string $attribute): array
+    protected static function resolveAttributeValue(Model $model, string $attribute, LogOptions $options): array
     {
-        $relatedModelNames = explode('.', $attribute);
-        $relatedAttribute = array_pop($relatedModelNames);
 
-        $attributeName = [];
-        $relatedModel = $model;
+        $value = in_array($attribute, $options->attributeRawValues)
+            ? $model->getAttributeFromArray($attribute)
+            : $model->getAttribute($attribute);
 
-        do {
-            $attributeName[] = $relatedModelName = static::getRelatedModelRelationName($relatedModel, array_shift($relatedModelNames));
+        if (is_null($value)) {
+            return [$attribute => null];
+        }
 
-            $relatedModel = $relatedModel->$relatedModelName ?? $relatedModel->$relatedModelName();
-        } while (! empty($relatedModelNames));
-
-        $attributeName[] = $relatedAttribute;
-
-        return [implode('.', $attributeName) => $relatedModel->$relatedAttribute ?? null];
+        return [$attribute => static::formatAttributeValue($model, $attribute, $value)];
     }
 
-    protected static function getRelatedModelRelationName(Model $model, string $relation): string
+    protected static function formatAttributeValue(Model $model, string $attribute, mixed $value): mixed
     {
-        $candidates = [$relation, Str::snake($relation), Str::camel($relation)];
+        if ($model->hasCast($attribute)) {
+            $cast = $model->getCasts()[$attribute];
 
-        return array_find(
-            $candidates,
-            fn (string $method): bool => method_exists($model, $method)
-        ) ?? $relation;
-    }
+            if ($model->isEnumCastable($attribute)) {
+                return $model->getStorableEnumValue($cast, $value);
+            }
 
-    protected static function getModelAttributeJsonValue(Model $model, string $attribute): mixed
-    {
-        $path = explode('->', $attribute);
-        $modelAttribute = array_shift($path);
-        $modelAttribute = collect($model->getAttribute($modelAttribute));
+            if ($model->isCustomDateTimeCast($cast)) {
+                return $model->asDateTime($value)->format(explode(':', $cast, 2)[1]);
+            }
 
-        return data_get($modelAttribute, implode('.', $path));
+            if ($model->isImmutableCustomDateTimeCast($cast)) {
+                return $model->asDateTime($value)->format(explode(':', $cast, 2)[1]);
+            }
+        }
+
+        if ($model->isDateAttribute($attribute)) {
+            return $model->serializeDate($model->asDateTime($value));
+        }
+
+        return $value;
     }
 }

@@ -65,7 +65,8 @@ class Activity extends Model implements ActivityContract
         return Arr::get($this->properties?->toArray() ?? [], $propertyName, $defaultValue);
     }
 
-    public function scopeInLog(Builder $query, ...$logNames): Builder
+    /** @param  string|string[]  ...$logNames */
+    public function scopeInLog(Builder $query, string|array ...$logNames): Builder
     {
         if (is_array($logNames[0])) {
             $logNames = $logNames[0];
