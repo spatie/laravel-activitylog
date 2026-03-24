@@ -8,7 +8,8 @@ Customization of how your models will be logged is controlled by implementing `g
 The most basic example of an Activity logged model is:
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 class YourModel extends Model
 {
@@ -19,7 +20,9 @@ class YourModel extends Model
 To customize what gets logged, override `getActivitylogOptions()`:
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class YourModel extends Model
 {
@@ -82,18 +85,16 @@ public function logAll(): LogOptions;
 
 ### logUnguarded
 
-This option will respect the wildcard `*`, `->logAll()` and `->logFillable()` methods.
-
 ```php
 /**
- * Log changes to all the $guarded attributes of the model.
+ * Log changes to all attributes that are not listed in $guarded.
  */
 public function logUnguarded(): LogOptions;
 ```
 
-### logFillable
+This can be combined with `->logFillable()` or `->logOnly()`. The final set of logged attributes is the union of all sources.
 
-This option will respect the wildcard `*`, `->logAll()` and `->logUnguarded()` methods.
+### logFillable
 
 ```php
 /**
@@ -101,6 +102,8 @@ This option will respect the wildcard `*`, `->logAll()` and `->logUnguarded()` m
  */
 public function logFillable(): LogOptions;
 ```
+
+This can be combined with `->logUnguarded()` or `->logOnly()`. The final set of logged attributes is the union of all sources.
 
 ### dontLogFillable
 

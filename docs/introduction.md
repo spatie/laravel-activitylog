@@ -47,17 +47,17 @@ $activity->description; //returns 'updated'
 $activity->subject; //returns the instance of NewsItem that was created
 ```
 
-Calling `$activity->attribute_changes` will return this array:
+Calling `$activity->attribute_changes` will return this collection:
 
 ```php
 [
     'attributes' => [
         'name' => 'updated name',
-        'text' => 'Lorum',
+        'text' => 'Lorem',
     ],
     'old' => [
         'name' => 'original name',
-        'text' => 'Lorum',
+        'text' => 'Lorem',
     ],
 ];
 ```
@@ -65,10 +65,8 @@ Calling `$activity->attribute_changes` will return this array:
 ## We have badges!
 
 <section class="article_badges">
-    <a href="https://packagist.org/packages/spatie/laravel-activitylog"><img src="https://img.shields.io/badge/packagist-spatie/laravel-activitylog.svg?style=flat-square" alt="spatie/laravel-activitylog"></a>
     <a href="https://packagist.org/packages/spatie/laravel-activitylog"><img src="https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square" alt="Latest Version on Packagist"></a>
-    <a href="https://github.com/spatie/laravel-activitylog/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License"></a>
-    <a href="https://travis-ci.org/spatie/laravel-activitylog"><img src="https://img.shields.io/travis/spatie/laravel-activitylog/master.svg?style=flat-square" alt="Build Status"></a>
-    <a href="https://scrutinizer-ci.com/g/spatie/laravel-activitylog"><img src="https://img.shields.io/scrutinizer/g/spatie/laravel-activitylog.svg?style=flat-square" alt="Quality Score"></a>
+    <a href="https://github.com/spatie/laravel-activitylog/actions/workflows/run-tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/spatie/laravel-activitylog/run-tests.yml?branch=main&label=Tests&style=flat-square" alt="Tests"></a>
+    <a href="https://github.com/spatie/laravel-activitylog/blob/main/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License"></a>
     <a href="https://packagist.org/packages/spatie/laravel-activitylog"><img src="https://img.shields.io/packagist/dt/spatie/laravel-activitylog.svg?style=flat-square" alt="Total Downloads"></a>
 </section>

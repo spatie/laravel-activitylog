@@ -5,7 +5,7 @@ weight: 2
 
 After using the package for a while you might have recorded a lot of activity. This package provides an artisan command `activitylog:clean` to clean the log.
 
-Running this command will result in the deletion of all recorded activity that is older than the number of days specified in the `delete_records_older_than_days` of the config file.
+Running this command will result in the deletion of all recorded activity that is older than the number of days specified in the `clean_after_days` key of the config file.
 
 You can leverage Laravel's scheduler to run the clean up command now and then.
 
@@ -14,12 +14,11 @@ php artisan activitylog:clean
 ```
 
 ```php
-//app/Console/Kernel.php
+// routes/console.php
 
-protected function schedule(Schedule $schedule)
-{
-   $schedule->command('activitylog:clean')->daily();
-}
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('activitylog:clean')->daily();
 ```
 
 If you want to automatically cleanup your `production` system you should append the `--force` option as the command will otherwise ask you to confirm the action. This is to prevent accidental data loss.
@@ -45,12 +44,12 @@ php artisan activitylog:clean --days=7
 After clean, you might experience database table size still allocated more than actual lines in table,
 execute this line in MySQL to OPTIMIZE / ANALYZE table.
 
-```bash
+```sql
 OPTIMIZE TABLE activity_log;
 ```
 OR
-```bash
+```sql
 ANALYZE TABLE activity_log;
 ```
 
-*this SQL operation will lock write/read of database, use ONLY when server under maintanance mode.
+*this SQL operation will lock write/read of database, use ONLY when server under maintenance mode.

@@ -8,7 +8,8 @@ The package can automatically log events such as when a model is created, update
 The simplest usage requires no configuration at all:
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 class NewsItem extends Model
 {
@@ -21,7 +22,9 @@ This will log `created`, `updated`, and `deleted` events, but won't track attrib
 The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -54,7 +57,7 @@ Let's see what gets logged when creating an instance of that model.
 ```php
 $newsItem = NewsItem::create([
    'name' => 'original name',
-   'text' => 'Lorum'
+   'text' => 'Lorem'
 ]);
 
 //creating the newsItem will cause an activity being logged
@@ -62,10 +65,10 @@ $activity = Activity::all()->last();
 
 $activity->description; //returns 'created'
 $activity->subject; //returns the instance of NewsItem that was created
-$activity->attribute_changes; //returns ['attributes' => ['name' => 'original name', 'text' => 'Lorum']];
+$activity->attribute_changes; //returns a collection containing ['attributes' => ['name' => 'original name', 'text' => 'Lorem']];
 ```
 
-Now let's update some that `$newsItem`.
+Now let's update that `$newsItem`.
 
 ```php
 $newsItem->name = 'updated name';
@@ -78,17 +81,17 @@ $activity->description; //returns 'updated'
 $activity->subject; //returns the instance of NewsItem that was created
 ```
 
-Calling `$activity->attribute_changes` will return this array:
+Calling `$activity->attribute_changes` will return a collection containing:
 
 ```php
 [
    'attributes' => [
         'name' => 'updated name',
-        'text' => 'Lorum',
+        'text' => 'Lorem',
     ],
     'old' => [
         'name' => 'original name',
-        'text' => 'Lorum',
+        'text' => 'Lorem',
     ],
 ];
 ```
@@ -104,7 +107,7 @@ $newsItem->delete();
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'deleted'
-$activity->attribute_changes; //returns ['attributes' => ['name' => 'updated name', 'text' => 'Lorum']];
+$activity->attribute_changes; //returns a collection containing ['old' => ['name' => 'updated name', 'text' => 'Lorem']];
 ```
 
 ## Customizing the events being logged
@@ -112,7 +115,8 @@ $activity->attribute_changes; //returns ['attributes' => ['name' => 'updated nam
 By default the package will log the `created`, `updated`, `deleted` events. You can modify this behaviour by setting the `$recordEvents` property on a model.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 class NewsItem extends Model
 {
@@ -126,13 +130,14 @@ class NewsItem extends Model
 Alternatively, you can use `$doNotRecordEvents` to exclude specific events while keeping all others.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
-    //the `created` event will not logged
+    //the `created` event will not be logged
     protected static $doNotRecordEvents = ['created'];
 }
 ```
@@ -142,7 +147,9 @@ class NewsItem extends Model
 By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by providing callback to the `->setDescriptionForEvent()` method on `LogOptions` class.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -155,7 +162,6 @@ class NewsItem extends Model
         return LogOptions::defaults()
         ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}");
     }
-
 }
 ```
 
@@ -164,7 +170,7 @@ Let's see what happens now:
 ```php
 $newsItem = NewsItem::create([
    'name' => 'original name',
-   'text' => 'Lorum'
+   'text' => 'Lorem'
 ]);
 
 //creating the newsItem will cause an activity being logged
@@ -178,7 +184,9 @@ $activity->description; //returns 'This model has been created'
 Specify name by provide string to `->useLogName()` to make the model use another name than the default.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -197,7 +205,9 @@ class NewsItem extends Model
 If your model contains attributes whose change don't need to trigger an activity being logged you can use `->dontLogIfAttributesChangedOnly()`
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -223,7 +233,9 @@ By default the `updated_at` attribute is _not_ ignored and will trigger an activ
 If you do not want to log every attribute passed into `->logOnly()`, but only those that have actually changed after the update, you can call `->logOnlyDirty()`.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -247,7 +259,9 @@ Changing only `name` means only the `name` attribute will be logged in the activ
 If you would like to log an attribute of a directly related model, you may use dot notation to log an attribute of the model's relationship.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -273,7 +287,9 @@ class NewsItem extends Model
 If you would like to log only the changes to a specific JSON objects sub-keys. You can use the same method for logging specific columns with the difference of choosing the json key to log.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -290,13 +306,12 @@ class NewsItem extends Model
         return LogOptions::defaults()
         ->logOnly(['preferences->notifications->status', 'preferences->hero_url']);
     }
-
 }
 ```
 
-Changing only `preferences->notifications->status` or `preferences->hero_url` means only the `preferences->notifications->status` or `preferences->hero_url` attribute will be logged in the activity, and everything else `preferences` will be left out.
+Only the specified sub-keys will be logged. Other keys inside `preferences` will be left out.
 
-The output of this in a activity entry would be as follows:
+Here's an example:
 
 ```php
 // Create a news item.
@@ -304,7 +319,7 @@ $newsItem = NewsItem::create([
     'name' => 'Title',
     'preferences' => [
         'notifications' => [
-            'status' => 'on',
+            'status' => 'off',
         ],
         'hero_url' => ''
     ],
@@ -322,14 +337,14 @@ $newsItem->update([
 
 $lastActivity = Activity::latest()->first();
 
-$lastActivity->properties->toArray();
+$lastActivity->attribute_changes->toArray();
 ```
 
 ```php
 // output
 [
     "attributes" => [
-        "preferences" => [ // the updated values
+        "preferences" => [
             "notifications" => [
                 "status" => "on",
             ],
@@ -337,7 +352,7 @@ $lastActivity->properties->toArray();
         ],
     ],
     "old" => [
-        "preferences" => [ // the old settings
+        "preferences" => [
             "notifications" => [
                 "status" => "off",
             ],
@@ -347,14 +362,14 @@ $lastActivity->properties->toArray();
 ]
 ```
 
-The result in the log entry key for the attribute will be what is in the `->logOnly()`.
-
 ## Prevent saving logs that have no changed attribute
 
 Calling `->dontLogEmptyChanges()` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
@@ -362,40 +377,41 @@ class NewsItem extends Model
 
     protected $fillable = ['name', 'text'];
 
-   public function getActivitylogOptions(): LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logOnly(['text'])
         ->logOnlyDirty()
         ->dontLogEmptyChanges();
     }
-
 }
 ```
 
-## Ignoring attributes from logging
+## Excluding attributes from the log output
 
-If you use wildcard logging, but do not want to log certain attributes, you can specify those attributes by calling `->dontLogIfAttributesChangedOnly()`.
+If you use wildcard logging but want to exclude certain attributes from appearing in the logged output, use `->logExcept()`:
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\LogsActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class NewsItem extends Model
 {
     use LogsActivity;
 
-   public function getActivitylogOptions(): LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
         ->logAll()
-        ->dontLogIfAttributesChangedOnly(['text'])
-        ->logOnlyDirty();
+        ->logExcept(['password', 'remember_token']);
     }
-
 }
 ```
 
-Even if there are changes to `text` attribute, they will not be logged.
+The `password` and `remember_token` attributes will never appear in the logged changes.
+
+Note: `logExcept()` removes attributes from the log output. This is different from `dontLogIfAttributesChangedOnly()` which prevents the entire activity from being created when only the specified attributes changed.
 
 ## Using the CausesActivity trait
 
@@ -412,7 +428,9 @@ Auth::user()->activitiesAsCauser;
 If your model both causes and logs activities (common for User models), use the `HasActivity` trait which combines `LogsActivity` and `CausesActivity`:
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Models\Concerns\HasActivity;use Spatie\Activitylog\Support\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\HasActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class User extends Model
 {
@@ -454,6 +472,32 @@ activity()->event(ActivityEvent::Updated)->log('...');
 
 All methods that accept an event also accept a plain string, so custom event names still work.
 
+## Logging restored events
+
+If your model uses the `SoftDeletes` trait, the package will automatically log `restored` events in addition to `created`, `updated`, and `deleted`. No extra configuration is needed.
+
+## Querying activity
+
+The `Activity` model provides several query scopes for filtering activities:
+
+```php
+use Spatie\Activitylog\Models\Activity;
+
+// get all activities for a specific subject
+Activity::forSubject($newsItem)->get();
+
+// get all activities caused by a specific user
+Activity::causedBy($user)->get();
+
+// get all activities for a specific event
+Activity::forEvent('updated')->get();
+
+// these scopes can be combined
+Activity::forSubject($newsItem)->causedBy($user)->forEvent('updated')->get();
+```
+
+The `inLog` scope is documented in [using multiple logs](/docs/laravel-activitylog/v5/advanced-usage/using-multiple-logs).
+
 ## Disabling logging on demand
 
 You can also disable logging for a specific model at runtime. To do so, you can use the `disableLogging()` method:
@@ -461,7 +505,7 @@ You can also disable logging for a specific model at runtime. To do so, you can 
 ```php
 $newsItem = NewsItem::create([
    'name' => 'original name',
-   'text' => 'Lorum'
+   'text' => 'Lorem'
 ]);
 
 // Updating with logging disabled
@@ -479,7 +523,7 @@ You can use the `enableLogging()` method to re-enable logging.
 ```php
 $newsItem = NewsItem::create([
    'name' => 'original name',
-   'text' => 'Lorum'
+   'text' => 'Lorem'
 ]);
 
 // Updating with logging disabled
@@ -498,7 +542,9 @@ $newsItem->update(['name' => 'The new name is logged']);
 In addition to the `tap()` method on `ActivityLogger` you can utilise the `beforeActivityLogged()` method in your observed model class. This method will allow you to fill properties and add custom fields before the activity is saved.
 
 ```php
-use Illuminate\Database\Eloquent\Model;use Spatie\Activitylog\Contracts\Activity;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Contracts\Activity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 class NewsItem extends Model
 {
@@ -515,10 +561,11 @@ class NewsItem extends Model
 
 Sometimes you want to log changes on your pivot model - for example if it contains additional data.
 By default pivot models don't have a primary key/column and because of this can't be used in eloquent relations.
-To solve this you have to add a primary key column `id` to your pivot table (`$table->id('id')`) and configure your pivot model to use this primary key.
+To solve this you have to add a primary key column `id` to your pivot table (`$table->id()`) and configure your pivot model to use this primary key.
 
 ```php
-use Illuminate\Database\Eloquent\Relations\Pivot;use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 final class PivotModel extends Pivot
 {

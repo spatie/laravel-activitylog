@@ -66,11 +66,11 @@ Calling `$activity->attribute_changes` will return this collection:
 [
    'attributes' => [
         'name' => 'updated name',
-        'text' => 'Lorum',
+        'text' => 'Lorem',
     ],
     'old' => [
         'name' => 'original name',
-        'text' => 'Lorum',
+        'text' => 'Lorem',
     ],
 ];
 ```

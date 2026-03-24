@@ -58,7 +58,7 @@ If you don't want to associate a model as causer of activity, you can use `cause
 
 ## Setting custom properties
 
-You can add any property you want to an activity by using `withProperties()`
+You can add arbitrary metadata to an activity by using `withProperties()`. This is separate from `attribute_changes`, which the package uses to store old/new model attribute values when [logging model events](/docs/laravel-activitylog/v5/advanced-usage/logging-model-events).
 
 ```php
 activity()
