@@ -2,6 +2,12 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.12.3 - 2026-03-24
+
+### What's Changed
+
+* Fix LogOptions closure preventing model serialization in queued listeners (#1453) by @morloderex
+
 ## 4.12.2 - 2026-03-24
 
 ### What's Changed
