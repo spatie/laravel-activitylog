@@ -10,7 +10,7 @@ Without specifying a log name the activities will be logged on the default log.
 ```php
 activity()->log('hi');
 
-$lastActivity = Spatie\Activitylog\Models\Activity::all()->last();
+$lastActivity = Activity::all()->last();
 
 $lastActivity->log_name; //returns 'default';
 ```

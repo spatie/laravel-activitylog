@@ -19,7 +19,7 @@ class NewsItem extends Model
 
 This will log `created`, `updated`, and `deleted` events, but won't track attribute changes. To also track attribute changes, override the `getActivitylogOptions()` method. It should return a `LogOptions` instance built from `LogOptions::defaults()` using fluent methods.
 
-The attributes that need to be logged can be defined either by their name or you can put in a wildcard `['*']` to log any attribute that has changed.
+The attributes that need to be logged can be defined either by their name, or you can pass the wildcard `['*']` to log all attributes.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -40,13 +40,13 @@ class NewsItem extends Model
 }
 ```
 
-Note that we start from sensible defaults, but any of them can be overridden as needed by chaining fluent methods. Review the `Spatie\Activitylog\Support\LogOptions` class for full list of supported options.
+Note that we start from sensible defaults, but any of them can be overridden as needed by chaining fluent methods. Review the `Spatie\Activitylog\Support\LogOptions` class for a full list of supported options.
 
 ## Basics of Logging Configuration
 
 If you want to log changes to all the `$fillable` attributes of the model, you can chain `->logFillable()` on the `LogOptions` class.
 
-Alternatively, if you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
+Alternatively, if you have a lot of attributes and used `$guarded` instead of `$fillable`, you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
 
 These can be combined with each other and with `->logOnly()`. The final set of logged attributes is the union of all sources.
 
@@ -60,7 +60,7 @@ $newsItem = NewsItem::create([
    'text' => 'Lorem'
 ]);
 
-//creating the newsItem will cause an activity being logged
+//creating the newsItem will cause an activity to be logged
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'created'
@@ -74,11 +74,11 @@ Now let's update that `$newsItem`.
 $newsItem->name = 'updated name';
 $newsItem->save();
 
-//updating the newsItem will cause an activity being logged
+//updating the newsItem will cause an activity to be logged
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'updated'
-$activity->subject; //returns the instance of NewsItem that was created
+$activity->subject; //returns the instance of NewsItem that was updated
 ```
 
 Calling `$activity->attribute_changes` will return a collection containing:
@@ -103,7 +103,7 @@ Now, what happens when you call delete?
 ```php
 $newsItem->delete();
 
-//deleting the newsItem will cause an activity being logged
+//deleting the newsItem will cause an activity to be logged
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'deleted'
@@ -173,7 +173,7 @@ $newsItem = NewsItem::create([
    'text' => 'Lorem'
 ]);
 
-//creating the newsItem will cause an activity being logged
+//creating the newsItem will cause an activity to be logged
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'This model has been created'
@@ -202,7 +202,7 @@ class NewsItem extends Model
 
 ## Skipping logging when only certain attributes change
 
-If your model contains attributes whose changes alone don't need to trigger an activity being logged, you can use `->dontLogIfAttributesChangedOnly()`.
+If your model contains attributes whose changes alone should not trigger an activity log, you can use `->dontLogIfAttributesChangedOnly()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -224,9 +224,9 @@ class NewsItem extends Model
 }
 ```
 
-Changing only `text` will not trigger an activity being logged. If both `name` and `text` change, the activity will still be logged (and both attributes will appear in the changes).
+Changing only `text` will not trigger an activity log. If both `name` and `text` change, the activity will still be logged (and both attributes will appear in the changes).
 
-By default the `updated_at` attribute is _not_ ignored and will trigger an activity being logged. You can add the `updated_at` attribute to the `->dontLogIfAttributesChangedOnly()` array to override this behavior.
+By default the `updated_at` attribute is _not_ ignored and will still trigger logging. You can add the `updated_at` attribute to the `->dontLogIfAttributesChangedOnly()` array to override this behavior.
 
 ## Logging only the changed attributes
 
@@ -500,7 +500,7 @@ The `inLog` scope is documented in [using multiple logs](/docs/laravel-activityl
 
 ## Disabling logging on demand
 
-You can also disable logging for a specific model at runtime. To do so, you can use the `disableLogging()` method:
+You can disable logging for a specific model instance by using the `disableLogging()` method. This only affects that instance, not other models. To disable all logging globally, see [disabling logging](/docs/laravel-activitylog/v5/advanced-usage/disabling-logging).
 
 ```php
 $newsItem = NewsItem::create([

@@ -40,11 +40,11 @@ Here's an example on [event logging](/docs/laravel-activitylog/v5/advanced-usage
 $newsItem->name = 'updated name';
 $newsItem->save();
 
-//updating the newsItem will cause an activity being logged
+//updating the newsItem will cause an activity to be logged
 $activity = Activity::all()->last();
 
 $activity->description; //returns 'updated'
-$activity->subject; //returns the instance of NewsItem that was created
+$activity->subject; //returns the instance of NewsItem that was updated
 ```
 
 Calling `$activity->attribute_changes` will return this collection:

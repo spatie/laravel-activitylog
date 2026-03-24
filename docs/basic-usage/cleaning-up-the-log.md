@@ -41,15 +41,14 @@ php artisan activitylog:clean --days=7
 
 ## MySQL: rebuild index and reclaim space after clean
 
-After clean, you might experience database table size still allocated more than actual lines in table,
-execute this line in MySQL to OPTIMIZE / ANALYZE table.
+After cleaning, the database table might still use more space than expected. You can run the following MySQL commands to reclaim space:
 
 ```sql
 OPTIMIZE TABLE activity_log;
 ```
-OR
+or
 ```sql
 ANALYZE TABLE activity_log;
 ```
 
-*this SQL operation will lock write/read of database, use ONLY when server under maintenance mode.
+*These SQL operations will lock read/write access to the database. Only run them when the server is in maintenance mode.

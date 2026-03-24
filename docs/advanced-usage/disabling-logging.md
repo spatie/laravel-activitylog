@@ -9,11 +9,11 @@ You can disable all logging globally for the current request by calling
 activity()->disableLogging();
 ```
 
-If you want to enable logging again call `activity()->enableLogging()`.
+If you want to enable logging again, call `activity()->enableLogging()`.
 
 ## Without logging
 
-If you want to run a given code snippet without logs you can use the `withoutLogging()` method.
+If you want to run a block of code without any logging, you can use the `withoutLogging()` method.
 
 ```php
 activity()->withoutLogging(function () {

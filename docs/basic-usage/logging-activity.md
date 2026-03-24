@@ -3,8 +3,6 @@ title: Logging activity
 weight: 1
 ---
 
-## Description
-
 This is the most basic way to log activity:
 
 ```php
