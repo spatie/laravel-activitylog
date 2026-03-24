@@ -157,7 +157,8 @@ trait LogsActivity
             return false;
         }
 
-        return count($this->getDirty()) === 1;
+        return ! is_null($this->getOriginal($deletedAtColumn))
+            && is_null($this->getAttribute($deletedAtColumn));
     }
 
     protected function hasChangedAttributesBeyondIgnored(): bool
