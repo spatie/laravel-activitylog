@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\ForwardsCalls;
 
 /**
- * @mixin \Spatie\Activitylog\Support\ActivityLogger
+ * @mixin ActivityLogger
  */
 class PendingActivityLog
 {

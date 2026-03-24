@@ -9,7 +9,9 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\CauserResolver;
 use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Activitylog\Test\Enums\IntBackedEnum;
 use Spatie\Activitylog\Test\Enums\NonBackedEnum;
+use Spatie\Activitylog\Test\Enums\StringBackedEnum;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
@@ -462,8 +464,8 @@ it('will disable logs for a callback without affecting previous state even with 
 
 it('logs backed enums in properties', function () {
     activity()
-        ->withProperties(['int_backed_enum' => \Spatie\Activitylog\Test\Enums\IntBackedEnum::Draft])
-        ->withProperty('string_backed_enum', \Spatie\Activitylog\Test\Enums\StringBackedEnum::Published)
+        ->withProperties(['int_backed_enum' => IntBackedEnum::Draft])
+        ->withProperty('string_backed_enum', StringBackedEnum::Published)
         ->log($this->activityDescription);
 
     $this->assertSame(0, $this->getLastActivity()->properties['int_backed_enum']);

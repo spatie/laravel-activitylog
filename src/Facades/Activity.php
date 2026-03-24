@@ -34,7 +34,7 @@ use Spatie\Activitylog\Support\PendingActivityLog;
  * @method static bool hasMacro(string $name)
  * @method static void flushMacros()
  *
- * @see \Spatie\Activitylog\Support\PendingActivityLog
+ * @see PendingActivityLog
  */
 class Activity extends Facade
 {

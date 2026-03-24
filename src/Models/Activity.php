@@ -2,11 +2,13 @@
 
 namespace Spatie\Activitylog\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Spatie\Activitylog\Enums\ActivityEvent;
 
@@ -19,10 +21,10 @@ use Spatie\Activitylog\Enums\ActivityEvent;
  * @property string|null $causer_type
  * @property int|null $causer_id
  * @property string|null $event
- * @property \Illuminate\Support\Collection|null $attribute_changes
- * @property \Illuminate\Support\Collection|null $properties
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
+ * @property Collection|null $attribute_changes
+ * @property Collection|null $properties
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read Model|null $causer
  * @property-read Model|null $subject
  */

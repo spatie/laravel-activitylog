@@ -99,7 +99,7 @@ class ActivityLogger
         return $this;
     }
 
-    /** @param  array<string, mixed>|\Illuminate\Support\Collection<string, mixed>  $changes */
+    /** @param  array<string, mixed>|Collection<string, mixed>  $changes */
     public function withChanges(array|Collection $changes): static
     {
         $this->getActivity()->attribute_changes = collect($changes);
@@ -107,7 +107,7 @@ class ActivityLogger
         return $this;
     }
 
-    /** @param  array<string, mixed>|\Illuminate\Support\Collection<string, mixed>  $properties */
+    /** @param  array<string, mixed>|Collection<string, mixed>  $properties */
     public function withProperties(array|Collection $properties): static
     {
         $this->getActivity()->properties = collect($properties);

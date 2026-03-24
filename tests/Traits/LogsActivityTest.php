@@ -6,7 +6,9 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Activitylog\Test\Enums\IntBackedEnum;
 use Spatie\Activitylog\Test\Enums\NonBackedEnum;
+use Spatie\Activitylog\Test\Enums\StringBackedEnum;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\ArticleWithLogDescriptionClosure;
 use Spatie\Activitylog\Test\Models\Issue733;
@@ -631,7 +633,7 @@ it('logs int backed enum casted attribute', function () {
         use LogsActivity;
 
         protected $casts = [
-            'status' => \Spatie\Activitylog\Test\Enums\IntBackedEnum::class,
+            'status' => IntBackedEnum::class,
         ];
 
         public function getActivitylogOptions(): LogOptions
@@ -641,7 +643,7 @@ it('logs int backed enum casted attribute', function () {
     };
 
     $article = new $articleClass;
-    $article->status = \Spatie\Activitylog\Test\Enums\IntBackedEnum::Published;
+    $article->status = IntBackedEnum::Published;
     $article->save();
 
     $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);
@@ -657,7 +659,7 @@ it('logs string backed enum casted attribute', function () {
         use LogsActivity;
 
         protected $casts = [
-            'status' => \Spatie\Activitylog\Test\Enums\StringBackedEnum::class,
+            'status' => StringBackedEnum::class,
         ];
 
         public function getActivitylogOptions(): LogOptions
@@ -667,7 +669,7 @@ it('logs string backed enum casted attribute', function () {
     };
 
     $article = new $articleClass;
-    $article->status = \Spatie\Activitylog\Test\Enums\StringBackedEnum::Draft;
+    $article->status = StringBackedEnum::Draft;
     $article->save();
 
     $this->assertInstanceOf(get_class($articleClass), $this->getLastActivity()->subject);

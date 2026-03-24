@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Enums\ActivityEvent;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\ActivityLogger;
 use Spatie\Activitylog\Support\ActivityLogStatus;
 use Spatie\Activitylog\Support\ChangeDetector;
@@ -82,7 +83,7 @@ trait LogsActivity
         return $this;
     }
 
-    /** @return MorphMany<\Spatie\Activitylog\Models\Activity, $this> */
+    /** @return MorphMany<Activity, $this> */
     public function activitiesAsSubject(): MorphMany
     {
         return $this->morphMany(Config::activityModel(), 'subject');
