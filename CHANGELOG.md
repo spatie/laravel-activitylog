@@ -2,6 +2,12 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 4.12.2 - 2026-03-24
+
+### What's Changed
+
+* Use try/finally in withinBatch to close batch when callback throws (#1449) by @isaackaara
+
 ## 4.12.1 - 2026-02-22
 
 ### What's Changed

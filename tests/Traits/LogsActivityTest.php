@@ -601,6 +601,19 @@ it('can be serialized', function () {
     $this->assertNotNull(serialize($model));
 });
 
+it('can serialize and unserialize LogOptions with a description closure', function () {
+    $options = LogOptions::defaults()
+        ->setDescriptionForEvent(function (string $eventName) {
+            return "Article was {$eventName}";
+        });
+
+    $serialized = serialize($options);
+    $unserialized = unserialize($serialized);
+
+    $this->assertEquals('Article was created', ($unserialized->descriptionForEvent)('created'));
+    $this->assertEquals('Article was updated', ($unserialized->descriptionForEvent)('updated'));
+});
+
 it('logs non backed enum casted attribute', function () {
     $articleClass = new class extends Article
     {

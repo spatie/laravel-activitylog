@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Support;
 
 use Closure;
+use Laravel\SerializableClosure\SerializableClosure;
 
 class LogOptions
 {
@@ -175,7 +176,10 @@ class LogOptions
     public function __serialize(): array
     {
         $data = get_object_vars($this);
-        unset($data['descriptionForEvent']);
+
+        if ($data['descriptionForEvent'] !== null) {
+            $data['descriptionForEvent'] = new SerializableClosure($data['descriptionForEvent']);
+        }
 
         return $data;
     }
@@ -183,8 +187,11 @@ class LogOptions
     public function __unserialize(array $data): void
     {
         foreach ($data as $key => $value) {
+            if ($key === 'descriptionForEvent' && $value instanceof SerializableClosure) {
+                $value = $value->getClosure();
+            }
+
             $this->$key = $value;
         }
-        $this->descriptionForEvent = null;
     }
 }
