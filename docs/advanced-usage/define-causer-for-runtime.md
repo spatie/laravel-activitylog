@@ -27,9 +27,11 @@ This works cleanly in jobs, CLI commands, seeders, and multi-guard setups.
 Without a callback, the causer is set for the rest of the request:
 
 ```php
+use Spatie\Activitylog\Facades\Activity;
+
 Activity::defaultCauser($admin);
 
 $product->update(['name' => 'New name']);
 
-Activity::all()->last()->causer; // $admin
+\Spatie\Activitylog\Models\Activity::all()->last()->causer; // $admin
 ```

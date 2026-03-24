@@ -31,7 +31,7 @@ Activity::all()->last()->log_name; //returns 'other-log';
 
 By default, the `LogsActivity` trait uses `default_log_name` from the config file to write the logs. To customize the log's name for each model, call the useLogName() method when configuring the LogOptions.
 
-```
+```php
 public function getActivitylogOptions(): LogOptions
 {
     return LogOptions::defaults()

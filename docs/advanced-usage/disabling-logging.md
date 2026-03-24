@@ -3,7 +3,7 @@ title: Disabling logging
 weight: 6
 ---
 
-You can disable all logging activities in the current request by calling
+You can disable all logging globally for the current request by calling
 
 ```php
 activity()->disableLogging();
@@ -22,3 +22,5 @@ activity()->withoutLogging(function () {
 ```
 
 Everything that would produce an activitylog (model events, explicit calls) won't save an activity.
+
+To disable logging for a specific model instance instead of globally, see the [per-model disabling](/docs/laravel-activitylog/v5/advanced-usage/logging-model-events#disabling-logging-on-demand) section.

@@ -18,10 +18,10 @@ php artisan activitylog:clean
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('activitylog:clean')->daily();
+Schedule::command('activitylog:clean --force')->daily();
 ```
 
-If you want to automatically cleanup your `production` system you should append the `--force` option as the command will otherwise ask you to confirm the action. This is to prevent accidental data loss.
+The `--force` flag is needed because the command will otherwise ask you to confirm the action when running in production. This is to prevent accidental data loss.
 
 ## Define the log to clean
 
@@ -39,7 +39,7 @@ You can define the days to keep for each call as command option. This will overw
 php artisan activitylog:clean --days=7
 ```
 
-## MySQL - Rebuild index & get back space after clean.
+## MySQL: rebuild index and reclaim space after clean
 
 After clean, you might experience database table size still allocated more than actual lines in table,
 execute this line in MySQL to OPTIMIZE / ANALYZE table.

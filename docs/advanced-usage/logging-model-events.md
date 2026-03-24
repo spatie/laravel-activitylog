@@ -48,7 +48,7 @@ If you want to log changes to all the `$fillable` attributes of the model, you c
 
 Alternatively, if you have a lot of attributes and used `$guarded` instead of `$fillable` you can also chain `->logUnguarded()` to add all attributes that are not listed in `$guarded`.
 
-For both of these flags it will respect the possible wildcard `*` and add all `->logFillable()` or `->logUnguarded()` methods.
+These can be combined with each other and with `->logOnly()`. The final set of logged attributes is the union of all sources.
 
 ## Basic example of what is logged
 
@@ -144,7 +144,7 @@ class NewsItem extends Model
 
 ## Customizing the description
 
-By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by providing callback to the `->setDescriptionForEvent()` method on `LogOptions` class.
+By default the package will log `created`, `updated`, `deleted` in the description of the activity. You can modify this text by providing a callback to the `->setDescriptionForEvent()` method on the `LogOptions` class.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -181,7 +181,7 @@ $activity->description; //returns 'This model has been created'
 
 ## Customizing the log name
 
-Specify name by provide string to `->useLogName()` to make the model use another name than the default.
+You can pass a string to `->useLogName()` to make the model use a different log name than the default.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -200,9 +200,9 @@ class NewsItem extends Model
 }
 ```
 
-## Ignoring changes to certain attributes
+## Skipping logging when only certain attributes change
 
-If your model contains attributes whose change don't need to trigger an activity being logged you can use `->dontLogIfAttributesChangedOnly()`
+If your model contains attributes whose changes alone don't need to trigger an activity being logged, you can use `->dontLogIfAttributesChangedOnly()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -224,7 +224,7 @@ class NewsItem extends Model
 }
 ```
 
-Changing `text` will not trigger an activity being logged.
+Changing only `text` will not trigger an activity being logged. If both `name` and `text` change, the activity will still be logged (and both attributes will appear in the changes).
 
 By default the `updated_at` attribute is _not_ ignored and will trigger an activity being logged. You can add the `updated_at` attribute to the `->dontLogIfAttributesChangedOnly()` array to override this behavior.
 
@@ -284,7 +284,7 @@ class NewsItem extends Model
 
 ## Logging only a specific JSON attribute sub-key
 
-If you would like to log only the changes to a specific JSON objects sub-keys. You can use the same method for logging specific columns with the difference of choosing the json key to log.
+If you would like to log only the changes to specific sub-keys of a JSON column, you can use arrow notation in `->logOnly()`.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -364,7 +364,7 @@ $lastActivity->attribute_changes->toArray();
 
 ## Prevent saving logs that have no changed attribute
 
-Calling `->dontLogEmptyChanges()` prevents the package from storing empty logs. Storing empty logs can happen when you only want to log a certain attribute but only another changes.
+Calling `->dontLogEmptyChanges()` prevents the package from storing empty logs. Empty logs can occur when you're tracking specific attributes but none of them actually changed in a given update.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -415,9 +415,9 @@ Note: `logExcept()` removes attributes from the log output. This is different fr
 
 ## Using the CausesActivity trait
 
-The package ships with a `CausesActivity` trait which can be added to any model that you use as a causer. It provides an `activitiesAsCauser()` relationship which returns all activities that are caused by the model.
+The package ships with a `Spatie\Activitylog\Models\Concerns\CausesActivity` trait which can be added to any model that you use as a causer. It provides an `activitiesAsCauser()` relationship which returns all activities that are caused by the model.
 
-If you include it in the `User` model you can simply retrieve all the current user's activities like this:
+If you include it in the `User` model you can retrieve all the current user's activities like this:
 
 ```php
 Auth::user()->activitiesAsCauser;
@@ -539,7 +539,7 @@ $newsItem->update(['name' => 'The new name is logged']);
 
 ## Tap Activity before logged from event
 
-In addition to the `tap()` method on `ActivityLogger` you can utilise the `beforeActivityLogged()` method in your observed model class. This method will allow you to fill properties and add custom fields before the activity is saved.
+In addition to the `tap()` method on `ActivityLogger`, you can use the `beforeActivityLogged()` method on your model. This allows you to fill properties and add custom fields before the activity is saved.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -559,7 +559,7 @@ class NewsItem extends Model
 
 ## Logging on Pivot Models
 
-Sometimes you want to log changes on your pivot model - for example if it contains additional data.
+Sometimes you want to log changes on your pivot model, for example if it contains additional data.
 By default pivot models don't have a primary key/column and because of this can't be used in eloquent relations.
 To solve this you have to add a primary key column `id` to your pivot table (`$table->id()`) and configure your pivot model to use this primary key.
 

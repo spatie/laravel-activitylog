@@ -127,7 +127,7 @@ public function logOnlyDirty(): LogOptions;
 
 ```php
 /**
- * Log changes only if these attributes changed.
+ * Only log changes to these specific attributes.
  */
 public function logOnly(array $attributes): LogOptions;
 ```
@@ -156,8 +156,8 @@ public function dontLogIfAttributesChangedOnly(array $attributes): LogOptions;
 
 ```php
 /**
- * Don't store empty logs. Storing empty logs can happen when you only
- * want to log a certain attribute but only another changes.
+ * Don't store empty logs. Empty logs can occur when you're tracking
+ * specific attributes but none of them actually changed.
  */
 public function dontLogEmptyChanges(): LogOptions;
 ```

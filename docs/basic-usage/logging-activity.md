@@ -33,7 +33,7 @@ $lastActivity = Activity::all()->last(); //returns the last logged activity
 $lastActivity->subject; //returns the model that was passed to `performedOn`;
 ```
 
-The `performedOn()`-function has a shorter alias name: `on()`
+The `performedOn()` method has a shorter alias: `on()`
 
 ## Setting a causer
 
@@ -50,7 +50,7 @@ $lastActivity = Activity::all()->last(); //returns the last logged activity
 $lastActivity->causer; //returns the model that was passed to `causedBy`;
 ```
 
-The `causedBy()`-function has a shorter alias named: `by()`
+The `causedBy()` method has a shorter alias: `by()`
 
 If you're not using `causedBy()` the package will automatically use the logged in user.
 
@@ -71,7 +71,7 @@ $lastActivity = Activity::all()->last(); //returns the last logged activity
 
 $lastActivity->getProperty('key'); //returns 'value'
 
-$lastActivity->where('properties->key', 'value')->get(); // get all activity where the `key` custom property is 'value'
+Activity::where('properties->key', 'value')->get(); // get all activity where the `key` custom property is 'value'
 ```
 
 ## Setting custom created date
@@ -103,12 +103,12 @@ activity()
 You can use the `tap()` method to fill properties and add custom fields before the activity is saved.
 
 ```php
-use Spatie\Activitylog\Contracts\Activity;
+use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 
 activity()
    ->causedBy($userModel)
    ->performedOn($someContentModel)
-   ->tap(function(Activity $activity) {
+   ->tap(function(ActivityContract $activity) {
       $activity->my_custom_field = 'my special value';
    })
    ->log('edited');
