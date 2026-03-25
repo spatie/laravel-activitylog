@@ -4,6 +4,7 @@ namespace Spatie\Activitylog\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Support\ActivityBuffer;
 
 class LogActivityAction
 {
@@ -48,7 +49,18 @@ class LogActivityAction
 
     protected function save(Model $activity): void
     {
+        if ($this->shouldBuffer()) {
+            app(ActivityBuffer::class)->add($activity);
+
+            return;
+        }
+
         $activity->save();
+    }
+
+    protected function shouldBuffer(): bool
+    {
+        return config('activitylog.buffer.enabled', false);
     }
 
     protected function replacePlaceholders(string $description, Model $activity): string

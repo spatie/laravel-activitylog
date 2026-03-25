@@ -2,6 +2,9 @@
 
 namespace Spatie\Activitylog;
 
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Spatie\Activitylog\Support\ActivityBuffer;
 use Spatie\Activitylog\Support\ActivityLogger;
 use Spatie\Activitylog\Support\ActivityLogStatus;
 use Spatie\Activitylog\Support\CauserResolver;
@@ -28,5 +31,26 @@ class ActivitylogServiceProvider extends PackageServiceProvider
         $this->app->scoped(CauserResolver::class);
 
         $this->app->scoped(ActivityLogStatus::class);
+
+        $this->app->scoped(ActivityBuffer::class);
+    }
+
+    public function packageBooted(): void
+    {
+        if (config('activitylog.buffer.enabled', false)) {
+            $this->registerActivityBufferFlushing();
+        }
+    }
+
+    protected function registerActivityBufferFlushing(): void
+    {
+        $this->app->terminating(fn () => app(ActivityBuffer::class)->flush());
+
+        $this->app['events']->listen(
+            [JobProcessed::class, JobFailed::class],
+            fn () => app(ActivityBuffer::class)->flush(),
+        );
+
+        register_shutdown_function(fn () => app(ActivityBuffer::class)->flush());
     }
 }
