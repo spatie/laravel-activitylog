@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Spatie\Activitylog\Actions\LogActivityAction;
+use Spatie\Activitylog\Contracts\Activity;
 
 /**
  * @mixin ActivityLogger
@@ -28,7 +29,7 @@ class PendingActivityLog
         return $this->logger;
     }
 
-    /** @param Closure(\Spatie\Activitylog\Contracts\Activity): void $callback */
+    /** @param Closure(Activity): void $callback */
     public static function beforeLogging(Closure $callback): void
     {
         LogActivityAction::beforeLogging($callback);
