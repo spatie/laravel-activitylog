@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Facades\Activity;
 use Spatie\Activitylog\Support\CauserResolver;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
@@ -79,9 +80,9 @@ it('restores the previous causer after withCauser even when an exception is thro
 
     try {
         $resolver->withCauser($user2, function () {
-            throw new \RuntimeException('test');
+            throw new RuntimeException('test');
         });
-    } catch (\RuntimeException) {
+    } catch (RuntimeException) {
         // expected
     }
 
@@ -105,11 +106,11 @@ it('setCauser takes priority over resolveUsing', function () {
 it('can set a default causer via the facade', function () {
     $user = User::first();
 
-    \Spatie\Activitylog\Facades\Activity::defaultCauser($user);
+    Activity::defaultCauser($user);
 
     activity()->log('test with default causer');
 
-    $activity = \Spatie\Activitylog\Models\Activity::all()->last();
+    $activity = Spatie\Activitylog\Models\Activity::all()->last();
 
     expect($activity->causer)->toBeInstanceOf(User::class);
     expect($activity->causer->id)->toEqual($user->id);
@@ -118,11 +119,11 @@ it('can set a default causer via the facade', function () {
 it('can scope a default causer via the facade with a callback', function () {
     $user = User::first();
 
-    \Spatie\Activitylog\Facades\Activity::defaultCauser($user, function () {
+    Activity::defaultCauser($user, function () {
         activity()->log('scoped causer');
     });
 
-    $activity = \Spatie\Activitylog\Models\Activity::all()->last();
+    $activity = Spatie\Activitylog\Models\Activity::all()->last();
 
     expect($activity->causer)->toBeInstanceOf(User::class);
     expect($activity->causer->id)->toEqual($user->id);
@@ -132,15 +133,15 @@ it('restores the previous causer after the facade callback', function () {
     $user1 = User::first();
     $user2 = User::find(2);
 
-    \Spatie\Activitylog\Facades\Activity::defaultCauser($user1);
+    Activity::defaultCauser($user1);
 
-    \Spatie\Activitylog\Facades\Activity::defaultCauser($user2, function () {
+    Activity::defaultCauser($user2, function () {
         activity()->log('inner');
     });
 
     activity()->log('outer');
 
-    $activities = \Spatie\Activitylog\Models\Activity::all();
+    $activities = Spatie\Activitylog\Models\Activity::all();
 
     expect($activities[0]->causer->id)->toEqual($user2->id);
     expect($activities[1]->causer->id)->toEqual($user1->id);
