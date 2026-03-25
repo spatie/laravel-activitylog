@@ -3,27 +3,35 @@ title: Define causer for runtime
 weight: 4
 ---
 
-In many cases you may want to set causer globally maybe inside jobs where there's no logged-in user, v4 made this possible by introducing `CauserResolver` that will allow you to set the causer globally. See the example:
+In many cases you may want to set the causer for a block of code, for example inside jobs where there's no logged-in user. The `Activity` facade provides `defaultCauser()` for this.
+
+## Scoped causer
+
+Pass a callback as the second argument to scope the causer to that block. The previous causer is automatically restored afterwards:
 
 ```php
-// in a queue job or controller
+use Spatie\Activitylog\Facades\Activity;
 
-use Spatie\Activitylog\Facades\CauserResolver;
+Activity::defaultCauser($admin, function () {
+    $product->update(['name' => 'New name']);
+    // this activity will have $admin as the causer
+});
 
-// ... other code
+// the previous causer is restored here
+```
 
-$product = Product::first(1);
-$causer = $product->owner;
+This works cleanly in jobs, CLI commands, seeders, and multi-guard setups.
 
-CauserResolver::setCauser($causer);
+## Global causer
+
+Without a callback, the causer is set for the rest of the request:
+
+```php
+use Spatie\Activitylog\Facades\Activity;
+
+Activity::defaultCauser($admin);
 
 $product->update(['name' => 'New name']);
 
-Activity::all()->last()->causer; // Product Model
-Activity::all()->last()->causer->id; // Product#1 Owner
-
+\Spatie\Activitylog\Models\Activity::all()->last()->causer; // $admin
 ```
-
-## Define Causer using callback
-
-You can resolve causer using provided callback to `resolve` method

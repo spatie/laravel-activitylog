@@ -1,0 +1,12 @@
+<?php
+
+use Spatie\Activitylog\Test\Models\User;
+
+it('can get all activity for the causer', function () {
+    $causer = User::first();
+
+    activity()->by($causer)->log('perform activity');
+    activity()->by($causer)->log('perform another activity');
+
+    expect($causer->activitiesAsCauser)->toHaveCount(2);
+});

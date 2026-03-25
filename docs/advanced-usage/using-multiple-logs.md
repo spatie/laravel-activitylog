@@ -5,12 +5,12 @@ weight: 5
 
 ## The default log
 
-Without specifying a log name the activities will be logged on the default log.
+Without specifying a log name, the activities will be logged on the default log.
 
 ```php
 activity()->log('hi');
 
-$lastActivity = Spatie\Activitylog\Models\Activity::all()->last();
+$lastActivity = Activity::all()->last();
 
 $lastActivity->log_name; //returns 'default';
 ```
@@ -29,9 +29,9 @@ Activity::all()->last()->log_name; //returns 'other-log';
 
 ## Specifying a log for each model
 
-By default, the `LogsActivity` trait uses `default_log_name` from the config file to write the logs. To customize the log's name for each model, call the useLogName() method when configuring the LogOptions.
+By default, the `LogsActivity` trait uses `default_log_name` from the config file to write the logs. To customize the log's name for each model, call the `useLogName()` method when configuring the `LogOptions`.
 
-```
+```php
 public function getActivitylogOptions(): LogOptions
 {
     return LogOptions::defaults()
@@ -44,7 +44,7 @@ public function getActivitylogOptions(): LogOptions
 The `Activity` model is just a regular Eloquent model that you know and love:
 
 ```php
-Activity::where('log_name' , 'other-log')->get(); //returns all activity from the 'other-log'
+Activity::where('log_name', 'other-log')->get(); //returns all activity from the 'other-log'
 ```
 
 There's also an `inLog` scope you can use:

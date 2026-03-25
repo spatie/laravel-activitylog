@@ -10,6 +10,11 @@ class InvalidConfiguration extends Exception
 {
     public static function modelIsNotValid(string $className): self
     {
-        return new static("The given model class `{$className}` does not implement `".Activity::class.'` or it does not extend `'.Model::class.'`');
+        return new self("The given model class `{$className}` does not implement `".Activity::class.'` or it does not extend `'.Model::class.'`');
+    }
+
+    public static function actionIsNotValid(string $className, string $expectedBaseClass): self
+    {
+        return new self("The given action class `{$className}` does not extend `{$expectedBaseClass}`.");
     }
 }

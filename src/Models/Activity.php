@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -9,10 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
+use Spatie\Activitylog\Enums\ActivityEvent;
 
 /**
- * Spatie\Activitylog\Models\Activity.
- *
  * @property int $id
  * @property string|null $log_name
  * @property string $description
@@ -21,51 +21,33 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @property string|null $causer_type
  * @property int|null $causer_id
  * @property string|null $event
- * @property string|null $batch_uuid
- * @property \Illuminate\Support\Collection|null $properties
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $causer
- * @property-read \Illuminate\Support\Collection $changes
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $subject
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity causedBy(\Illuminate\Database\Eloquent\Model $causer)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forBatch(string $batchUuid)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forEvent(string $event)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forSubject(\Illuminate\Database\Eloquent\Model $subject)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity hasBatch()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity inLog($logNames)
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity query()
+ * @property Collection|null $attribute_changes
+ * @property Collection|null $properties
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Model|null $causer
+ * @property-read Model|null $subject
  */
 class Activity extends Model implements ActivityContract
 {
     public $guarded = [];
 
-    protected $casts = [
-        'properties' => 'collection',
-    ];
-
-    public function __construct(array $attributes = [])
+    protected function casts(): array
     {
-        if (! isset($this->connection)) {
-            $this->setConnection(config('activitylog.database_connection'));
-        }
-
-        if (! isset($this->table)) {
-            $this->setTable(config('activitylog.table_name'));
-        }
-
-        parent::__construct($attributes);
+        return [
+            'attribute_changes' => 'collection',
+            'properties' => 'collection',
+        ];
     }
+
+    protected $table = 'activity_log';
 
     /**
      * @return MorphTo<Model, $this>
      */
     public function subject(): MorphTo
     {
-        if (config('activitylog.subject_returns_soft_deleted_models')) {
+        if (config('activitylog.include_soft_deleted_subjects')) {
             return $this->morphTo()->withoutGlobalScope(SoftDeletingScope::class);
         }
 
@@ -80,26 +62,13 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
+    public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
-        return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
+        return Arr::get($this->properties?->toArray() ?? [], $propertyName, $defaultValue);
     }
 
-    public function changes(): Collection
-    {
-        if (! $this->properties instanceof Collection) {
-            return new Collection();
-        }
-
-        return $this->properties->only(['attributes', 'old']);
-    }
-
-    public function getChangesAttribute(): Collection
-    {
-        return $this->changes();
-    }
-
-    public function scopeInLog(Builder $query, ...$logNames): Builder
+    /** @param  string|string[]  ...$logNames */
+    public function scopeInLog(Builder $query, string|array ...$logNames): Builder
     {
         if (is_array($logNames[0])) {
             $logNames = $logNames[0];
@@ -122,18 +91,8 @@ class Activity extends Model implements ActivityContract
             ->where('subject_id', $subject->getKey());
     }
 
-    public function scopeForEvent(Builder $query, string $event): Builder
+    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder
     {
-        return $query->where('event', $event);
-    }
-
-    public function scopeHasBatch(Builder $query): Builder
-    {
-        return $query->whereNotNull('batch_uuid');
-    }
-
-    public function scopeForBatch(Builder $query, string $batchUuid): Builder
-    {
-        return $query->where('batch_uuid', $batchUuid);
+        return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
     }
 }

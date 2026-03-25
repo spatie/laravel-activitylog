@@ -2,8 +2,8 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Issue733 extends Article
 {
@@ -16,7 +16,7 @@ class Issue733 extends Article
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->dontSubmitEmptyLogs()
-        ->logOnly(['name']);
+            ->dontLogEmptyChanges()
+            ->logOnly(['name']);
     }
 }

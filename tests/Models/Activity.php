@@ -7,29 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
+use Spatie\Activitylog\Enums\ActivityEvent;
 
 class Activity extends Model implements ActivityContract
 {
-    protected $table;
+    protected $table = 'activity_log';
 
     public $guarded = [];
 
     protected $casts = [
+        'attribute_changes' => 'collection',
         'properties' => 'collection',
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        $this->table = config('activitylog.table_name');
-
-        parent::__construct($attributes);
-    }
-
     public function subject(): MorphTo
     {
-        if (config('activitylog.subject_returns_soft_deleted_models')) {
+        if (config('activitylog.include_soft_deleted_subjects')) {
             return $this->morphTo()->withoutGlobalScope(SoftDeletingScope::class);
         }
 
@@ -41,20 +35,9 @@ class Activity extends Model implements ActivityContract
         return $this->morphTo();
     }
 
-    public function getExtraProperty(string $propertyName, mixed $defaultValue = null): mixed
+    public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
         return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
-    }
-
-    public function changes(): Collection
-    {
-        if (! $this->properties instanceof Collection) {
-            return new Collection();
-        }
-
-        return collect(array_filter($this->properties->toArray(), function ($key) {
-            return in_array($key, ['attributes', 'old']);
-        }, ARRAY_FILTER_USE_KEY));
     }
 
     public function scopeInLog(Builder $query, ...$logNames): Builder
@@ -80,13 +63,13 @@ class Activity extends Model implements ActivityContract
             ->where('subject_id', $subject->getKey());
     }
 
-    public function scopeForEvent(Builder $query, string $event): Builder
+    public function scopeForEvent(Builder $query, string|ActivityEvent $event): Builder
     {
-        return $query->where('event', $event);
+        return $query->where('event', $event instanceof ActivityEvent ? $event->value : $event);
     }
 
     public function getCustomPropertyAttribute()
     {
-        return $this->changes();
+        return $this->attribute_changes;
     }
 }

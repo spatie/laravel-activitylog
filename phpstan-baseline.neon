@@ -1,0 +1,115 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:inLog\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Actions/CleanActivityLogAction.php
+
+		-
+			message: '#^Call to an undefined static method Spatie\\Activitylog\\Contracts\\Activity\:\:query\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/Actions/CleanActivityLogAction.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$causer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/LogActivityAction.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/LogActivityAction.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$properties\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/LogActivityAction.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$subject\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/LogActivityAction.php
+
+		-
+			message: '#^Parameter \#1 of closure expects Spatie\\Activitylog\\Contracts\\Activity, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Actions/LogActivityAction.php
+
+		-
+			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\CausesActivity is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Models/Concerns/CausesActivity.php
+
+		-
+			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\HasActivity is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Models/Concerns/HasActivity.php
+
+		-
+			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\LogsActivity is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Models/Concerns/LogsActivity.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$attribute_changes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$causer_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$causer_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$event\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$log_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$properties\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Method Spatie\\Activitylog\\Support\\ActivityLogger\:\:log\(\) should return Spatie\\Activitylog\\Contracts\\Activity\|null but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/ActivityLogger.php
+
+		-
+			message: '#^Parameter \#1 \$activity of method Spatie\\Activitylog\\Actions\\LogActivityAction\:\:execute\(\) expects Illuminate\\Database\\Eloquent\\Model, Spatie\\Activitylog\\Contracts\\Activity given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Support/ActivityLogger.php
