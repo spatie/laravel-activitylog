@@ -66,15 +66,3 @@ Activity::beforeLogging(function ($activity) use ($batchUuid) {
 ```
 
 All activities logged during the request will share the same `batch_uuid`.
-
-## Alternative registration
-
-You can also register callbacks directly on the `LogActivityAction` class:
-
-```php
-use Spatie\Activitylog\Actions\LogActivityAction;
-
-LogActivityAction::beforeLogging(function ($activity) {
-    // ...
-});
-```
