@@ -3,8 +3,8 @@
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Collection;
-use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Actions\LogActivityAction;
+use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
