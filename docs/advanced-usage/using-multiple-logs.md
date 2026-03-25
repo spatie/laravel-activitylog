@@ -5,7 +5,7 @@ weight: 5
 
 ## The default log
 
-Without specifying a log name the activities will be logged on the default log.
+Without specifying a log name, the activities will be logged on the default log.
 
 ```php
 activity()->log('hi');

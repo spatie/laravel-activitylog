@@ -417,7 +417,7 @@ Note: `logExcept()` removes attributes from the log output. This is different fr
 
 The package ships with a `Spatie\Activitylog\Models\Concerns\CausesActivity` trait which can be added to any model that you use as a causer. It provides an `activitiesAsCauser()` relationship which returns all activities that are caused by the model.
 
-If you include it in the `User` model you can retrieve all the current user's activities like this:
+If you include it in the `User` model, you can retrieve all the current user's activities like this:
 
 ```php
 Auth::user()->activitiesAsCauser;
@@ -575,4 +575,4 @@ final class PivotModel extends Pivot
 }
 ```
 
-After these changes you can log activities on your pivot models as expected.
+After these changes, you can log activities on your pivot models as expected.

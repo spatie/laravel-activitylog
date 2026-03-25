@@ -174,7 +174,7 @@ php artisan migrate
 - To control what attributes are logged, instead of defining a `$logAttributes` property this is defined in the `getActivitylogOptions()` method using the `logOnly()` method of `LogOptions`.
 - The `getDescriptionForEvent()` method is no longer used to customize the description. Instead, use the `setDescriptionForEvent()` method for `LogOptions` class.
 - When customizing the log's name instead of defining a `$logName` property, call the `useLogName()` method when configuring the `LogOptions`.
-- Instead of the `$ignoreChangedAttributes` property the ` dontLogIfAttributesChangedOnly()` method should be used.
+- Instead of the `$ignoreChangedAttributes` property the `dontLogIfAttributesChangedOnly()` method should be used.
 - If you only need to log the dirty attributes use `logOnlyDirty()` since the `$logOnlyDirty` property is no longer used.
 - For instances where you do not want to store empty log events use `dontSubmitEmptyLogs()` instead of setting `$submitEmptyLogs` to `false`.
 - When you use a `*` (wildcard) and want to ignore specific elements use the `dontLogIfAttributesChangedOnly()` method instead of the `$logAttributesToIgnore` property.
