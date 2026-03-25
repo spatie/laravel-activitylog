@@ -50,7 +50,7 @@ $lastActivity->causer; //returns the model that was passed to `causedBy`;
 
 The `causedBy()` method has a shorter alias: `by()`
 
-If you're not using `causedBy()` the package will automatically use the logged in user.
+If you're not using `causedBy()`, the package will automatically use the logged in user.
 
 If you don't want to associate a model as causer of activity, you can use `causedByAnonymous()` (or the shorter alias: `byAnonymous()`).
 

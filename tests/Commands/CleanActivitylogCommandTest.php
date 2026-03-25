@@ -70,6 +70,31 @@ it('does not clean the activity log when days config value is invalid', function
     '',
 ]);
 
+it('can clean only a specific log', function () {
+    collect(range(1, 60))->each(function (int $index) {
+        Activity::create([
+            'log_name' => 'my-log',
+            'description' => "item {$index}",
+            'created_at' => Carbon::now()->subDays($index)->startOfDay(),
+        ]);
+    });
+
+    collect(range(1, 60))->each(function (int $index) {
+        Activity::create([
+            'log_name' => 'other-log',
+            'description' => "item {$index}",
+            'created_at' => Carbon::now()->subDays($index)->startOfDay(),
+        ]);
+    });
+
+    expect(Activity::all())->toHaveCount(120);
+
+    Artisan::call('activitylog:clean', ['log' => 'my-log']);
+
+    expect(Activity::where('log_name', 'my-log')->count())->toBe(31);
+    expect(Activity::where('log_name', 'other-log')->count())->toBe(60);
+});
+
 it('does not clean the activity log when days option value is invalid', function (mixed $days) {
     collect(range(1, 60))->each(function (int $index) {
         Activity::create([

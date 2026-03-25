@@ -1856,6 +1856,64 @@ it('will access further than level one json attribute', function () {
     $this->assertSame($expectedChanges, $changes);
 });
 
+it('can exclude attributes globally via config default_except_attributes', function () {
+    config()->set('activitylog.default_except_attributes', ['text']);
+
+    $articleClass = new class extends Article
+    {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+                ->logOnly(['name', 'text']);
+        }
+    };
+
+    $article = new $articleClass;
+    $article->name = 'my name';
+    $article->text = 'my text';
+    $article->save();
+
+    $expectedChanges = [
+        'attributes' => [
+            'name' => 'my name',
+        ],
+    ];
+
+    $this->assertEquals($expectedChanges, $this->getLastActivity()->attribute_changes->toArray());
+});
+
+it('merges config default_except_attributes with model logExcept', function () {
+    config()->set('activitylog.default_except_attributes', ['text']);
+
+    $articleClass = new class extends Article
+    {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()
+                ->logAll()
+                ->logExcept(['name']);
+        }
+    };
+
+    $article = new $articleClass;
+    $article->name = 'my name';
+    $article->text = 'my text';
+
+    Carbon::setTestNow(Carbon::create(2017, 1, 1, 12, 0, 0));
+    $article->save();
+
+    $changes = $this->getLastActivity()->attribute_changes->toArray();
+
+    // both 'name' (from logExcept) and 'text' (from config) should be excluded
+    expect($changes['attributes'])->not->toHaveKey('name');
+    expect($changes['attributes'])->not->toHaveKey('text');
+    expect($changes['attributes'])->toHaveKey('id');
+});
+
 function createDirtyArticle(): Article
 {
     $articleClass = new class extends Article

@@ -19,7 +19,7 @@ php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProv
 
 **Note:** The default migration assumes you are using integers for your model IDs. If you are using UUIDs, or some other format, adjust the format of the `subject_id` and `causer_id` fields in the published migration before continuing.
 
-After the migration has been published you can create the `activity_log` table by running the migrations:
+After the migration has been published, you can create the `activity_log` table by running the migrations:
 
 ```bash
 php artisan migrate
@@ -78,6 +78,10 @@ return [
      */
     'default_except_attributes' => [],
 
+    /*
+     * These action classes can be overridden to customize how activities
+     * are logged and cleaned. Your custom classes must extend the originals.
+     */
     'actions' => [
         'log_activity' => \Spatie\Activitylog\Actions\LogActivityAction::class,
         'clean_log' => \Spatie\Activitylog\Actions\CleanActivityLogAction::class,

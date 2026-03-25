@@ -3,7 +3,7 @@ title: Logging model events
 weight: 1
 ---
 
-The package can automatically log events such as when a model is created, updated and deleted. To make this work all you need to do is let your model use the `Spatie\Activitylog\Models\Concerns\LogsActivity` trait.
+The package can automatically log events such as when a model is created, updated and deleted. To make this work, all you need to do is let your model use the `Spatie\Activitylog\Models\Concerns\LogsActivity` trait.
 
 The simplest usage requires no configuration at all:
 
@@ -112,7 +112,7 @@ $activity->attribute_changes; //returns a collection containing ['old' => ['name
 
 ## Customizing the events being logged
 
-By default the package will log the `created`, `updated`, `deleted` events. You can modify this behaviour by setting the `$recordEvents` property on a model.
+By default the package will log the `created`, `updated`, `deleted` events. You can modify this behavior by setting the `$recordEvents` property on a model.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -560,8 +560,8 @@ class NewsItem extends Model
 ## Logging on Pivot Models
 
 Sometimes you want to log changes on your pivot model, for example if it contains additional data.
-By default pivot models don't have a primary key/column and because of this can't be used in eloquent relations.
-To solve this you have to add a primary key column `id` to your pivot table (`$table->id()`) and configure your pivot model to use this primary key.
+By default pivot models don't have a primary key column, which means they can't be used as activity subjects.
+To solve this, add a primary key column `id` to your pivot table (`$table->id()`) and configure your pivot model to use it.
 
 ```php
 use Illuminate\Database\Eloquent\Relations\Pivot;

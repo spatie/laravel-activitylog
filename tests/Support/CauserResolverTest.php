@@ -43,3 +43,105 @@ it('will resolve any model', function () {
     expect($causer)->toBeInstanceOf(Article::class);
     expect($causer->id)->toEqual($article->id);
 });
+
+it('can scope a causer using withCauser', function () {
+    $user = User::first();
+    $resolver = app(CauserResolver::class);
+
+    $result = $resolver->withCauser($user, function () use ($resolver) {
+        return $resolver->resolve();
+    });
+
+    expect($result)->toBeInstanceOf(User::class);
+    expect($result->id)->toEqual($user->id);
+});
+
+it('restores the previous causer after withCauser', function () {
+    $user1 = User::first();
+    $user2 = User::find(2);
+    $resolver = app(CauserResolver::class);
+
+    $resolver->setCauser($user1);
+
+    $resolver->withCauser($user2, function () use ($resolver, $user2) {
+        expect($resolver->resolve()->id)->toEqual($user2->id);
+    });
+
+    expect($resolver->resolve()->id)->toEqual($user1->id);
+});
+
+it('restores the previous causer after withCauser even when an exception is thrown', function () {
+    $user1 = User::first();
+    $user2 = User::find(2);
+    $resolver = app(CauserResolver::class);
+
+    $resolver->setCauser($user1);
+
+    try {
+        $resolver->withCauser($user2, function () {
+            throw new \RuntimeException('test');
+        });
+    } catch (\RuntimeException) {
+        // expected
+    }
+
+    expect($resolver->resolve()->id)->toEqual($user1->id);
+});
+
+it('setCauser takes priority over resolveUsing', function () {
+    $user = User::first();
+    $article = Article::first();
+    $resolver = app(CauserResolver::class);
+
+    $resolver->resolveUsing(fn () => $article);
+    $resolver->setCauser($user);
+
+    $causer = $resolver->resolve();
+
+    expect($causer)->toBeInstanceOf(User::class);
+    expect($causer->id)->toEqual($user->id);
+});
+
+it('can set a default causer via the facade', function () {
+    $user = User::first();
+
+    \Spatie\Activitylog\Facades\Activity::defaultCauser($user);
+
+    activity()->log('test with default causer');
+
+    $activity = \Spatie\Activitylog\Models\Activity::all()->last();
+
+    expect($activity->causer)->toBeInstanceOf(User::class);
+    expect($activity->causer->id)->toEqual($user->id);
+});
+
+it('can scope a default causer via the facade with a callback', function () {
+    $user = User::first();
+
+    \Spatie\Activitylog\Facades\Activity::defaultCauser($user, function () {
+        activity()->log('scoped causer');
+    });
+
+    $activity = \Spatie\Activitylog\Models\Activity::all()->last();
+
+    expect($activity->causer)->toBeInstanceOf(User::class);
+    expect($activity->causer->id)->toEqual($user->id);
+});
+
+it('restores the previous causer after the facade callback', function () {
+    $user1 = User::first();
+    $user2 = User::find(2);
+
+    \Spatie\Activitylog\Facades\Activity::defaultCauser($user1);
+
+    \Spatie\Activitylog\Facades\Activity::defaultCauser($user2, function () {
+        activity()->log('inner');
+    });
+
+    activity()->log('outer');
+
+    $activities = \Spatie\Activitylog\Models\Activity::all();
+
+    expect($activities[0]->causer->id)->toEqual($user2->id);
+    expect($activities[1]->causer->id)->toEqual($user1->id);
+});
