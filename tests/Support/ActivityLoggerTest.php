@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use Spatie\Activitylog\Actions\LogActivityAction;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -17,6 +18,10 @@ use Spatie\Activitylog\Test\Models\User;
 
 beforeEach(function () {
     $this->activityDescription = 'My activity';
+});
+
+afterEach(function () {
+    LogActivityAction::clearBeforeLoggingCallbacks();
 });
 
 it('can log an activity', function () {
@@ -479,3 +484,60 @@ it('does not log non backed enums in properties', function () {
 })
     ->throws(JsonEncodingException::class)
     ->skip(version_compare(PHP_VERSION, '8.1', '<'), "PHP < 8.1 doesn't support enum");
+
+it('can modify an activity using beforeLogging', function () {
+    LogActivityAction::beforeLogging(function (Activity $activity) {
+        $activity->description = 'modified by beforeLogging';
+    });
+
+    activity()->log('original description');
+
+    expect($this->getLastActivity()->description)->toEqual('modified by beforeLogging');
+});
+
+it('can register multiple beforeLogging callbacks', function () {
+    LogActivityAction::beforeLogging(function (Activity $activity) {
+        $activity->properties = $activity->properties->put('first', true);
+    });
+
+    LogActivityAction::beforeLogging(function (Activity $activity) {
+        $activity->properties = $activity->properties->put('second', true);
+    });
+
+    activity()->log('test');
+
+    $lastActivity = $this->getLastActivity();
+    expect($lastActivity->getProperty('first'))->toBeTrue();
+    expect($lastActivity->getProperty('second'))->toBeTrue();
+});
+
+it('can use beforeLogging via the facade', function () {
+    ActivityFacade::beforeLogging(function (Activity $activity) {
+        $activity->properties = $activity->properties->put('from_facade', true);
+    });
+
+    activity()->log('test');
+
+    expect($this->getLastActivity()->getProperty('from_facade'))->toBeTrue();
+});
+
+it('runs beforeLogging callbacks for model event activities', function () {
+    LogActivityAction::beforeLogging(function (Activity $activity) {
+        $activity->properties = $activity->properties->put('hook_ran', true);
+    });
+
+    $article = new class extends Article
+    {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults();
+        }
+    };
+
+    $article->name = 'test';
+    $article->save();
+
+    expect($this->getLastActivity()->getProperty('hook_ran'))->toBeTrue();
+});

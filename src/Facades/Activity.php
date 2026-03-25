@@ -26,6 +26,7 @@ use Spatie\Activitylog\Support\PendingActivityLog;
  * @method static \Spatie\Activitylog\Contracts\Activity|null log(string $description)
  * @method static \Spatie\Activitylog\Support\ActivityLogger withChanges(array<string, mixed>|\Illuminate\Support\Collection<string, mixed> $changes)
  * @method static mixed withoutLogging(\Closure $callback)
+ * @method static void beforeLogging(\Closure $callback)
  * @method static mixed defaultCauser(\Illuminate\Database\Eloquent\Model|null $causer, \Closure|null $callback = null)
  * @method static \Spatie\Activitylog\Support\ActivityLogger|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
  * @method static \Spatie\Activitylog\Support\ActivityLogger|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)

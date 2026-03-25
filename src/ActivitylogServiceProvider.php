@@ -51,6 +51,12 @@ class ActivitylogServiceProvider extends PackageServiceProvider
             fn () => app(ActivityBuffer::class)->flush(),
         );
 
-        register_shutdown_function(fn () => app(ActivityBuffer::class)->flush());
+        register_shutdown_function(function () {
+            try {
+                app(ActivityBuffer::class)->flush();
+            } catch (\Throwable) {
+                // Container may be unavailable during shutdown
+            }
+        });
     }
 }

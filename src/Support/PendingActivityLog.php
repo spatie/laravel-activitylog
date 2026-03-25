@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Support;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\ForwardsCalls;
+use Spatie\Activitylog\Actions\LogActivityAction;
 
 /**
  * @mixin ActivityLogger
@@ -25,6 +26,12 @@ class PendingActivityLog
     public function logger(): ActivityLogger
     {
         return $this->logger;
+    }
+
+    /** @param Closure(\Spatie\Activitylog\Contracts\Activity): void $callback */
+    public static function beforeLogging(Closure $callback): void
+    {
+        LogActivityAction::beforeLogging($callback);
     }
 
     public function defaultCauser(?Model $causer, ?Closure $callback = null): mixed

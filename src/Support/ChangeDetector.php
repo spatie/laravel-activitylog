@@ -21,6 +21,12 @@ class ChangeDetector
             $relationName = static::resolveRelationName($relatedModel, $segment);
             $path[] = $relationName;
             $relatedModel = $relatedModel->$relationName ?? $relatedModel->$relationName();
+
+            if (is_null($relatedModel)) {
+                $path[] = $relatedAttribute;
+
+                return [implode('.', $path) => null];
+            }
         }
 
         $path[] = $relatedAttribute;

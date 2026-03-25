@@ -2,12 +2,28 @@
 
 namespace Spatie\Activitylog\Actions;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\Support\ActivityBuffer;
 
 class LogActivityAction
 {
+    /** @var array<Closure(Activity): void> */
+    protected static array $beforeLoggingCallbacks = [];
+
+    /** @param Closure(Activity): void $callback */
+    public static function beforeLogging(Closure $callback): void
+    {
+        static::$beforeLoggingCallbacks[] = $callback;
+    }
+
+    public static function clearBeforeLoggingCallbacks(): void
+    {
+        static::$beforeLoggingCallbacks = [];
+    }
+
     public function execute(Model $activity, string $description): Model
     {
         $activity->description = $this->resolveDescription($activity, $description);
@@ -15,6 +31,10 @@ class LogActivityAction
         $this->transformChanges($activity);
 
         $this->beforeActivityLogged($activity);
+
+        foreach (static::$beforeLoggingCallbacks as $callback) {
+            $callback($activity);
+        }
 
         $this->save($activity);
 

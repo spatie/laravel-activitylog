@@ -37,6 +37,12 @@ parameters:
 			path: src/Actions/LogActivityAction.php
 
 		-
+			message: '#^Parameter \#1 of closure expects Spatie\\Activitylog\\Contracts\\Activity, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Actions/LogActivityAction.php
+
+		-
 			message: '#^Trait Spatie\\Activitylog\\Models\\Concerns\\CausesActivity is used zero times and is not analysed\.$#'
 			identifier: trait.unused
 			count: 1

@@ -22,11 +22,12 @@ class ActivityBuffer
         }
 
         $records = $this->pending;
-        $this->pending = [];
 
-        Config::activityModelInstance()
-            ->newQuery()
-            ->insert($records);
+        $modelClass = Config::activityModel();
+
+        $modelClass::query()->insert($records);
+
+        $this->pending = [];
     }
 
     public function hasPending(): bool
