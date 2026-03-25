@@ -2,6 +2,14 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.0.0 - 2026-03-25
+
+### What's Changed
+
+* v5: PHP 8.4+, Laravel 11+, modernized API by @freekmurze in https://github.com/spatie/laravel-activitylog/pull/1452
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/4.12.3...5.0.0
+
 ## 4.12.3 - 2026-03-24
 
 ### What's Changed
