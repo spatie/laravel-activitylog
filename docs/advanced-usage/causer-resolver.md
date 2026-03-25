@@ -1,6 +1,6 @@
 ---
 title: Causer Resolver
-weight: 3
+weight: 11
 ---
 
 The `CauserResolver` class handles resolving who caused an activity. It is registered as a scoped binding (per request) in the container.

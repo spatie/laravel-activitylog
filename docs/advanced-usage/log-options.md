@@ -1,6 +1,6 @@
 ---
 title: Log Options
-weight: 1
+weight: 10
 ---
 
 Customization of how your models will be logged is controlled by implementing `getActivitylogOptions()`. This method is optional. If not implemented, the package uses sensible defaults (logs events but no attribute changes).
