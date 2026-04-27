@@ -24,15 +24,20 @@ Schema::table('activity_log', function (Blueprint $table) {
 });
 
 // Then migrate existing data: move 'attributes' and 'old' from properties to attribute_changes
-DB::table('activity_log')->whereNotNull('properties')->eachById(function ($row) {
-    $properties = json_decode($row->properties, true);
-    $changes = array_intersect_key($properties, array_flip(['attributes', 'old']));
-    $remaining = array_diff_key($properties, array_flip(['attributes', 'old']));
+DB::table('activity_log')
+    ->where(function ($query) {
+        $query->whereNotNull('properties->attributes')
+            ->orWhereNotNull('properties->old');
+    })
+    ->eachById(function ($row) {
+        $properties = json_decode($row->properties, true);
+        $changes = array_intersect_key($properties, array_flip(['attributes', 'old']));
+        $remaining = array_diff_key($properties, array_flip(['attributes', 'old']));
 
-    DB::table('activity_log')->where('id', $row->id)->update([
-        'attribute_changes' => empty($changes) ? null : json_encode($changes),
-        'properties' => empty($remaining) ? null : json_encode($remaining),
-    ]);
+        DB::table('activity_log')->where('id', $row->id)->update([
+            'attribute_changes' => empty($changes) ? null : json_encode($changes),
+            'properties' => empty($remaining) ? null : json_encode($remaining),
+        ]);
 });
 ```
 
