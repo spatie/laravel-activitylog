@@ -24,6 +24,6 @@ jobs:
               run: vendor/bin/pint
 
             - name: Commit changes
-              uses: stefanzweifel/git-auto-commit-action@v5.2.0
+              uses: stefanzweifel/git-auto-commit-action@v7.2.0
               with:
                   commit_message: Fix styling
