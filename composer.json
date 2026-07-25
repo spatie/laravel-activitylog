@@ -29,7 +29,7 @@
             "role": "Developer"
         }
     ],
-    "homepage": "https://github.com/spatie/activitylog",
+    "homepage": "https://github.com/spatie/laravel-activitylog",
     "require": {
         "php": "^8.4",
         "illuminate/config": "^12.0 || ^13.0",
