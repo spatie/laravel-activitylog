@@ -42,7 +42,7 @@
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.29",
         "orchestra/testbench": "^10.0 || ^11.0",
-        "pestphp/pest": "^4.0"
+        "pestphp/pest": "^5.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
