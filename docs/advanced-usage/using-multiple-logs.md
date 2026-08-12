@@ -39,6 +39,52 @@ public function getActivitylogOptions(): LogOptions
 }
 ```
 
+## Using a backed enum as log name
+
+Everywhere a log name is accepted, you can also pass a backed enum. Its `value` is what gets stored
+in the `log_name` column.
+
+```php
+enum LogName: string
+{
+    case Orders = 'orders';
+    case Auth = 'auth';
+}
+
+activity(LogName::Orders)->log('hi');
+
+Activity::all()->last()->log_name; //returns 'orders'
+```
+
+This works in `useLog()` and `inLog()` on the logger, and in `useLogName()` on `LogOptions`.
+
+```php
+public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName(LogName::Orders);
+}
+```
+
+Because `log_name` is a string column, it's always read back as a string (an int-backed enum reads
+back as a numeric string). If you want it hydrated into an enum, add the cast on your own activity
+model and register it in the `activity_model` key of the config file:
+
+```php
+use Spatie\Activitylog\Models\Activity as BaseActivity;
+
+class Activity extends BaseActivity
+{
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'log_name' => LogName::class,
+        ];
+    }
+}
+```
+
 ## Retrieving activity
 
 The `Activity` model is just a regular Eloquent model that you know and love:
@@ -57,4 +103,8 @@ Activity::inLog('default', 'other-log')->get();
 
 //passing an array is just as good
 Activity::inLog(['default', 'other-log'])->get();
+
+//backed enums work here too
+Activity::inLog(LogName::Orders)->get();
+Activity::inLog(LogName::Orders, LogName::Auth)->get();
 ```

@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Support;
 
+use BackedEnum;
 use Closure;
 use Laravel\SerializableClosure\SerializableClosure;
 
@@ -143,9 +144,9 @@ class LogOptions
     /**
      * Customize log name.
      */
-    public function useLogName(?string $logName): self
+    public function useLogName(BackedEnum|string|null $logName): self
     {
-        $this->logName = $logName;
+        $this->logName = $logName instanceof BackedEnum ? $logName->value : $logName;
 
         return $this;
     }

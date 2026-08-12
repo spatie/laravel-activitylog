@@ -541,3 +541,52 @@ it('runs beforeLogging callbacks for model event activities', function () {
 
     expect($this->getLastActivity()->getProperty('hook_ran'))->toBeTrue();
 });
+
+it('can use a string backed enum as log name', function () {
+    activity(StringBackedEnum::Published)->log('Test');
+
+    expect($this->getLastActivity()->log_name)->toBe(StringBackedEnum::Published->value);
+});
+
+it('can use an int backed enum as log name', function () {
+    activity()->useLog(IntBackedEnum::Published)->log('Test');
+
+    // log_name is a string column, so an int backed value reads back as a numeric string
+    expect($this->getLastActivity()->log_name)->toBe((string) IntBackedEnum::Published->value);
+});
+
+it('can use a backed enum as log name in the log options', function () {
+    $article = new class extends Article
+    {
+        use LogsActivity;
+
+        public function getActivitylogOptions(): LogOptions
+        {
+            return LogOptions::defaults()->useLogName(StringBackedEnum::Published);
+        }
+    };
+
+    $article->name = 'article';
+    $article->save();
+
+    expect($this->getLastActivity()->log_name)->toBe(StringBackedEnum::Published->value);
+});
+
+it('can query by log name using a backed enum', function () {
+    activity(StringBackedEnum::Published)->log('Published');
+    activity(StringBackedEnum::Draft)->log('Draft');
+
+    $activities = Activity::inLog(StringBackedEnum::Published)->get();
+
+    expect($activities)->toHaveCount(1)
+        ->and($activities->first()->description)->toBe('Published');
+});
+
+it('can query by log name using multiple backed enums', function () {
+    activity(StringBackedEnum::Published)->log('Published');
+    activity(StringBackedEnum::Draft)->log('Draft');
+    activity('other-log')->log('Other');
+
+    expect(Activity::inLog(StringBackedEnum::Published, StringBackedEnum::Draft)->get())->toHaveCount(2)
+        ->and(Activity::inLog([StringBackedEnum::Published, 'other-log'])->get())->toHaveCount(2);
+});

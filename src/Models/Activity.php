@@ -2,6 +2,7 @@
 
 namespace Spatie\Activitylog\Models;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -67,14 +68,17 @@ class Activity extends Model implements ActivityContract
         return Arr::get($this->properties?->toArray() ?? [], $propertyName, $defaultValue);
     }
 
-    /** @param  string|string[]  ...$logNames */
-    public function scopeInLog(Builder $query, string|array ...$logNames): Builder
+    /** @param  BackedEnum|string|array<BackedEnum|string>  ...$logNames */
+    public function scopeInLog(Builder $query, BackedEnum|string|array ...$logNames): Builder
     {
         if (is_array($logNames[0])) {
             $logNames = $logNames[0];
         }
 
-        return $query->whereIn('log_name', $logNames);
+        return $query->whereIn('log_name', array_map(
+            fn (BackedEnum|string $logName) => $logName instanceof BackedEnum ? $logName->value : $logName,
+            $logNames,
+        ));
     }
 
     public function scopeCausedBy(Builder $query, Model $causer): Builder

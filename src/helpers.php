@@ -4,7 +4,7 @@ use Spatie\Activitylog\Support\ActivityLogger;
 use Spatie\Activitylog\Support\PendingActivityLog;
 
 if (! function_exists('activity')) {
-    function activity(?string $logName = null): ActivityLogger
+    function activity(BackedEnum|string|null $logName = null): ActivityLogger
     {
         /** @var PendingActivityLog $log */
         $log = app(PendingActivityLog::class);
