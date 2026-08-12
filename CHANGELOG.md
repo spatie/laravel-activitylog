@@ -2,6 +2,29 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.1.0 - 2026-08-12
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.0.0 by @dependabot[bot] in https://github.com/spatie/laravel-activitylog/pull/1454
+* Bump dependabot/fetch-metadata from 3.0.0 to 3.1.0 by @dependabot[bot] in https://github.com/spatie/laravel-activitylog/pull/1457
+* Optimize migration snippet to target only affected rows using JSON queries by @msonowal in https://github.com/spatie/laravel-activitylog/pull/1455
+* Bump actions/checkout from 3 to 7 by @dependabot[bot] in https://github.com/spatie/laravel-activitylog/pull/1462
+* Bump stefanzweifel/git-auto-commit-action from 5.2.0 to 7.2.0 by @dependabot[bot] in https://github.com/spatie/laravel-activitylog/pull/1463
+* Fix outdated docs subdomain links in requirements by @lazerg in https://github.com/spatie/laravel-activitylog/pull/1466
+* Fix composer.json homepage to point at this repository by @ademola-emmanuel in https://github.com/spatie/laravel-activitylog/pull/1467
+* Update pestphp/pest requirement from ^4.0 to ^5.0 by @dependabot[bot] in https://github.com/spatie/laravel-activitylog/pull/1468
+* Add BackedEnum support for log name by @alexanderkroneis in https://github.com/spatie/laravel-activitylog/pull/1461
+
+### New Contributors
+
+* @msonowal made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1455
+* @lazerg made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1466
+* @ademola-emmanuel made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1467
+* @alexanderkroneis made their first contribution in https://github.com/spatie/laravel-activitylog/pull/1461
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/5.0.0...5.1.0
+
 ## 5.0.0 - 2026-03-25
 
 ### What's Changed
