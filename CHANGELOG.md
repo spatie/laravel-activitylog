@@ -2,6 +2,16 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.1.1 - 2026-09-08
+
+Restores Laravel 12 support, which 5.1.0 dropped unintentionally.
+
+### What's Changed
+
+* Restore Laravel 12 support by @freekmurze in https://github.com/spatie/laravel-activitylog/pull/1473
+
+**Full Changelog**: https://github.com/spatie/laravel-activitylog/compare/5.1.0...5.1.1
+
 ## 5.1.0 - 2026-08-12
 
 ### What's Changed
