@@ -68,6 +68,8 @@ it('does not clean the activity log when days config value is invalid', function
     'abc',
     '7.5',
     '',
+    0,
+    -1,
 ]);
 
 it('can clean only a specific log', function () {
@@ -114,4 +116,6 @@ it('does not clean the activity log when days option value is invalid', function
     'abc',
     '7.5',
     '',
+    0,
+    -1,
 ]);
