@@ -109,3 +109,15 @@ Then set it in the config:
 ```php
 'activity_model' => \App\Models\Activity::class,
 ```
+
+### Database transactions
+
+When the activity and its subject use the same database connection, an unbuffered activity is saved immediately within the subject's transaction. Rolling back that transaction also rolls back the activity.
+
+When they use different connections, the package waits until the subject's outermost transaction commits before saving the activity. Rolling back the transaction discards its activities. Rolling back a nested savepoint discards only the activities belonging to that savepoint and its descendants. Activities that survive are saved in their original logging order.
+
+The description, changes, properties, and timestamps are captured when you log the activity, after the logging hooks have run. Without buffering, the model returned by `log()` has no ID until the transaction commits. With buffering, the activity is added to the buffer after commit and inserted when the buffer is flushed.
+
+Activities without a subject, and activities whose subject is not in a transaction, keep their usual behavior. The package does not infer a source transaction from the causer or from unrelated database connections. This behavior applies to the logging API and automatic model event logging; directly saving an activity model bypasses the logging action.
+
+This does not make writes to two databases atomic. If saving the activity fails after the subject's transaction has committed, the subject's changes remain committed. Applications that require guaranteed delivery should use a durable outbox or another retry mechanism.

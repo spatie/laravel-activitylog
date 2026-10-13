@@ -87,6 +87,8 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 You'll find the documentation on [https://spatie.be/docs/laravel-activitylog/introduction](https://spatie.be/docs/laravel-activitylog/introduction).
 
+Activities stored on a different database connection wait for their subject's transaction to commit. See [database transactions](https://spatie.be/docs/laravel-activitylog/v5/installation-and-setup#database-transactions) for rollback behavior and buffering.
+
 Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the activity log? Feel free to [create an issue on GitHub](https://github.com/spatie/laravel-activitylog/issues), we'll try to address it as soon as possible.
 
 ## Installation
