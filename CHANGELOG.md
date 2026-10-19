@@ -2,6 +2,21 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.1.2 - 2026-10-19
+
+### What changed
+
+- Move the Laravel Boost activitylog reference into an on-demand `activitylog-development` skill, with a short guideline and a direct-file fallback when skills are unavailable.
+- Complete the standalone skill examples.
+- Explicitly test PHP 8.4 and 8.5 with Laravel 12/Pest 4 and Laravel 13/Pest 5, including lowest and latest dependencies.
+- Run read-only Pint and PHPStan checks for fork pull requests and fix the authentication test fixture for current Laravel.
+
+No package runtime behavior or supported Laravel versions changed.
+
+**Full changelog**: https://github.com/spatie/laravel-activitylog/compare/5.1.1...5.1.2
+
+Thanks to @benddailey for #1475.
+
 ## 5.1.1 - 2026-09-08
 
 Restores Laravel 12 support, which 5.1.0 dropped unintentionally.
