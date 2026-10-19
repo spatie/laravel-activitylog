@@ -2,6 +2,26 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.1.3 - 2026-10-19
+
+### What changed
+
+- Fix eager authentication and session resolution when registering activity callbacks during application boot.
+- Preserve explicit causers, including unsaved models and custom resolvers that return null.
+- Keep the causer available to tap() callbacks and preserve their changes, including anonymous logging.
+- Clear cached causer relations through Eloquent when selecting an anonymous causer.
+- Align the PHPUnit XML schema with the installed runner, retaining PHP 8.4/8.5 coverage with Laravel 12/Pest 4 and Laravel 13/Pest 5.
+
+#### Compatibility note
+
+No public APIs were removed and supported PHP/Laravel versions are unchanged. The default causer is now selected when log() is called, or before a tap() callback, rather than when the logger is constructed. If authentication changes between those calls, use causedBy() to retain a specific causer.
+
+Validated with 189 tests (467 assertions), the full eight-job dependency matrix, PHPStan, and Pint.
+
+Thanks to @artygrand for #1477.
+
+**Full changelog**: https://github.com/spatie/laravel-activitylog/compare/5.1.2...5.1.3
+
 ## 5.1.2 - 2026-10-19
 
 ### What changed
