@@ -28,7 +28,7 @@ it('can clean the activity log', function () {
     expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
 });
 
-it('can accept days as option to override config setting', function () {
+it('can accept days as option to override config setting', function (int $days) {
     collect(range(1, 60))->each(function (int $index) {
         Activity::create([
             'description' => "item {$index}",
@@ -38,14 +38,15 @@ it('can accept days as option to override config setting', function () {
 
     expect(Activity::all())->toHaveCount(60);
 
-    Artisan::call('activitylog:clean', ['--days' => 7]);
+    $exitCode = Artisan::call('activitylog:clean', ['--days' => $days]);
 
-    expect(Activity::all())->toHaveCount(7);
+    expect($exitCode)->toBe(0);
+    expect(Activity::all())->toHaveCount($days);
 
-    $cutOffDate = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
+    $cutOffDate = Carbon::now()->subDays($days)->format('Y-m-d H:i:s');
 
     expect(Activity::where('created_at', '<', $cutOffDate)->get())->toHaveCount(0);
-});
+})->with([1, 7]);
 
 it('does not clean the activity log when days config value is invalid', function (mixed $days) {
     app()['config']->set('activitylog.clean_after_days', $days);
@@ -62,6 +63,7 @@ it('does not clean the activity log when days config value is invalid', function
     $exitCode = Artisan::call('activitylog:clean');
 
     expect($exitCode)->toBe(1);
+    expect(Artisan::output())->toContain('The days option must be a positive integer.');
     expect(Activity::all())->toHaveCount(60);
 })->with([
     false,
@@ -110,6 +112,7 @@ it('does not clean the activity log when days option value is invalid', function
     $exitCode = Artisan::call('activitylog:clean', ['--days' => $days]);
 
     expect($exitCode)->toBe(1);
+    expect(Artisan::output())->toContain('The days option must be a positive integer.');
     expect(Activity::all())->toHaveCount(60);
 })->with([
     false,
