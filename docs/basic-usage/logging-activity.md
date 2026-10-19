@@ -50,7 +50,7 @@ $lastActivity->causer; //returns the model that was passed to `causedBy`;
 
 The `causedBy()` method has a shorter alias: `by()`
 
-If you're not using `causedBy()`, the package will automatically use the logged in user.
+If you're not using `causedBy()`, the package will automatically use the user who is logged in when `log()` is called, not when the logger is created. Calling `tap()` resolves the default causer before its callback runs. Use `causedBy()` to keep a specific causer if authentication changes before logging.
 
 If you don't want to associate a model as causer of activity, you can use `causedByAnonymous()` (or the shorter alias: `byAnonymous()`).
 
@@ -99,6 +99,8 @@ activity()
 ## Tap Activity before logged
 
 You can use the `tap()` method to fill properties and add custom fields before the activity is saved.
+
+The causer is available inside the callback, and changes to it are preserved when the activity is logged.
 
 ```php
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;

@@ -255,16 +255,92 @@ it('resolves the default causer when the activity is logged, not when the logger
 it('does not resolve the causer when the facade is resolved', function () {
     app(CauserResolver::class)->resolveUsing(fn () => throw new LogicException('The causer was resolved.'));
 
-    expect(fn () => ActivityFacade::getFacadeRoot())->not->toThrow(LogicException::class);
+    expect(fn () => ActivityFacade::beforeLogging(fn (Activity $activity) => null))->not->toThrow(LogicException::class);
+});
+
+it('preserves an explicitly resolved anonymous causer', function () {
+    $defaultCauser = User::find(1);
+
+    app(CauserResolver::class)->resolveUsing(fn ($subject) => $subject?->getKey() === 2 ? null : $defaultCauser);
+
+    activity()->causedBy(User::find(2))->log('anonymous');
+
+    expect($this->getLastActivity()->causer_id)->toBeNull()
+        ->and($this->getLastActivity()->causer_type)->toBeNull();
+});
+
+it('preserves an explicit causer without a primary key', function () {
+    Auth::login(User::find(1));
+
+    $causer = new User;
+
+    $activity = activity()->causedBy($causer)->log('unsaved causer');
+
+    expect($activity->causer)->toBe($causer)
+        ->and($activity->causer_id)->toBeNull();
+});
+
+it('resolves a fresh default causer when reusing a logger after anonymous logging', function () {
+    $logger = activity()->causedByAnonymous();
+
+    Auth::login(User::find(1));
+
+    expect($logger->log('anonymous')->causer_id)->toBeNull();
+
+    Auth::login(User::find(2));
+
+    expect($logger->log('authenticated')->causer_id)->toEqual(2);
+});
+
+it('preserves a causer associated through tap', function () {
+    Auth::login(User::find(1));
+
+    activity()
+        ->tap(fn (Activity $activity) => $activity->causer()->associate(User::find(2)))
+        ->log('explicit causer');
+
+    expect($this->getLastActivity()->causer_id)->toEqual(2);
+});
+
+it('makes the default causer available to tap and preserves its changes', function () {
+    Auth::login(User::find(1));
+
+    activity()
+        ->tap(function (Activity $activity) {
+            $activity->properties = collect(['causer_name' => $activity->causer->name]);
+            $activity->causer()->dissociate();
+        })
+        ->log('anonymous after tap');
+
+    expect($this->getLastActivity()->getProperty('causer_name'))->toBe('name 1')
+        ->and($this->getLastActivity()->causer_id)->toBeNull()
+        ->and($this->getLastActivity()->causer_type)->toBeNull();
+});
+
+it('makes the default causer available to description placeholders and beforeLogging callbacks', function () {
+    $logger = activity();
+
+    ActivityFacade::beforeLogging(function (Activity $activity) {
+        $activity->properties = collect(['causer_name' => $activity->causer->name]);
+    });
+
+    Auth::login(User::find(2));
+
+    $logger->log('Logged by :causer.name');
+
+    expect($this->getLastActivity()->description)->toBe('Logged by name 0')
+        ->and($this->getLastActivity()->getProperty('causer_name'))->toBe('name 0');
 });
 
 it('can log activity using an anonymous causer', function () {
-    activity()
+    $activity = activity()
+        ->causedBy(User::find(1))
         ->causedByAnonymous()
         ->log('hello poetsvrouwman');
 
-    expect($this->getLastActivity()->causer_id)->toBeNull();
-    expect($this->getLastActivity()->causer_type)->toBeNull();
+    expect($activity->causer)->toBeNull()
+        ->and($this->getLastActivity()->causer_id)->toBeNull()
+        ->and($this->getLastActivity()->causer_type)->toBeNull();
 });
 
 it('will override the logged in user as the causer when an anonymous causer is specified', function () {

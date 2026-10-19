@@ -27,7 +27,7 @@ class ActivityLogger
 
     protected ?ActivityContract $activity = null;
 
-    protected bool $causedByAnonymous = false;
+    protected bool $causerWasSet = false;
 
     public function __construct(Repository $config, ActivityLogStatus $logStatus, CauserResolver $causerResolver)
     {
@@ -67,6 +67,8 @@ class ActivityLogger
 
         $this->getActivity()->causer()->associate($model);
 
+        $this->causerWasSet = true;
+
         return $this;
     }
 
@@ -77,12 +79,9 @@ class ActivityLogger
 
     public function causedByAnonymous(): static
     {
-        $activity = $this->getActivity();
+        $this->getActivity()->causer()->dissociate();
 
-        $activity->causer_id = null;
-        $activity->causer_type = null;
-
-        $this->causedByAnonymous = true;
+        $this->causerWasSet = true;
 
         return $this;
     }
@@ -148,6 +147,9 @@ class ActivityLogger
 
     public function tap(callable $callback, ?string $eventName = null): static
     {
+        $this->useDefaultCauserIfNoneWasGiven();
+        $this->causerWasSet = true;
+
         call_user_func($callback, $this->getActivity(), $eventName);
 
         return $this;
@@ -204,7 +206,8 @@ class ActivityLogger
     {
         if (! $this->activity instanceof ActivityContract) {
             $this->activity = Config::activityModelInstance();
-            $this->causedByAnonymous = false;
+            $this->causerWasSet = false;
+
             $this
                 ->useLog($this->defaultLogName)
                 ->withChanges([])
@@ -214,18 +217,20 @@ class ActivityLogger
         return $this->activity;
     }
 
-    /**
-     * The default causer is resolved when the activity is logged, not when the logger is built,
-     * so resolving the logger (e.g. through the facade in a service provider) doesn't touch auth or the session.
-     */
     protected function useDefaultCauserIfNoneWasGiven(): void
     {
         $activity = $this->getActivity();
 
-        if ($this->causedByAnonymous || ($activity instanceof Model && $activity->getAttribute('causer_id') !== null)) {
+        if ($this->causerWasSet) {
             return;
         }
 
-        $this->causedBy($this->causerResolver->resolve());
+        if ($activity instanceof Model) {
+            if ($activity->getAttribute('causer_id') !== null) {
+                return;
+            }
+        }
+
+        $activity->causer()->associate($this->causerResolver->resolve());
     }
 }
