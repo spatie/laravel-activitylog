@@ -112,14 +112,8 @@ Then set it in the config:
 
 ### Database transactions
 
-When the activity and its subject use the same database connection, an unbuffered activity is saved immediately within the subject's transaction. Rolling back that transaction also rolls back the activity.
+Without buffering, activities on the same database connection as their subject are rolled back together.
 
-When they use different connections, the package waits until the subject's outermost transaction commits before saving the activity. Rolling back the transaction discards its activities. Rolling back a nested savepoint discards only the activities belonging to that savepoint and its descendants. Within a single subject transaction, activities that survive are saved in their original logging order. Activities from independent transactions are saved in commit order, not necessarily logging order.
+When using a different connection or [buffering activities](/docs/laravel-activitylog/v5/advanced-usage/buffering), the package waits until the subject's transaction commits. If it rolls back, the activities are discarded. These activities have no ID until they are saved, after commit or the next buffer flush.
 
-For deferred activities, the description, changes, properties, and timestamps are captured when you log the activity, after the logging hooks have run. Without buffering, the model returned by `log()` has no ID until the transaction commits. With buffering, the activity is added to the buffer after commit and inserted when the buffer is flushed.
-
-Activities without a subject, and activities whose subject is not in a transaction, keep their usual behavior. The package does not infer a source transaction from the causer or from unrelated database connections. This behavior applies to the logging API and automatic model event logging; directly saving an activity model bypasses the logging action.
-
-In tests using Laravel's `DatabaseTransactions` or `RefreshDatabase` traits, the wrapping test transaction is excluded, following Laravel's after-commit callback behavior. Activities can be saved or buffered before that wrapper rolls back. Transactions started by your application inside the wrapper still defer activities until the application transaction commits. To test real outermost commit and rollback behavior, run those tests without a wrapping test transaction.
-
-This does not make writes to two databases atomic. If saving the activity fails after the subject's transaction has committed, the subject's changes remain committed, and later activity callbacks may not run. Applications that require guaranteed delivery should use a durable outbox or another retry mechanism.
+Writes to separate databases are not atomic: if saving an activity fails after commit, the subject's changes remain saved.
