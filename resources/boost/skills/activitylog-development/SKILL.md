@@ -1,6 +1,6 @@
 ---
 name: activitylog-development
-description: Build and work with spatie/laravel-activitylog features including logging model events with the LogsActivity trait, configuring LogOptions, manual activity logging, setting causers, and querying or customizing activities.
+description: Builds spatie/laravel-activitylog features. Use when logging model events with the LogsActivity trait, configuring LogOptions, logging activities manually, setting causers, or querying and customizing activities.
 license: MIT
 metadata:
   author: Spatie
@@ -36,6 +36,7 @@ Use spatie/laravel-activitylog to log model events and manual activities to a da
 Add to models to automatically log create/update/delete events. Optionally implement `getActivitylogOptions()` to configure which attributes to track (defaults to logging events without attribute changes).
 
 ```php
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -62,6 +63,8 @@ Combines `LogsActivity` and `CausesActivity`. Provides `activities()`, `activiti
 ## Manual Logging
 
 ```php
+use Spatie\Activitylog\Enums\ActivityEvent;
+
 activity()
     ->performedOn($article)
     ->causedBy($user)
