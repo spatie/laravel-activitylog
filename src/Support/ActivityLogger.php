@@ -27,6 +27,8 @@ class ActivityLogger
 
     protected ?ActivityContract $activity = null;
 
+    protected bool $causedByAnonymous = false;
+
     public function __construct(Repository $config, ActivityLogStatus $logStatus, CauserResolver $causerResolver)
     {
         $this->causerResolver = $causerResolver;
@@ -79,6 +81,8 @@ class ActivityLogger
 
         $activity->causer_id = null;
         $activity->causer_type = null;
+
+        $this->causedByAnonymous = true;
 
         return $this;
     }
@@ -169,6 +173,8 @@ class ActivityLogger
             return null;
         }
 
+        $this->useDefaultCauserIfNoneWasGiven();
+
         $activity = Config::logActivityAction()->execute(
             $this->getActivity(),
             $description,
@@ -198,13 +204,28 @@ class ActivityLogger
     {
         if (! $this->activity instanceof ActivityContract) {
             $this->activity = Config::activityModelInstance();
+            $this->causedByAnonymous = false;
             $this
                 ->useLog($this->defaultLogName)
                 ->withChanges([])
-                ->withProperties([])
-                ->causedBy($this->causerResolver->resolve());
+                ->withProperties([]);
         }
 
         return $this->activity;
+    }
+
+    /**
+     * The default causer is resolved when the activity is logged, not when the logger is built,
+     * so resolving the logger (e.g. through the facade in a service provider) doesn't touch auth or the session.
+     */
+    protected function useDefaultCauserIfNoneWasGiven(): void
+    {
+        $activity = $this->getActivity();
+
+        if ($this->causedByAnonymous || ($activity instanceof Model && $activity->getAttribute('causer_id') !== null)) {
+            return;
+        }
+
+        $this->causedBy($this->causerResolver->resolve());
     }
 }

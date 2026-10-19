@@ -241,6 +241,23 @@ it('will use the logged in user as the causer by default', function () {
     expect($this->getLastActivity()->causer->id)->toEqual($userId);
 });
 
+it('resolves the default causer when the activity is logged, not when the logger is built', function () {
+    $logger = activity();
+
+    Auth::login(User::find(1));
+
+    $logger->log('hello poetsvrouwman');
+
+    expect($this->getLastActivity()->causer)->toBeInstanceOf(User::class);
+    expect($this->getLastActivity()->causer->id)->toEqual(1);
+});
+
+it('does not resolve the causer when the facade is resolved', function () {
+    app(CauserResolver::class)->resolveUsing(fn () => throw new LogicException('The causer was resolved.'));
+
+    expect(fn () => ActivityFacade::getFacadeRoot())->not->toThrow(LogicException::class);
+});
+
 it('can log activity using an anonymous causer', function () {
     activity()
         ->causedByAnonymous()
