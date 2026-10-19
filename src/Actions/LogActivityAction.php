@@ -3,6 +3,7 @@
 namespace Spatie\Activitylog\Actions;
 
 use Closure;
+use Illuminate\Database\DatabaseTransactionsManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Contracts\Activity;
@@ -36,7 +37,9 @@ class LogActivityAction
             $callback($activity);
         }
 
-        $this->save($activity);
+        if (! $this->deferUntilAfterCommit($activity)) {
+            $this->save($activity);
+        }
 
         return $activity;
     }
@@ -76,6 +79,63 @@ class LogActivityAction
         }
 
         $activity->save();
+    }
+
+    protected function deferUntilAfterCommit(Model $activity): bool
+    {
+        $subject = $activity->getRelations()['subject'] ?? null;
+
+        if (! $subject instanceof Model) {
+            return false;
+        }
+
+        $connection = $subject->getConnection();
+
+        if ($connection->transactionLevel() === 0) {
+            return false;
+        }
+
+        if ($connection === $activity->getConnection() && ! $this->shouldBuffer()) {
+            return false;
+        }
+
+        /** @var DatabaseTransactionsManager $manager */
+        $manager = app('db.transactions');
+
+        // Connection::afterCommit() uses the latest transaction across all connections.
+        $transactions = $manager->callbackApplicableTransactions()
+            ->where('connection', $connection->getName());
+
+        if ($transactions->isEmpty()) {
+            return false;
+        }
+
+        if ($activity->usesTimestamps()) {
+            $activity->updateTimestamps();
+        }
+
+        $attributes = $activity->getAttributes();
+        $connectionName = $activity->getConnection()->getName();
+        $committed = false;
+
+        // Nested callbacks run first. Only surviving savepoints mark their activity for saving.
+        $transactions->last()->addCallback(function () use (&$committed) {
+            $committed = true;
+        });
+
+        // Save on the outer transaction to preserve the original logging order.
+        $transactions->first()->addCallback(function () use ($activity, $attributes, $connectionName, &$committed) {
+            if (! $committed) {
+                return;
+            }
+
+            $activity->setRawAttributes($attributes);
+            $activity->setConnection($connectionName);
+
+            $this->save($activity);
+        });
+
+        return true;
     }
 
     protected function shouldBuffer(): bool

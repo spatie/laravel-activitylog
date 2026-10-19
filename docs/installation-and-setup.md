@@ -109,3 +109,11 @@ Then set it in the config:
 ```php
 'activity_model' => \App\Models\Activity::class,
 ```
+
+### Database transactions
+
+Without buffering, activities on the same database connection as their subject are rolled back together.
+
+When using a different connection or [buffering activities](/docs/laravel-activitylog/v5/advanced-usage/buffering), the package waits until the subject's transaction commits. If it rolls back, the activities are discarded. These activities have no ID until they are saved, after commit or the next buffer flush.
+
+Writes to separate databases are not atomic: if saving an activity fails after commit, the subject's changes remain saved.

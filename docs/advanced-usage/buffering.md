@@ -45,6 +45,8 @@ When buffering is enabled:
 
 The buffer also registers a shutdown function as a safety net, so activities are flushed even if the application terminates unexpectedly.
 
+When the subject is in a [database transaction](/docs/laravel-activitylog/v5/installation-and-setup#database-transactions), its activities enter the buffer only after commit.
+
 ## Things to be aware of
 
 ### No ID until flush
