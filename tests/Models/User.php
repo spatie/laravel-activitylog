@@ -35,7 +35,7 @@ class User extends Model implements Authenticatable
 
     public function getAuthPassword()
     {
-        return $this->attributes['password'];
+        return $this->getAttribute($this->getAuthPasswordName());
     }
 
     public function getRememberToken()

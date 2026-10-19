@@ -67,18 +67,6 @@ parameters:
 			path: src/Support/ActivityLogger.php
 
 		-
-			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$causer_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/ActivityLogger.php
-
-		-
-			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$causer_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/ActivityLogger.php
-
-		-
 			message: '#^Access to an undefined property Spatie\\Activitylog\\Contracts\\Activity\:\:\$created_at\.$#'
 			identifier: property.notFound
 			count: 1
