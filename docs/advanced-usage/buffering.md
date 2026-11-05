@@ -5,7 +5,7 @@ weight: 8
 
 By default, each activity is saved to the database immediately with its own `INSERT` query. If your application logs many activities during a single request (for example, when updating multiple models in a loop), this can result in a significant number of queries.
 
-When buffering is enabled, activities are collected in memory during the request and inserted in a single bulk query after the response has been sent to the client.
+When buffering is enabled, activities are collected in memory during the request and inserted in bulk after the response has been sent to the client.
 
 ## When to use buffering
 
@@ -40,7 +40,7 @@ That's it. No other code changes are required. All existing logging code (both a
 When buffering is enabled:
 
 1. Activities are collected in an in-memory buffer instead of being saved immediately
-2. After the response is sent to the client (during the `terminating` phase), all buffered activities are inserted in a single query
+2. After the response is sent to the client (during the `terminating` phase), buffered activities with the same attributes are inserted together, in logging order, within a transaction
 3. For queue workers, the buffer is flushed after each job completes
 
 The buffer also registers a shutdown function as a safety net, so activities are flushed even if the application terminates unexpectedly.
