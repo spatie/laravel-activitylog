@@ -13,16 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.5, 8.4]
-        laravel: [^12.0, ^13.0]
+        php: ['8.6', '8.5', '8.4']
+        laravel: [^13.32]
         dependency-version: [prefer-lowest, prefer-stable]
         include:
-          - laravel: ^12.0
-            testbench: ^10.0
-            pest: ^4.0
-          - laravel: ^13.0
+          - laravel: ^13.32
             testbench: ^11.0
-            pest: ^5.0
+            pest: ^5.3.5
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - Pest ${{ matrix.pest }} - ${{ matrix.dependency-version }}
 
@@ -36,6 +33,12 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
+
+      - name: Verify PHP version
+        env:
+          EXPECTED_PHP_VERSION: ${{ matrix.php }}
+        run: |
+          php -r 'echo PHP_VERSION, PHP_EOL; exit(PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION === getenv("EXPECTED_PHP_VERSION") ? 0 : 1);'
 
       - name: Install dependencies
         run: |
