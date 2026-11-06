@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\ActivityBuffer;
 use Spatie\Activitylog\Test\Models\Article;
@@ -170,4 +173,43 @@ it('resolves description placeholders before buffering', function () {
     app(ActivityBuffer::class)->flush();
 
     expect(Activity::first()->description)->toBe('Subject is my article');
+});
+
+it('flushes activities with different optional attributes', function () {
+    activity()->event('created')->log('first activity');
+    activity()->log('second activity');
+    activity()->event('updated')->log('third activity');
+
+    app(ActivityBuffer::class)->flush();
+
+    expect(Activity::orderBy('id')->get()->map->only(['description', 'event'])->all())->toBe([
+        ['description' => 'first activity', 'event' => 'created'],
+        ['description' => 'second activity', 'event' => null],
+        ['description' => 'third activity', 'event' => 'updated'],
+    ]);
+});
+
+it('preserves database defaults for omitted attributes', function () {
+    Schema::table('activity_log', function (Blueprint $table) {
+        $table->string('source')->default('application');
+    });
+
+    activity()->tap(fn (Activity $activity) => $activity->source = 'import')->log('imported');
+    activity()->log('default source');
+
+    app(ActivityBuffer::class)->flush();
+
+    expect(Activity::orderBy('id')->pluck('source')->all())->toBe(['import', 'application']);
+});
+
+it('keeps the whole buffer pending if an insert fails', function () {
+    activity()->log('valid activity');
+    activity()->tap(fn (Activity $activity) => $activity->missing_column = 'invalid')->log('invalid activity');
+
+    $buffer = app(ActivityBuffer::class);
+
+    expect(fn () => $buffer->flush())->toThrow(QueryException::class);
+
+    expect(Activity::count())->toBe(0);
+    expect($buffer->count())->toBe(2);
 });
