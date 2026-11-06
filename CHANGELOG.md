@@ -2,6 +2,27 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.1.4 - 2026-11-06
+
+### What changed
+
+- Fix buffered activities with different optional attributes failing to flush.
+- Insert consecutive activities with matching columns together, preserving logging order and database defaults for omitted columns.
+- Roll back all groups if an insert fails and retain the pending buffer for retry.
+- Clarify the buffering documentation and add public regression coverage.
+
+### Compatibility and release scope
+
+This is an isolated backport of #1480 onto 5.1.3. PHP ^8.4 and Laravel ^12.0 || ^13.0 support are unchanged. No public API or configuration changes are required.
+
+This release intentionally excludes other unreleased changes on main, including its Laravel 13.32 minimum requirement and transaction-logging changes.
+
+Validated with 192 tests (472 assertions), Pint, PHPStan, and all eight PHP 8.4/8.5 × Laravel 12/13 × lowest/stable dependency test lanes.
+
+Thanks to @AleksandrSpicyn for https://github.com/spatie/laravel-activitylog/pull/1480.
+
+**Full changelog**: https://github.com/spatie/laravel-activitylog/compare/5.1.3...5.1.4
+
 ## 5.1.3 - 2026-10-19
 
 ### What changed
