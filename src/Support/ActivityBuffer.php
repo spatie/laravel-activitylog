@@ -64,8 +64,14 @@ class ActivityBuffer
             }
         }
 
-        $attributes['created_at'] ??= $now;
-        $attributes['updated_at'] ??= $now;
+        // As save() does: the model's own timestamp columns, which may be renamed or disabled.
+        if ($activity->usesTimestamps()) {
+            foreach ([$activity->getCreatedAtColumn(), $activity->getUpdatedAtColumn()] as $column) {
+                if ($column !== null) {
+                    $attributes[$column] ??= $now;
+                }
+            }
+        }
 
         return $attributes;
     }

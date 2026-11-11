@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\ActivityBuffer;
+use Spatie\Activitylog\Test\Models\ActivityWithoutUpdatedAt;
 use Spatie\Activitylog\Test\Models\Article;
 use Spatie\Activitylog\Test\Models\User;
 
@@ -212,4 +213,15 @@ it('keeps the whole buffer pending if an insert fails', function () {
 
     expect(Activity::count())->toBe(0);
     expect($buffer->count())->toBe(2);
+});
+
+it('flushes an activity model that has no updated_at column', function () {
+    Schema::table('activity_log', fn (Blueprint $table) => $table->dropColumn('updated_at'));
+    config(['activitylog.activity_model' => ActivityWithoutUpdatedAt::class]);
+
+    activity()->log('buffered activity');
+    app(ActivityBuffer::class)->flush();
+
+    expect(ActivityWithoutUpdatedAt::query()->pluck('description')->all())->toBe(['buffered activity'])
+        ->and(ActivityWithoutUpdatedAt::first()->created_at)->not->toBeNull();
 });
