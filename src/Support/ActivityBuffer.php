@@ -51,7 +51,10 @@ class ActivityBuffer
     /** @return array<string, mixed> */
     protected function prepareForInsert(Model $activity): array
     {
-        $now = $activity->freshTimestampString();
+        if ($activity->usesTimestamps()) {
+            $activity->updateTimestamps();
+        }
+
         $attributes = [];
 
         foreach ($activity->getAttributes() as $key => $value) {
@@ -63,9 +66,6 @@ class ActivityBuffer
                 $attributes[$key] = $value;
             }
         }
-
-        $attributes['created_at'] ??= $now;
-        $attributes['updated_at'] ??= $now;
 
         return $attributes;
     }
