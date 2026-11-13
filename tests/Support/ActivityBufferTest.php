@@ -219,9 +219,82 @@ it('flushes an activity model that has no updated_at column', function () {
     Schema::table('activity_log', fn (Blueprint $table) => $table->dropColumn('updated_at'));
     config(['activitylog.activity_model' => ActivityWithoutUpdatedAt::class]);
 
+    $this->freezeTime();
+
     activity()->log('buffered activity');
     app(ActivityBuffer::class)->flush();
 
     expect(ActivityWithoutUpdatedAt::query()->pluck('description')->all())->toBe(['buffered activity'])
-        ->and(ActivityWithoutUpdatedAt::first()->created_at)->not->toBeNull();
+        ->and(ActivityWithoutUpdatedAt::first()->created_at->toDateTimeString())->toBe(now()->toDateTimeString());
+});
+
+it('flushes renamed timestamp columns and preserves supplied timestamps', function () {
+    $activityClass = new class extends Activity
+    {
+        public const CREATED_AT = 'logged_at';
+
+        public const UPDATED_AT = 'modified_at';
+    };
+
+    config(['activitylog.activity_model' => $activityClass::class]);
+
+    Schema::table('activity_log', function (Blueprint $table) {
+        $table->renameColumn('created_at', 'logged_at');
+        $table->renameColumn('updated_at', 'modified_at');
+    });
+
+    $this->freezeTime();
+    $loggedAt = now()->toDateTimeString();
+    $createdAt = now()->subDays(5)->toDateTimeString();
+    $updatedAt = now()->subDays(2)->toDateTimeString();
+
+    activity()->log('automatic timestamps');
+    activity()->tap(function (Activity $activity) use ($createdAt, $updatedAt) {
+        $activity->setCreatedAt($createdAt);
+        $activity->setUpdatedAt($updatedAt);
+    })->log('supplied timestamps');
+
+    expect($activityClass::count())->toBe(0);
+
+    $this->travel(1)->hour();
+    app(ActivityBuffer::class)->flush();
+
+    expect($activityClass::orderBy('id')->get(['description', 'logged_at', 'modified_at'])->map->getAttributes()->all())->toBe([
+        ['description' => 'automatic timestamps', 'logged_at' => $loggedAt, 'modified_at' => $loggedAt],
+        ['description' => 'supplied timestamps', 'logged_at' => $createdAt, 'modified_at' => $updatedAt],
+    ]);
+});
+
+it('flushes an activity model with timestamps disabled and no timestamp columns', function () {
+    $activityClass = new class extends Activity
+    {
+        public $timestamps = false;
+    };
+
+    config(['activitylog.activity_model' => $activityClass::class]);
+    Schema::table('activity_log', fn (Blueprint $table) => $table->dropColumn(['created_at', 'updated_at']));
+
+    activity()->log('without timestamps');
+
+    expect($activityClass::count())->toBe(0);
+
+    app(ActivityBuffer::class)->flush();
+
+    expect($activityClass::pluck('description')->all())->toBe(['without timestamps'])
+        ->and(app(ActivityBuffer::class)->hasPending())->toBeFalse();
+});
+
+it('preserves explicitly null timestamps when flushing', function () {
+    activity()->tap(function (Activity $activity) {
+        $activity->setCreatedAt(null);
+        $activity->setUpdatedAt(null);
+    })->log('null timestamps');
+
+    app(ActivityBuffer::class)->flush();
+
+    expect(Activity::first()->only(['description', 'created_at', 'updated_at']))->toBe([
+        'description' => 'null timestamps',
+        'created_at' => null,
+        'updated_at' => null,
+    ]);
 });

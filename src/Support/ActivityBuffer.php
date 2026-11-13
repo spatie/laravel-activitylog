@@ -51,7 +51,10 @@ class ActivityBuffer
     /** @return array<string, mixed> */
     protected function prepareForInsert(Model $activity): array
     {
-        $now = $activity->freshTimestampString();
+        if ($activity->usesTimestamps()) {
+            $activity->updateTimestamps();
+        }
+
         $attributes = [];
 
         foreach ($activity->getAttributes() as $key => $value) {
@@ -61,15 +64,6 @@ class ActivityBuffer
                 $attributes[$key] = $activity->fromDateTime($value);
             } else {
                 $attributes[$key] = $value;
-            }
-        }
-
-        // As save() does: the model's own timestamp columns, which may be renamed or disabled.
-        if ($activity->usesTimestamps()) {
-            foreach ([$activity->getCreatedAtColumn(), $activity->getUpdatedAtColumn()] as $column) {
-                if ($column !== null) {
-                    $attributes[$column] ??= $now;
-                }
             }
         }
 
