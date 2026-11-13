@@ -2,6 +2,22 @@
 
 All notable changes to `spatie/laravel-activitylog` will be documented in this file
 
+## 5.1.5 - 2026-11-13
+
+### What changed
+
+- Fix buffered logging for custom activity models with renamed timestamp columns, `UPDATED_AT = null`, or `$timestamps = false`.
+- Use Eloquent's timestamp handling when preparing buffered activities, preserving supplied dates and explicit null values.
+- Add database-backed regression tests for custom timestamp settings and delayed flushing.
+
+### Compatibility and release scope
+
+This release contains only the timestamp fix from #1481, backported onto 5.1.4. PHP ^8.4 and Laravel ^12.0 || ^13.0 support are unchanged. Other unreleased changes on main are not included.
+
+Thanks to @skybleak333 for https://github.com/spatie/laravel-activitylog/pull/1481.
+
+**Full changelog**: https://github.com/spatie/laravel-activitylog/compare/5.1.4...5.1.5
+
 ## 5.1.4 - 2026-11-06
 
 ### What changed
