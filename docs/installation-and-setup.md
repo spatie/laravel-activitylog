@@ -6,10 +6,12 @@ weight: 4
 The package can be installed via composer:
 
 ```bash
-composer require spatie/laravel-activitylog
+composer require vsrklabs/laravel-mongo-activitylog
 ```
 
 The package will automatically register the service provider.
+
+Configure a `mongodb` connection in `config/database.php` and make it the default connection, or use a custom Activity model that sets `protected $connection = 'mongodb';`. Models logged by this package should extend `MongoDB\Laravel\Eloquent\Model`.
 
 You can publish the migration with:
 
@@ -19,7 +21,7 @@ php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProv
 
 **Note:** The default migration assumes you are using integers for your model IDs. If you are using UUIDs, or some other format, adjust the format of the `subject_id` and `causer_id` fields in the published migration before continuing.
 
-After the migration has been published, you can create the `activity_log` table by running the migrations:
+After the migration has been published, you can create the `activity_log` collection by running the migrations:
 
 ```bash
 php artisan migrate
@@ -68,7 +70,7 @@ return [
     /*
      * This model will be used to log activity.
      * It should implement the Spatie\Activitylog\Contracts\Activity interface
-     * and extend Illuminate\Database\Eloquent\Model.
+     * and extend MongoDB\Laravel\Eloquent\Model.
      */
     'activity_model' => \Spatie\Activitylog\Models\Activity::class,
 
@@ -116,4 +118,4 @@ Without buffering, activities on the same database connection as their subject a
 
 When using a different connection or [buffering activities](/docs/laravel-activitylog/v5/advanced-usage/buffering), the package waits until the subject's transaction commits. If it rolls back, the activities are discarded. These activities have no ID until they are saved, after commit or the next buffer flush.
 
-Writes to separate databases are not atomic: if saving an activity fails after commit, the subject's changes remain saved.
+Writes to separate databases are not atomic: if saving an activity fails after commit, the subject's changes remain saved. MongoDB multi-document transactions require a replica set.

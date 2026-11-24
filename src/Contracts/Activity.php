@@ -2,7 +2,7 @@
 
 namespace Spatie\Activitylog\Contracts;
 
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use MongoDB\Laravel\Relations\MorphTo;
 
 interface Activity
 {

@@ -10,6 +10,19 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          MONGO_INITDB_DATABASE: activitylog_test
+
     strategy:
       fail-fast: false
       matrix:
@@ -27,11 +40,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
+      - name: Start MongoDB replica set
+        run: |
+          docker exec ${{ job.services.mongodb.id }} mongosh --quiet --eval 'rs.initiate({_id: "rs0", members: [{_id: 0, host: "localhost:27017"}]})'
+          docker exec ${{ job.services.mongodb.id }} mongosh --quiet --eval 'while (!db.hello().isWritablePrimary) { sleep(1000) }'
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, mongodb
           coverage: none
 
       - name: Verify PHP version
@@ -46,4 +64,7 @@ jobs:
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
 
       - name: Execute tests
+        env:
+          MONGODB_URI: mongodb://127.0.0.1:27017
+          MONGODB_DATABASE: activitylog_test
         run: vendor/bin/pest

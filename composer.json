@@ -1,8 +1,9 @@
 {
-    "name": "spatie/laravel-activitylog",
+    "name": "vsrklabs/laravel-mongo-activitylog",
     "description": "A very simple activity logger to monitor the users of your website or application",
     "license": "MIT",
     "keywords": [
+        "mongodb",
         "spatie",
         "log",
         "user",
@@ -29,12 +30,14 @@
             "role": "Developer"
         }
     ],
-    "homepage": "https://github.com/spatie/laravel-activitylog",
+    "homepage": "https://github.com/vsrklabs/laravel-mongo-activitylog",
     "require": {
         "php": "^8.4",
+        "ext-mongodb": "^1.21 || ^2.0",
         "illuminate/config": "^13.32",
         "illuminate/database": "^13.32",
         "illuminate/support": "^13.32",
+        "mongodb/laravel-mongodb": "^5.12",
         "spatie/laravel-package-tools": "^1.6.3"
     },
     "require-dev": {

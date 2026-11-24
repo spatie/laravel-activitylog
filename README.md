@@ -8,15 +8,16 @@
 
 <h1>Log activity inside your Laravel app</h1>
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
-[![GitHub Workflow Status](https://github.com/spatie/laravel-activitylog/actions/workflows/run-tests.yml/badge.svg)](https://github.com/spatie/laravel-activitylog/actions/workflows/run-tests.yml)
-[![Check & fix styling](https://github.com/spatie/laravel-activitylog/workflows/Check%20&%20fix%20styling/badge.svg)](https://github.com/spatie/laravel-activitylog/actions/workflows/php-cs-fixer.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-activitylog.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-activitylog)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/vsrklabs/laravel-mongo-activitylog.svg?style=flat-square)](https://packagist.org/packages/vsrklabs/laravel-mongo-activitylog)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/vsrklabs/laravel-mongo-activitylog/run-tests.yml?branch=main&label=Tests)](https://github.com/vsrklabs/laravel-mongo-activitylog/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/vsrklabs/laravel-mongo-activitylog.svg?style=flat-square)](https://packagist.org/packages/vsrklabs/laravel-mongo-activitylog)
     
 </div>
 
-The `spatie/laravel-activitylog` package provides easy to use functions to log the activities of the users of your app. It can also automatically log model events.
-The package stores all activity in the `activity_log` table.
+The `vsrklabs/laravel-mongo-activitylog` package provides easy to use functions to log the activities of the users of your app. It can also automatically log model events.
+The package stores all activity in the `activity_log` MongoDB collection.
+
+It is based on `spatie/laravel-activitylog` v5 and stores activity in MongoDB through the official [Laravel MongoDB](https://github.com/mongodb/laravel-mongodb) package (`mongodb/laravel-mongodb`). Models used with this package should extend `MongoDB\Laravel\Eloquent\Model`.
 
 Here's a demo of how you can use it:
 
@@ -85,19 +86,21 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Documentation
 
-You'll find the documentation on [https://spatie.be/docs/laravel-activitylog/introduction](https://spatie.be/docs/laravel-activitylog/introduction).
+You'll find the upstream documentation on [https://spatie.be/docs/laravel-activitylog/introduction](https://spatie.be/docs/laravel-activitylog/introduction). MongoDB-specific notes are kept in this repository's `docs/` folder.
 
-Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the activity log? Feel free to [create an issue on GitHub](https://github.com/spatie/laravel-activitylog/issues), we'll try to address it as soon as possible.
+Find yourself stuck using the package? Found a bug? Do you have general questions or suggestions for improving the activity log? Feel free to [create an issue on GitHub](https://github.com/vsrklabs/laravel-mongo-activitylog/issues), we'll try to address it as soon as possible.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require spatie/laravel-activitylog
+composer require vsrklabs/laravel-mongo-activitylog
 ```
 
 The package will automatically register itself.
+
+Configure a `mongodb` connection in your application's `config/database.php` and make it the default connection (or use a custom Activity model with its own `$connection`). The published migration uses `MongoDB\Laravel\Schema\Blueprint` to create the `activity_log` collection.
 
 You can publish the migration with:
 
@@ -129,8 +132,10 @@ Please see [UPGRADING](UPGRADING.md) for details.
 
 ## Testing
 
+The test suite needs a MongoDB server, preferably started as a replica set because the transaction tests use multi-document transactions.
+
 ```bash
-composer test
+MONGODB_URI=mongodb://127.0.0.1:27017 MONGODB_DATABASE=activitylog_test composer test
 ```
 
 ## Contributing

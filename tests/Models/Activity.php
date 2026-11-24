@@ -2,11 +2,12 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use BackedEnum;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
+use MongoDB\Laravel\Eloquent\Builder;
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\MorphTo;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 use Spatie\Activitylog\Enums\ActivityEvent;
 
@@ -37,16 +38,20 @@ class Activity extends Model implements ActivityContract
 
     public function getProperty(string $propertyName, mixed $defaultValue = null): mixed
     {
-        return Arr::get($this->properties->toArray(), $propertyName, $defaultValue);
+        return Arr::get($this->properties?->toArray() ?? [], $propertyName, $defaultValue);
     }
 
-    public function scopeInLog(Builder $query, ...$logNames): Builder
+    /** @param  BackedEnum|string|array<BackedEnum|string>  ...$logNames */
+    public function scopeInLog(Builder $query, BackedEnum|string|array ...$logNames): Builder
     {
         if (is_array($logNames[0])) {
             $logNames = $logNames[0];
         }
 
-        return $query->whereIn('log_name', $logNames);
+        return $query->whereIn('log_name', array_map(
+            fn (BackedEnum|string $logName) => $logName instanceof BackedEnum ? $logName->value : $logName,
+            $logNames,
+        ));
     }
 
     public function scopeCausedBy(Builder $query, Model $causer): Builder

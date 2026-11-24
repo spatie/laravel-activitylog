@@ -38,7 +38,7 @@ return [
     /*
      * This model will be used to log activity.
      * It should implement the Spatie\Activitylog\Contracts\Activity interface
-     * and extend Illuminate\Database\Eloquent\Model.
+     * and extend MongoDB\Laravel\Eloquent\Model.
      */
     'activity_model' => Activity::class,
 

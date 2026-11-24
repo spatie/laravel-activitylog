@@ -1,6 +1,15 @@
 # Changelog
 
-All notable changes to `spatie/laravel-activitylog` will be documented in this file
+All notable changes to `vsrklabs/laravel-mongo-activitylog` will be documented in this file
+
+## Unreleased
+
+### Changed
+
+- Synced with upstream `spatie/laravel-activitylog` v5.1.5, including its new schema, action classes, buffering, config keys and API renames.
+- Require PHP 8.4+, Laravel 13.32+, the MongoDB PHP extension and the official `mongodb/laravel-mongodb` package (`^5.12`).
+- Use `MongoDB\Laravel\*` namespaces for models, builders, relations and the schema blueprint.
+- Store activities in the `activity_log` MongoDB collection and run the test suite against MongoDB.
 
 ## 5.1.5 - 2026-11-13
 

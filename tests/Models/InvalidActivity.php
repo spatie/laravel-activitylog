@@ -2,6 +2,6 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class InvalidActivity extends Model {}

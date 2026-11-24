@@ -2,7 +2,7 @@
 
 namespace Spatie\Activitylog\Test\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use MongoDB\Laravel\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 

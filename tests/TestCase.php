@@ -2,9 +2,9 @@
 
 namespace Spatie\Activitylog\Test;
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
+use MongoDB\Laravel\MongoDBServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\Activitylog\Models\Activity;
@@ -23,17 +23,23 @@ abstract class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [
+            MongoDBServiceProvider::class,
             ActivitylogServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
-        config()->set('database.default', 'sqlite');
-        config()->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-        ]);
+        $mongoConnection = [
+            'driver' => 'mongodb',
+            'dsn' => env('MONGODB_URI', 'mongodb://127.0.0.1:27017'),
+            'database' => env('MONGODB_DATABASE', 'activitylog_test'),
+        ];
+
+        config()->set('database.default', 'mongodb');
+        config()->set('database.connections.mongodb', $mongoConnection);
+        config()->set('database.connections.custom_connection_name', $mongoConnection);
+        config()->set('database.connections.unrelated', $mongoConnection);
 
         config()->set('auth.providers.users.model', User::class);
         config()->set('app.key', 'base64:'.base64_encode(
@@ -43,6 +49,8 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function setUpDatabase(): void
     {
+        Schema::connection('mongodb')->dropAllTables();
+
         $this->migrateActivityLogTable();
 
         $this->createTables('articles', 'users');
@@ -57,31 +65,16 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function createTables(...$tableNames): void
     {
-        collect($tableNames)->each(function (string $tableName) {
-            Schema::create($tableName, function (Blueprint $table) use ($tableName) {
-                $table->increments('id');
-                $table->string('name')->nullable();
-                $table->string('text')->nullable();
-                $table->timestamps();
-                $table->softDeletes();
-
-                if ($tableName === 'articles') {
-                    $table->integer('user_id')->unsigned()->nullable();
-                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                    $table->text('json')->nullable();
-                    $table->string('interval')->nullable();
-                    $table->decimal('price')->nullable();
-                    $table->string('status')->nullable();
-                }
-            });
+        collect($tableNames)->each(function (string $tableName): void {
+            Schema::connection('mongodb')->create($tableName);
         });
     }
 
     protected function seedModels(...$modelClasses): void
     {
-        collect($modelClasses)->each(function (string $modelClass) {
+        collect($modelClasses)->each(function (string $modelClass): void {
             foreach (range(1, 0) as $index) {
-                $modelClass::create(['name' => "name {$index}"]);
+                $modelClass::create(['_id' => $index, 'name' => "name {$index}"]);
             }
         });
     }
@@ -98,7 +91,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function createArticle(): Article
     {
-        $article = new $this->article;
+        $article = new $this->article();
         $article->name = 'my name';
         $article->save();
 
@@ -107,7 +100,7 @@ abstract class TestCase extends OrchestraTestCase
 
     public function loginWithFakeUser()
     {
-        $user = new $this->user;
+        $user = new $this->user();
 
         $user::find(1);
 

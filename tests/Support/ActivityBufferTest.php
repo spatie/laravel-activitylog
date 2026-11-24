@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\QueryException;
-use Illuminate\Database\Schema\Blueprint;
+use MongoDB\Laravel\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\ActivityBuffer;
@@ -191,6 +191,8 @@ it('flushes activities with different optional attributes', function () {
 });
 
 it('preserves database defaults for omitted attributes', function () {
+    markTestSkipped('MongoDB is schemaless; database column defaults do not apply.');
+
     Schema::table('activity_log', function (Blueprint $table) {
         $table->string('source')->default('application');
     });
@@ -204,6 +206,8 @@ it('preserves database defaults for omitted attributes', function () {
 });
 
 it('keeps the whole buffer pending if an insert fails', function () {
+    markTestSkipped('MongoDB is schemaless; an unknown column does not cause an insert failure.');
+
     activity()->log('valid activity');
     activity()->tap(fn (Activity $activity) => $activity->missing_column = 'invalid')->log('invalid activity');
 
@@ -216,6 +220,8 @@ it('keeps the whole buffer pending if an insert fails', function () {
 });
 
 it('flushes an activity model that has no updated_at column', function () {
+    markTestSkipped('MongoDB collections do not have columns to drop.');
+
     Schema::table('activity_log', fn (Blueprint $table) => $table->dropColumn('updated_at'));
     config(['activitylog.activity_model' => ActivityWithoutUpdatedAt::class]);
 
@@ -266,6 +272,8 @@ it('flushes renamed timestamp columns and preserves supplied timestamps', functi
 });
 
 it('flushes an activity model with timestamps disabled and no timestamp columns', function () {
+    markTestSkipped('MongoDB collections do not have columns to drop.');
+
     $activityClass = new class extends Activity
     {
         public $timestamps = false;

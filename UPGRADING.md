@@ -1,12 +1,22 @@
+## From `jenssegers/mongodb` to `mongodb/laravel-mongodb`
+
+This fork now uses the official MongoDB Laravel driver.
+
+- Require PHP 8.4+, Laravel 13.32+, the MongoDB PHP extension and `mongodb/laravel-mongodb ^5.12`.
+- Replace every `Jenssegers\Mongodb\` import with `MongoDB\Laravel\`, for example `MongoDB\Laravel\Eloquent\Model`, `MongoDB\Laravel\Eloquent\Builder` and `MongoDB\Laravel\Relations\MorphTo`.
+- In migrations, import `MongoDB\Laravel\Schema\Blueprint` instead of `Illuminate\Database\Schema\Blueprint`.
+- `$collection` was removed in v5 of the official driver; use `$table` instead.
+- Run `composer remove jenssegers/mongodb` and `composer require vsrklabs/laravel-mongo-activitylog`, then verify your `config/database.php` uses the `mongodb` driver with a `dsn` and `database`.
+
 ## From v4 to v5
 
 ```bash
-composer require spatie/laravel-activitylog "^5.0.0"
+composer require vsrklabs/laravel-mongo-activitylog "^5.0.0"
 ```
 
 ### Requirements
 
-v5 requires **PHP 8.4+** and **Laravel 12+**. If you're on older versions, stay on v4.
+v5 of this fork requires **PHP 8.4+** and **Laravel 13.32+**. If you're on older versions, stay on v4.
 
 ### Migration
 
@@ -40,6 +50,8 @@ DB::table('activity_log')
         ]);
 });
 ```
+
+On MongoDB, the schema changes are unnecessary because collections are schemaless. Migrate existing documents with an aggregation/update pipeline that moves `properties.attributes` and `properties.old` into `attribute_changes` and leaves the remaining custom properties in `properties`. Do not use the SQL `properties->attributes` syntax shown above verbatim.
 
 ### Schema changes
 

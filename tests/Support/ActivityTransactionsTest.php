@@ -13,15 +13,16 @@ use Spatie\Activitylog\Test\Models\CustomDatabaseConnectionOnActivityModel as Ac
 beforeEach(function () {
     config([
         'database.connections.custom_connection_name' => [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
+            'driver' => 'mongodb',
+            'dsn' => env('MONGODB_URI', 'mongodb://127.0.0.1:27017'),
+            'database' => env('MONGODB_DATABASE', 'activitylog_test'),
         ],
         'activitylog.activity_model' => Activity::class,
     ]);
 
     DB::setDefaultConnection('custom_connection_name');
     $this->migrateActivityLogTable();
-    DB::setDefaultConnection('sqlite');
+    DB::setDefaultConnection('mongodb');
 });
 
 afterEach(function () {
@@ -134,7 +135,7 @@ it('waits for the subject connection when another connection commits first', fun
 });
 
 it('saves on the subject commit while an unrelated transaction remains open', function () {
-    config(['database.connections.unrelated' => config('database.connections.sqlite')]);
+    config(['database.connections.unrelated' => config('database.connections.mongodb')]);
     $article = Article::first();
     DB::beginTransaction();
     $unrelated = DB::connection('unrelated');
@@ -151,7 +152,7 @@ it('saves on the subject commit while an unrelated transaction remains open', fu
 });
 
 it('uses the subject connection when it is not the default connection', function () {
-    $article = Article::first()->setConnection('sqlite');
+    $article = Article::first()->setConnection('unrelated');
     $source = $article->getConnection();
     DB::setDefaultConnection('custom_connection_name');
     $source->beginTransaction();
