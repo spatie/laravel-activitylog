@@ -19,6 +19,8 @@ The package stores all activity in the `activity_log` MongoDB collection.
 
 It is based on `spatie/laravel-activitylog` v5 and stores activity in MongoDB through the official [Laravel MongoDB](https://github.com/mongodb/laravel-mongodb) package (`mongodb/laravel-mongodb`). Models used with this package should extend `MongoDB\Laravel\Eloquent\Model`.
 
+Supported versions: PHP 8.1+, Laravel 10.37.2 through 13, and `mongodb/laravel-mongodb ^5.8`. The v5 API is backported so Laravel 10 remains supported even though upstream v5 requires PHP 8.4 and Laravel 13.
+
 Here's a demo of how you can use it:
 
 ```php

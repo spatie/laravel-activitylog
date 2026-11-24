@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use ReflectionMethod;
 use Spatie\Activitylog\Enums\ActivityEvent;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Support\ActivityLogger;
@@ -357,7 +358,7 @@ trait LogsActivity
             $cast = $model->getCasts()[$attribute];
 
             if ($model->isEnumCastable($attribute)) {
-                return $model->getStorableEnumValue($cast, $value);
+                return static::resolveStorableEnumValue($model, $cast, $value);
             }
 
             if ($model->isCustomDateTimeCast($cast)) {
@@ -374,5 +375,20 @@ trait LogsActivity
         }
 
         return $value;
+    }
+
+    /**
+     * Laravel 10 exposes getStorableEnumValue($value), while Laravel 11+ expects
+     * getStorableEnumValue($expectedEnum, $value). Support both signatures.
+     */
+    protected static function resolveStorableEnumValue(Model $model, string $cast, mixed $value): mixed
+    {
+        $method = new ReflectionMethod($model, 'getStorableEnumValue');
+
+        if ($method->getNumberOfParameters() === 1) {
+            return $model->getStorableEnumValue($value);
+        }
+
+        return $model->getStorableEnumValue($cast, $value);
     }
 }

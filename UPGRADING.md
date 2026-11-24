@@ -2,7 +2,7 @@
 
 This fork now uses the official MongoDB Laravel driver.
 
-- Require PHP 8.4+, Laravel 13.32+, the MongoDB PHP extension and `mongodb/laravel-mongodb ^5.12`.
+- Require PHP 8.1+, Laravel 10.37.2+ (up to Laravel 13), the MongoDB PHP extension and `mongodb/laravel-mongodb ^5.8`.
 - Replace every `Jenssegers\Mongodb\` import with `MongoDB\Laravel\`, for example `MongoDB\Laravel\Eloquent\Model`, `MongoDB\Laravel\Eloquent\Builder` and `MongoDB\Laravel\Relations\MorphTo`.
 - In migrations, import `MongoDB\Laravel\Schema\Blueprint` instead of `Illuminate\Database\Schema\Blueprint`.
 - `$collection` was removed in v5 of the official driver; use `$table` instead.
@@ -16,7 +16,7 @@ composer require vsrklabs/laravel-mongo-activitylog "^5.0.0"
 
 ### Requirements
 
-v5 of this fork requires **PHP 8.4+** and **Laravel 13.32+**. If you're on older versions, stay on v4.
+v5 of this fork requires **PHP 8.1+** and **Laravel 10.37.2+** (tested through Laravel 13). Upstream v5 requires PHP 8.4 and Laravel 13, but this fork keeps its Laravel 10 support by backporting the few newer framework/PHP calls it uses. If you're on PHP 8.0 or Laravel below 10.37.2, stay on v4.
 
 ### Migration
 

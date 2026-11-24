@@ -5,6 +5,7 @@ namespace Spatie\Activitylog\Support;
 use Carbon\CarbonInterval;
 use DateInterval;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class ChangeDetector
@@ -36,7 +37,7 @@ class ChangeDetector
 
     public static function resolveRelationName(Model $model, string $relation): string
     {
-        return array_find(
+        return Arr::first(
             [$relation, Str::snake($relation), Str::camel($relation)],
             fn (string $method): bool => method_exists($model, $method)
         ) ?? $relation;
