@@ -146,6 +146,8 @@ The config file has been simplified. Republish it or update manually.
 **New keys:**
 - `actions.log_activity`: action class for logging (default: `LogActivityAction::class`)
 - `actions.clean_log`: action class for cleaning (default: `CleanActivityLogAction::class`)
+- `default_except_attributes`: globally exclude attributes from logging for all models
+- `buffer.enabled`: buffer activities in memory and insert them in bulk after the response is sent (default: `false`, env: `ACTIVITYLOG_BUFFER_ENABLED`). See [buffering activities](/docs/laravel-activitylog/v5/advanced-usage/buffering).
 
 ### Pipe system removed
 
@@ -154,9 +156,6 @@ The `addLogChange()` method, `LoggablePipe` interface, and `EventLogBag` class h
 ### Customizable actions
 
 Core operations are now handled by action classes that can be extended and swapped via config. This lets you customize how activities are saved (e.g., queue them) or how old records are cleaned without overriding the entire logger or command.
-
-**New keys:**
-- `default_except_attributes`: globally exclude attributes from logging for all models
 
 ---
 
